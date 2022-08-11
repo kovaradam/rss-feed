@@ -1,0 +1,99 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  password Password?
+  notes    Note[]
+  Channel  Channel[]
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model Note {
+  id    String @id @default(cuid())
+  title String
+  body  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model Post {
+  slug     String @id
+  title    String
+  markdown String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Channel {
+  id          String @id @default(cuid())
+  link        String
+  title       String
+  description String
+
+  lastBuildDate DateTime?
+  rssVersion    String
+  category      String
+  copyright     String
+  language      String
+
+  items    Item[]
+  imageUrl String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  link        String   @id
+  title       String
+  description String
+  pubDate     DateTime
+
+  author      String
+  comments    String
+  enclosureId String
+
+  channelId String
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Image {
+  url   String @id
+  title String
+  link  String
+
+  channelLink String
+}
+
+model Enclosure {
+  id     String @id
+  url    String
+  length Int
+  type   String
+}
