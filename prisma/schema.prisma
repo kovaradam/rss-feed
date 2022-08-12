@@ -52,6 +52,7 @@ model Channel {
   link        String
   title       String
   description String
+  feedUrl     String
 
   lastBuildDate DateTime?
   rssVersion    String

@@ -6,6 +6,7 @@ import {
 } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChannelCategories } from '~/components/ChannelCategories';
 import { Href } from '~/components/Href';
@@ -110,6 +111,7 @@ export default function ChannelIndexPage() {
   return (
     <div className="flex">
       <section className="min-w-2/3 flex-1">
+        {items.length === 0 && <p className="text-center">No articles found</p>}
         <ul className="grid grid-cols-2 gap-4">
           {items.map(({ channel, ...item }) => (
             <li key={item.link}>
@@ -134,16 +136,22 @@ export default function ChannelIndexPage() {
             </li>
           ))}
         </ul>
-        <Form className="mt-6 flex w-full justify-center" method="get">
-          <input type="hidden" name={itemCountName} value={items.length + 10} />
-          <button
-            type="submit"
-            className="rounded bg-slate-600 py-2 px-2 text-white disabled:bg-slate-300"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Loading...' : 'Show more'}
-          </button>
-        </Form>
+        {items.length !== 0 && (
+          <Form className="mt-6 flex w-full justify-center" method="get">
+            <input
+              type="hidden"
+              name={itemCountName}
+              value={items.length + 10}
+            />
+            <button
+              type="submit"
+              className="rounded bg-slate-600 py-2 px-2 text-white disabled:bg-slate-300"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Loading...' : 'Show more'}
+            </button>
+          </Form>
+        )}
       </section>
       <aside className="pl-8">
         <Form method="get" className="flex w-56 flex-col gap-6">

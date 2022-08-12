@@ -219,6 +219,7 @@ export default function Channels() {
             ) {
               return prev;
             }
+            (event.target as HTMLFormElement)['new-category'].value = '';
             return prev.concat('/').concat(category);
           });
         }}

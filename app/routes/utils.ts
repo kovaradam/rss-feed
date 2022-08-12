@@ -3,7 +3,7 @@ import { parseStringPromise } from 'xml2js';
 
 export async function parseChannelXml(
   channelXml: string
-): Promise<[Partial<Omit<Channel, 'userId'>>, Item[]]> {
+): Promise<[Partial<Omit<Channel, 'userId' | 'feedUrl'>>, Item[]]> {
   const result = await parseStringPromise(channelXml);
 
   const rssData = result?.rss;
@@ -11,7 +11,10 @@ export async function parseChannelXml(
 
   const lastBuildDate = channelData?.lastBuildDate?.[0];
 
-  const channel: Omit<Channel, 'userId' | 'id' | 'updatedAt' | 'createdAt'> = {
+  const channel: Omit<
+    Channel,
+    'userId' | 'id' | 'updatedAt' | 'createdAt' | 'feedUrl'
+  > = {
     link: channelData?.link?.[0],
     title: channelData?.title?.[0] || 'Title is missing',
     description: channelData?.description?.[0] || 'Description is missing',

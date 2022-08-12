@@ -13,6 +13,7 @@ import {
 import React from 'react';
 import invariant from 'tiny-invariant';
 import type { Channel, Item } from '~/models/channel.server';
+import { updateChannel } from '~/models/channel.server';
 import { createChanel, getChannel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 
@@ -26,10 +27,35 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  const channelListItems = await getChannels({
+  const channelListItems = (await getChannels({
     where: { userId },
-    select: { id: true, title: true },
+    select: { id: true, title: true, feedUrl: true, items: true },
     orderBy: { updatedAt: 'desc' },
+  })) as (Channel & { items: Item[] })[];
+
+  channelListItems.forEach(async (dbChannel) => {
+    try {
+      console.log('update', dbChannel.feedUrl);
+      const channelRequest = await fetch(dbChannel.feedUrl);
+      const channelXml = await channelRequest.text();
+      const [newChannel, newItems] = await parseChannelXml(channelXml);
+
+      updateChannel({
+        where: { id: dbChannel.id },
+        data: {
+          lastBuildDate: newChannel.lastBuildDate,
+          items: {
+            create: newItems.filter(
+              (item) =>
+                !dbChannel.items.find((dbItem) => dbItem.link === item.link)
+            ),
+          },
+        },
+      });
+    } catch (error) {
+      console.error('update failed', error);
+      return;
+    }
   });
 
   return json<LoaderData>({ channelListItems });
@@ -64,7 +90,9 @@ export const action: ActionFunction = async ({ request }) => {
 
   const channelXml = await channelRequest.text();
 
-  let channel: Partial<Channel>, items: Item[];
+  let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
+  let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
+
   try {
     [channel, items] = await parseChannelXml(channelXml);
     invariant(channel.link, 'Link is missing in the RSS definition');
@@ -86,7 +114,7 @@ export const action: ActionFunction = async ({ request }) => {
   let newChannel;
   try {
     newChannel = await createChanel({
-      channel: channel as Channel,
+      channel: { ...channel, feedUrl: channelHref } as Channel,
       userId,
       items: items ?? [],
     });
