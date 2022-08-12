@@ -37,14 +37,10 @@ export async function updateChannel(
   return prisma.channel.update(params);
 }
 
-export async function getUserChannels(
-  userId: Channel['userId'],
-  options: Parameters<typeof prisma.channel.findMany>[0]
+export async function getChannels(
+  params: Parameters<typeof prisma.channel.findMany>[0]
 ) {
-  return prisma.channel.findMany({
-    ...options,
-    where: { ...options?.where, userId },
-  });
+  return prisma.channel.findMany(params);
 }
 
 export async function deleteChannels() {

@@ -1,8 +1,24 @@
+const plugin = require('tailwindcss/plugin');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{ts,tsx,jsx,js}"],
+  content: ['./app/**/*.{ts,tsx,jsx,js}'],
   theme: {
-    extend: {},
+    extend: {
+      lineClamp: {
+        10: '10',
+      },
+    },
   },
-  plugins: [],
+  variants: {
+    extend: {
+      lineClamp: ['hover'],
+    },
+  },
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+    plugin(({ addVariant }) => {
+      addVariant('active-select-item', '&[data-active-item]');
+    }),
+  ],
 };

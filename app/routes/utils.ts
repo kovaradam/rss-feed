@@ -15,7 +15,7 @@ export async function parseChannelXml(
     link: channelData?.link?.[0],
     title: channelData?.title?.[0] || 'Title is missing',
     description: channelData?.description?.[0] || 'Description is missing',
-    category: channelData?.category?.[0] || 'Category is missing',
+    category: channelData?.category?.[0] || '',
     imageUrl: channelData?.imageUrl?.[0] || 'Image is missing',
     language: channelData?.language?.[0] || 'Language is missing',
     copyright: channelData?.copyright?.[0] ?? '',

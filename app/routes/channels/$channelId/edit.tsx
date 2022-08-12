@@ -1,3 +1,4 @@
+import { PlusIcon } from '@heroicons/react/outline';
 import {
   Form,
   useActionData,
@@ -7,8 +8,11 @@ import {
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
+import React from 'react';
 import invariant from 'tiny-invariant';
-import { Channel, updateChannel } from '~/models/channel.server';
+import { ChannelCategories } from '~/components/ChannelCategories';
+import type { Channel } from '~/models/channel.server';
+import { updateChannel } from '~/models/channel.server';
 import { getChannel } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 
@@ -80,87 +84,146 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export default function Channels() {
-  const actionData = useActionData<ActionData>();
+  const errors = useActionData<ActionData>()?.errors;
   const transition = useTransition();
   const channel = useLoaderData<LoaderData>().channel;
   const isCreating = Boolean(transition.submission);
-  const errors = actionData?.errors;
+
+  const [category, setCategory] = React.useState(channel.category ?? '');
+
+  const deleteCategory: React.MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
+    const categoryToRemove = (event.currentTarget as HTMLButtonElement).value;
+
+    setCategory((prev) =>
+      prev
+        .split('/')
+        .filter((category) => category !== categoryToRemove)
+        .join('/')
+    );
+  };
 
   return (
-    <Form method="post" className="flex max-w-xl flex-col gap-4">
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Title: </span>
-          <input
-            defaultValue={channel.title}
-            name={'title'}
-            required
-            {...inputProps}
-          />
-        </label>
-        {errors?.title && (
-          <div className="pt-1 text-red-700" id="title-error">
-            {errors.title}
+    <>
+      <Form method="post" className="flex max-w-xl flex-col gap-4">
+        <h3 className="mb-6 text-4xl font-bold">Edit channel</h3>
+        <div>
+          <label className="flex w-full flex-col gap-1">
+            <span>Title: </span>
+            <input
+              defaultValue={channel.title}
+              name={'title'}
+              required
+              {...inputProps}
+            />
+          </label>
+          {errors?.title && (
+            <div className="pt-1 text-red-700" id="title-error">
+              {errors.title}
+            </div>
+          )}
+        </div>
+        <div>
+          <label className="flex w-full flex-col gap-1">
+            <span>Description: </span>
+            <textarea
+              defaultValue={channel.description}
+              name={'description'}
+              required
+              {...inputProps}
+            />
+          </label>
+          {errors?.description && (
+            <div className="pt-1 text-red-700" id="title-error">
+              {errors.description}
+            </div>
+          )}
+        </div>
+        <div>
+          <div className="flex w-full flex-col gap-1">
+            <label htmlFor="new-category">Category: </label>
+            <div className="flex gap-1">
+              <ChannelCategories category={category} delete={deleteCategory} />
+            </div>
+            <fieldset className="flex gap-2">
+              <input
+                placeholder="e.g. gardening"
+                {...inputProps}
+                name="new-category"
+                id="new-category"
+                form="category-form"
+              />
+              <button
+                className="rounded  bg-slate-100 py-2 px-4 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
+                type="submit"
+                form="category-form"
+              >
+                <PlusIcon className="w-4 " />
+              </button>
+            </fieldset>
+            <input
+              value={category}
+              type="hidden"
+              name={'category'}
+              {...inputProps}
+            />
           </div>
-        )}
-      </div>
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Description: </span>
-          <textarea
-            defaultValue={channel.description}
-            name={'description'}
-            required
-            {...inputProps}
-          />
-        </label>
-        {errors?.category && (
-          <div className="pt-1 text-red-700" id="title-error">
-            {errors.category}
-          </div>
-        )}
-      </div>
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Category: </span>
-          <input
-            defaultValue={channel.category}
-            name={'category'}
-            {...inputProps}
-          />
-        </label>
-      </div>
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Language: </span>
-          <input
-            defaultValue={channel.language}
-            name={'language'}
-            {...inputProps}
-          />
-        </label>
-      </div>
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Image url: </span>
-          <input
-            defaultValue={channel.imageUrl}
-            name={'image-url'}
-            {...inputProps}
-          />
-        </label>
-      </div>
+        </div>
+        <div>
+          <label className="flex w-full flex-col gap-1">
+            <span>Language: </span>
+            <input
+              defaultValue={channel.language}
+              name={'language'}
+              {...inputProps}
+            />
+          </label>
+        </div>
+        <div>
+          <label className="flex w-full flex-col gap-1">
+            <span>Image url: </span>
+            <input
+              defaultValue={channel.imageUrl}
+              name={'image-url'}
+              {...inputProps}
+            />
+          </label>
+        </div>
 
-      <div className="text-right">
-        <button
-          type="submit"
-          className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
-          disabled={isCreating}
-        >
-          {isCreating ? 'Creating...' : 'Update'}
-        </button>
-      </div>
-    </Form>
+        <div className="text-right">
+          <button
+            type="submit"
+            disabled={isCreating}
+            className="rounded bg-slate-600 py-2 px-4 text-white hover:bg-slate-500  disabled:bg-slate-300"
+          >
+            {isCreating ? 'Creating...' : 'Update'}
+          </button>
+        </div>
+      </Form>
+      <Form
+        id="category-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const category = new FormData(event.target as HTMLFormElement).get(
+            'new-category'
+          );
+
+          if (typeof category !== 'string') {
+            return;
+          }
+
+          setCategory((prev) => {
+            if (
+              prev.split('/').find((prevCategory) => prevCategory === category)
+            ) {
+              return prev;
+            }
+            return prev.concat('/').concat(category);
+          });
+        }}
+      ></Form>
+    </>
   );
 }
 

@@ -26,6 +26,7 @@ import {
 
 import { requireUserId } from '~/session.server';
 import React from 'react';
+import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 
 type LoaderData = {
   channel: Channel;
@@ -78,7 +79,7 @@ export default function ChannelDetailsPage() {
         <Form method="delete">
           <button
             type="submit"
-            className="rounded py-2 px-4 text-gray-500 hover:bg-gray-100"
+            className="rounded py-2 px-4 text-slate-600 hover:bg-gray-100"
             title="Delete this channel"
           >
             <TrashIcon className="w-6" />
@@ -107,7 +108,12 @@ export default function ChannelDetailsPage() {
         </span>
         <span className="flex items-center gap-1 text-gray-400">
           <BookmarkIcon className="h-4" />
-          {channel.category}
+
+          {channel.category ? (
+            <ChannelCategoryLinks category={channel.category} />
+          ) : (
+            'Category is missing'
+          )}
         </span>
         <span className="flex items-center gap-1 text-gray-400">
           <TranslateIcon className="h-4" />
@@ -136,11 +142,11 @@ export default function ChannelDetailsPage() {
           {index !== array.length - 1 && <hr className="mb-4 border-dashed" />}
         </React.Fragment>
       ))}
-      <Form className="flex w-full  justify-center" method="get">
+      <Form className="mt-6 flex w-full justify-center" method="get">
         <input type="hidden" name={itemCountName} value={items.length + 10} />
         <button
           type="submit"
-          className="rounded bg-blue-400 py-2 px-2 text-white disabled:bg-blue-300"
+          className="rounded bg-slate-600 py-2 px-2 text-white disabled:bg-slate-300"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Loading...' : 'Show more'}
@@ -152,14 +158,24 @@ export default function ChannelDetailsPage() {
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return <div>An unexpected error occurred: {error.message}</div>;
+
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-red-50 text-red-500">
+      An unexpected error occurred: {error.message}
+    </div>
+  );
 }
 
 export function CatchBoundary() {
   const caught = useCatch();
 
   if (caught.status === 404) {
-    return <div>Note not found</div>;
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center bg-red-50  text-2xl text-red-500">
+        <b className="">Oops!</b>
+        <h4 className="">Channel not found</h4>
+      </div>
+    );
   }
 
   throw new Error(`Unexpected caught response with status: ${caught.status}`);
