@@ -87,7 +87,7 @@ export default function Channels() {
   const errors = actionData?.errors;
 
   return (
-    <Form method="post" className="flex flex-col gap-4">
+    <Form method="post" className="flex max-w-xl flex-col gap-4">
       <div>
         <label className="flex w-full flex-col gap-1">
           <span>Title: </span>
@@ -165,6 +165,5 @@ export default function Channels() {
 }
 
 const inputProps = {
-  className:
-    'flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose',
+  className: 'w-full rounded border border-gray-500 px-2 py-1 text-lg',
 };

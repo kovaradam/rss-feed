@@ -25,6 +25,7 @@ import {
 } from '@heroicons/react/outline';
 
 import { requireUserId } from '~/session.server';
+import React from 'react';
 
 type LoaderData = {
   channel: Channel;
@@ -64,7 +65,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   return redirect('/channels');
 };
 
-export default function NoteDetailsPage() {
+export default function ChannelDetailsPage() {
   const data = useLoaderData() as LoaderData;
   const transition = useTransition();
   const { channel, items } = data;
@@ -74,29 +75,35 @@ export default function NoteDetailsPage() {
   return (
     <div className="relative">
       <div className="absolute top-0 right-0 flex w-12 flex-row-reverse items-center">
-        <Form method="post">
+        <Form method="delete">
           <button
             type="submit"
             className="rounded py-2 px-4 text-gray-500 hover:bg-gray-100"
+            title="Delete this channel"
           >
             <TrashIcon className="w-6" />
           </button>
         </Form>
         <Link
+          title="Edit this channel"
           to="edit"
-          className="rounded py-2 px-4 text-gray-500 hover:bg-gray-100"
+          className="rounded py-2 px-4 text-blue-500 hover:bg-gray-100"
         >
           <PencilIcon className="w-6" />
         </Link>
       </div>
       <h3 className="text-4xl font-bold">{data.channel.title}</h3>
-      <div className="flex flex-col pt-2">
+      <div className="flex flex-col gap-2 pt-2">
         <span className="flex items-center gap-1 text-gray-400">
           <Href href={channel.link}>{channel.link}</Href>
         </span>
         <span className="flex items-center gap-1 text-gray-400">
           <ClockIcon className="h-4" /> Last build date:{' '}
-          <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+          {data.channel.lastBuildDate ? (
+            <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+          ) : (
+            'unknown'
+          )}
         </span>
         <span className="flex items-center gap-1 text-gray-400">
           <BookmarkIcon className="h-4" />
@@ -114,8 +121,8 @@ export default function NoteDetailsPage() {
       <hr className="mb-8 " />
       <h4 className="pb-2 text-2xl font-medium">Articles</h4>
       {items.map((item, index, array) => (
-        <>
-          <article key={item.link} className="flex flex-col pb-2">
+        <React.Fragment key={item.link}>
+          <article className="flex flex-col pb-2">
             <Href href={item.link}>{item.title}</Href>
             <span className="border-b-gray-400 text-gray-400">
               {' '}
@@ -127,7 +134,7 @@ export default function NoteDetailsPage() {
             </span>
           </article>
           {index !== array.length - 1 && <hr className="mb-4 border-dashed" />}
-        </>
+        </React.Fragment>
       ))}
       <Form className="flex w-full  justify-center" method="get">
         <input type="hidden" name={itemCountName} value={items.length + 10} />
