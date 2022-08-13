@@ -14,13 +14,13 @@ import { createChanel, getChannel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 
 import { requireUserId } from '~/session.server';
-import { useUser } from '~/utils';
+import { createTitle, useUser } from '~/utils';
 import { parseChannelXml } from '../models/parse-xml';
 
 const title = 'Your feed';
 
 export const meta: MetaFunction = () => ({
-  title,
+  title: createTitle(title),
 });
 
 type LoaderData = {

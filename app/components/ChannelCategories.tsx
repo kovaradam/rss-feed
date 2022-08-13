@@ -39,6 +39,7 @@ export function ChannelCategoryLinks(
         .filter(Boolean)
         .map((category) => (
           <Link
+            title="View articles with this category"
             className={className}
             key={category}
             to={`/channels?categories=${category}`}

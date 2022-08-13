@@ -20,6 +20,7 @@ import type { Channel } from '~/models/channel.server';
 import { updateChannel } from '~/models/channel.server';
 import { getChannel } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
+import { createTitle } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -31,7 +32,7 @@ const fieldNames = [
 
 export const meta: MetaFunction = ({ data, parentsData }) => {
   return {
-    title: `Edit ${data?.channel?.title ?? 'channel'}`,
+    title: createTitle(`Edit ${data?.channel?.title ?? 'channel'}`),
   };
 };
 

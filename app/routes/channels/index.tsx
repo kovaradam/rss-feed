@@ -4,24 +4,26 @@ import {
   useLocation,
   useTransition,
 } from '@remix-run/react';
-import type { LoaderFunction } from '@remix-run/server-runtime';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import invariant from 'tiny-invariant';
 import { Button } from '~/components/Button';
-import { ChannelCategories } from '~/components/ChannelCategories';
+import { ChannelItem } from '~/components/ChannelItem';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { Href } from '~/components/Href';
 import { Select } from '~/components/Select';
 import { SpinnerIcon } from '~/components/SpinnerIcon';
-import { TimeFromNow } from '~/components/TimeFromNow';
-import type { Channel, Item } from '~/models/channel.server';
+import {
+  Channel,
+  ItemWithChannel,
+  updateChannelItem,
+} from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { getChannelItems } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 
 type LoaderData = {
-  items: (Item & { channel: Channel })[];
+  items: ItemWithChannel[];
   channels: Channel[];
   categories: string[];
   filters: {
@@ -107,6 +109,34 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  if (request.method === 'PATCH') {
+    const { names, getBooleanValue } = ChannelItem.form;
+    const channelId = formData.get(names.channelId);
+    const itemLink = formData.get(names.itemLink);
+    invariant(typeof channelId === 'string', 'Channel id was not provided');
+    invariant(typeof itemLink === 'string', 'Item link was not provided');
+
+    const bookmarked = formData.get(names.bookmarked);
+    const read = formData.get(names.read);
+
+    return await updateChannelItem({
+      where: {
+        link_channelId: {
+          channelId,
+          link: itemLink,
+        },
+      },
+      data: {
+        read: getBooleanValue(read),
+        bookmarked: getBooleanValue(bookmarked),
+      },
+    });
+  }
+};
+
 export default function ChannelIndexPage() {
   const { items, channels, categories, filters, loadMoreAction } =
     useLoaderData<LoaderData>();
@@ -135,34 +165,9 @@ export default function ChannelIndexPage() {
           <p className="text-center">No articles found</p>
         )}
         <ul className="grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-2">
-          {items.map(({ channel, ...item }) => (
+          {items.map((item) => (
             <li key={item.link}>
-              <article className="flex flex-col gap-1 rounded-lg p-4 shadow-md">
-                <Link to={String(channel.id)} className="pb-2 text-slate-400">
-                  {channel.title}
-                </Link>
-
-                {item.imageUrl && (
-                  <img
-                    alt="Article decoration"
-                    src={item.imageUrl}
-                    className="my-2 h-auto w-full"
-                  />
-                )}
-                <h4>
-                  <Href href={item.link} className="text-lg text-black">
-                    {item.title}
-                  </Href>
-                </h4>
-                <span className="flex gap-1 text-slate-400">
-                  {item.author}
-                  <TimeFromNow date={new Date(item.pubDate)} />
-                </span>
-                <span className="mb-1 flex gap-1 text-sm">
-                  <ChannelCategories category={channel.category} />
-                </span>
-                <p className="line-clamp-10">{item.description}</p>
-              </article>
+              <ChannelItem item={item} formMethod="patch" />
             </li>
           ))}
         </ul>

@@ -11,7 +11,7 @@ import {
 import invariant from 'tiny-invariant';
 import { Href } from '~/components/Href';
 import { TimeFromNow } from '~/components/TimeFromNow';
-import type { channelWithItems } from '~/models/channel.server';
+import type { ChannelWithItems } from '~/models/channel.server';
 import {
   deleteChannel,
   getChannel,
@@ -33,10 +33,11 @@ import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 import { Button } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import type { MetaFunction } from '@remix-run/react/routeModules';
+import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
-    title: data?.channel?.title ?? 'Channel detail',
+    title: createTitle(data?.channel?.title ?? 'Channel detail'),
   };
 };
 
@@ -86,7 +87,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   invariant(channel, 'Channel could not be loaded');
 
-  await refreshChannel({ channel: channel as channelWithItems, userId });
+  await refreshChannel({ channel: channel as ChannelWithItems, userId });
   return redirect('/channels/'.concat(params.channelId));
 };
 
@@ -102,7 +103,7 @@ export default function ChannelDetailsPage() {
     transition.state === 'submitting' && submission?.method === 'GET';
 
   return (
-    <div className="relative flex">
+    <div className="relative flex flex-col sm:flex-row">
       <section className="flex-1">
         <h3 className="text-4xl font-bold">{data.channel.title}</h3>
         <div className="flex flex-col gap-2 pt-2">
@@ -161,7 +162,7 @@ export default function ChannelDetailsPage() {
           </Button>
         </Form>
       </section>
-      <aside className="flex flex-col gap-2 pl-4">
+      <aside className="sticky bottom-0 -mb-8 flex justify-between gap-2 bg-white py-4 sm:relative sm:mb-0 sm:flex-col sm:justify-start sm:py-0 sm:pl-4">
         <Form method="patch">
           <Button
             type="submit"

@@ -23,10 +23,11 @@ export async function createChanel(input: {
   });
 }
 
-export type channelWithItems = Channel & { items: Item[] };
+export type ChannelWithItems = Channel & { items: Item[] };
+export type ItemWithChannel = Item & { channel: Channel };
 
 export async function refreshChannel(params: {
-  channel: Pick<channelWithItems, 'feedUrl' | 'items'>;
+  channel: Pick<ChannelWithItems, 'feedUrl' | 'items'>;
   userId: string;
 }) {
   const channelRequest = await fetch(params.channel.feedUrl);
@@ -51,10 +52,6 @@ export async function refreshChannel(params: {
       },
     },
   });
-}
-
-export async function getChannelById(params: Pick<Channel, 'id' | 'userId'>) {
-  return prisma.channel.findFirst({ where: params });
 }
 
 export async function getChannel(
@@ -92,4 +89,10 @@ export async function getChannelItems(
   params: Parameters<typeof prisma.item.findMany>[0]
 ) {
   return prisma.item.findMany(params);
+}
+
+export async function updateChannelItem(
+  params: Parameters<typeof prisma.item.update>[0]
+) {
+  return prisma.item.update(params);
 }
