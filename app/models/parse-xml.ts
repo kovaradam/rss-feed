@@ -28,26 +28,27 @@ export async function parseChannelXml(
     rssVersion: rssData?.$?.version?.[0] ?? '',
   };
 
-  const items = channelData?.item?.map((item: any): ItemParseResult[number] => {
-    const description = item?.description?.[0];
-    const link = item?.link?.[0] ?? '';
+  const items =
+    channelData?.item?.map((item: any): ItemParseResult[number] | undefined => {
+      const description = item?.description?.[0];
+      const link = item?.link?.[0] ?? '';
 
-    return {
-      link,
-      title: item?.title?.[0] ?? '',
-      description: typeof description === 'string' ? description : '',
-      author: item?.author?.[0] ?? '',
-      comments: item?.comments?.[0] ?? '',
-      pubDate: new Date(item?.pubDate?.[0]),
-      imageUrl:
-        (item?.enclosure as { $: Enclosure }[] | undefined)
-          ?.map((payload) => payload?.['$'])
-          .filter(Boolean)
-          .find((enclosure) => enclosure.type?.includes('image'))?.url ?? '',
-      bookmarked: false,
-      read: false,
-    };
-  });
+      return {
+        link,
+        title: item?.title?.[0] ?? '',
+        description: typeof description === 'string' ? description : '',
+        author: item?.author?.[0] ?? '',
+        comments: item?.comments?.[0] ?? '',
+        pubDate: new Date(item?.pubDate?.[0]),
+        imageUrl:
+          (item?.enclosure as { $: Enclosure }[] | undefined)
+            ?.map((payload) => payload?.['$'])
+            .filter(Boolean)
+            .find((enclosure) => enclosure.type?.includes('image'))?.url ?? '',
+        bookmarked: false,
+        read: false,
+      };
+    }) ?? [];
 
   return [channel, items];
 }

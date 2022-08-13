@@ -14,7 +14,9 @@ import { Button } from '~/components/Button';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
-  if (userId) return redirect('/');
+  if (userId) {
+    return redirect('/');
+  }
   return json({});
 };
 
@@ -29,7 +31,8 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const email = formData.get('email');
   const password = formData.get('password');
-  const redirectTo = safeRedirect(formData.get('redirectTo'), '/channels');
+  const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
+
   const remember = formData.get('remember');
 
   if (!validateEmail(email)) {

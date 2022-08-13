@@ -22,7 +22,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Remix RSS',
+  title: 'RSS Journal',
   viewport: 'width=device-width,initial-scale=1',
 });
 
@@ -31,8 +31,9 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getUser(request);
   return json<LoaderData>({
-    user: await getUser(request),
+    user,
   });
 };
 

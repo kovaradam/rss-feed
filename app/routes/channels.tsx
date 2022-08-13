@@ -1,4 +1,4 @@
-import { LogoutIcon } from '@heroicons/react/outline';
+import { LogoutIcon, MenuAlt2Icon } from '@heroicons/react/outline';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
@@ -6,6 +6,7 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
+import { NavWrapper } from '~/components/NavWrapper';
 import type { Channel, Item } from '~/models/channel.server';
 import { refreshChannel } from '~/models/channel.server';
 import { createChanel, getChannel } from '~/models/channel.server';
@@ -108,17 +109,25 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelsPage() {
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<LoaderData>();
   const user = useUser();
+
+  const [isNavExpanded, setIsNavExpanded] = React.useState(false);
 
   return (
     <div className="flex  flex-col">
       <header className="flex w-full justify-center border-b">
-        <div className="flex w-2/3 items-center justify-between p-4">
+        <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
+          <button
+            onClick={() => setIsNavExpanded((prev) => !prev)}
+            className="block rounded py-2  px-4 hover:bg-slate-100 active:bg-slate-200 sm:hidden"
+          >
+            <MenuAlt2Icon className="w-6" />
+          </button>
           <h1 className="text-3xl font-bold">
             <Link to=".">Your feed</Link>
           </h1>
-          <p>{user.email}</p>
+          <p className="hidden sm:block">{user?.email}</p>
           <Form action="/logout" method="post">
             <button
               type="submit"
@@ -130,8 +139,8 @@ export default function ChannelsPage() {
         </div>
       </header>
       <div className="flex justify-center">
-        <main className="relative flex h-full min-h-screen w-2/3 bg-white">
-          <nav className="h-full w-64 ">
+        <main className="relative flex h-full min-h-screen w-full bg-white xl:w-2/3">
+          <NavWrapper isExpanded={isNavExpanded}>
             <CreateChannelForm />
             <hr />
             {data.channelListItems.length === 0 ? (
@@ -154,7 +163,7 @@ export default function ChannelsPage() {
                 ))}
               </ol>
             )}
-          </nav>
+          </NavWrapper>
           <div className="flex-1 border-l p-6">
             <Outlet />
           </div>

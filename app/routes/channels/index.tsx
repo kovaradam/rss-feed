@@ -134,13 +134,21 @@ export default function ChannelIndexPage() {
         {items.length === 0 && isIdle && (
           <p className="text-center">No articles found</p>
         )}
-        <ul className="grid grid-cols-2 gap-4">
+        <ul className="grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-2">
           {items.map(({ channel, ...item }) => (
             <li key={item.link}>
               <article className="flex flex-col gap-1 rounded-lg p-4 shadow-md">
                 <Link to={String(channel.id)} className="pb-2 text-slate-400">
                   {channel.title}
                 </Link>
+
+                {item.imageUrl && (
+                  <img
+                    alt="Article decoration"
+                    src={item.imageUrl}
+                    className="my-2 h-auto w-full"
+                  />
+                )}
                 <h4>
                   <Href href={item.link} className="text-lg text-black">
                     {item.title}
@@ -174,7 +182,7 @@ export default function ChannelIndexPage() {
           </Form>
         )}
       </section>
-      <aside className="pl-8">
+      <aside className="hidden pl-8 sm:block">
         <Form method="get" className="flex w-56 flex-col gap-6">
           <fieldset className="flex flex-col gap-4">
             <label>

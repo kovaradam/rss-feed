@@ -1,13 +1,15 @@
 import { Link } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
+import { json } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
-import { requireUser } from '~/session.server';
+import { getUserId } from '~/session.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  try {
-    await requireUser(request);
+  const userId = await getUserId(request);
+  if (userId) {
     return redirect('/channels');
-  } catch (error) {}
+  }
+  return json({});
 };
 
 export default function Welcome() {
