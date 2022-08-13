@@ -32,6 +32,13 @@ import React from 'react';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 import { Button } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
+import type { MetaFunction } from '@remix-run/react/routeModules';
+
+export const meta: MetaFunction = ({ data }) => {
+  return {
+    title: data?.channel?.title ?? 'Channel detail',
+  };
+};
 
 type LoaderData = {
   channel: Channel;

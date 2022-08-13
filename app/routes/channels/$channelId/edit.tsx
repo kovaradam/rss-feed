@@ -5,7 +5,11 @@ import {
   useLoaderData,
   useTransition,
 } from '@remix-run/react';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
@@ -24,6 +28,12 @@ const fieldNames = [
   'category',
   'language',
 ] as const;
+
+export const meta: MetaFunction = ({ data, parentsData }) => {
+  return {
+    title: `Edit ${data?.channel?.title ?? 'channel'}`,
+  };
+};
 
 type FieldName = typeof fieldNames[number];
 

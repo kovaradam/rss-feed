@@ -3,6 +3,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
+import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
@@ -15,6 +16,12 @@ import { getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { useUser } from '~/utils';
 import { parseChannelXml } from '../models/parse-xml';
+
+const title = 'Your feed';
+
+export const meta: MetaFunction = () => ({
+  title,
+});
 
 type LoaderData = {
   channelListItems: Awaited<ReturnType<typeof getChannels>>;
@@ -125,7 +132,7 @@ export default function ChannelsPage() {
             <MenuAlt2Icon className="w-6" />
           </button>
           <h1 className="text-3xl font-bold">
-            <Link to=".">Your feed</Link>
+            <Link to=".">{title}</Link>
           </h1>
           <p className="hidden sm:block">{user?.email}</p>
           <Form action="/logout" method="post">
