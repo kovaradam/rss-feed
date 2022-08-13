@@ -8,9 +8,12 @@ import type { LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '~/components/Button';
 import { ChannelCategories } from '~/components/ChannelCategories';
+import { ErrorMessage } from '~/components/ErrorMessage';
 import { Href } from '~/components/Href';
 import { Select } from '~/components/Select';
+import { SpinnerIcon } from '~/components/SpinnerIcon';
 import { TimeFromNow } from '~/components/TimeFromNow';
 import type { Channel, Item } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
@@ -27,6 +30,7 @@ type LoaderData = {
     filterChannels: string[];
     filterCategories: string[];
   };
+  loadMoreAction: string;
 };
 
 const itemCountName = 'item-count';
@@ -34,10 +38,13 @@ const itemCountName = 'item-count';
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
-  const itemCount = searchParams.get(itemCountName);
+  const itemCountParam = searchParams.get(itemCountName);
+  const itemCount = itemCountParam ? Number(itemCountParam) : 30;
+
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
   );
+
   const [before, after] = ['before', 'after'].map((name) =>
     searchParams.get(name)
   );
@@ -72,7 +79,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       },
     },
     orderBy: { pubDate: 'desc' },
-    take: itemCount ? Number(itemCount) : 30,
+    take: itemCount,
   });
 
   const channels = await getChannels({ where: { userId } });
@@ -82,6 +89,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     .flat()
     .filter((category, index, array) => index === array.indexOf(category))
     .filter(Boolean);
+
+  const loadMoreUrl = new URL(request.url);
+  loadMoreUrl.searchParams.set(itemCountName, String(itemCount + 10));
 
   return json<LoaderData>({
     items: items as LoaderData['items'],
@@ -93,12 +103,17 @@ export const loader: LoaderFunction = async ({ request }) => {
       filterCategories,
       filterChannels,
     },
+    loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
   });
 };
 
 export default function ChannelIndexPage() {
-  const { items, channels, categories, filters } = useLoaderData<LoaderData>();
-  const isSubmitting = useTransition().state === 'submitting';
+  const { items, channels, categories, filters, loadMoreAction } =
+    useLoaderData<LoaderData>();
+  const transition = useTransition();
+  const isSubmitting = transition.state === 'submitting';
+  const isIdle = transition.state === 'idle';
+
   const { pathname } = useLocation();
 
   const hasFilters = Boolean(
@@ -110,12 +125,19 @@ export default function ChannelIndexPage() {
 
   return (
     <div className="flex">
-      <section className="min-w-2/3 flex-1">
-        {items.length === 0 && <p className="text-center">No articles found</p>}
+      <section className="min-w-2/3 relative flex-1">
+        {!isIdle && (
+          <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
+            <SpinnerIcon className="h-16 w-16" />
+          </div>
+        )}
+        {items.length === 0 && isIdle && (
+          <p className="text-center">No articles found</p>
+        )}
         <ul className="grid grid-cols-2 gap-4">
           {items.map(({ channel, ...item }) => (
             <li key={item.link}>
-              <article className="flex flex-col gap-1 rounded-lg bg-blue-50 p-4">
+              <article className="flex flex-col gap-1 rounded-lg p-4 shadow-md">
                 <Link to={String(channel.id)} className="pb-2 text-slate-400">
                   {channel.title}
                 </Link>
@@ -137,19 +159,18 @@ export default function ChannelIndexPage() {
           ))}
         </ul>
         {items.length !== 0 && (
-          <Form className="mt-6 flex w-full justify-center" method="get">
+          <Form
+            className="mt-6 flex w-full justify-center"
+            action={loadMoreAction}
+          >
             <input
               type="hidden"
               name={itemCountName}
               value={items.length + 10}
             />
-            <button
-              type="submit"
-              className="rounded bg-slate-600 py-2 px-2 text-white disabled:bg-slate-300"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" isLoading={isSubmitting}>
               {isSubmitting ? 'Loading...' : 'Show more'}
-            </button>
+            </Button>
           </Form>
         )}
       </section>
@@ -169,6 +190,9 @@ export default function ChannelIndexPage() {
                 }
                 defaultValue={filters.filterChannels}
                 className={'w-56'}
+                title={
+                  channels.length ? 'Select channels' : 'No channels found'
+                }
               />
             </label>
             <label>
@@ -181,6 +205,11 @@ export default function ChannelIndexPage() {
                 }))}
                 defaultValue={filters.filterCategories}
                 className={'w-56'}
+                title={
+                  categories.length
+                    ? 'Select categories'
+                    : 'No categories found'
+                }
               />
             </label>
           </fieldset>
@@ -206,21 +235,22 @@ export default function ChannelIndexPage() {
           </fieldset>
 
           <fieldset className="flex flex-col gap-1">
-            <button className="rounded bg-slate-600 py-2 px-4 text-white hover:bg-slate-500 active:bg-slate-600">
-              Filter articles
-            </button>
+            <Button>Filter articles</Button>
             {hasFilters && (
-              <button
-                className="rounded bg-slate-100 py-2 px-4 text-slate-600 hover:bg-slate-200 "
-                form="reset-filters"
-              >
+              <Button secondary form="reset-filters">
                 Reset filters
-              </button>
+              </Button>
             )}
           </fieldset>
         </Form>
         <Form id="reset-filters" action={pathname} />
       </aside>
     </div>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
 }

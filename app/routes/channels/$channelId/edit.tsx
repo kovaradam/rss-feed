@@ -10,6 +10,7 @@ import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { Button } from '~/components/Button';
 import { ChannelCategories } from '~/components/ChannelCategories';
 import type { Channel } from '~/models/channel.server';
 import { updateChannel } from '~/models/channel.server';
@@ -87,7 +88,7 @@ export default function Channels() {
   const errors = useActionData<ActionData>()?.errors;
   const transition = useTransition();
   const channel = useLoaderData<LoaderData>().channel;
-  const isCreating = Boolean(transition.submission);
+  const isSaving = Boolean(transition.submission);
 
   const [category, setCategory] = React.useState(channel.category ?? '');
 
@@ -154,13 +155,14 @@ export default function Channels() {
                 id="new-category"
                 form="category-form"
               />
-              <button
+              <Button
                 className="rounded  bg-slate-100 py-2 px-4 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
                 type="submit"
                 form="category-form"
+                secondary
               >
                 <PlusIcon className="w-4 " />
-              </button>
+              </Button>
             </fieldset>
             <input
               value={category}
@@ -192,13 +194,9 @@ export default function Channels() {
         </div>
 
         <div className="text-right">
-          <button
-            type="submit"
-            disabled={isCreating}
-            className="rounded bg-slate-600 py-2 px-4 text-white hover:bg-slate-500  disabled:bg-slate-300"
-          >
-            {isCreating ? 'Creating...' : 'Update'}
-          </button>
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Update'}
+          </Button>
         </div>
       </Form>
       <Form

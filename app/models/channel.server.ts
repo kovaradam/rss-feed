@@ -1,12 +1,14 @@
 import { prisma } from '~/db.server';
 import type { Channel, Item, User } from '@prisma/client';
+import type { ItemParseResult } from './parse-xml';
+import { parseChannelXml } from './parse-xml';
 
 export type { Channel, Item };
 
 export async function createChanel(input: {
   userId: User['id'];
   channel: Omit<Channel, 'userId'>;
-  items: Item[];
+  items: ItemParseResult;
 }) {
   return prisma.channel.create({
     data: {
@@ -16,6 +18,36 @@ export async function createChanel(input: {
         connect: {
           id: input.userId,
         },
+      },
+    },
+  });
+}
+
+export type channelWithItems = Channel & { items: Item[] };
+
+export async function refreshChannel(params: {
+  channel: Pick<channelWithItems, 'feedUrl' | 'items'>;
+  userId: string;
+}) {
+  const channelRequest = await fetch(params.channel.feedUrl);
+  const channelXml = await channelRequest.text();
+  const [parsedChannel, parsedItems] = await parseChannelXml(channelXml);
+
+  const newItems = parsedItems.filter(
+    (item) => !params.channel.items.find((dbItem) => dbItem.link === item.link)
+  );
+
+  return updateChannel({
+    where: {
+      feedUrl_userId: {
+        feedUrl: params.channel.feedUrl,
+        userId: params.userId,
+      },
+    },
+    data: {
+      lastBuildDate: parsedChannel.lastBuildDate,
+      items: {
+        create: newItems,
       },
     },
   });
