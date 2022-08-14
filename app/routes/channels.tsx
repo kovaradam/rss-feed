@@ -3,6 +3,7 @@ import {
   HomeIcon,
   LogoutIcon,
   MenuAlt2Icon,
+  PlusIcon,
 } from '@heroicons/react/outline';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
@@ -198,6 +199,15 @@ export default function ChannelsPage() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-blue-50`}
+                  to={`/channels/collections/new`}
+                >
+                  <PlusIcon className="w-4" />
+                  New collection
+                </Link>
+              </li>
             </ol>
             <hr />
             <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>

@@ -1,5 +1,7 @@
+import { PencilIcon } from '@heroicons/react/outline';
 import {
   Form,
+  Link,
   useLoaderData,
   useLocation,
   useTransition,
@@ -26,6 +28,7 @@ type LoaderData = {
   categories: string[];
   filters: Parameters<typeof getItemsByFilters>[0]['filters'];
   loadMoreAction: string;
+  activeCollectionId: string | null;
 };
 
 const itemCountName = 'item-count';
@@ -94,6 +97,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     categories,
     filters,
     loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
+    activeCollectionId,
   });
 };
 
@@ -126,7 +130,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, channels, categories, filters, loadMoreAction } =
+  const { items, channels, categories, filters, loadMoreAction, ...data } =
     useLoaderData<LoaderData>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
@@ -171,6 +175,14 @@ export default function ChannelIndexPage() {
         )}
       </section>
       <aside className="hidden pl-8 sm:block">
+        {data.activeCollectionId && (
+          <Link
+            to={`collections/${data.activeCollectionId}/edit`}
+            className="mb-6 flex items-center gap-2"
+          >
+            <PencilIcon className="w-4" /> Edit collection
+          </Link>
+        )}
         <Form method="get" className="flex w-56 flex-col gap-6">
           <fieldset className="flex flex-col gap-4">
             <label>

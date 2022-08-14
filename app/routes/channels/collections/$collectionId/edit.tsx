@@ -11,7 +11,8 @@ import invariant from 'tiny-invariant';
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
-import { Collection, deleteCollection } from '~/models/collection.server';
+import type { Collection } from '~/models/collection.server';
+import { deleteCollection } from '~/models/collection.server';
 import { updateCollection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
@@ -66,9 +67,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     data: {
       userId,
       title: form.title as string,
-      bookmarked:
-        form.bookmarked !== 'null' ? Boolean(form.bookmarked) : undefined,
-      read: form.read !== 'null' ? Boolean(form.read) : undefined,
+      bookmarked: form.bookmarked === 'null' ? null : Boolean(form.bookmarked),
+      read: form.read === 'null' ? null : Boolean(form.read),
       category: form.category ?? undefined,
       language: form.language ?? undefined,
     },
@@ -121,7 +121,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export default function Channels() {
-  return <CollectionForm<LoaderData, ActionData> deleteFormId="delete-form" />;
+  return (
+    <CollectionForm<LoaderData, ActionData>
+      title={'Edit collection'}
+      deleteFormId="delete-form"
+    />
+  );
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {

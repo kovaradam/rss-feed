@@ -12,7 +12,7 @@ import { useCategoryInput } from './CategoryInput';
 
 const inputClassName = styles.input;
 
-type Props = { deleteFormId?: string };
+type Props = { deleteFormId?: string; title: string };
 
 export function CollectionForm<
   LoaderData extends {
@@ -27,9 +27,11 @@ export function CollectionForm<
   const errors = useActionData<ActionData>()?.errors;
   const transition = useTransition();
   const data = useLoaderData<LoaderData>();
+
   const isSaving =
     transition.state === 'submitting' &&
     transition.submission?.method === 'POST';
+
   const isDeleting =
     transition.state === 'submitting' &&
     transition.submission?.method === 'DELETE';
@@ -42,9 +44,10 @@ export function CollectionForm<
     inputClassName: styles.input,
     name: 'category',
   });
+
   return (
     <>
-      <h3 className="mb-2 text-4xl font-bold">Create a new collection</h3>
+      <h3 className="mb-2 text-4xl font-bold">{props.title}</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
           <label className="flex w-full flex-col gap-1">
@@ -78,8 +81,9 @@ export function CollectionForm<
                 >
                   <input
                     defaultChecked={
-                      props.value === null ||
-                      data?.defaultValue?.read === props.value
+                      data?.defaultValue === undefined
+                        ? props.value === null
+                        : data.defaultValue.read === props.value
                     }
                     type="radio"
                     className="accent-blue-400"
@@ -107,8 +111,9 @@ export function CollectionForm<
                 >
                   <input
                     defaultChecked={
-                      props.value === null ||
-                      data?.defaultValue?.read === props.value
+                      data?.defaultValue === undefined
+                        ? props.value === null
+                        : data.defaultValue.bookmarked === props.value
                     }
                     type="radio"
                     className="accent-blue-400"

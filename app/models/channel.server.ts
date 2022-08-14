@@ -107,6 +107,7 @@ export async function getItemsByCollection(
   const collection = await prisma.collection.findFirst({
     where: { id: collectionId },
   });
+  console.log(collection);
 
   const categories = collection?.category?.split('/');
 
@@ -119,11 +120,12 @@ export async function getItemsByCollection(
         collection?.bookmarked !== null ? collection?.bookmarked : undefined,
       channel: {
         userId,
-        OR: categories?.map((category) => ({
-          category: { contains: category },
-        })),
-        language:
-          collection?.language !== null ? collection?.language : undefined,
+        OR: categories?.length
+          ? categories.map((category) => ({
+              category: { contains: category },
+            }))
+          : undefined,
+        language: collection?.language ? collection?.language : undefined,
       },
     },
   });
