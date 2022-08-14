@@ -25,35 +25,44 @@ export function ChannelItem(props: Props): JSX.Element {
     ? SolidBookmarkIcon
     : OutlineBookmarkIcon;
   return (
-    <article className="flex flex-col gap-1 rounded-lg p-4 shadow-md">
-      <span className="flex w-full justify-between">
-        <Link to={channel.id} className="truncate pb-2 text-slate-400">
+    <article
+      className={`flex flex-col gap-1 rounded-lg p-4 shadow-md ${
+        item.read ? 'opacity-50' : ''
+      }`}
+    >
+      <span className="flex w-full justify-between text-slate-400">
+        <Link to={channel.id} className="truncate pb-2 ">
           {channel.title}
         </Link>
         <fieldset className="flex gap-2">
-          <Form method={props.formMethod}>
-            <RequiredFormData itemLink={item.link} channelId={channel.id} />
-            <input
-              type="hidden"
-              name={ChannelItem.form.names.read}
-              value={String(!item.read)}
-            />
-            <button type="submit">
-              <ReadIcon className="w-4" />
-            </button>
-          </Form>
-          <Form method={props.formMethod}>
-            <RequiredFormData itemLink={item.link} channelId={channel.id} />
-            <input
-              type="hidden"
-              name={ChannelItem.form.names.bookmarked}
-              value={String(!item.bookmarked)}
-            />
-
-            <button type="submit">
-              <BookmarkIcon className="w-4" />
-            </button>
-          </Form>
+          {[
+            {
+              name: ChannelItem.form.names.read,
+              value: String(!item.read),
+              Icon: ReadIcon,
+            },
+            {
+              name: ChannelItem.form.names.bookmarked,
+              value: String(!item.bookmarked),
+              Icon: BookmarkIcon,
+            },
+          ].map((formItems) => (
+            <Form method={props.formMethod} key={formItems.name}>
+              <RequiredFormData itemLink={item.link} channelId={channel.id} />
+              <input
+                type="hidden"
+                name={formItems.name}
+                value={formItems.value}
+              />
+              <button type="submit">
+                <formItems.Icon
+                  className={`w-4 ${
+                    formItems.value === 'false' ? 'text-black' : ''
+                  }`}
+                />
+              </button>
+            </Form>
+          ))}
         </fieldset>
       </span>
 
