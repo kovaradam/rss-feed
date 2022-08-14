@@ -13,25 +13,18 @@ import { ChannelItem } from '~/components/ChannelItem';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { Select } from '~/components/Select';
 import { SpinnerIcon } from '~/components/SpinnerIcon';
-import {
-  Channel,
-  ItemWithChannel,
-  updateChannelItem,
-} from '~/models/channel.server';
+import type { Channel, ItemWithChannel } from '~/models/channel.server';
+import { getItemsByCollection } from '~/models/channel.server';
+import { getItemsByFilters } from '~/models/channel.server';
+import { updateChannelItem } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
-import { getChannelItems } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 
 type LoaderData = {
   items: ItemWithChannel[];
   channels: Channel[];
   categories: string[];
-  filters: {
-    before: string | null;
-    after: string | null;
-    filterChannels: string[];
-    filterCategories: string[];
-  };
+  filters: Parameters<typeof getItemsByFilters>[0]['filters'];
   loadMoreAction: string;
 };
 
@@ -40,8 +33,10 @@ const itemCountName = 'item-count';
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
+
   const itemCountParam = searchParams.get(itemCountName);
   const itemCount = itemCountParam ? Number(itemCountParam) : 30;
+  const activeCollectionId = searchParams.get('collection');
 
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
@@ -51,26 +46,26 @@ export const loader: LoaderFunction = async ({ request }) => {
     searchParams.get(name)
   );
 
-  const items = await getChannelItems({
-    where: {
-      channel: {
+  const filters = {
+    after,
+    before,
+    categories: filterCategories,
+    channels: filterChannels,
+  };
+
+  const getItems = activeCollectionId
+    ? getItemsByCollection.bind(null, {
         userId,
-        id: filterChannels.length !== 0 ? { in: filterChannels } : undefined,
-        AND:
-          filterCategories.length !== 0
-            ? filterCategories?.map((category) => ({
-                category: { contains: category },
-              }))
-            : undefined,
-      },
-      pubDate:
-        before || after
-          ? {
-              gte: after ? new Date(after) : undefined,
-              lte: before ? new Date(before) : undefined,
-            }
-          : undefined,
-    },
+        collectionId: activeCollectionId,
+      })
+    : getItemsByFilters.bind(null, {
+        userId,
+        filters,
+      });
+
+  const items = await getItems({
+    orderBy: { pubDate: 'desc' },
+    take: itemCount,
     include: {
       channel: {
         select: {
@@ -80,8 +75,6 @@ export const loader: LoaderFunction = async ({ request }) => {
         },
       },
     },
-    orderBy: { pubDate: 'desc' },
-    take: itemCount,
   });
 
   const channels = await getChannels({ where: { userId } });
@@ -99,12 +92,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     items: items as LoaderData['items'],
     channels,
     categories,
-    filters: {
-      after,
-      before,
-      filterCategories,
-      filterChannels,
-    },
+    filters,
     loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
   });
 };
@@ -146,12 +134,7 @@ export default function ChannelIndexPage() {
 
   const { pathname } = useLocation();
 
-  const hasFilters = Boolean(
-    filters.after ||
-      filters.before ||
-      filters.filterCategories.length ||
-      filters.filterChannels.length
-  );
+  const hasFilters = hasActiveFilters(filters);
 
   return (
     <div className="flex">
@@ -201,7 +184,7 @@ export default function ChannelIndexPage() {
                 renderValue={(values) =>
                   `${values.length || 'No'} channels selected`
                 }
-                defaultValue={filters.filterChannels}
+                defaultValue={filters.channels}
                 className={'w-56'}
                 title={
                   channels.length ? 'Select channels' : 'No channels found'
@@ -216,7 +199,7 @@ export default function ChannelIndexPage() {
                   value: category,
                   label: category,
                 }))}
-                defaultValue={filters.filterCategories}
+                defaultValue={filters.categories}
                 className={'w-56'}
                 title={
                   categories.length
@@ -265,5 +248,14 @@ export default function ChannelIndexPage() {
 export function ErrorBoundary({ error }: { error: Error }) {
   return (
     <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
+  );
+}
+
+function hasActiveFilters(filters: LoaderData['filters']): boolean {
+  return Boolean(
+    filters.after ||
+      filters.before ||
+      filters.categories.length ||
+      filters.channels.length
   );
 }

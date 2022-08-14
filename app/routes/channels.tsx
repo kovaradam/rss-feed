@@ -1,4 +1,9 @@
-import { LogoutIcon, MenuAlt2Icon } from '@heroicons/react/outline';
+import {
+  ArchiveIcon,
+  HomeIcon,
+  LogoutIcon,
+  MenuAlt2Icon,
+} from '@heroicons/react/outline';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
@@ -12,6 +17,7 @@ import type { Channel, Item } from '~/models/channel.server';
 import { refreshChannel } from '~/models/channel.server';
 import { createChanel, getChannel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
+import { getCollections } from '~/models/collection.server';
 
 import { requireUserId } from '~/session.server';
 import { createTitle, useUser } from '~/utils';
@@ -25,6 +31,10 @@ export const meta: MetaFunction = () => ({
 
 type LoaderData = {
   channelListItems: Awaited<ReturnType<typeof getChannels>>;
+  collectionListItems: Awaited<ReturnType<typeof getCollections>>;
+  activeCollectionId:
+    | Awaited<ReturnType<typeof getCollections>>[number]['id']
+    | null;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -45,7 +55,20 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
   });
 
-  return json<LoaderData>({ channelListItems });
+  const collectionListItems = await getCollections({
+    where: { userId },
+    orderBy: { title: 'asc' },
+  });
+
+  const activeCollectionId = new URL(request.url).searchParams.get(
+    'collection'
+  );
+
+  return json<LoaderData>({
+    channelListItems,
+    collectionListItems,
+    activeCollectionId,
+  });
 };
 
 const inputNames = ['channel-url'] as const;
@@ -150,6 +173,34 @@ export default function ChannelsPage() {
           <NavWrapper isExpanded={isNavExpanded}>
             <CreateChannelForm />
             <hr />
+            <NavLink
+              className={`m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 `}
+              to={`/channels`}
+            >
+              <HomeIcon className="w-4" />
+              All articles
+            </NavLink>
+            <hr />
+            <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
+            <ol>
+              {data.collectionListItems?.map((collection) => (
+                <li key={collection.id}>
+                  <Link
+                    className={`m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 ${
+                      data.activeCollectionId === collection.id
+                        ? 'bg-blue-50 text-blue-500'
+                        : ''
+                    }`}
+                    to={`/channels?collection=${collection.id}`}
+                  >
+                    <ArchiveIcon className="w-4" />
+                    {collection.title}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+            <hr />
+            <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>
             {data.channelListItems.length === 0 ? (
               <p className="p-4">No channels yet</p>
             ) : (

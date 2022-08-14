@@ -105,7 +105,9 @@ export default function ChannelDetailsPage() {
   return (
     <div className="relative flex flex-col sm:flex-row">
       <section className="flex-1">
-        <h3 className="text-4xl font-bold">{data.channel.title}</h3>
+        <WithEditLink name={'title'}>
+          <h3 className="text-4xl font-bold ">{data.channel.title}</h3>
+        </WithEditLink>
         <div className="flex flex-col gap-2 pt-2">
           <span className="flex items-center gap-1 text-gray-400">
             <Href href={channel.link}>{channel.link}</Href>
@@ -118,21 +120,27 @@ export default function ChannelDetailsPage() {
               'unknown'
             )}
           </span>
-          <span className="flex items-center gap-1 text-gray-400">
-            <BookmarkIcon className="h-4" />
-            {channel.category ? (
-              <ChannelCategoryLinks category={channel.category} />
-            ) : (
-              'Category is missing'
-            )}
-          </span>
-          <span className="flex items-center gap-1 text-gray-400">
-            <TranslateIcon className="h-4" />
-            {channel.language}
-          </span>
+          <WithEditLink name={'new-category'}>
+            <span className="flex items-center gap-1 text-gray-400">
+              <BookmarkIcon className="h-4" />
+              {channel.category ? (
+                <ChannelCategoryLinks category={channel.category} />
+              ) : (
+                'Category is missing'
+              )}
+            </span>
+          </WithEditLink>
+          <WithEditLink name={'language'}>
+            <span className="flex items-center gap-1 text-gray-400">
+              <TranslateIcon className="h-4" />
+              {channel.language}
+            </span>
+          </WithEditLink>
         </div>
         <div className="py-6">
-          <span className="text-gray-400">Description</span>
+          <WithEditLink name={'language'}>
+            <span className="text-gray-400">Description</span>
+          </WithEditLink>
           <p className="text-xl">{data.channel.description}</p>
         </div>
         <hr className="mb-8 " />
@@ -216,4 +224,25 @@ export function CatchBoundary() {
   }
 
   throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+function WithEditLink(props: {
+  name: string;
+  children: React.ReactNode;
+}): JSX.Element {
+  const [isHover, setIsHover] = React.useState(false);
+  return (
+    <div
+      className="flex items-center gap-2"
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      {props.children}
+      {isHover && (
+        <Link to={`edit?focus=${props.name}`}>
+          <PencilIcon className="w-4" />
+        </Link>
+      )}
+    </div>
+  );
 }

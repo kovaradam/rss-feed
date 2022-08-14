@@ -75,3 +75,11 @@ export function validateEmail(email: unknown): email is string {
 export function createTitle(input: string): string {
   return `RSS | ${input}`;
 }
+
+export function uniqueArrayFilter<T>(
+  item: T,
+  index: number,
+  array: T[]
+): boolean {
+  return array.indexOf(item) === index;
+}

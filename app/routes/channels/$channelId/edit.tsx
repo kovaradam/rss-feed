@@ -15,11 +15,13 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { Button } from '~/components/Button';
-import { ChannelCategories } from '~/components/ChannelCategories';
+import { useCategoryInput } from '~/components/CategoryInput';
 import type { Channel } from '~/models/channel.server';
+import { getChannels } from '~/models/channel.server';
 import { updateChannel } from '~/models/channel.server';
 import { getChannel } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
+import { styles } from '~/styles/shared';
 import { createTitle } from '~/utils';
 
 const fieldNames = [
@@ -78,12 +80,18 @@ export const action: ActionFunction = async ({ request, params }) => {
   return redirect('/channels/'.concat(channel.id));
 };
 
-type LoaderData = { channel: Channel };
+type LoaderData = {
+  channel: Channel;
+  categories: string[];
+  focusName: string | null;
+};
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const channelId = params.channelId;
   invariant(channelId, 'ChannelId was not provided');
   const userId = await requireUserId(request);
+  const searchParams = new URL(request.url).searchParams;
+  const focusName = searchParams.get('focus');
 
   const channel = await getChannel({
     where: { userId, id: params.channelId },
@@ -92,34 +100,45 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw new Response('Not Found', { status: 404 });
   }
 
-  return json<LoaderData>({ channel });
+  const channels = await getChannels({
+    where: { userId },
+    select: { category: true },
+  });
+
+  const categories =
+    channels
+      .map((channel) => channel.category.split('/'))
+      .flat()
+      .filter((category, index, array) => array.indexOf(category) === index) ??
+    [];
+
+  if (!channel) {
+    throw new Response('Not Found', { status: 404 });
+  }
+
+  return json<LoaderData>({ channel, categories, focusName });
 };
 
 export default function Channels() {
   const errors = useActionData<ActionData>()?.errors;
   const transition = useTransition();
-  const channel = useLoaderData<LoaderData>().channel;
+  const { channel, categories, focusName } = useLoaderData<LoaderData>();
   const isSaving = Boolean(transition.submission);
 
-  const [category, setCategory] = React.useState(channel.category ?? '');
-
-  const deleteCategory: React.MouseEventHandler<HTMLButtonElement> = (
-    event
-  ) => {
-    const categoryToRemove = (event.currentTarget as HTMLButtonElement).value;
-
-    setCategory((prev) =>
-      prev
-        .split('/')
-        .filter((category) => category !== categoryToRemove)
-        .join('/')
-    );
-  };
+  const { renderCategoryInput, renderCategoryForm } = useCategoryInput({
+    categorySuggestions: categories,
+    defaultValue: channel.category ?? '',
+    fakeInputName: 'new-category',
+    formId: 'new-category-form',
+    name: 'category',
+    autoFocus: inputProps(focusName === 'category').autoFocus,
+    inputClassName,
+  });
 
   return (
     <>
+      <h3 className="mb-2 text-4xl font-bold">Edit channel</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
-        <h3 className="mb-6 text-4xl font-bold">Edit channel</h3>
         <div>
           <label className="flex w-full flex-col gap-1">
             <span>Title: </span>
@@ -127,7 +146,7 @@ export default function Channels() {
               defaultValue={channel.title}
               name={'title'}
               required
-              {...inputProps}
+              {...inputProps(focusName === 'title')}
             />
           </label>
           {errors?.title && (
@@ -143,7 +162,7 @@ export default function Channels() {
               defaultValue={channel.description}
               name={'description'}
               required
-              {...inputProps}
+              {...inputProps(focusName === 'description')}
             />
           </label>
           {errors?.description && (
@@ -152,44 +171,14 @@ export default function Channels() {
             </div>
           )}
         </div>
-        <div>
-          <div className="flex w-full flex-col gap-1">
-            <label htmlFor="new-category">Category: </label>
-            <div className="flex gap-1">
-              <ChannelCategories category={category} delete={deleteCategory} />
-            </div>
-            <fieldset className="flex gap-2">
-              <input
-                placeholder="e.g. gardening"
-                {...inputProps}
-                name="new-category"
-                id="new-category"
-                form="category-form"
-              />
-              <Button
-                className="rounded  bg-slate-100 py-2 px-4 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
-                type="submit"
-                form="category-form"
-                secondary
-              >
-                <PlusIcon className="w-4 " />
-              </Button>
-            </fieldset>
-            <input
-              value={category}
-              type="hidden"
-              name={'category'}
-              {...inputProps}
-            />
-          </div>
-        </div>
+        <div>{renderCategoryInput()}</div>
         <div>
           <label className="flex w-full flex-col gap-1">
             <span>Language: </span>
             <input
               defaultValue={channel.language}
               name={'language'}
-              {...inputProps}
+              {...inputProps(focusName === 'language')}
             />
           </label>
         </div>
@@ -199,7 +188,7 @@ export default function Channels() {
             <input
               defaultValue={channel.imageUrl}
               name={'image-url'}
-              {...inputProps}
+              {...inputProps(focusName === 'image-url')}
             />
           </label>
         </div>
@@ -210,33 +199,16 @@ export default function Channels() {
           </Button>
         </div>
       </Form>
-      <Form
-        id="category-form"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const category = new FormData(event.target as HTMLFormElement).get(
-            'new-category'
-          );
-
-          if (typeof category !== 'string') {
-            return;
-          }
-
-          setCategory((prev) => {
-            if (
-              prev.split('/').find((prevCategory) => prevCategory === category)
-            ) {
-              return prev;
-            }
-            (event.target as HTMLFormElement)['new-category'].value = '';
-            return prev.concat('/').concat(category);
-          });
-        }}
-      ></Form>
+      {renderCategoryForm()}
     </>
   );
 }
 
-const inputProps = {
-  className: 'w-full rounded border border-gray-500 px-2 py-1 text-lg',
-};
+const inputClassName = styles.input;
+
+function inputProps(autoFocus: boolean) {
+  return {
+    autoFocus,
+    className: inputClassName,
+  };
+}

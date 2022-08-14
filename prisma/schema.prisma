@@ -15,8 +15,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
-  notes    Note[]
-  Channel  Channel[]
+
+  channels    Channel[]
+  collections Collection[]
 }
 
 model Password {
@@ -24,27 +25,6 @@ model Password {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-}
-
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-}
-
-model Post {
-  slug     String @id
-  title    String
-  markdown String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Channel {
@@ -103,4 +83,17 @@ model Enclosure {
   id   String @id @default(cuid())
   url  String
   type String
+}
+
+model Collection {
+  id    String @id @default(cuid())
+  title String
+
+  read       Boolean?
+  bookmarked Boolean?
+  language   String?
+  category   String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
 }
