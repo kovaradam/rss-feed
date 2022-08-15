@@ -2,8 +2,10 @@ import { PencilIcon } from '@heroicons/react/outline';
 import {
   Form,
   Link,
+  useFetcher,
   useLoaderData,
   useLocation,
+  useSubmit,
   useTransition,
 } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
@@ -140,6 +142,16 @@ export default function ChannelIndexPage() {
 
   const hasFilters = hasActiveFilters(filters);
 
+  const submit = useSubmit();
+
+  const submitFilters: React.FormEventHandler<HTMLFormElement> = (event) => {
+    const form = event.currentTarget;
+    if (!form) {
+      return;
+    }
+    submit(form);
+  };
+
   return (
     <div className="flex">
       <section className="min-w-2/3 relative flex-1">
@@ -183,42 +195,49 @@ export default function ChannelIndexPage() {
             <PencilIcon className="w-4" /> Edit collection
           </Link>
         )}
-        <Form method="get" className="flex w-56 flex-col gap-6">
+        <Form
+          method="get"
+          className="flex w-56 flex-col gap-6"
+          onChangeCapture={submitFilters}
+        >
           <fieldset className="flex flex-col gap-4">
             <label>
               Filter channels
-              <Select
+              <select
                 name="channels"
-                options={channels.map((channel) => ({
-                  value: channel.id,
-                  label: channel.title,
-                }))}
-                renderValue={(values) =>
-                  `${values.length || 'No'} channels selected`
-                }
                 defaultValue={filters.channels}
-                className={'w-56'}
                 title={
                   channels.length ? 'Select channels' : 'No channels found'
                 }
-              />
+                multiple
+                className="w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600"
+              >
+                {channels.map((channel) => (
+                  <option value={channel.id} key={channel.id}>
+                    {channel.title}
+                  </option>
+                ))}
+              </select>
             </label>
             <label>
               Filter categories
-              <Select
+              <select
                 name="categories"
-                options={categories.map((category) => ({
-                  value: category,
-                  label: category,
-                }))}
                 defaultValue={filters.categories}
-                className={'w-56'}
+                className="w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600"
                 title={
                   categories.length
                     ? 'Select categories'
                     : 'No categories found'
                 }
-              />
+                multiple
+              >
+                {categories.map((category) => (
+                  <option value={category} key={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </label>
           </fieldset>
           <fieldset className="flex flex-col gap-4">
@@ -243,10 +262,9 @@ export default function ChannelIndexPage() {
           </fieldset>
 
           <fieldset className="flex flex-col gap-1">
-            <Button>Filter articles</Button>
             {hasFilters && (
-              <Button secondary form="reset-filters">
-                Reset filters
+              <Button secondary form="reset-filters" type="submit">
+                Disable filters
               </Button>
             )}
           </fieldset>
