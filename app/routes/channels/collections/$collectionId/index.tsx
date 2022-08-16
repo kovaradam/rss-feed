@@ -8,7 +8,7 @@ import {
   useTransition,
 } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
-import type { LoaderFunction } from '@remix-run/server-runtime';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
@@ -104,6 +104,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     filters,
     collection,
   });
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  if (request.method === 'POST') {
+    return ChannelItemDetail.handleAction({ formData, request });
+  }
 };
 
 export default function ChannelIndexPage() {

@@ -9,10 +9,13 @@ import {
 import type { FormProps } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
 import { Form } from '@remix-run/react';
+import { redirect } from '@remix-run/server-runtime';
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import invariant from 'tiny-invariant';
 import type { ItemWithChannel } from '~/models/channel.server';
+import { updateChannelItem } from '~/models/channel.server';
 import { ChannelCategoryLinks } from './ChannelCategories';
 import { Href } from './Href';
 import { TimeFromNow } from './TimeFromNow';
@@ -133,3 +136,37 @@ function RequiredFormData(props: { itemLink: string; channelId: string }) {
     </>
   );
 }
+
+export async function handleItemStatusUpdate({
+  formData,
+  request,
+}: {
+  formData: FormData;
+  request: Request;
+}) {
+  const { names, getBooleanValue } = ChannelItemDetail.form;
+  const channelId = formData.get(names.channelId);
+  const itemLink = formData.get(names.itemLink);
+  invariant(typeof channelId === 'string', 'Channel id was not provided');
+  invariant(typeof itemLink === 'string', 'Item link was not provided');
+
+  const bookmarked = formData.get(names.bookmarked);
+  const read = formData.get(names.read);
+
+  await updateChannelItem({
+    where: {
+      link_channelId: {
+        channelId,
+        link: itemLink,
+      },
+    },
+    data: {
+      read: getBooleanValue(read),
+      bookmarked: getBooleanValue(bookmarked),
+    },
+  });
+
+  return redirect(String(formData.get(names.redirectTo) ?? request.url));
+}
+
+ChannelItemDetail.handleAction = handleItemStatusUpdate;

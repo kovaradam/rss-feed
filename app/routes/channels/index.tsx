@@ -8,10 +8,8 @@ import {
   useTransition,
 } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
-import invariant from 'tiny-invariant';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ErrorMessage } from '~/components/ErrorMessage';
@@ -19,7 +17,6 @@ import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByCollection } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
-import { updateChannelItem } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 
@@ -106,29 +103,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   if (request.method === 'POST') {
-    const { names, getBooleanValue } = ChannelItemDetail.form;
-    const channelId = formData.get(names.channelId);
-    const itemLink = formData.get(names.itemLink);
-    invariant(typeof channelId === 'string', 'Channel id was not provided');
-    invariant(typeof itemLink === 'string', 'Item link was not provided');
-
-    const bookmarked = formData.get(names.bookmarked);
-    const read = formData.get(names.read);
-
-    await updateChannelItem({
-      where: {
-        link_channelId: {
-          channelId,
-          link: itemLink,
-        },
-      },
-      data: {
-        read: getBooleanValue(read),
-        bookmarked: getBooleanValue(bookmarked),
-      },
-    });
-
-    return redirect(String(formData.get(names.redirectTo) ?? request.url));
+    return ChannelItemDetail.handleAction({ formData, request });
   }
 };
 
