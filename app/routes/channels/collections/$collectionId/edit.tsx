@@ -12,6 +12,7 @@ import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
 import type { Collection } from '~/models/collection.server';
+import { getBooleanValue } from '~/models/collection.server';
 import { deleteCollection } from '~/models/collection.server';
 import { updateCollection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
@@ -67,8 +68,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     data: {
       userId,
       title: form.title as string,
-      bookmarked: form.bookmarked === 'null' ? null : Boolean(form.bookmarked),
-      read: form.read === 'null' ? null : Boolean(form.read),
+      bookmarked: getBooleanValue(form.bookmarked),
+      read: getBooleanValue(form.read),
       category: form.category ?? undefined,
       language: form.language ?? undefined,
     },
@@ -120,7 +121,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return json<LoaderData>({ categories, languages, defaultValue: collection });
 };
 
-export default function Channels() {
+export default function EditCollectionPage() {
   return (
     <CollectionForm<LoaderData, ActionData>
       title={'Edit collection'}

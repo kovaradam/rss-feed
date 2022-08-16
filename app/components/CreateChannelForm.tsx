@@ -1,4 +1,4 @@
-import { XIcon } from '@heroicons/react/outline';
+import { PlusIcon, XIcon } from '@heroicons/react/outline';
 import { Form, useActionData, useTransition } from '@remix-run/react';
 import React from 'react';
 import { Button } from './Button';
@@ -66,10 +66,10 @@ export function CreateChannelForm<
         </Form>
       ) : (
         <button
-          className="w-full px-2 py-2 text-left text-xl text-blue-500 hover:bg-blue-50 peer-focus:hidden"
+          className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-blue-500 hover:bg-blue-50 peer-focus:hidden"
           onClick={() => setShowInput(true)}
         >
-          + New Channel
+          <PlusIcon className="w-4" /> New Channel
         </button>
       )}
     </div>

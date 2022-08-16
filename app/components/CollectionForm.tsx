@@ -9,6 +9,7 @@ import React from 'react';
 import { styles } from '~/styles/shared';
 import { Button } from './Button';
 import { useCategoryInput } from './CategoryInput';
+import { WithFormLabel } from './WithFormLabel';
 
 const inputClassName = styles.input;
 
@@ -50,82 +51,71 @@ export function CollectionForm<
       <h3 className="mb-2 text-4xl font-bold">{props.title}</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Title: </span>
+          <WithFormLabel label={'Title'} required>
             <input
+              autoFocus
               name={'title'}
               defaultValue={data.defaultValue?.title ?? ''}
-              placeholder="e.g. Super fun collection"
               required
               className={inputClassName}
             />
-          </label>
+          </WithFormLabel>
           {errors?.title && (
             <div className="pt-1 text-red-700" id="title-error">
               {errors.title}
             </div>
           )}
         </div>
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Read status: </span>
-            <fieldset className="flex flex-col gap-2">
-              {[
+
+        {(
+          [
+            {
+              label: 'Read status',
+              name: 'read',
+              values: [
                 { label: 'Ignore', value: null },
                 { label: 'Include only read articles', value: true },
                 { label: 'Include only articles not read yet', value: false },
-              ].map((props) => (
-                <label
-                  className="flex items-center gap-2"
-                  key={String(props.value)}
-                >
-                  <input
-                    defaultChecked={
-                      data?.defaultValue === undefined
-                        ? props.value === null
-                        : data.defaultValue.read === props.value
-                    }
-                    type="radio"
-                    className="accent-blue-400"
-                    value={String(props.value)}
-                    name="read"
-                  />
-                  {props.label}
-                </label>
-              ))}
-            </fieldset>
-          </label>
-        </div>
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Bookmarked status: </span>
-            <fieldset className="flex flex-col gap-2">
-              {[
+              ],
+            },
+            {
+              label: 'Bookmark status',
+              name: 'bookmarked',
+              values: [
                 { label: 'Ignore', value: null },
                 { label: 'Include only bookmarked articles', value: true },
                 { label: 'Exclude bookmarked articles', value: false },
-              ].map((props) => (
-                <label
-                  className="flex items-center gap-2"
-                  key={String(props.value)}
-                >
-                  <input
-                    defaultChecked={
-                      data?.defaultValue === undefined
-                        ? props.value === null
-                        : data.defaultValue.bookmarked === props.value
-                    }
-                    type="radio"
-                    className="accent-blue-400"
-                    value={String(props.value)}
-                    name="bookmarked"
-                  />
-                  {props.label}
-                </label>
-              ))}
-            </fieldset>
-          </label>
-        </div>
+              ],
+            },
+          ] as const
+        ).map(({ label, name, values }) => (
+          <div key={name}>
+            <WithFormLabel label={label}>
+              <fieldset className="flex flex-col gap-2">
+                {values.map((radio) => (
+                  <label
+                    className="flex items-center gap-2"
+                    key={String(radio.value)}
+                  >
+                    <input
+                      defaultChecked={
+                        data?.defaultValue === undefined
+                          ? radio.value === null
+                          : data.defaultValue[name] === radio.value
+                      }
+                      type="radio"
+                      className="accent-blue-400"
+                      value={String(radio.value)}
+                      name={name}
+                    />
+                    {radio.label}
+                  </label>
+                ))}
+              </fieldset>
+            </WithFormLabel>
+          </div>
+        ))}
+
         <div>{Categories.renderCategoryInput()}</div>
         <div>
           <label className="flex w-full flex-col gap-1">

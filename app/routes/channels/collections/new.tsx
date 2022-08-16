@@ -9,7 +9,7 @@ import React from 'react';
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
-import { createCollection } from '~/models/collection.server';
+import { createCollection, getBooleanValue } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, uniqueArrayFilter } from '~/utils';
 
@@ -54,8 +54,8 @@ export const action: ActionFunction = async ({ request }) => {
     data: {
       userId,
       title: form.title as string,
-      bookmarked: form.bookmarked === 'null' ? null : Boolean(form.bookmarked),
-      read: form.read === 'null' ? null : Boolean(form.read),
+      bookmarked: getBooleanValue(form.bookmarked),
+      read: getBooleanValue(form.read),
       category: form.category ?? undefined,
       language: form.language ?? undefined,
     },
@@ -93,7 +93,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return json<LoaderData>({ categories, languages });
 };
 
-export default function Channels() {
+export default function NewCollectionPage() {
   return <CollectionForm title="Create a new collection" />;
 }
 

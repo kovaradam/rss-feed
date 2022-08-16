@@ -179,24 +179,24 @@ export default function ChannelsPage() {
               to={`/channels`}
             >
               <HomeIcon className="w-4" />
-              All articles
+              Feed
             </NavLink>
             <hr />
             <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
             <ol>
               {data.collectionListItems?.map((collection) => (
                 <li key={collection.id}>
-                  <Link
-                    className={`m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 ${
-                      data.activeCollectionId === collection.id
-                        ? 'bg-blue-50 text-blue-500'
-                        : ''
-                    }`}
-                    to={`/channels?collection=${collection.id}`}
+                  <NavLink
+                    className={({ isActive }) =>
+                      `m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 ${
+                        isActive ? 'bg-blue-50 text-blue-500' : ''
+                      }`
+                    }
+                    to={`/channels/collections/${collection.id}`}
                   >
                     <ArchiveIcon className="w-4" />
                     {collection.title}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
               <li>

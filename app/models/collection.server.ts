@@ -50,3 +50,16 @@ export async function deleteCollection(
 ) {
   return prisma.collection.delete(params);
 }
+
+export function getBooleanValue(input: string | null) {
+  switch (input) {
+    case 'null':
+      return null;
+    case 'false':
+      return false;
+    case 'true':
+      return true;
+    default:
+      return null;
+  }
+}

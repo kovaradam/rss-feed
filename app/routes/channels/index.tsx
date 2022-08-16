@@ -1,21 +1,20 @@
-import { PencilIcon } from '@heroicons/react/outline';
+import { BanIcon, PencilIcon } from '@heroicons/react/outline';
 import {
   Form,
   Link,
-  useFetcher,
   useLoaderData,
   useLocation,
   useSubmit,
   useTransition,
 } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { Button } from '~/components/Button';
-import { ChannelItem } from '~/components/ChannelItem';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { Select } from '~/components/Select';
 import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByCollection } from '~/models/channel.server';
@@ -106,8 +105,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
-  if (request.method === 'PATCH') {
-    const { names, getBooleanValue } = ChannelItem.form;
+  if (request.method === 'POST') {
+    const { names, getBooleanValue } = ChannelItemDetail.form;
     const channelId = formData.get(names.channelId);
     const itemLink = formData.get(names.itemLink);
     invariant(typeof channelId === 'string', 'Channel id was not provided');
@@ -116,7 +115,7 @@ export const action: ActionFunction = async ({ request }) => {
     const bookmarked = formData.get(names.bookmarked);
     const read = formData.get(names.read);
 
-    return await updateChannelItem({
+    await updateChannelItem({
       where: {
         link_channelId: {
           channelId,
@@ -128,6 +127,8 @@ export const action: ActionFunction = async ({ request }) => {
         bookmarked: getBooleanValue(bookmarked),
       },
     });
+
+    return redirect(String(formData.get(names.redirectTo) ?? request.url));
   }
 };
 
@@ -163,10 +164,14 @@ export default function ChannelIndexPage() {
         {items.length === 0 && isIdle && (
           <p className="text-center">No articles found</p>
         )}
-        <ul className="grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-2">
+        <ul
+          className={`grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-${
+            items.length > 1 ? '2' : '1'
+          }`}
+        >
           {items.map((item) => (
             <li key={item.link}>
-              <ChannelItem item={item} formMethod="patch" />
+              <ChannelItemDetail item={item} formMethod="post" />
             </li>
           ))}
         </ul>
@@ -210,7 +215,7 @@ export default function ChannelIndexPage() {
                   channels.length ? 'Select channels' : 'No channels found'
                 }
                 multiple
-                className="w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600"
+                className={inputClassName}
               >
                 {channels.map((channel) => (
                   <option value={channel.id} key={channel.id}>
@@ -224,7 +229,7 @@ export default function ChannelIndexPage() {
               <select
                 name="categories"
                 defaultValue={filters.categories}
-                className="w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600"
+                className={inputClassName}
                 title={
                   categories.length
                     ? 'Select categories'
@@ -242,29 +247,34 @@ export default function ChannelIndexPage() {
           </fieldset>
           <fieldset className="flex flex-col gap-4">
             <label>
-              Published before
-              <input
-                name="before"
-                type="date"
-                className="w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600"
-                defaultValue={filters.before ?? undefined}
-              />
-            </label>
-            <label>
               Published after
               <input
                 name="after"
                 type="date"
-                className="w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600"
+                className={inputClassName}
                 defaultValue={filters.after ?? undefined}
+              />
+            </label>
+            <label>
+              Published before
+              <input
+                name="before"
+                type="date"
+                className={inputClassName}
+                defaultValue={filters.before ?? undefined}
               />
             </label>
           </fieldset>
 
           <fieldset className="flex flex-col gap-1">
             {hasFilters && (
-              <Button secondary form="reset-filters" type="submit">
-                Disable filters
+              <Button
+                secondary
+                form="reset-filters"
+                type="submit"
+                className="flex items-center justify-center gap-2"
+              >
+                <BanIcon className="w-4" /> Disable filters
               </Button>
             )}
           </fieldset>
@@ -289,3 +299,6 @@ function hasActiveFilters(filters: LoaderData['filters']): boolean {
       filters.channels.length
   );
 }
+
+const inputClassName =
+  'w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600';

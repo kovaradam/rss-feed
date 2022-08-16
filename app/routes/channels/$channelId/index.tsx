@@ -133,7 +133,7 @@ export default function ChannelDetailsPage() {
           <WithEditLink name={'language'}>
             <span className="flex items-center gap-1 text-gray-400">
               <TranslateIcon className="h-4" />
-              {channel.language}
+              {channel.language || 'Language is missing'}
             </span>
           </WithEditLink>
         </div>

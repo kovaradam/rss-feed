@@ -107,9 +107,8 @@ export async function getItemsByCollection(
   const collection = await prisma.collection.findFirst({
     where: { id: collectionId },
   });
-  console.log(collection);
 
-  const categories = collection?.category?.split('/');
+  const categories = collection?.category?.split('/').filter(Boolean);
 
   return prisma.item.findMany({
     ...params,

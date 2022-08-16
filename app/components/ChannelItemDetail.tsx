@@ -7,6 +7,7 @@ import {
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
 import type { FormProps } from '@remix-run/react';
+import { useLocation } from '@remix-run/react';
 import { Form } from '@remix-run/react';
 
 import React from 'react';
@@ -18,12 +19,13 @@ import { TimeFromNow } from './TimeFromNow';
 
 type Props = { item: ItemWithChannel; formMethod: FormProps['method'] };
 
-export function ChannelItem(props: Props): JSX.Element {
+export function ChannelItemDetail(props: Props): JSX.Element {
   const { channel, ...item } = props.item;
   const ReadIcon = item.read ? SolidCheckIcon : CheckCircleIcon;
   const BookmarkIcon = item.bookmarked
     ? SolidBookmarkIcon
     : OutlineBookmarkIcon;
+
   return (
     <article
       className={`flex flex-col gap-1 rounded-lg p-4 shadow-md ${
@@ -37,12 +39,12 @@ export function ChannelItem(props: Props): JSX.Element {
         <fieldset className="flex gap-2">
           {[
             {
-              name: ChannelItem.form.names.read,
+              name: ChannelItemDetail.form.names.read,
               value: String(!item.read),
               Icon: ReadIcon,
             },
             {
-              name: ChannelItem.form.names.bookmarked,
+              name: ChannelItemDetail.form.names.bookmarked,
               value: String(!item.bookmarked),
               Icon: BookmarkIcon,
             },
@@ -90,12 +92,13 @@ export function ChannelItem(props: Props): JSX.Element {
   );
 }
 
-ChannelItem.form = {
+ChannelItemDetail.form = {
   names: {
     itemLink: 'itemLink',
     channelId: 'channelId',
     bookmarked: 'bookmarked',
     read: 'read',
+    redirectTo: 'redirectTo',
   },
   getBooleanValue(formValue: FormDataEntryValue | null): boolean | undefined {
     if (formValue === 'true') {
@@ -109,17 +112,23 @@ ChannelItem.form = {
 };
 
 function RequiredFormData(props: { itemLink: string; channelId: string }) {
+  const location = useLocation();
   return (
     <>
       <input
         type="hidden"
-        name={ChannelItem.form.names.itemLink}
+        name={ChannelItemDetail.form.names.itemLink}
         value={props.itemLink}
       />
       <input
         type="hidden"
-        name={ChannelItem.form.names.channelId}
+        name={ChannelItemDetail.form.names.channelId}
         value={props.channelId}
+      />
+      <input
+        type="hidden"
+        name={ChannelItemDetail.form.names.redirectTo}
+        value={location.pathname.concat(location.search)}
       />
     </>
   );
