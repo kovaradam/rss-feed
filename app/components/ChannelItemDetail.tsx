@@ -35,7 +35,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
         item.read ? 'opacity-50' : ''
       }`}
     >
-      <span className="flex w-full justify-between text-slate-400">
+      <span className="flex w-full justify-between">
         <Link to={channel.id} className="truncate pb-2 ">
           {channel.title}
         </Link>

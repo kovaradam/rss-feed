@@ -1,9 +1,6 @@
-import { BanIcon, PencilIcon } from '@heroicons/react/outline';
 import {
   Form,
-  Link,
   useLoaderData,
-  useLocation,
   useSubmit,
   useTransition,
 } from '@remix-run/react';
@@ -12,10 +9,10 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
+import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
-import { getItemsByCollection } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
@@ -26,7 +23,6 @@ type LoaderData = {
   categories: string[];
   filters: Parameters<typeof getItemsByFilters>[0]['filters'];
   loadMoreAction: string;
-  activeCollectionId: string | null;
 };
 
 const itemCountName = 'item-count';
@@ -37,7 +33,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const itemCountParam = searchParams.get(itemCountName);
   const itemCount = itemCountParam ? Number(itemCountParam) : 30;
-  const activeCollectionId = searchParams.get('collection');
 
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
@@ -54,29 +49,25 @@ export const loader: LoaderFunction = async ({ request }) => {
     channels: filterChannels,
   };
 
-  const getItems = activeCollectionId
-    ? getItemsByCollection.bind(null, {
-        userId,
-        collectionId: activeCollectionId,
-      })
-    : getItemsByFilters.bind(null, {
-        userId,
-        filters,
-      });
-
-  const items = await getItems({
-    orderBy: { pubDate: 'desc' },
-    take: itemCount,
-    include: {
-      channel: {
-        select: {
-          title: true,
-          id: true,
-          category: true,
+  const items = await getItemsByFilters(
+    {
+      userId,
+      filters,
+    },
+    {
+      orderBy: { pubDate: 'desc' },
+      take: itemCount,
+      include: {
+        channel: {
+          select: {
+            title: true,
+            id: true,
+            category: true,
+          },
         },
       },
-    },
-  });
+    }
+  );
 
   const channels = await getChannels({ where: { userId } });
 
@@ -95,7 +86,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     categories,
     filters,
     loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
-    activeCollectionId,
   });
 };
 
@@ -108,15 +98,11 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, channels, categories, filters, loadMoreAction, ...data } =
+  const { items, channels, categories, filters, loadMoreAction } =
     useLoaderData<LoaderData>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
-
-  const { pathname } = useLocation();
-
-  const hasFilters = hasActiveFilters(filters);
 
   const submit = useSubmit();
 
@@ -167,94 +153,12 @@ export default function ChannelIndexPage() {
         )}
       </section>
       <aside className="hidden pl-8 sm:block">
-        {data.activeCollectionId && (
-          <Link
-            to={`collections/${data.activeCollectionId}/edit`}
-            className="mb-6 flex items-center gap-2"
-          >
-            <PencilIcon className="w-4" /> Edit collection
-          </Link>
-        )}
-        <Form
-          method="get"
-          className="flex w-56 flex-col gap-6"
-          onChangeCapture={submitFilters}
-        >
-          <fieldset className="flex flex-col gap-4">
-            <label>
-              Filter channels
-              <select
-                name="channels"
-                defaultValue={filters.channels}
-                title={
-                  channels.length ? 'Select channels' : 'No channels found'
-                }
-                multiple
-                className={inputClassName}
-              >
-                {channels.map((channel) => (
-                  <option value={channel.id} key={channel.id}>
-                    {channel.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Filter categories
-              <select
-                name="categories"
-                defaultValue={filters.categories}
-                className={inputClassName}
-                title={
-                  categories.length
-                    ? 'Select categories'
-                    : 'No categories found'
-                }
-                multiple
-              >
-                {categories.map((category) => (
-                  <option value={category} key={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </fieldset>
-          <fieldset className="flex flex-col gap-4">
-            <label>
-              Published after
-              <input
-                name="after"
-                type="date"
-                className={inputClassName}
-                defaultValue={filters.after ?? undefined}
-              />
-            </label>
-            <label>
-              Published before
-              <input
-                name="before"
-                type="date"
-                className={inputClassName}
-                defaultValue={filters.before ?? undefined}
-              />
-            </label>
-          </fieldset>
-
-          <fieldset className="flex flex-col gap-1">
-            {hasFilters && (
-              <Button
-                secondary
-                form="reset-filters"
-                type="submit"
-                className="flex items-center justify-center gap-2"
-              >
-                <BanIcon className="w-4" /> Disable filters
-              </Button>
-            )}
-          </fieldset>
-        </Form>
-        <Form id="reset-filters" action={pathname} />
+        <ChannelItemFilterForm
+          filters={filters}
+          categories={categories}
+          submitFilters={submitFilters}
+          channels={channels}
+        />
       </aside>
     </div>
   );
@@ -265,15 +169,3 @@ export function ErrorBoundary({ error }: { error: Error }) {
     <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
 }
-
-function hasActiveFilters(filters: LoaderData['filters']): boolean {
-  return Boolean(
-    filters.after ||
-      filters.before ||
-      filters.categories.length ||
-      filters.channels.length
-  );
-}
-
-const inputClassName =
-  'w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600';

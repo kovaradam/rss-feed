@@ -1,9 +1,8 @@
-import { BanIcon, PencilIcon } from '@heroicons/react/outline';
+import { PencilIcon } from '@heroicons/react/outline';
 import {
   Form,
   Link,
   useLoaderData,
-  useLocation,
   useSubmit,
   useTransition,
 } from '@remix-run/react';
@@ -14,6 +13,7 @@ import React from 'react';
 import invariant from 'tiny-invariant';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
+import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type {
@@ -24,7 +24,6 @@ import { getItemsByCollection } from '~/models/channel.server';
 import type { Collection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { styles } from '~/styles/shared';
 import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = ({ data }) => {
@@ -120,8 +119,6 @@ export default function ChannelIndexPage() {
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
 
-  const hasFilters = filters.after || filters.before;
-
   const submit = useSubmit();
 
   const submitFilters: React.FormEventHandler<HTMLFormElement> = (event) => {
@@ -131,8 +128,6 @@ export default function ChannelIndexPage() {
     }
     submit(form);
   };
-
-  const { pathname } = useLocation();
 
   return (
     <div className="flex">
@@ -173,49 +168,13 @@ export default function ChannelIndexPage() {
         )}
       </section>
       <aside className="hidden pl-8 sm:block">
-        <Link to={`edit`} className="mb-6 flex w-56 items-center gap-2">
+        <Link to={`edit`} className=" flex w-56 items-center gap-2">
           <PencilIcon className="w-4" /> Edit collection
         </Link>
-        <Form
-          method="get"
-          className="flex w-56 flex-col gap-6"
-          onChangeCapture={submitFilters}
-        >
-          <fieldset className="flex flex-col gap-4">
-            <label>
-              Published after
-              <input
-                name="after"
-                type="date"
-                className={inputClassName}
-                defaultValue={filters.after ?? undefined}
-              />
-            </label>
-            <label>
-              Published before
-              <input
-                name="before"
-                type="date"
-                className={inputClassName}
-                defaultValue={filters.before ?? undefined}
-              />
-            </label>
-          </fieldset>
-
-          <fieldset className="flex flex-col gap-1">
-            {hasFilters && (
-              <Button
-                secondary
-                form="reset-filters"
-                type="submit"
-                className="flex items-center justify-center gap-2"
-              >
-                <BanIcon className="w-4" /> Disable filters
-              </Button>
-            )}
-          </fieldset>
-        </Form>
-        <Form id="reset-filters" action={pathname} />
+        <ChannelItemFilterForm
+          filters={filters}
+          submitFilters={submitFilters}
+        />
       </aside>
     </div>
   );
@@ -226,5 +185,3 @@ export function ErrorBoundary({ error }: { error: Error }) {
     <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
 }
-
-const inputClassName = styles.filterInput;

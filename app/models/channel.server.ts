@@ -130,6 +130,10 @@ export async function getItemsByCollection(
   });
 }
 
+export type ChannelItemsFilter = Parameters<
+  typeof getItemsByFilters
+>[0]['filters'];
+
 export async function getItemsByFilters(
   {
     filters,
