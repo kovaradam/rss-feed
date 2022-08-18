@@ -11,6 +11,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { AsideWrapper } from '~/components/AsideWrapper';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -130,8 +131,8 @@ export default function ChannelIndexPage() {
   };
 
   return (
-    <div className="flex">
-      <section className="min-w-2/3 relative flex-1">
+    <div className="relative flex flex-col sm:flex-row">
+      <section className="sm:min-w-2/3 relative flex-1">
         {!isIdle && (
           <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
             <SpinnerIcon className="h-16 w-16" />
@@ -140,6 +141,13 @@ export default function ChannelIndexPage() {
         {items.length === 0 && isIdle && (
           <p className="text-center">No articles found</p>
         )}
+        <details className="mb-4 w-full  p-2 sm:hidden">
+          <summary>Filters</summary>
+          <ChannelItemFilterForm
+            filters={filters}
+            submitFilters={submitFilters}
+          />
+        </details>
         <ul
           className={`grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-${
             items.length > 1 ? '2' : '1'
@@ -167,15 +175,16 @@ export default function ChannelIndexPage() {
           </Form>
         )}
       </section>
-      <aside className="hidden pl-8 sm:block">
+      <AsideWrapper>
         <Link to={`edit`} className=" flex w-56 items-center gap-2">
           <PencilIcon className="w-4" /> Edit collection
         </Link>
         <ChannelItemFilterForm
           filters={filters}
           submitFilters={submitFilters}
+          className={'hidden w-56 sm:flex'}
         />
-      </aside>
+      </AsideWrapper>
     </div>
   );
 }

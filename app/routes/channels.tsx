@@ -8,11 +8,13 @@ import {
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
+import type { NavLinkProps } from '@remix-run/react';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
+import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
 import type { Channel, Item } from '~/models/channel.server';
 import { refreshChannel } from '~/models/channel.server';
@@ -158,8 +160,12 @@ export default function ChannelsPage() {
           <h1 className="text-3xl font-bold">
             <Link to=".">{title}</Link>
           </h1>
-          <p className="hidden sm:block">{user?.email}</p>
-          <Form action="/logout" method="post">
+          <Form
+            action="/logout"
+            method="post"
+            className="flex items-center gap-2"
+          >
+            <p className="hidden sm:block">{user?.email}</p>
             <button
               type="submit"
               className="rounded  py-2 px-4 hover:bg-slate-100 active:bg-slate-200"
@@ -171,32 +177,25 @@ export default function ChannelsPage() {
       </header>
       <div className="flex justify-center">
         <main className="relative flex h-full min-h-screen w-full bg-white xl:w-2/3">
-          <NavWrapper isExpanded={isNavExpanded}>
+          <NavWrapper
+            isExpanded={isNavExpanded}
+            hide={() => setIsNavExpanded(false)}
+          >
             <CreateChannelForm />
             <hr />
-            <NavLink
-              className={`m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 `}
-              to={`/channels`}
-            >
+            <StyledNavLink to={`/channels/`}>
               <HomeIcon className="w-4" />
               Feed
-            </NavLink>
+            </StyledNavLink>
             <hr />
             <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
             <ol>
               {data.collectionListItems?.map((collection) => (
                 <li key={collection.id}>
-                  <NavLink
-                    className={({ isActive }) =>
-                      `m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 ${
-                        isActive ? 'bg-blue-50 text-blue-500' : ''
-                      }`
-                    }
-                    to={`/channels/collections/${collection.id}`}
-                  >
+                  <StyledNavLink to={`/channels/collections/${collection.id}`}>
                     <ArchiveIcon className="w-4" />
                     {collection.title}
-                  </NavLink>
+                  </StyledNavLink>
                 </li>
               ))}
               <li>
@@ -217,26 +216,40 @@ export default function ChannelsPage() {
               <ol>
                 {data.channelListItems.map((channel) => (
                   <li key={channel.id}>
-                    <NavLink
-                      className={({ isActive }) =>
-                        `m-2 block rounded p-2 text-xl hover:bg-blue-50 ${
-                          isActive ? 'bg-blue-50 text-blue-500' : ''
-                        }`
-                      }
-                      to={channel.id}
-                    >
+                    <StyledNavLink className="block" to={channel.id}>
                       {channel.title}
-                    </NavLink>
+                    </StyledNavLink>
                   </li>
                 ))}
               </ol>
             )}
           </NavWrapper>
-          <div className="flex-1 border-l p-6">
+          <div className="flex-1 p-6 sm:border-l">
             <Outlet />
           </div>
         </main>
       </div>
     </div>
+  );
+}
+
+function StyledNavLink(props: NavLinkProps) {
+  return (
+    <NavLink
+      {...props}
+      className={({ isActive }) =>
+        `m-2 flex gap-2 rounded p-2 text-xl hover:bg-blue-50 ${
+          isActive ? 'bg-blue-50 text-blue-500' : ''
+        } ${props.className}`
+      }
+    >
+      {props.children}
+    </NavLink>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
 }

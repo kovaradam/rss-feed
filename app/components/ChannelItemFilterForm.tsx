@@ -9,6 +9,7 @@ type Props = {
   filters: Partial<ChannelItemsFilter>;
   channels?: Channel[];
   categories?: string[];
+  className?: string;
 };
 
 export function ChannelItemFilterForm(props: Props): JSX.Element {
@@ -25,7 +26,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
     <>
       <Form
         method="get"
-        className="flex w-56 flex-col gap-6"
+        className={`flex flex-col gap-6 ${props.className}`}
         onChangeCapture={props.submitFilters}
       >
         <fieldset className="flex flex-col gap-4">

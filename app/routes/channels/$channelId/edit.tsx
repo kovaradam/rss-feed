@@ -1,4 +1,3 @@
-import { PlusIcon } from '@heroicons/react/outline';
 import {
   Form,
   useActionData,
@@ -14,8 +13,10 @@ import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { AsideWrapper } from '~/components/AsideWrapper';
 import { Button } from '~/components/Button';
 import { useCategoryInput } from '~/components/CategoryInput';
+import { WithFormLabel } from '~/components/WithFormLabel';
 import type { Channel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { updateChannel } from '~/models/channel.server';
@@ -57,9 +58,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const errors = {} as typeof form;
   if (!form.title) {
     errors.title = 'Title cannot be undefined';
-  }
-  if (!form.description) {
-    errors.description = 'Description cannot be undefined';
   }
 
   if (Object.keys(errors).length !== 0) {
@@ -140,15 +138,14 @@ export default function Channels() {
       <h3 className="mb-2 text-4xl font-bold">Edit channel</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Title: </span>
+          <WithFormLabel label="Title" required>
             <input
               defaultValue={channel.title}
               name={'title'}
               required
               {...inputProps(focusName === 'title')}
             />
-          </label>
+          </WithFormLabel>
           {errors?.title && (
             <div className="pt-1 text-red-700" id="title-error">
               {errors.title}
@@ -156,48 +153,39 @@ export default function Channels() {
           )}
         </div>
         <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Description: </span>
+          <WithFormLabel label="Description">
             <textarea
               defaultValue={channel.description}
               name={'description'}
-              required
               {...inputProps(focusName === 'description')}
             />
-          </label>
-          {errors?.description && (
-            <div className="pt-1 text-red-700" id="title-error">
-              {errors.description}
-            </div>
-          )}
+          </WithFormLabel>
         </div>
         <div>{renderCategoryInput()}</div>
         <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Language: </span>
+          <WithFormLabel label="Language">
             <input
               defaultValue={channel.language}
               name={'language'}
               {...inputProps(focusName === 'language')}
             />
-          </label>
+          </WithFormLabel>
         </div>
         <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Image url: </span>
+          <WithFormLabel label="Image URL">
             <input
               defaultValue={channel.imageUrl}
               name={'image-url'}
               {...inputProps(focusName === 'image-url')}
             />
-          </label>
+          </WithFormLabel>
         </div>
 
-        <div className="text-right">
-          <Button type="submit" disabled={isSaving}>
+        <AsideWrapper className="sm:items-end">
+          <Button type="submit" disabled={isSaving} className="w-fit">
             {isSaving ? 'Saving...' : 'Update'}
           </Button>
-        </div>
+        </AsideWrapper>
       </Form>
       {renderCategoryForm()}
     </>

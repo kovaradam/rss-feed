@@ -81,7 +81,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   loadMoreUrl.searchParams.set(itemCountName, String(itemCount + 10));
 
   return json<LoaderData>({
-    items: items as LoaderData['items'],
+    items: (items as LoaderData['items']) ?? [],
     channels,
     categories,
     filters,
@@ -122,12 +122,22 @@ export default function ChannelIndexPage() {
             <SpinnerIcon className="h-16 w-16" />
           </div>
         )}
+        <details className="mb-4 w-full  p-2 sm:hidden">
+          <summary>Filters</summary>
+          <ChannelItemFilterForm
+            filters={filters}
+            submitFilters={submitFilters}
+            channels={channels}
+            categories={categories}
+            className="pt-2"
+          />
+        </details>
         {items.length === 0 && isIdle && (
           <p className="text-center">No articles found</p>
         )}
         <ul
-          className={`grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-${
-            items.length > 1 ? '2' : '1'
+          className={`grid min-w-[30ch] grid-cols-1 gap-4 ${
+            items.length <= 1 ? '2xl:grid-cols-1' : '2xl:grid-cols-2'
           }`}
         >
           {items.map((item) => (
@@ -158,6 +168,7 @@ export default function ChannelIndexPage() {
           categories={categories}
           submitFilters={submitFilters}
           channels={channels}
+          className="w-56"
         />
       </aside>
     </div>

@@ -7,6 +7,7 @@ import {
 } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
+import { AsideWrapper } from './AsideWrapper';
 import { Button } from './Button';
 import { useCategoryInput } from './CategoryInput';
 import { WithFormLabel } from './WithFormLabel';
@@ -134,7 +135,7 @@ export function CollectionForm<
           </label>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <AsideWrapper className="flex-row-reverse justify-end sm:flex-row sm:items-end sm:justify-end md:flex-row">
           {props.deleteFormId && (
             <Button
               form={props.deleteFormId}
@@ -148,7 +149,7 @@ export function CollectionForm<
           <Button type="submit" disabled={isSaving}>
             {isSaving ? 'Submitting...' : 'Submit'}
           </Button>
-        </div>
+        </AsideWrapper>
       </Form>
       {Categories.renderCategoryForm()}
       {props.deleteFormId && (

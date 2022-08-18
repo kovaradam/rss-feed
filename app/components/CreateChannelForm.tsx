@@ -33,7 +33,7 @@ export function CreateChannelForm<
         <Form
           method="put"
           action={window.location.pathname}
-          className="flex flex-col gap-1"
+          className="flex flex-col gap-2"
         >
           <button
             type="button"

@@ -34,6 +34,7 @@ import { Button } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import { createTitle } from '~/utils';
+import { AsideWrapper } from '~/components/AsideWrapper';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -141,7 +142,9 @@ export default function ChannelDetailsPage() {
           <WithEditLink name={'language'}>
             <span className="text-gray-400">Description</span>
           </WithEditLink>
-          <p className="text-xl">{data.channel.description}</p>
+          <p className="text-xl">
+            {data.channel.description || 'Description is missing'}
+          </p>
         </div>
         <hr className="mb-8 " />
         <h4 className="pb-2 text-2xl font-medium">Articles</h4>
@@ -170,17 +173,17 @@ export default function ChannelDetailsPage() {
           </Button>
         </Form>
       </section>
-      <aside className="sticky bottom-0 -mb-8 flex justify-between gap-2 bg-white py-4 sm:relative sm:mb-0 sm:flex-col sm:justify-start sm:py-0 sm:pl-4">
-        <Form method="patch">
+      <AsideWrapper>
+        <Form method="patch" className="flex-1 sm:flex-grow-0">
           <Button
             type="submit"
             title="Refresh this channel"
-            className="flex w-fit items-center gap-2"
+            className="flex w-full items-center gap-2"
             isLoading={isRefreshing}
           >
             <RefreshIcon
               className={`w-4 animate-${isRefreshing ? 'spin' : 'none'}`}
-            />{' '}
+            />
             Refresh
           </Button>
         </Form>
@@ -201,7 +204,7 @@ export default function ChannelDetailsPage() {
             <TrashIcon className="w-4" /> Delete
           </Button>
         </Form>
-      </aside>
+      </AsideWrapper>
     </div>
   );
 }
