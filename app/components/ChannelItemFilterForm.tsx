@@ -31,7 +31,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
       >
         <fieldset className="flex flex-col gap-4">
           {props.filters.categories !== undefined && (
-            <label>
+            <label className={labelClassName}>
               Filter channels
               <select
                 name="channels"
@@ -53,7 +53,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </label>
           )}
           {props.filters.channels !== undefined && (
-            <label>
+            <label className={labelClassName}>
               Filter categories
               <select
                 name="categories"
@@ -77,7 +77,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
         </fieldset>
         <fieldset className="flex flex-col gap-4">
           {filters.after !== undefined && (
-            <label>
+            <label className={labelClassName}>
               Published after
               <input
                 name="after"
@@ -88,7 +88,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </label>
           )}
           {filters.before !== undefined && (
-            <label>
+            <label className={labelClassName}>
               Published before
               <input
                 name="before"
@@ -100,7 +100,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
           )}
         </fieldset>
 
-        <fieldset className="flex flex-col gap-1">
+        <fieldset className="flex flex-col gap-1 ">
           {hasFilters && (
             <Button
               secondary
@@ -120,3 +120,5 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
 
 const inputClassName =
   'w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600';
+
+const labelClassName = 'flex flex-row justify-between gap-2 sm:flex-col';

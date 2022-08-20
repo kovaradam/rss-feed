@@ -148,7 +148,7 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
 
   return (
-    <div className="flex  flex-col">
+    <div className="flex flex-col">
       <header className="flex w-full justify-center border-b">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
           <button
@@ -176,14 +176,14 @@ export default function ChannelsPage() {
         </div>
       </header>
       <div className="flex justify-center">
-        <main className="relative flex h-full min-h-screen w-full bg-white xl:w-2/3">
+        <main className="relative flex h-full min-h-screen w-screen bg-white xl:w-2/3">
           <NavWrapper
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
           >
             <CreateChannelForm />
             <hr />
-            <StyledNavLink to={`/channels/`}>
+            <StyledNavLink to={`/channels`} end>
               <HomeIcon className="w-4" />
               Feed
             </StyledNavLink>

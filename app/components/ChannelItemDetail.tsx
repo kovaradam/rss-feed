@@ -72,11 +72,15 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       </span>
 
       {item.imageUrl && (
-        <img
-          alt="Article decoration"
-          src={item.imageUrl}
-          className="my-2 h-auto w-full"
-        />
+        <a href={item.link}>
+          <img
+            alt="Article header decoration"
+            src={item.imageUrl}
+            className="my-2 h-auto w-full bg-slate-50"
+            loading="lazy"
+            style={{ aspectRatio: '1.4' }}
+          />
+        </a>
       )}
       <h4>
         <Href href={item.link} className="text-lg text-black">

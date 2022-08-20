@@ -199,9 +199,10 @@ export default function ChannelDetailsPage() {
             type="submit"
             title="Delete this channel"
             secondary
-            className="flex w-fit items-center gap-2"
+            className="flex h-full w-fit items-center gap-2 "
           >
-            <TrashIcon className="w-4" /> Delete
+            <TrashIcon className="w-4" />{' '}
+            <span className="hidden sm:block">Delete</span>
           </Button>
         </Form>
       </AsideWrapper>

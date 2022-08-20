@@ -136,7 +136,7 @@ export default function ChannelIndexPage() {
           <p className="text-center">No articles found</p>
         )}
         <ul
-          className={`grid min-w-[30ch] grid-cols-1 gap-4 ${
+          className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] ${
             items.length <= 1 ? '2xl:grid-cols-1' : '2xl:grid-cols-2'
           }`}
         >

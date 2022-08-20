@@ -149,7 +149,7 @@ export default function ChannelIndexPage() {
           />
         </details>
         <ul
-          className={`grid min-w-[30ch] grid-cols-1 gap-4 2xl:grid-cols-${
+          className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-${
             items.length > 1 ? '2' : '1'
           }`}
         >
