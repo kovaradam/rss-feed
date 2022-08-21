@@ -4,10 +4,9 @@ import React from 'react';
 import { Button } from './Button';
 
 export function CreateChannelForm<
-  ActionData extends Record<string, string>
+  ActionData extends Partial<Record<string, string | null>> | undefined
 >(): JSX.Element {
   const [showInput, setShowInput] = React.useState(false);
-  const blurTimeout = React.useRef(0);
 
   const errors = useActionData<ActionData>();
   const transition = useTransition();
@@ -15,20 +14,8 @@ export function CreateChannelForm<
     transition.state === 'submitting' &&
     transition.submission?.method === 'PUT';
 
-  const setBlurTimeout = () => {
-    blurTimeout.current = window.setTimeout(() => setShowInput(false));
-  };
-
-  const clearBlurTimeout = () => {
-    window.clearTimeout(blurTimeout.current);
-  };
-
   return (
-    <div
-      className="relative m-2 block"
-      onBlurCapture={setBlurTimeout}
-      onFocusCapture={clearBlurTimeout}
-    >
+    <div className="relative m-2 block">
       {showInput ? (
         <Form
           method="put"

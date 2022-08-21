@@ -15,18 +15,20 @@ export function NavWrapper(props: Props): JSX.Element {
   React.useEffect(() => hide(), [pathname, hide]);
 
   return (
-    <nav
-      className={`absolute z-10 h-full w-3/4  ${
-        props.isExpanded ? '-translate-x-0' : '-translate-x-96'
-      }  bg-white  duration-200 ease-in  sm:relative sm:block sm:w-64 sm:translate-x-0`}
-    >
-      {props.children}
+    <>
+      <nav
+        className={`absolute z-20 h-full w-3/4  ${
+          props.isExpanded ? '-translate-x-0' : '-translate-x-96'
+        }  bg-white  duration-200 ease-in  sm:relative sm:block sm:w-64 sm:translate-x-0`}
+      >
+        {props.children}
+      </nav>
       <div
-        className={`absolute top-0 left-full h-full w-[200vw]  bg-black opacity-10 ${
+        className={`absolute top-0 right-0 z-10 h-full  w-full bg-black opacity-10 ${
           props.isExpanded ? 'visible' : 'hidden'
         }`}
         onClick={props.hide}
       />
-    </nav>
+    </>
   );
 }

@@ -168,7 +168,7 @@ export default function ChannelsPage() {
             <p className="hidden sm:block">{user?.email}</p>
             <button
               type="submit"
-              className="rounded  py-2 px-4 hover:bg-slate-100 active:bg-slate-200"
+              className="rounded py-2 px-4 hover:bg-slate-100 active:bg-slate-200"
             >
               <LogoutIcon className="w-6" />
             </button>
@@ -176,12 +176,12 @@ export default function ChannelsPage() {
         </div>
       </header>
       <div className="flex justify-center">
-        <main className="relative flex h-full min-h-screen w-screen bg-white xl:w-2/3">
+        <main className="relative flex h-full min-h-screen w-screen overflow-x-hidden bg-white xl:w-2/3">
           <NavWrapper
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
           >
-            <CreateChannelForm />
+            <CreateChannelForm<ActionData> />
             <hr />
             <StyledNavLink to={`/channels`} end>
               <HomeIcon className="w-4" />
