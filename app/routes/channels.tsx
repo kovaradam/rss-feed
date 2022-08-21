@@ -176,7 +176,7 @@ export default function ChannelsPage() {
         </div>
       </header>
       <div className="flex justify-center">
-        <main className="relative flex h-full min-h-screen w-screen overflow-x-hidden bg-white xl:w-2/3">
+        <main className="relative flex h-full min-h-screen w-screen bg-white xl:w-2/3">
           <NavWrapper
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
