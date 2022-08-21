@@ -1,5 +1,10 @@
 import { PlusIcon, XIcon } from '@heroicons/react/outline';
-import { Form, useActionData, useTransition } from '@remix-run/react';
+import {
+  Form,
+  useActionData,
+  useLocation,
+  useTransition,
+} from '@remix-run/react';
 import React from 'react';
 import { Button } from './Button';
 
@@ -11,8 +16,10 @@ export function CreateChannelForm<
   const errors = useActionData<ActionData>();
   const transition = useTransition();
   const isCreating =
-    transition.state === 'submitting' &&
-    transition.submission?.method === 'PUT';
+    transition.state !== 'idle' && transition.submission?.method === 'PUT';
+
+  const { pathname } = useLocation();
+  React.useEffect(() => setShowInput(false), [pathname]);
 
   return (
     <div className="relative m-2 block">
