@@ -31,7 +31,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
   return (
     <article
-      className={`flex flex-col gap-1 rounded-lg p-4 shadow-md ${
+      className={`pd-4 flex flex-col gap-1 border-t-2 pt-8 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${
         item.read ? 'opacity-50' : ''
       }`}
     >
@@ -45,11 +45,13 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               name: ChannelItemDetail.form.names.read,
               value: String(!item.read),
               Icon: ReadIcon,
+              title: 'Mark as read',
             },
             {
               name: ChannelItemDetail.form.names.bookmarked,
               value: String(!item.bookmarked),
               Icon: BookmarkIcon,
+              title: 'Bookmark article',
             },
           ].map((formItems) => (
             <Form method={props.formMethod} key={formItems.name}>
@@ -59,7 +61,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                 name={formItems.name}
                 value={formItems.value}
               />
-              <button type="submit">
+              <button type="submit" title={formItems.title}>
                 <formItems.Icon
                   className={`w-4 ${
                     formItems.value === 'false' ? 'text-black' : ''
@@ -76,7 +78,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           <img
             alt="Article header decoration"
             src={item.imageUrl}
-            className="my-2 h-auto w-full bg-slate-50"
+            className="my-2 h-auto w-full rounded-lg bg-slate-50 sm:rounded-none"
             loading="lazy"
             style={{ aspectRatio: '1.4' }}
           />
