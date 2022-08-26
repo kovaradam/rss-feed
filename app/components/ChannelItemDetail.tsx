@@ -31,7 +31,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
   return (
     <article
-      className={`pd-4 flex flex-col gap-1 border-t-2 pt-8 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${
+      className={` flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${
         item.read ? 'opacity-50' : ''
       }`}
     >

@@ -16,6 +16,7 @@ import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
+import { UseAppTitle } from '~/utils';
 
 type LoaderData = {
   items: ItemWithChannel[];
@@ -115,63 +116,66 @@ export default function ChannelIndexPage() {
   };
 
   return (
-    <div className="flex">
-      <section className="min-w-2/3 relative flex-1">
-        {!isIdle && (
-          <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
-            <SpinnerIcon className="h-16 w-16" />
-          </div>
-        )}
-        <details className="mb-4 w-full  p-2 sm:hidden">
-          <summary>Filters</summary>
+    <>
+      <UseAppTitle>Your feed</UseAppTitle>
+      <div className="flex">
+        <section className="min-w-2/3 relative flex-1">
+          {!isIdle && (
+            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
+              <SpinnerIcon className="h-16 w-16" />
+            </div>
+          )}
+          <details className="mb-4 w-full rounded-md border p-2 sm:hidden">
+            <summary>Filter articles</summary>
+            <ChannelItemFilterForm
+              filters={filters}
+              submitFilters={submitFilters}
+              channels={channels}
+              categories={categories}
+              className="pt-4"
+            />
+          </details>
+          {items.length === 0 && isIdle && (
+            <p className="text-center">No articles found</p>
+          )}
+          <ul
+            className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] ${
+              items.length <= 1 ? '2xl:grid-cols-1' : '2xl:grid-cols-2'
+            }`}
+          >
+            {items.map((item) => (
+              <li key={item.link}>
+                <ChannelItemDetail item={item} formMethod="post" />
+              </li>
+            ))}
+          </ul>
+          {items.length !== 0 && (
+            <Form
+              className="mt-6 flex w-full justify-center"
+              action={loadMoreAction}
+            >
+              <input
+                type="hidden"
+                name={itemCountName}
+                value={items.length + 10}
+              />
+              <Button type="submit" isLoading={isSubmitting}>
+                {isSubmitting ? 'Loading...' : 'Show more'}
+              </Button>
+            </Form>
+          )}
+        </section>
+        <aside className="hidden pl-8 sm:block">
           <ChannelItemFilterForm
             filters={filters}
+            categories={categories}
             submitFilters={submitFilters}
             channels={channels}
-            categories={categories}
-            className="pt-2"
+            className="w-56"
           />
-        </details>
-        {items.length === 0 && isIdle && (
-          <p className="text-center">No articles found</p>
-        )}
-        <ul
-          className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] ${
-            items.length <= 1 ? '2xl:grid-cols-1' : '2xl:grid-cols-2'
-          }`}
-        >
-          {items.map((item) => (
-            <li key={item.link}>
-              <ChannelItemDetail item={item} formMethod="post" />
-            </li>
-          ))}
-        </ul>
-        {items.length !== 0 && (
-          <Form
-            className="mt-6 flex w-full justify-center"
-            action={loadMoreAction}
-          >
-            <input
-              type="hidden"
-              name={itemCountName}
-              value={items.length + 10}
-            />
-            <Button type="submit" isLoading={isSubmitting}>
-              {isSubmitting ? 'Loading...' : 'Show more'}
-            </Button>
-          </Form>
-        )}
-      </section>
-      <aside className="hidden pl-8 sm:block">
-        <ChannelItemFilterForm
-          filters={filters}
-          categories={categories}
-          submitFilters={submitFilters}
-          channels={channels}
-          className="w-56"
-        />
-      </aside>
-    </div>
+        </aside>
+      </div>
+    </>
   );
 }
 

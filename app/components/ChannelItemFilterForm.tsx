@@ -100,8 +100,8 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
           )}
         </fieldset>
 
-        <fieldset className="flex flex-col gap-1 ">
-          {hasFilters && (
+        {hasFilters && (
+          <fieldset className="flex flex-col gap-1 ">
             <Button
               secondary
               form="reset-filters"
@@ -110,8 +110,8 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             >
               <BanIcon className="w-4" /> Disable filters
             </Button>
-          )}
-        </fieldset>
+          </fieldset>
+        )}
       </Form>
       <Form id="reset-filters" action={pathname} />
     </>

@@ -33,7 +33,7 @@ import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 import { Button } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import type { MetaFunction } from '@remix-run/react/routeModules';
-import { createTitle } from '~/utils';
+import { createTitle, UseAppTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
 
 export const meta: MetaFunction = ({ data }) => {
@@ -105,6 +105,7 @@ export default function ChannelDetailsPage() {
 
   return (
     <div className="relative flex flex-col sm:flex-row">
+      <UseAppTitle>Channel detail</UseAppTitle>
       <section className="flex-1">
         <WithEditLink name={'title'}>
           <h3 className="text-4xl font-bold ">{data.channel.title}</h3>

@@ -1,3 +1,4 @@
+import { useLoaderData } from '@remix-run/react';
 import type {
   ActionFunction,
   LoaderFunction,
@@ -17,7 +18,7 @@ import { deleteCollection } from '~/models/collection.server';
 import { updateCollection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, uniqueArrayFilter } from '~/utils';
+import { createTitle, uniqueArrayFilter, UseAppTitle } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -122,11 +123,15 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export default function EditCollectionPage() {
+  const data = useLoaderData<LoaderData>();
   return (
-    <CollectionForm<LoaderData, ActionData>
-      title={'Edit collection'}
-      deleteFormId="delete-form"
-    />
+    <>
+      <UseAppTitle>{data.defaultValue.title}</UseAppTitle>
+      <CollectionForm<LoaderData, ActionData>
+        title={'Edit collection'}
+        deleteFormId="delete-form"
+      />
+    </>
   );
 }
 

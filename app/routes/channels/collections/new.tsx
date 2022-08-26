@@ -11,7 +11,7 @@ import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
 import { createCollection, getBooleanValue } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, uniqueArrayFilter } from '~/utils';
+import { createTitle, uniqueArrayFilter, UseAppTitle } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -94,7 +94,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export default function NewCollectionPage() {
-  return <CollectionForm title="Create a new collection" />;
+  return (
+    <>
+      <UseAppTitle>New collection</UseAppTitle>
+      <CollectionForm title="Create a new collection" />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {

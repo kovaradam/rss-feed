@@ -21,9 +21,8 @@ import { refreshChannel } from '~/models/channel.server';
 import { createChanel, getChannel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
-
 import { requireUserId } from '~/session.server';
-import { createTitle, useUser } from '~/utils';
+import { createTitle, UseAppTitle, useUser } from '~/utils';
 import { parseChannelXml } from '../models/parse-xml';
 
 const title = 'Your feed';
@@ -149,7 +148,8 @@ export default function ChannelsPage() {
 
   return (
     <div className="flex flex-col">
-      <header className="flex w-full justify-center border-b">
+      <UseAppTitle>{title}</UseAppTitle>
+      <header className="flex w-full justify-center text-ellipsis whitespace-nowrap border-b">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
           <button
             onClick={() => setIsNavExpanded((prev) => !prev)}
@@ -157,8 +157,11 @@ export default function ChannelsPage() {
           >
             <MenuAlt2Icon className="w-6" />
           </button>
-          <h1 className="text-3xl font-bold">
-            <Link to=".">{title}</Link>
+          <h1
+            className="font-bold sm:text-3xl"
+            id={createTitle.appTitleElementId}
+          >
+            {title}
           </h1>
           <Form
             action="/logout"

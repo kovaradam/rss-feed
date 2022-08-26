@@ -25,7 +25,7 @@ import { getItemsByCollection } from '~/models/channel.server';
 import type { Collection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle } from '~/utils';
+import { createTitle, UseAppTitle } from '~/utils';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -115,7 +115,8 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, loadMoreAction, filters } = useLoaderData<LoaderData>();
+  const { items, loadMoreAction, filters, collection } =
+    useLoaderData<LoaderData>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
@@ -131,61 +132,64 @@ export default function ChannelIndexPage() {
   };
 
   return (
-    <div className="relative flex flex-col sm:flex-row">
-      <section className="sm:min-w-2/3 relative flex-1">
-        {!isIdle && (
-          <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
-            <SpinnerIcon className="h-16 w-16" />
-          </div>
-        )}
-        {items.length === 0 && isIdle && (
-          <p className="text-center">No articles found</p>
-        )}
-        <details className="mb-4 w-full  p-2 sm:hidden">
-          <summary>Filters</summary>
+    <>
+      <UseAppTitle>{collection.title}</UseAppTitle>
+      <div className="relative flex min-h-full flex-col sm:flex-row">
+        <section className="sm:min-w-2/3 relative flex-1">
+          {!isIdle && (
+            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
+              <SpinnerIcon className="h-16 w-16" />
+            </div>
+          )}
+          <details className="mb-4 w-full rounded-md border p-2 sm:hidden">
+            <summary>Filters</summary>
+            <ChannelItemFilterForm
+              filters={filters}
+              submitFilters={submitFilters}
+            />
+          </details>
+          {items.length === 0 && isIdle && (
+            <p className="text-center">No articles found</p>
+          )}
+          <ul
+            className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-${
+              items.length > 1 ? '2' : '1'
+            }`}
+          >
+            {items.map((item) => (
+              <li key={item.link}>
+                <ChannelItemDetail item={item} formMethod="post" />
+              </li>
+            ))}
+          </ul>
+          {items.length !== 0 && (
+            <Form
+              className="mt-6 flex w-full justify-center"
+              action={loadMoreAction}
+            >
+              <input
+                type="hidden"
+                name={itemCountName}
+                value={items.length + 10}
+              />
+              <Button type="submit" isLoading={isSubmitting}>
+                {isSubmitting ? 'Loading...' : 'Show more'}
+              </Button>
+            </Form>
+          )}
+        </section>
+        <AsideWrapper>
+          <Link to={`edit`} className=" flex w-56 items-center gap-2">
+            <PencilIcon className="w-4" /> Edit collection
+          </Link>
           <ChannelItemFilterForm
             filters={filters}
             submitFilters={submitFilters}
+            className={'hidden w-56 sm:flex'}
           />
-        </details>
-        <ul
-          className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-${
-            items.length > 1 ? '2' : '1'
-          }`}
-        >
-          {items.map((item) => (
-            <li key={item.link}>
-              <ChannelItemDetail item={item} formMethod="post" />
-            </li>
-          ))}
-        </ul>
-        {items.length !== 0 && (
-          <Form
-            className="mt-6 flex w-full justify-center"
-            action={loadMoreAction}
-          >
-            <input
-              type="hidden"
-              name={itemCountName}
-              value={items.length + 10}
-            />
-            <Button type="submit" isLoading={isSubmitting}>
-              {isSubmitting ? 'Loading...' : 'Show more'}
-            </Button>
-          </Form>
-        )}
-      </section>
-      <AsideWrapper>
-        <Link to={`edit`} className=" flex w-56 items-center gap-2">
-          <PencilIcon className="w-4" /> Edit collection
-        </Link>
-        <ChannelItemFilterForm
-          filters={filters}
-          submitFilters={submitFilters}
-          className={'hidden w-56 sm:flex'}
-        />
-      </AsideWrapper>
-    </div>
+        </AsideWrapper>
+      </div>
+    </>
   );
 }
 

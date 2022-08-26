@@ -23,7 +23,7 @@ import { updateChannel } from '~/models/channel.server';
 import { getChannel } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
-import { createTitle } from '~/utils';
+import { createTitle, UseAppTitle } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -33,7 +33,7 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction = ({ data, parentsData }) => {
+export const meta: MetaFunction = ({ data }) => {
   return {
     title: createTitle(`Edit ${data?.channel?.title ?? 'channel'}`),
   };
@@ -135,6 +135,7 @@ export default function Channels() {
 
   return (
     <>
+      <UseAppTitle>{channel?.title}</UseAppTitle>
       <h3 className="mb-2 text-4xl font-bold">Edit channel</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>

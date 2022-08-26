@@ -1,5 +1,5 @@
 import { useMatches } from '@remix-run/react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import type { User } from '~/models/user.server';
 
@@ -76,10 +76,22 @@ export function createTitle(input: string): string {
   return `RSS | ${input}`;
 }
 
+createTitle.appTitleElementId = 'app-title';
+
 export function uniqueArrayFilter<T>(
   item: T,
   index: number,
   array: T[]
 ): boolean {
   return array.indexOf(item) === index;
+}
+
+export function UseAppTitle(props: { children: string }) {
+  React.useEffect(() => {
+    const titleElement = document.getElementById(createTitle.appTitleElementId);
+    if (titleElement) {
+      titleElement.innerHTML = props.children;
+    }
+  }, [props.children]);
+  return null;
 }
