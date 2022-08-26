@@ -179,7 +179,10 @@ export default function ChannelIndexPage() {
           )}
         </section>
         <AsideWrapper>
-          <Link to={`edit`} className=" flex w-56 items-center gap-2">
+          <Link
+            to={`edit`}
+            className="flex w-fit items-center gap-2 rounded bg-slate-100 py-2 px-4 text-slate-600 hover:bg-slate-200"
+          >
             <PencilIcon className="w-4" /> Edit collection
           </Link>
           <ChannelItemFilterForm

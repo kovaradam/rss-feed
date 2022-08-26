@@ -149,7 +149,7 @@ export default function ChannelsPage() {
   return (
     <div className="flex flex-col">
       <UseAppTitle>{title}</UseAppTitle>
-      <header className="flex w-full justify-center text-ellipsis whitespace-nowrap border-b">
+      <header className="flex w-full justify-center whitespace-nowrap border-b">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
           <button
             onClick={() => setIsNavExpanded((prev) => !prev)}
@@ -158,7 +158,7 @@ export default function ChannelsPage() {
             <MenuAlt2Icon className="w-6" />
           </button>
           <h1
-            className="font-bold sm:text-3xl"
+            className="text-ellipsis font-bold sm:text-3xl"
             id={createTitle.appTitleElementId}
           >
             {title}
@@ -172,6 +172,7 @@ export default function ChannelsPage() {
             <button
               type="submit"
               className="rounded py-2 px-4 hover:bg-slate-100 active:bg-slate-200"
+              title="Log out"
             >
               <LogoutIcon className="w-6" />
             </button>
