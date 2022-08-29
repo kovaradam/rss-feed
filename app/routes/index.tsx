@@ -21,12 +21,23 @@ export const meta: MetaFunction = () => {
 
 export default function Welcome() {
   return (
-    <main className="relative flex min-h-screen flex-col justify-center bg-white p-4 sm:items-center">
-      <div className="flex flex-col gap-8">
+    <main className="relative flex min-h-screen flex-col justify-center bg-white p-4 sm:h-screen sm:flex-row sm:justify-start sm:p-0">
+      <section className="hidden flex-col items-center justify-between bg-blue-100 p-[5%] sm:flex sm:h-full sm:w-1/3">
+        <h1 className="w-full text-2xl font-bold text-white">
+          Welcome to RSS Journal
+        </h1>
+        <div className="flex flex-col gap-4">
+          <p className="text-4xl font-bold text-blue-900">
+            Keep up with the latest web content using your organized RSS feed.
+          </p>
+        </div>
+        <img src="/reading.svg" alt="Doodle of a person reading"></img>
+      </section>
+      <section className="flex h-full flex-col gap-8 sm:flex-1 sm:items-center sm:justify-center">
         <div>
-          <h1 className="my-2 text-4xl font-bold">RSS Journal</h1>
+          <h2 className="my-2 text-4xl font-bold">Create your journal</h2>
           <p className="text-slate-500">
-            Keep up with the latest web content with your organized RSS feed
+            Get started with a new account or log in if you already have one.
           </p>
         </div>
         <div className="flex flex-col-reverse gap-2 sm:flex-row">
@@ -43,7 +54,7 @@ export default function Welcome() {
             Log In
           </Link>
         </div>
-      </div>
+      </section>
     </main>
   );
 }
