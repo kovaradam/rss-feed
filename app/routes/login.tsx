@@ -11,6 +11,7 @@ import { createUserSession, getUserId } from '~/session.server';
 import { verifyLogin } from '~/models/user.server';
 import { safeRedirect, validateEmail } from '~/utils';
 import { Button } from '~/components/Button';
+import { styles } from '~/styles/shared';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
@@ -116,7 +117,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className={styles.input}
               />
               {actionData?.errors?.email && (
                 <div className="pt-1 text-red-700" id="email-error">
@@ -142,7 +143,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className={styles.input}
               />
               {actionData?.errors?.password && (
                 <div className="pt-1 text-red-700" id="password-error">
@@ -162,7 +163,9 @@ export default function LoginPage() {
                 id="remember"
                 name="remember"
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className={
+                  'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                }
               />
               <label
                 htmlFor="remember"
@@ -176,7 +179,7 @@ export default function LoginPage() {
               <Link
                 className="text-blue-500 underline"
                 to={{
-                  pathname: '/join',
+                  pathname: '/',
                   search: searchParams.toString(),
                 }}
               >

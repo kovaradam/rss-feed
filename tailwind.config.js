@@ -8,6 +8,9 @@ module.exports = {
       lineClamp: {
         10: '10',
       },
+      colors: {
+        accent: '#ff5678',
+      },
     },
   },
   variants: {

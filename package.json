@@ -39,7 +39,6 @@
     "@remix-run/server-runtime": "^1.5.1",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@types/xml2js": "^0.4.11",
-    "ariakit": "^2.0.0-next.38",
     "bcryptjs": "^2.4.3",
     "marked": "^4.0.16",
     "react": "^17.0.2",

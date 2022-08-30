@@ -6,6 +6,7 @@ import {
   useTransition,
 } from '@remix-run/react';
 import React from 'react';
+import { styles } from '~/styles/shared';
 import { Button } from './Button';
 
 export function CreateChannelForm<
@@ -45,7 +46,7 @@ export function CreateChannelForm<
             required
             disabled={isCreating}
             placeholder="https://www.example-web.com/rss.xml"
-            className="peer  w-full rounded border border-gray-500 px-2 py-1 leading-loose "
+            className={`peer leading-loose ${styles.input} text-base`}
             aria-invalid="false"
           />
           {errors &&
