@@ -1,4 +1,6 @@
+import { useTransition } from '@remix-run/react';
 import React from 'react';
+import { SpinnerIcon } from './SpinnerIcon';
 
 type Props = {
   secondary?: boolean;
@@ -31,3 +33,19 @@ export const secondaryButtonStyle =
 
 export const primaryButtonStyle =
   'bg-blue-200 text-blue-600 hover:bg-blue-300 active:bg-slate-100 disabled:bg-blue-100 disabled:text-blue-300';
+
+export function SubmitButton({
+  ...buttonProps
+}: Omit<Props, 'isLoading'>): JSX.Element {
+  const isLoading = useTransition().state !== 'idle';
+  return (
+    <button
+      {...buttonProps}
+      disabled={buttonProps.disabled || isLoading}
+      type="submit"
+      className={`flex items-center justify-center rounded-md  bg-rose-400  px-4 py-3  font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 sm:px-8 ${buttonProps.className}`}
+    >
+      {!isLoading ? buttonProps.children : <SpinnerIcon className="ml-2 " />}
+    </button>
+  );
+}

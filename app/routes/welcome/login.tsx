@@ -10,7 +10,7 @@ import * as React from 'react';
 import { createUserSession, getUserId } from '~/session.server';
 import { verifyLogin } from '~/models/user.server';
 import { safeRedirect, validateEmail } from '~/utils';
-import { Button } from '~/components/Button';
+import { SubmitButton } from '~/components/Button';
 import { styles } from '~/styles/shared';
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -96,67 +96,81 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
-      <div className="mx-auto w-full max-w-md px-8">
+    <>
+      <div>
+        <h2 className="my-2 text-4xl font-bold">Welcome back!</h2>
+        <p className="text-slate-500">
+          Don't have an account?{' '}
+          <Link
+            className="font-bold underline"
+            to={{
+              pathname: '/',
+              search: searchParams.toString(),
+            }}
+          >
+            Sign up
+          </Link>
+        </p>
+      </div>
+      <div className="w-full max-w-md">
         <Form method="post" className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email address
-            </label>
-            <div className="mt-1">
-              <input
-                ref={emailRef}
-                id="email"
-                required
-                autoFocus={true}
-                name="email"
-                type="email"
-                autoComplete="email"
-                aria-invalid={actionData?.errors?.email ? true : undefined}
-                aria-describedby="email-error"
-                className={styles.input}
-              />
-              {actionData?.errors?.email && (
-                <div className="pt-1 text-red-700" id="email-error">
-                  {actionData.errors.email}
-                </div>
-              )}
+          {[
+            {
+              label: 'Email address',
+              placeholder: 'name@example.com',
+              ref: emailRef,
+              id: 'email',
+              name: 'email',
+              type: 'email',
+              ariaInvalid: actionData?.errors?.email ? true : undefined,
+              ariaDescribedBy: 'email-error',
+              error: actionData?.errors?.email,
+            },
+            {
+              label: 'Password',
+              placeholder: undefined,
+              ref: passwordRef,
+              id: 'password',
+              name: 'password',
+              type: 'password',
+              ariaInvalid: actionData?.errors?.password ? true : undefined,
+              ariaDescribedBy: 'password-error',
+              error: actionData?.errors?.password,
+            },
+          ].map((formField) => (
+            <div key={formField.id}>
+              <label
+                htmlFor={formField.id}
+                className="block text-sm font-medium text-gray-700"
+              >
+                {formField.label}
+              </label>
+              <div className="mt-1">
+                <input
+                  ref={formField.ref}
+                  id={formField.id}
+                  required
+                  name={formField.name}
+                  type={formField.type}
+                  placeholder={formField.placeholder}
+                  aria-invalid={formField.ariaInvalid}
+                  aria-describedby={formField.ariaDescribedBy}
+                  className={styles.input}
+                />
+                {formField.error && (
+                  <div
+                    className="pt-1 text-red-800"
+                    id={formField.ariaDescribedBy}
+                  >
+                    {formField.error}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="mt-1">
-              <input
-                id="password"
-                ref={passwordRef}
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby="password-error"
-                className={styles.input}
-              />
-              {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
-                  {actionData.errors.password}
-                </div>
-              )}
-            </div>
-          </div>
+          ))}
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <Button type="submit" className="w-full">
-            Log in
-          </Button>
+          <SubmitButton>Log in</SubmitButton>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -174,21 +188,10 @@ export default function LoginPage() {
                 Remember me
               </label>
             </div>
-            <div className="text-center text-sm text-gray-500">
-              Don't have an account?{' '}
-              <Link
-                className="text-blue-500 underline"
-                to={{
-                  pathname: '/',
-                  search: searchParams.toString(),
-                }}
-              >
-                Sign up
-              </Link>
-            </div>
+            <div className="text-center text-sm text-gray-500"></div>
           </div>
         </Form>
       </div>
-    </div>
+    </>
   );
 }
