@@ -73,10 +73,8 @@ export function validateEmail(email: unknown): email is string {
 }
 
 export function createTitle(input: string): string {
-  return `RSS | ${input}`;
+  return `Journal | ${input}`;
 }
-
-createTitle.appTitleElementId = 'app-title';
 
 export function uniqueArrayFilter<T>(
   item: T,
@@ -86,4 +84,9 @@ export function uniqueArrayFilter<T>(
   return array.indexOf(item) === index;
 }
 
-export const OPEN_PARAM_KEY = 'new-channel';
+export function browserApiSwitch<T>(input: T, fallback: T) {
+  if (typeof document === 'undefined') {
+    return fallback;
+  }
+  return input;
+}

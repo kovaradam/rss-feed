@@ -7,16 +7,13 @@ import {
 } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
-import { OPEN_PARAM_KEY } from '~/utils';
+import { browserApiSwitch } from '~/utils';
 import { SubmitButton } from './Button';
 
 export function CreateChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
 >(): JSX.Element {
-  const [params, navigateParams] = useSearchParams();
-
-  const showInput = params.get(OPEN_PARAM_KEY);
-
+  const [isOpen, setIsInputOpen] = useCreateChannelHandle();
   const errors = useActionData<ActionData>();
   const transition = useTransition();
   const isCreating =
@@ -24,7 +21,7 @@ export function CreateChannelForm<
 
   return (
     <div className="relative m-2 block">
-      {showInput ? (
+      {isOpen ? (
         <Form
           method="put"
           action={window.location.pathname}
@@ -32,7 +29,7 @@ export function CreateChannelForm<
         >
           <button
             type="button"
-            onClick={() => navigateParams([])}
+            onClick={() => setIsInputOpen(false)}
             className="absolute top-0 right-0 w-4"
           >
             <XIcon className="w-4" />
@@ -62,15 +59,33 @@ export function CreateChannelForm<
       ) : (
         <button
           className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-blue-500 hover:bg-blue-50 peer-focus:hidden"
-          onClick={() =>
-            navigateParams(new URLSearchParams([[OPEN_PARAM_KEY, 'true']]), {
-              replace: true,
-            })
-          }
+          onClick={() => setIsInputOpen(true)}
         >
           <PlusIcon className="w-4" /> New Channel
         </button>
       )}
     </div>
   );
+}
+
+const OPEN_CHANNEL_FORM_KEY = 'new-channel';
+
+export function useCreateChannelHandle() {
+  const [searchParams, navigateParams] = useSearchParams();
+
+  const isOpen = browserApiSwitch(
+    searchParams.get(OPEN_CHANNEL_FORM_KEY),
+    null
+  );
+
+  const setIsOpen = (newIsOpen: boolean) => {
+    if (newIsOpen) {
+      searchParams.set(OPEN_CHANNEL_FORM_KEY, String(true));
+    } else {
+      searchParams.delete(OPEN_CHANNEL_FORM_KEY);
+    }
+    navigateParams(searchParams, { replace: true });
+  };
+
+  return [isOpen, setIsOpen] as const;
 }

@@ -1,7 +1,6 @@
 import {
   Form,
   useLoaderData,
-  useSearchParams,
   useSubmit,
   useTransition,
 } from '@remix-run/react';
@@ -12,13 +11,13 @@ import { AppTitleEmitter } from '~/components/AppTitle';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
+import { useCreateChannelHandle } from '~/components/CreateChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
-import { OPEN_PARAM_KEY } from '~/utils';
 
 type LoaderData = {
   items: ItemWithChannel[];
@@ -106,7 +105,6 @@ export default function ChannelIndexPage() {
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
-  const [, navigateParams] = useSearchParams();
 
   const submit = useSubmit();
 
@@ -117,6 +115,7 @@ export default function ChannelIndexPage() {
     }
     submit(form);
   };
+  const [, setIsNewChannelFormOpen] = useCreateChannelHandle();
 
   return (
     <>
@@ -144,9 +143,9 @@ export default function ChannelIndexPage() {
                 <p>No articles found</p>
               ) : (
                 <>
-                  <p>You are not subscribed to any channels.</p>
+                  <p>You are not subscribed to any RSS feeds.</p>
                   <button
-                    onClick={() => navigateParams([[OPEN_PARAM_KEY, 'true']])}
+                    onClick={() => setIsNewChannelFormOpen(true)}
                     className="whitespace-nowrap text-rose-400 underline"
                   >
                     Add a new channel to get started!
