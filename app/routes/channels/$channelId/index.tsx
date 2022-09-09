@@ -30,11 +30,12 @@ import {
 import { requireUserId } from '~/session.server';
 import React from 'react';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
-import { Button } from '~/components/Button';
+import { Button, SubmitButton } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import type { MetaFunction } from '@remix-run/react/routeModules';
-import { createTitle, UseAppTitle } from '~/utils';
+import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
+import { AppTitleEmitter } from '~/components/AppTitle';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -105,7 +106,7 @@ export default function ChannelDetailsPage() {
 
   return (
     <div className="relative flex flex-col sm:flex-row">
-      <UseAppTitle>Channel detail</UseAppTitle>
+      <AppTitleEmitter>Channel detail</AppTitleEmitter>
       <section className="flex-1">
         <WithEditLink name={'title'}>
           <h3 className="text-4xl font-bold ">{data.channel.title}</h3>
@@ -176,17 +177,17 @@ export default function ChannelDetailsPage() {
       </section>
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">
-          <Button
+          <SubmitButton
             type="submit"
             title="Refresh this channel"
-            className="flex w-full items-center gap-2"
+            className="flex w-full items-center gap-2 "
             isLoading={isRefreshing}
           >
             <RefreshIcon
               className={`w-4 animate-${isRefreshing ? 'spin' : 'none'}`}
             />
             Refresh
-          </Button>
+          </SubmitButton>
         </Form>
         <Link
           title="Edit this channel"

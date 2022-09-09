@@ -11,6 +11,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { AppTitleEmitter } from '~/components/AppTitle';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
@@ -25,7 +26,7 @@ import { getItemsByCollection } from '~/models/channel.server';
 import type { Collection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, UseAppTitle } from '~/utils';
+import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -133,11 +134,11 @@ export default function ChannelIndexPage() {
 
   return (
     <>
-      <UseAppTitle>{collection.title}</UseAppTitle>
+      <AppTitleEmitter>{collection.title}</AppTitleEmitter>
       <div className="relative flex min-h-full flex-col sm:flex-row">
         <section className="sm:min-w-2/3 relative flex-1">
           {!isIdle && (
-            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
+            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black/10 pt-[50%] ">
               <SpinnerIcon className="h-16 w-16" />
             </div>
           )}
@@ -149,7 +150,9 @@ export default function ChannelIndexPage() {
             />
           </details>
           {items.length === 0 && isIdle && (
-            <p className="text-center">No articles found</p>
+            <p className="text-center text-lg font-bold">
+              No articles found in this collection
+            </p>
           )}
           <ul
             className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-${

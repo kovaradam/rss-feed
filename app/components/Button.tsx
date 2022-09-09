@@ -36,14 +36,14 @@ export const primaryButtonStyle =
 
 export function SubmitButton(props: Props): JSX.Element {
   const transition = useTransition();
-  const isLoading = props.isLoading ?? transition.state !== 'idle';
+  const isLoading = props.isLoading ?? transition.state === 'submitting';
 
   return (
     <button
       {...props}
       disabled={props.disabled || isLoading}
       type="submit"
-      className={`flex items-center justify-center rounded-md  bg-rose-400 px-4 py-3 font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 sm:px-8 ${props.className}`}
+      className={`flex items-center justify-center rounded  bg-rose-400 px-4 py-2 font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 ${props.className}`}
     >
       {!isLoading ? props.children : <SpinnerIcon className="w-4" />}
     </button>

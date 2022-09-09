@@ -13,6 +13,7 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { AppTitleClient, AppTitleEmitter } from '~/components/AppTitle';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
@@ -22,7 +23,7 @@ import { createChanel, getChannel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, UseAppTitle, useUser } from '~/utils';
+import { createTitle, useUser } from '~/utils';
 import { parseChannelXml } from '../models/parse-xml';
 
 const title = 'Your feed';
@@ -148,8 +149,8 @@ export default function ChannelsPage() {
 
   return (
     <div className="flex flex-col">
-      <UseAppTitle>{title}</UseAppTitle>
-      <header className="flex w-full justify-center whitespace-nowrap border-b">
+      <AppTitleEmitter>{title}</AppTitleEmitter>
+      <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
           <button
             onClick={() => setIsNavExpanded((prev) => !prev)}
@@ -157,11 +158,8 @@ export default function ChannelsPage() {
           >
             <MenuAlt2Icon className="w-6" />
           </button>
-          <h1
-            className="text-ellipsis font-bold sm:text-3xl"
-            id={createTitle.appTitleElementId}
-          >
-            {title}
+          <h1 className="text-ellipsis font-bold sm:text-3xl">
+            <AppTitleClient defaultTitle={title}></AppTitleClient>
           </h1>
           <Form
             action="/logout"

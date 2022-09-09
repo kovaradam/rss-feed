@@ -8,7 +8,7 @@ export function Href(props: Props): JSX.Element {
       href={props.href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`text-blue-500 underline ${props.className}`}
+      className={`underline ${props.className}`}
     >
       {props.children}
     </a>

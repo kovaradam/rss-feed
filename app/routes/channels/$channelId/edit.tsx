@@ -13,8 +13,9 @@ import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { AppTitleEmitter } from '~/components/AppTitle';
 import { AsideWrapper } from '~/components/AsideWrapper';
-import { Button } from '~/components/Button';
+import { SubmitButton } from '~/components/Button';
 import { useCategoryInput } from '~/components/CategoryInput';
 import { WithFormLabel } from '~/components/WithFormLabel';
 import type { Channel } from '~/models/channel.server';
@@ -23,7 +24,7 @@ import { updateChannel } from '~/models/channel.server';
 import { getChannel } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
-import { createTitle, UseAppTitle } from '~/utils';
+import { createTitle } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -135,7 +136,7 @@ export default function Channels() {
 
   return (
     <>
-      <UseAppTitle>{channel?.title}</UseAppTitle>
+      <AppTitleEmitter>{channel?.title}</AppTitleEmitter>
       <h3 className="mb-2 text-4xl font-bold">Edit channel</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
@@ -183,9 +184,9 @@ export default function Channels() {
         </div>
 
         <AsideWrapper className="sm:items-end">
-          <Button type="submit" disabled={isSaving} className="w-fit">
+          <SubmitButton type="submit" disabled={isSaving} className="w-fit">
             {isSaving ? 'Saving...' : 'Update'}
-          </Button>
+          </SubmitButton>
         </AsideWrapper>
       </Form>
       {renderCategoryForm()}

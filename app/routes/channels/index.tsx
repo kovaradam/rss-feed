@@ -1,12 +1,14 @@
 import {
   Form,
   useLoaderData,
+  useSearchParams,
   useSubmit,
   useTransition,
 } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
+import { AppTitleEmitter } from '~/components/AppTitle';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -16,7 +18,7 @@ import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
-import { UseAppTitle } from '~/utils';
+import { OPEN_PARAM_KEY } from '~/utils';
 
 type LoaderData = {
   items: ItemWithChannel[];
@@ -104,6 +106,7 @@ export default function ChannelIndexPage() {
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
+  const [, navigateParams] = useSearchParams();
 
   const submit = useSubmit();
 
@@ -117,11 +120,11 @@ export default function ChannelIndexPage() {
 
   return (
     <>
-      <UseAppTitle>Your feed</UseAppTitle>
+      <AppTitleEmitter>Your feed</AppTitleEmitter>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
           {!isIdle && (
-            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black pt-[50%] opacity-10">
+            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black/10 pt-[50%] ">
               <SpinnerIcon className="h-16 w-16" />
             </div>
           )}
@@ -136,7 +139,21 @@ export default function ChannelIndexPage() {
             />
           </details>
           {items.length === 0 && isIdle && (
-            <p className="text-center">No articles found</p>
+            <div className="flex flex-col gap-2 text-center text-lg font-bold">
+              {channels.length !== 0 ? (
+                <p>No articles found</p>
+              ) : (
+                <>
+                  <p>You are not subscribed to any channels.</p>
+                  <button
+                    onClick={() => navigateParams([[OPEN_PARAM_KEY, 'true']])}
+                    className="whitespace-nowrap text-rose-400 underline"
+                  >
+                    Add a new channel to get started!
+                  </button>
+                </>
+              )}
+            </div>
           )}
           <ul
             className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] ${

@@ -31,9 +31,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
   return (
     <article
-      className={` flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${
-        item.read ? 'opacity-50' : ''
-      }`}
+      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-lg`}
     >
       <span className="flex w-full justify-between">
         <Link to={channel.id} className="truncate pb-2 ">
@@ -45,13 +43,17 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               name: ChannelItemDetail.form.names.read,
               value: String(!item.read),
               Icon: ReadIcon,
-              title: 'Mark as read',
+              title: !item.read ? 'Mark as read' : 'Mark as not read yet',
+              className: 'hover:bg-green-200',
             },
             {
               name: ChannelItemDetail.form.names.bookmarked,
               value: String(!item.bookmarked),
               Icon: BookmarkIcon,
-              title: 'Bookmark article',
+              title: !item.bookmarked
+                ? 'Bookmark article'
+                : 'Remove from bookmarked articles',
+              className: 'hover:bg-yellow-100',
             },
           ].map((formItems) => (
             <Form method={props.formMethod} key={formItems.name}>
@@ -63,9 +65,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               />
               <button type="submit" title={formItems.title}>
                 <formItems.Icon
-                  className={`w-4 ${
+                  className={`w-6 rounded p-1 ${
                     formItems.value === 'false' ? 'text-black' : ''
-                  }`}
+                  } ${formItems.className}`}
                 />
               </button>
             </Form>
@@ -85,7 +87,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
         </a>
       )}
       <h4>
-        <Href href={item.link} className="text-lg text-black">
+        <Href href={item.link} className="text-lg text-gray-900 ">
           {item.title}
         </Href>
       </h4>

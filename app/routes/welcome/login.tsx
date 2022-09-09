@@ -170,7 +170,7 @@ export default function LoginPage() {
           ))}
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <SubmitButton>Log in</SubmitButton>
+          <SubmitButton className="sm:px-8">Log in</SubmitButton>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input

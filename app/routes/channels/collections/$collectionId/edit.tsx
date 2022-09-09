@@ -8,6 +8,7 @@ import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
+import { AppTitleEmitter } from '~/components/AppTitle';
 
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
@@ -18,7 +19,7 @@ import { deleteCollection } from '~/models/collection.server';
 import { updateCollection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, uniqueArrayFilter, UseAppTitle } from '~/utils';
+import { createTitle, uniqueArrayFilter } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -126,7 +127,7 @@ export default function EditCollectionPage() {
   const data = useLoaderData<LoaderData>();
   return (
     <>
-      <UseAppTitle>{data.defaultValue.title}</UseAppTitle>
+      <AppTitleEmitter>{data.defaultValue.title}</AppTitleEmitter>
       <CollectionForm<LoaderData, ActionData>
         title={'Edit collection'}
         deleteFormId="delete-form"

@@ -8,7 +8,8 @@ type Props = {
   delete?: MouseEventHandler<HTMLButtonElement>;
 };
 
-const className = 'flex gap-1 rounded bg-orange-400 px-1 text-white';
+const className =
+  'flex gap-1 rounded bg-rose-400 p-1 px-2 text-bold text-white';
 export function ChannelCategories(props: Props): JSX.Element {
   return (
     <>

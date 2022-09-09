@@ -59,7 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return json<ActionData>(
-      { errors: { email: 'A user already exists with this email' } },
+      { errors: { email: 'User with this email already exists.' } },
       { status: 400 }
     );
   }
@@ -165,7 +165,7 @@ export default function Welcome() {
           ))}
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <SubmitButton>Create Account</SubmitButton>
+          <SubmitButton className="sm:px-8">Create Account</SubmitButton>
         </Form>
       </div>
     </>

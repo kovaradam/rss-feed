@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import { styles } from '~/styles/shared';
 import { AsideWrapper } from './AsideWrapper';
-import { Button } from './Button';
+import { Button, SubmitButton } from './Button';
 import { useCategoryInput } from './CategoryInput';
 import { WithFormLabel } from './WithFormLabel';
 
@@ -105,7 +105,7 @@ export function CollectionForm<
                           : data.defaultValue[name] === radio.value
                       }
                       type="radio"
-                      className="accent-blue-400"
+                      className="accent-rose-400"
                       value={String(radio.value)}
                       name={name}
                     />
@@ -146,9 +146,9 @@ export function CollectionForm<
               {isDeleting ? 'Deleting...' : 'Delete'}
             </Button>
           )}
-          <Button type="submit" disabled={isSaving}>
+          <SubmitButton type="submit" disabled={isSaving}>
             {isSaving ? 'Submitting...' : 'Submit'}
-          </Button>
+          </SubmitButton>
         </AsideWrapper>
       </Form>
       {Categories.renderCategoryForm()}

@@ -2,6 +2,7 @@ import { BanIcon } from '@heroicons/react/outline';
 import { Form, useLocation } from '@remix-run/react';
 import React from 'react';
 import type { Channel, ChannelItemsFilter } from '~/models/channel.server';
+import { styles } from '~/styles/shared';
 import { Button } from './Button';
 
 type Props = {
@@ -29,6 +30,30 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
         className={`flex flex-col gap-6 ${props.className}`}
         onChangeCapture={props.submitFilters}
       >
+        <fieldset className="flex flex-col gap-4">
+          {filters.after !== undefined && (
+            <label className={labelClassName}>
+              Published after
+              <input
+                name="after"
+                type="date"
+                className={inputClassName}
+                defaultValue={filters.after ?? undefined}
+              />
+            </label>
+          )}
+          {filters.before !== undefined && (
+            <label className={labelClassName}>
+              Published before
+              <input
+                name="before"
+                type="date"
+                className={inputClassName}
+                defaultValue={filters.before ?? undefined}
+              />
+            </label>
+          )}
+        </fieldset>
         <fieldset className="flex flex-col gap-4">
           {props.filters.categories !== undefined && (
             <label className={labelClassName}>
@@ -75,30 +100,6 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </label>
           )}
         </fieldset>
-        <fieldset className="flex flex-col gap-4">
-          {filters.after !== undefined && (
-            <label className={labelClassName}>
-              Published after
-              <input
-                name="after"
-                type="date"
-                className={inputClassName}
-                defaultValue={filters.after ?? undefined}
-              />
-            </label>
-          )}
-          {filters.before !== undefined && (
-            <label className={labelClassName}>
-              Published before
-              <input
-                name="before"
-                type="date"
-                className={inputClassName}
-                defaultValue={filters.before ?? undefined}
-              />
-            </label>
-          )}
-        </fieldset>
 
         {hasFilters && (
           <fieldset className="flex flex-col gap-1 ">
@@ -118,7 +119,6 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
   );
 }
 
-const inputClassName =
-  'w-full rounded  bg-slate-100 p-2 px-2 py-1 text-slate-600';
+const inputClassName = styles.input;
 
 const labelClassName = 'flex flex-row justify-between gap-2 sm:flex-col';

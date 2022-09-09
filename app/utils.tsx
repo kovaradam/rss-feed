@@ -1,5 +1,5 @@
 import { useMatches } from '@remix-run/react';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import type { User } from '~/models/user.server';
 
@@ -37,7 +37,7 @@ export function useMatchesData(
   id: string
 ): Record<string, unknown> | undefined {
   const matchingRoutes = useMatches();
-  const route = useMemo(
+  const route = React.useMemo(
     () => matchingRoutes.find((route) => route.id === id),
     [matchingRoutes, id]
   );
@@ -86,12 +86,4 @@ export function uniqueArrayFilter<T>(
   return array.indexOf(item) === index;
 }
 
-export function UseAppTitle(props: { children: string }) {
-  React.useEffect(() => {
-    const titleElement = document.getElementById(createTitle.appTitleElementId);
-    if (titleElement) {
-      titleElement.innerHTML = props.children;
-    }
-  }, [props.children]);
-  return null;
-}
+export const OPEN_PARAM_KEY = 'new-channel';

@@ -2,25 +2,25 @@ import { PlusIcon, XIcon } from '@heroicons/react/outline';
 import {
   Form,
   useActionData,
-  useLocation,
+  useSearchParams,
   useTransition,
 } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
-import { Button } from './Button';
+import { OPEN_PARAM_KEY } from '~/utils';
+import { SubmitButton } from './Button';
 
 export function CreateChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
 >(): JSX.Element {
-  const [showInput, setShowInput] = React.useState(false);
+  const [params, navigateParams] = useSearchParams();
+
+  const showInput = params.get(OPEN_PARAM_KEY);
 
   const errors = useActionData<ActionData>();
   const transition = useTransition();
   const isCreating =
     transition.state !== 'idle' && transition.submission?.method === 'PUT';
-
-  const { pathname } = useLocation();
-  React.useEffect(() => setShowInput(false), [pathname]);
 
   return (
     <div className="relative m-2 block">
@@ -32,7 +32,7 @@ export function CreateChannelForm<
         >
           <button
             type="button"
-            onClick={() => setShowInput(false)}
+            onClick={() => navigateParams([])}
             className="absolute top-0 right-0 w-4"
           >
             <XIcon className="w-4" />
@@ -55,14 +55,18 @@ export function CreateChannelForm<
                 {error}
               </span>
             ))}
-          <Button type="submit" isLoading={isCreating}>
+          <SubmitButton type="submit" isLoading={isCreating}>
             {isCreating ? 'Creating...' : 'Add'}
-          </Button>
+          </SubmitButton>
         </Form>
       ) : (
         <button
           className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-blue-500 hover:bg-blue-50 peer-focus:hidden"
-          onClick={() => setShowInput(true)}
+          onClick={() =>
+            navigateParams(new URLSearchParams([[OPEN_PARAM_KEY, 'true']]), {
+              replace: true,
+            })
+          }
         >
           <PlusIcon className="w-4" /> New Channel
         </button>

@@ -6,12 +6,13 @@ import type {
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
+import { AppTitleEmitter } from '~/components/AppTitle';
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
 import { createCollection, getBooleanValue } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, uniqueArrayFilter, UseAppTitle } from '~/utils';
+import { createTitle, uniqueArrayFilter } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -96,7 +97,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export default function NewCollectionPage() {
   return (
     <>
-      <UseAppTitle>New collection</UseAppTitle>
+      <AppTitleEmitter>New collection</AppTitleEmitter>
       <CollectionForm title="Create a new collection" />
     </>
   );
