@@ -169,7 +169,7 @@ export default function ChannelsPage() {
             <p className="hidden sm:block">{user?.email}</p>
             <button
               type="submit"
-              className="rounded py-2 px-4 hover:bg-slate-100 active:bg-slate-200"
+              className="rounded py-2 px-4 hover:bg-gray-100 active:bg-gray-200"
               title="Log out"
             >
               <LogoutIcon className="w-6" />
@@ -202,7 +202,7 @@ export default function ChannelsPage() {
               ))}
               <li>
                 <Link
-                  className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-blue-50`}
+                  className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-amber-100 hover:text-yellow-900`}
                   to={`/channels/collections/new`}
                 >
                   <PlusIcon className="w-4" />
@@ -240,8 +240,8 @@ function StyledNavLink(props: NavLinkProps) {
     <NavLink
       {...props}
       className={({ isActive }) =>
-        `m-2 flex gap-2 rounded p-2 text-lg hover:bg-blue-50 sm:text-xl ${
-          isActive ? 'bg-blue-50 text-blue-500' : ''
+        `m-2 flex gap-2 rounded p-2 text-lg hover:bg-amber-100 sm:text-xl ${
+          isActive ? 'bg-amber-100 text-yellow-700' : ''
         } ${props.className}`
       }
     >

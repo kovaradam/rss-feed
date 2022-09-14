@@ -32,7 +32,7 @@ export const secondaryButtonStyle =
   'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300';
 
 export const primaryButtonStyle =
-  'bg-blue-200 text-blue-600 hover:bg-blue-300 active:bg-slate-100 disabled:bg-blue-100 disabled:text-blue-300';
+  'bg-black text-white hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-500';
 
 export function SubmitButton(props: Props): JSX.Element {
   const transition = useTransition();

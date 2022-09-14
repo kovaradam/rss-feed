@@ -24,7 +24,7 @@ export function CreateChannelForm<
       {isOpen ? (
         <Form
           method="put"
-          action={window.location.pathname}
+          action={window.location.pathname.concat(window.location.search)}
           className="flex flex-col gap-2"
         >
           <button
@@ -58,7 +58,7 @@ export function CreateChannelForm<
         </Form>
       ) : (
         <button
-          className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-blue-500 hover:bg-blue-50 peer-focus:hidden"
+          className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-black hover:bg-amber-100 peer-focus:hidden"
           onClick={() => setIsInputOpen(true)}
         >
           <PlusIcon className="w-4" /> New Channel

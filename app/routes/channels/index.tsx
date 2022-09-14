@@ -8,6 +8,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import { AppTitleEmitter } from '~/components/AppTitle';
+import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -122,11 +123,7 @@ export default function ChannelIndexPage() {
       <AppTitleEmitter>Your feed</AppTitleEmitter>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
-          {!isIdle && (
-            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black/10 pt-[50%] ">
-              <SpinnerIcon className="h-16 w-16" />
-            </div>
-          )}
+          <ChannelItemsOverlay />
           <details className="mb-4 w-full rounded-md border p-2 sm:hidden">
             <summary>Filter articles</summary>
             <ChannelItemFilterForm
@@ -146,7 +143,7 @@ export default function ChannelIndexPage() {
                   <p>You are not subscribed to any RSS feeds.</p>
                   <button
                     onClick={() => setIsNewChannelFormOpen(true)}
-                    className="whitespace-nowrap text-rose-400 underline"
+                    className="text-rose-400 underline"
                   >
                     Add a new channel to get started!
                   </button>

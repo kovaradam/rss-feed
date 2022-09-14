@@ -12,6 +12,7 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { AppTitleEmitter } from '~/components/AppTitle';
+import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
@@ -137,11 +138,7 @@ export default function ChannelIndexPage() {
       <AppTitleEmitter>{collection.title}</AppTitleEmitter>
       <div className="relative flex min-h-full flex-col sm:flex-row">
         <section className="sm:min-w-2/3 relative flex-1">
-          {!isIdle && (
-            <div className="absolute flex h-full min-h-screen w-full  justify-center rounded-lg bg-black/10 pt-[50%] ">
-              <SpinnerIcon className="h-16 w-16" />
-            </div>
-          )}
+          <ChannelItemsOverlay />
           <details className="mb-4 w-full rounded-md border p-2 sm:hidden">
             <summary>Filters</summary>
             <ChannelItemFilterForm
