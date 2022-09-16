@@ -241,7 +241,7 @@ function StyledNavLink(props: NavLinkProps) {
       {...props}
       className={({ isActive }) =>
         `m-2 flex gap-2 rounded p-2 text-lg hover:bg-amber-100 sm:text-xl ${
-          isActive ? 'bg-amber-100 text-yellow-700' : ''
+          isActive ? 'bg-amber-100 text-yellow-900' : ''
         } ${props.className}`
       }
     >
