@@ -50,7 +50,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   channelListItems.forEach(async (dbChannel) => {
     try {
-      console.log('update', dbChannel.feedUrl);
+      console.log('updating', dbChannel.feedUrl);
       refreshChannel({ channel: dbChannel, userId });
     } catch (error) {
       console.error('update failed', error);
@@ -108,7 +108,12 @@ export const action: ActionFunction = async ({ request }) => {
 
   try {
     [channel, items] = await parseChannelXml(channelXml);
+
     invariant(channel.link, 'Link is missing in the RSS definition');
+    invariant(
+      typeof channel.link === 'string',
+      'Link has been parsed in wrong format'
+    );
     invariant(channel.title, 'Title is missing in the RSS definition');
   } catch (error) {
     return json<ActionData>({ 'xml-parse': 'Could not parse RSS definition' });
