@@ -17,8 +17,8 @@ import { AsideWrapper } from '~/components/AsideWrapper';
 import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
+import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type {
   getItemsByFilters,
   ItemWithChannel,
@@ -43,6 +43,7 @@ type LoaderData = {
   >;
   loadMoreAction: string;
   collection: Collection;
+  requestedCount: number;
 };
 
 const itemCountName = 'item-count';
@@ -52,9 +53,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id was not provided');
   const searchParams = new URL(request.url).searchParams;
-
-  const itemCountParam = searchParams.get(itemCountName);
-  const itemCount = itemCountParam ? Number(itemCountParam) : 30;
 
   const [before, after] = ['before', 'after'].map((name) =>
     searchParams.get(name)
@@ -70,6 +68,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!collection) {
     throw new Response('Not Found', { status: 404 });
   }
+
+  const itemCountParam = searchParams.get(itemCountName);
+  const itemCount = itemCountParam ? Number(itemCountParam) : 30;
 
   const items = await getItemsByCollection(
     { collectionId, userId },
@@ -105,6 +106,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
     filters,
     collection,
+    requestedCount: itemCount,
   });
 };
 
@@ -117,7 +119,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, loadMoreAction, filters, collection } =
+  const { items, loadMoreAction, filters, collection, requestedCount } =
     useLoaderData<LoaderData>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
@@ -139,13 +141,12 @@ export default function ChannelIndexPage() {
       <div className="relative flex min-h-full flex-col sm:flex-row">
         <section className="sm:min-w-2/3 relative flex-1">
           <ChannelItemsOverlay />
-          <details className="mb-4 w-full rounded-md border p-2 sm:hidden">
-            <summary>Filters</summary>
+          <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
               filters={filters}
               submitFilters={submitFilters}
             />
-          </details>
+          </Details>
           {items.length === 0 && isIdle && (
             <p className="text-center text-lg font-bold">
               No articles found in this collection
@@ -162,7 +163,7 @@ export default function ChannelIndexPage() {
               </li>
             ))}
           </ul>
-          {items.length !== 0 && (
+          {items.length >= requestedCount && (
             <Form
               className="mt-6 flex w-full justify-center"
               action={loadMoreAction}
@@ -179,17 +180,22 @@ export default function ChannelIndexPage() {
           )}
         </section>
         <AsideWrapper>
+          <Details
+            title="Filter articles"
+            className={'mb-2 hidden w-60 sm:flex'}
+          >
+            <ChannelItemFilterForm
+              filters={filters}
+              submitFilters={submitFilters}
+              className={'hidden sm:flex'}
+            />
+          </Details>
           <Link
             to={`edit`}
             className="flex w-fit items-center gap-2 rounded bg-slate-100 py-2 px-4 text-slate-600 hover:bg-slate-200"
           >
             <PencilIcon className="w-4" /> Edit collection
           </Link>
-          <ChannelItemFilterForm
-            filters={filters}
-            submitFilters={submitFilters}
-            className={'hidden w-56 sm:flex'}
-          />
         </AsideWrapper>
       </div>
     </>

@@ -7,12 +7,10 @@ import {
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
 import type { FormProps } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
 import { Form } from '@remix-run/react';
 import { redirect } from '@remix-run/server-runtime';
-
-import React from 'react';
-import { Link } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 import type { ItemWithChannel } from '~/models/channel.server';
 import { updateChannelItem } from '~/models/channel.server';

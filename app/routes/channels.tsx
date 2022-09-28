@@ -48,16 +48,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     orderBy: { title: 'asc' },
   })) as (Channel & { items: Item[] })[];
 
-  channelListItems.forEach(async (dbChannel) => {
-    try {
-      console.log('updating', dbChannel.feedUrl);
-      refreshChannel({ channel: dbChannel, userId });
-    } catch (error) {
-      console.error('update failed', error);
-      return;
-    }
-  });
-
   const collectionListItems = await getCollections({
     where: { userId },
     orderBy: { title: 'asc' },
@@ -66,6 +56,16 @@ export const loader: LoaderFunction = async ({ request }) => {
   const activeCollectionId = new URL(request.url).searchParams.get(
     'collection'
   );
+
+  channelListItems.forEach(async (dbChannel) => {
+    refreshChannel({ channel: dbChannel, userId })
+      .then((updatedChannel) => {
+        console.log('updated', updatedChannel.feedUrl);
+      })
+      .catch((error) => {
+        console.error('update failed', error);
+      });
+  });
 
   return json<LoaderData>({
     channelListItems,
@@ -139,8 +139,7 @@ export const action: ActionFunction = async ({ request }) => {
       items: items ?? [],
     });
   } catch (error) {
-    console.log(error);
-
+    console.error(error);
     return json<ActionData>({ create: 'Could not save RSS feed' });
   }
   return redirect('/channels/'.concat(newChannel.id));

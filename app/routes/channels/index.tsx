@@ -13,8 +13,8 @@ import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { useCreateChannelHandle } from '~/components/CreateChannelForm';
+import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { SpinnerIcon } from '~/components/SpinnerIcon';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
@@ -124,8 +124,7 @@ export default function ChannelIndexPage() {
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
           <ChannelItemsOverlay />
-          <details className="mb-4 w-full rounded-md border p-2 sm:hidden">
-            <summary>Filter articles</summary>
+          <Details className="mb-4 w-full sm:hidden" title="Filter articles">
             <ChannelItemFilterForm
               filters={filters}
               submitFilters={submitFilters}
@@ -133,7 +132,7 @@ export default function ChannelIndexPage() {
               categories={categories}
               className="pt-4"
             />
-          </details>
+          </Details>
           {items.length === 0 && isIdle && (
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (
@@ -179,13 +178,14 @@ export default function ChannelIndexPage() {
           )}
         </section>
         <aside className="hidden pl-8 sm:block">
-          <ChannelItemFilterForm
-            filters={filters}
-            categories={categories}
-            submitFilters={submitFilters}
-            channels={channels}
-            className="w-56"
-          />
+          <Details title="Filter articles" className="w-60">
+            <ChannelItemFilterForm
+              filters={filters}
+              categories={categories}
+              submitFilters={submitFilters}
+              channels={channels}
+            />
+          </Details>
         </aside>
       </div>
     </>

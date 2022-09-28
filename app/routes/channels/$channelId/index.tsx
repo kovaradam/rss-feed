@@ -46,6 +46,7 @@ export const meta: MetaFunction = ({ data }) => {
 type LoaderData = {
   channel: Channel;
   items: Item[];
+  requestedCount: number;
 };
 
 const itemCountName = 'itemCount';
@@ -63,13 +64,19 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw new Response('Not Found', { status: 404 });
   }
 
+  const take = itemCount ? Number(itemCount) : 10;
+
   const items = await getChannelItems({
     where: { channelId: channel.id },
     orderBy: { pubDate: 'desc' },
-    take: itemCount ? Number(itemCount) : 10,
+    take: take,
   });
 
-  return json<LoaderData>({ channel: channel, items: items ?? [] });
+  return json<LoaderData>({
+    channel: channel,
+    items: items ?? [],
+    requestedCount: take,
+  });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -104,6 +111,11 @@ export default function ChannelDetailsPage() {
   const isLoadingMore =
     transition.state === 'submitting' && submission?.method === 'GET';
 
+  const category = channel.category.slice(
+    channel.category.startsWith('/') ? 1 : 0,
+    channel.category.endsWith('/') ? -1 : undefined
+  );
+
   return (
     <div className="relative flex flex-col sm:flex-row">
       <AppTitleEmitter>Channel detail</AppTitleEmitter>
@@ -126,8 +138,8 @@ export default function ChannelDetailsPage() {
           <WithEditLink name={'new-category'}>
             <span className="flex items-center gap-1 text-gray-400">
               <BookmarkIcon className="h-4" />
-              {channel.category ? (
-                <ChannelCategoryLinks category={channel.category} />
+              {category ? (
+                <ChannelCategoryLinks category={category} />
               ) : (
                 'Category is missing'
               )}
@@ -168,12 +180,18 @@ export default function ChannelDetailsPage() {
             )}
           </React.Fragment>
         ))}
-        <Form className="mt-6 flex w-full justify-center" method="get">
-          <input type="hidden" name={itemCountName} value={items.length + 10} />
-          <Button type="submit" isLoading={isLoadingMore}>
-            {isLoadingMore ? 'Loading...' : 'Show more'}
-          </Button>
-        </Form>
+        {data.items.length >= data.requestedCount && (
+          <Form className="mt-6 flex w-full justify-center" method="get">
+            <input
+              type="hidden"
+              name={itemCountName}
+              value={items.length + 10}
+            />
+            <Button type="submit" isLoading={isLoadingMore}>
+              {isLoadingMore ? 'Loading...' : 'Show more'}
+            </Button>
+          </Form>
+        )}
       </section>
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">
@@ -201,7 +219,8 @@ export default function ChannelDetailsPage() {
             type="submit"
             title="Delete this channel"
             secondary
-            className="flex h-full w-fit items-center gap-2 "
+            className="flex h-full w-fit items-center gap-2"
+            isLoading={transition.submission?.method === 'DELETE'}
           >
             <TrashIcon className="w-4" />{' '}
             <span className="hidden sm:block">Delete</span>

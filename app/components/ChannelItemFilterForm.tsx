@@ -54,7 +54,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </label>
           )}
         </fieldset>
-        <fieldset className="flex flex-col gap-4">
+        <fieldset className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
             <label className={labelClassName}>
               Filter channels
@@ -114,7 +114,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
           </fieldset>
         )}
       </Form>
-      <Form id="reset-filters" action={pathname} />
+      {hasFilters && <Form id="reset-filters" action={pathname} />}
     </>
   );
 }
