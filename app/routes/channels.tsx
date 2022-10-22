@@ -181,11 +181,26 @@ export default function ChannelsPage() {
           </Form>
         </div>
       </header>
-      <div className="flex justify-center">
+      <div
+        className="flex justify-center"
+        onTouchStart={(event) => {
+          event.currentTarget.dataset.touchStartX = String(
+            event.targetTouches[0]?.clientX
+          );
+        }}
+        onTouchEnd={(event) => {
+          const startX = event.currentTarget.dataset.touchStartX;
+          const diff = Number(startX) - event.changedTouches[0]?.clientX;
+          if (!startX || Math.abs(diff) < 50) {
+            return;
+          }
+          setIsNavExpanded(diff < 0);
+        }}
+      >
         <main
           className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
             isNavExpanded ? 'translate-x-3/4' : ''
-          } duration-200 ease-in`}
+          } duration-200 ease-in sm:translate-x-0`}
           style={{
             boxShadow:
               '-8rem 0 5rem 0rem rgb(248 250 252 / var(--tw-bg-opacity))',
