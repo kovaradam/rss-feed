@@ -26,6 +26,7 @@ type LoaderData = {
   categories: string[];
   filters: Parameters<typeof getItemsByFilters>[0]['filters'];
   loadMoreAction: string;
+  requestedCount: number;
 };
 
 const itemCountName = 'item-count';
@@ -82,6 +83,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const loadMoreUrl = new URL(request.url);
   loadMoreUrl.searchParams.set(itemCountName, String(itemCount + 10));
+  console.log(request.url);
 
   return json<LoaderData>({
     items: (items as LoaderData['items']) ?? [],
@@ -89,6 +91,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     categories,
     filters,
     loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
+    requestedCount: itemCount,
   });
 };
 
@@ -101,8 +104,14 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, channels, categories, filters, loadMoreAction } =
-    useLoaderData<LoaderData>();
+  const {
+    items,
+    channels,
+    categories,
+    filters,
+    loadMoreAction,
+    requestedCount,
+  } = useLoaderData<LoaderData>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
@@ -161,16 +170,11 @@ export default function ChannelIndexPage() {
               </li>
             ))}
           </ul>
-          {items.length !== 0 && (
+          {items.length >= requestedCount && (
             <Form
               className="mt-6 flex w-full justify-center"
               action={loadMoreAction}
             >
-              <input
-                type="hidden"
-                name={itemCountName}
-                value={items.length + 10}
-              />
               <Button type="submit" isLoading={isSubmitting}>
                 {isSubmitting ? 'Loading...' : 'Show more'}
               </Button>

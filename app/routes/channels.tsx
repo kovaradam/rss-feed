@@ -152,7 +152,7 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-hidden ">
       <AppTitleEmitter>{title}</AppTitleEmitter>
       <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
@@ -182,7 +182,11 @@ export default function ChannelsPage() {
         </div>
       </header>
       <div className="flex justify-center">
-        <main className="relative flex h-full min-h-screen w-screen bg-white xl:w-2/3">
+        <main
+          className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
+            isNavExpanded ? 'translate-x-80' : ''
+          } duration-200 ease-in`}
+        >
           <NavWrapper
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
