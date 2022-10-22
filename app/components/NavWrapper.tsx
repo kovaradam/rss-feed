@@ -21,7 +21,7 @@ export function NavWrapper(props: Props): JSX.Element {
   return (
     <>
       <nav
-        className={`absolute right-full h-full w-3/4 bg-white sm:relative sm:right-0 sm:block sm:w-64 sm:translate-x-0`}
+        className={`absolute right-full h-full w-3/4 bg-white sm:relative sm:right-0 sm:block sm:h-auto sm:w-64 sm:bg-slate-50 lg:w-80`}
       >
         {props.children}
       </nav>

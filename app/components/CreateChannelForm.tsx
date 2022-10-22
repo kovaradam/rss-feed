@@ -43,7 +43,7 @@ export function CreateChannelForm<
             required
             disabled={isCreating}
             placeholder="https://www.example-web.com/rss.xml"
-            className={`peer leading-loose ${styles.input} text-base`}
+            className={`peer leading-loose ${styles.input} text-base sm:bg-white`}
             aria-invalid="false"
           />
           {errors &&
@@ -58,10 +58,10 @@ export function CreateChannelForm<
         </Form>
       ) : (
         <button
-          className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-black hover:bg-amber-100 peer-focus:hidden"
+          className="flex w-full items-center gap-2 px-2 py-2 text-left text-xl text-yellow-900 hover:bg-slate-100 peer-focus:hidden"
           onClick={() => setIsInputOpen(true)}
         >
-          <PlusIcon className="w-4" /> New Channel
+          <PlusIcon className="w-4" /> Add RSS Channel
         </button>
       )}
     </div>

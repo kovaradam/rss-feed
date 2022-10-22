@@ -154,7 +154,7 @@ export default function ChannelsPage() {
   return (
     <div className="flex flex-col overflow-x-hidden ">
       <AppTitleEmitter>{title}</AppTitleEmitter>
-      <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative">
+      <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
           <button
             onClick={() => setIsNavExpanded((prev) => !prev)}
@@ -186,11 +186,18 @@ export default function ChannelsPage() {
           className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
             isNavExpanded ? 'translate-x-80' : ''
           } duration-200 ease-in`}
+          style={{
+            boxShadow:
+              '-8rem 0 5rem 0rem rgb(248 250 252 / var(--tw-bg-opacity))',
+          }}
         >
           <NavWrapper
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
           >
+            <h1 className="hidden text-ellipsis p-4 font-bold sm:block sm:text-3xl">
+              <AppTitleClient defaultTitle={title}></AppTitleClient>
+            </h1>
             <CreateChannelForm<ActionData> />
             <hr />
             <StyledNavLink to={`/channels`} end>
@@ -210,7 +217,7 @@ export default function ChannelsPage() {
               ))}
               <li>
                 <Link
-                  className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-amber-100 hover:text-yellow-900`}
+                  className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
                   to={`/channels/collections/new`}
                 >
                   <PlusIcon className="w-4" />
@@ -234,7 +241,30 @@ export default function ChannelsPage() {
               </ol>
             )}
           </NavWrapper>
-          <div className="flex-1 p-6 sm:border-l">
+          <div className="flex-1 p-6  sm:pt-0">
+            <header className=" hidden w-full justify-end whitespace-nowrap p-4 sm:relative sm:flex ">
+              <button
+                onClick={() => setIsNavExpanded((prev) => !prev)}
+                className="block rounded py-2  px-4 hover:bg-slate-100 active:bg-slate-200 sm:hidden"
+              >
+                <MenuAlt2Icon className="w-6" />
+              </button>
+
+              <Form
+                action="/logout"
+                method="post"
+                className="flex items-center gap-2"
+              >
+                <p className="hidden sm:block">{user?.email}</p>
+                <button
+                  type="submit"
+                  className="rounded py-2 px-4 hover:bg-gray-100 active:bg-gray-200"
+                  title="Log out"
+                >
+                  <LogoutIcon className="w-6" />
+                </button>
+              </Form>
+            </header>
             <Outlet />
           </div>
         </main>
@@ -248,8 +278,8 @@ function StyledNavLink(props: NavLinkProps) {
     <NavLink
       {...props}
       className={({ isActive }) =>
-        `m-2 flex gap-2 rounded p-2 text-lg hover:bg-amber-100 sm:text-xl ${
-          isActive ? 'bg-amber-100 text-yellow-900' : ''
+        `m-2 flex gap-2 rounded p-2 text-lg hover:bg-slate-100 sm:text-xl ${
+          isActive ? 'bg-amber-100 text-yellow-900 sm:bg-slate-100' : ''
         } ${props.className}`
       }
     >
