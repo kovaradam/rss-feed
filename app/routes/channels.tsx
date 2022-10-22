@@ -184,7 +184,7 @@ export default function ChannelsPage() {
       <div className="flex justify-center">
         <main
           className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
-            isNavExpanded ? 'translate-x-80' : ''
+            isNavExpanded ? 'translate-x-3/4' : ''
           } duration-200 ease-in`}
           style={{
             boxShadow:
