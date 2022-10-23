@@ -36,6 +36,7 @@ import type { MetaFunction } from '@remix-run/react/routeModules';
 import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { AppTitleEmitter } from '~/components/AppTitle';
+import { ShowMoreLink } from '~/components/ShowMoreLink';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -46,14 +47,15 @@ export const meta: MetaFunction = ({ data }) => {
 type LoaderData = {
   channel: Channel;
   items: Item[];
-  requestedCount: number;
+  moreItemsAction: string | null;
 };
 
 const itemCountName = 'itemCount';
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
-  const itemCount = new URL(request.url).searchParams.get(itemCountName);
+  const requestUrl = new URL(request.url);
+  const itemCount = requestUrl.searchParams.get(itemCountName);
 
   invariant(params.channelId, 'channelId not found');
 
@@ -72,10 +74,16 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     take: take,
   });
 
+  const loadMoreUrl = new URL(request.url);
+  loadMoreUrl.searchParams.set(itemCountName, String(take + 10));
+
   return json<LoaderData>({
     channel: channel,
     items: items ?? [],
-    requestedCount: take,
+    moreItemsAction:
+      items.length >= take
+        ? loadMoreUrl.pathname.concat(loadMoreUrl.search)
+        : null,
   });
 };
 
@@ -101,15 +109,14 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function ChannelDetailsPage() {
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<LoaderData>();
   const transition = useTransition();
   const submission = transition.submission;
   const isRefreshing =
     transition.state !== 'idle' && submission?.method === 'PATCH';
   const { channel, items } = data;
 
-  const isLoadingMore =
-    transition.state === 'submitting' && submission?.method === 'GET';
+  const isLoading = transition.state === 'loading';
 
   const category = channel.category.slice(
     channel.category.startsWith('/') ? 1 : 0,
@@ -180,17 +187,8 @@ export default function ChannelDetailsPage() {
             )}
           </React.Fragment>
         ))}
-        {data.items.length >= data.requestedCount && (
-          <Form className="mt-6 flex w-full justify-center" method="get">
-            <input
-              type="hidden"
-              name={itemCountName}
-              value={items.length + 10}
-            />
-            <Button type="submit" isLoading={isLoadingMore}>
-              {isLoadingMore ? 'Loading...' : 'Show more'}
-            </Button>
-          </Form>
+        {data.moreItemsAction && (
+          <ShowMoreLink to={data.moreItemsAction} isLoading={isLoading} />
         )}
       </section>
       <AsideWrapper>

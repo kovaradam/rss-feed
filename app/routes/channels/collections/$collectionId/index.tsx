@@ -1,6 +1,5 @@
 import { PencilIcon } from '@heroicons/react/outline';
 import {
-  Form,
   Link,
   useLoaderData,
   useSubmit,
@@ -14,11 +13,11 @@ import invariant from 'tiny-invariant';
 import { AppTitleEmitter } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
-import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
+import { ShowMoreLink } from '~/components/ShowMoreLink';
 import type {
   getItemsByFilters,
   ItemWithChannel,
@@ -41,9 +40,8 @@ type LoaderData = {
     Parameters<typeof getItemsByFilters>[0]['filters'],
     'after' | 'before'
   >;
-  loadMoreAction: string;
+  loadMoreAction: string | null;
   collection: Collection;
-  requestedCount: number;
 };
 
 const itemCountName = 'item-count';
@@ -103,10 +101,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   return json<LoaderData>({
     items: items as LoaderData['items'],
-    loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
+    loadMoreAction:
+      items.length >= itemCount
+        ? loadMoreUrl.pathname.concat(loadMoreUrl.search)
+        : null,
     filters,
     collection,
-    requestedCount: itemCount,
   });
 };
 
@@ -119,7 +119,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, loadMoreAction, filters, collection, requestedCount } =
+  const { items, loadMoreAction, filters, collection } =
     useLoaderData<LoaderData>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
@@ -163,20 +163,8 @@ export default function ChannelIndexPage() {
               </li>
             ))}
           </ul>
-          {items.length >= requestedCount && (
-            <Form
-              className="mt-6 flex w-full justify-center"
-              action={loadMoreAction}
-            >
-              <input
-                type="hidden"
-                name={itemCountName}
-                value={items.length + 10}
-              />
-              <Button type="submit" isLoading={isSubmitting}>
-                {isSubmitting ? 'Loading...' : 'Show more'}
-              </Button>
-            </Form>
+          {loadMoreAction && (
+            <ShowMoreLink to={loadMoreAction} isLoading={isSubmitting} />
           )}
         </section>
         <AsideWrapper>

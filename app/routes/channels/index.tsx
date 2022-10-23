@@ -1,20 +1,15 @@
-import {
-  Form,
-  useLoaderData,
-  useSubmit,
-  useTransition,
-} from '@remix-run/react';
+import { useLoaderData, useSubmit, useTransition } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import { AppTitleEmitter } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
-import { Button } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { useCreateChannelHandle } from '~/components/CreateChannelForm';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
+import { ShowMoreLink } from '~/components/ShowMoreLink';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
@@ -25,8 +20,7 @@ type LoaderData = {
   channels: Channel[];
   categories: string[];
   filters: Parameters<typeof getItemsByFilters>[0]['filters'];
-  loadMoreAction: string;
-  requestedCount: number;
+  loadMoreAction: string | null;
 };
 
 const itemCountName = 'item-count';
@@ -36,7 +30,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const searchParams = new URL(request.url).searchParams;
 
   const itemCountParam = searchParams.get(itemCountName);
-  const itemCount = itemCountParam ? Number(itemCountParam) : 30;
+  const itemCountRequest = itemCountParam ? Number(itemCountParam) : 30;
 
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
@@ -60,7 +54,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     },
     {
       orderBy: { pubDate: 'desc' },
-      take: itemCount,
+      take: itemCountRequest,
       include: {
         channel: {
           select: {
@@ -82,7 +76,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     .filter(Boolean);
 
   const loadMoreUrl = new URL(request.url);
-  loadMoreUrl.searchParams.set(itemCountName, String(itemCount + 10));
+  loadMoreUrl.searchParams.set(itemCountName, String(itemCountRequest + 10));
   console.log(request.url);
 
   return json<LoaderData>({
@@ -90,8 +84,10 @@ export const loader: LoaderFunction = async ({ request }) => {
     channels,
     categories,
     filters,
-    loadMoreAction: loadMoreUrl.pathname.concat(loadMoreUrl.search),
-    requestedCount: itemCount,
+    loadMoreAction:
+      items.length >= itemCountRequest
+        ? loadMoreUrl.pathname.concat(loadMoreUrl.search)
+        : null,
   });
 };
 
@@ -104,16 +100,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const {
-    items,
-    channels,
-    categories,
-    filters,
-    loadMoreAction,
-    requestedCount,
-  } = useLoaderData<LoaderData>();
+  const { items, channels, categories, filters, loadMoreAction } =
+    useLoaderData<LoaderData>();
   const transition = useTransition();
-  const isSubmitting = transition.state === 'submitting';
+  const isLoading = transition.state === 'loading';
   const isIdle = transition.state === 'idle';
 
   const submit = useSubmit();
@@ -170,15 +160,8 @@ export default function ChannelIndexPage() {
               </li>
             ))}
           </ul>
-          {items.length >= requestedCount && (
-            <Form
-              className="mt-6 flex w-full justify-center"
-              action={loadMoreAction}
-            >
-              <Button type="submit" isLoading={isSubmitting}>
-                {isSubmitting ? 'Loading...' : 'Show more'}
-              </Button>
-            </Form>
+          {loadMoreAction && (
+            <ShowMoreLink to={loadMoreAction} isLoading={isLoading} />
           )}
         </section>
         <aside className="hidden pl-8 sm:block">

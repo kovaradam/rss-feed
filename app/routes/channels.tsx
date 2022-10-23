@@ -194,6 +194,7 @@ export default function ChannelsPage() {
           if (!startX || Math.abs(diff) < 50) {
             return;
           }
+          event.preventDefault();
           setIsNavExpanded(diff < 0);
         }}
       >
