@@ -165,7 +165,9 @@ export default function Welcome() {
           ))}
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <SubmitButton className="sm:px-8">Create Account</SubmitButton>
+          <SubmitButton className="w-full sm:w-48 sm:px-8">
+            Create Account
+          </SubmitButton>
         </Form>
       </div>
     </>
