@@ -150,9 +150,7 @@ export default function ChannelIndexPage() {
             </div>
           )}
           <ul
-            className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] ${
-              items.length <= 1 ? '2xl:grid-cols-1' : '2xl:grid-cols-2'
-            }`}
+            className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-2`}
           >
             {items.map((item) => (
               <li key={item.link}>
