@@ -152,7 +152,7 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
 
   return (
-    <div className="flex flex-col overflow-x-hidden ">
+    <div className="flex flex-col overflow-x-hidden sm:overflow-x-visible">
       <AppTitleEmitter>{title}</AppTitleEmitter>
       <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
