@@ -128,7 +128,7 @@ export const action: ActionFunction = async ({ request }) => {
       return json<ActionData>({ create: 'RSS feed already exists' });
     }
   } catch (_) {
-    return json<ActionData>({ create: 'Could not save RSS feed' });
+    return json<ActionData>({ create: 'Cannot save RSS feed at the moment' });
   }
 
   let newChannel;

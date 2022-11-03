@@ -120,7 +120,9 @@ class ItemDataTransformer {
   }
   get pubDate() {
     const pubDate =
-      this.itemData?.pubDate?.[0] ?? this.itemData?.published?.[0];
+      this.itemData?.pubDate?.[0] ??
+      this.itemData?.published?.[0] ??
+      this.itemData?.updated?.[0];
     try {
       return new Date(pubDate);
     } catch (_) {
