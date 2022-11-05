@@ -42,12 +42,12 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function App() {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full overflow-x-hidden">
+      <body className="h-full w-screen overflow-x-hidden ">
         <Outlet />
         <ScrollRestoration />
         <Scripts />

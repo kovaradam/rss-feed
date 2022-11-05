@@ -179,7 +179,6 @@ export default function ChannelsPage() {
         }}
         onTouchEnd={(event) => {
           const startX = event.currentTarget.dataset.touchStartX;
-          console.log(event.currentTarget.clientWidth);
 
           const diff = Number(startX) - event.changedTouches[0]?.clientX;
           if (!startX || Math.abs(diff) < event.currentTarget.clientWidth / 3) {
@@ -248,7 +247,7 @@ export default function ChannelsPage() {
               </ol>
             )}
           </NavWrapper>
-          <div className="flex-1 p-6  sm:pt-0">
+          <div className=" flex-1 p-6 sm:pt-0">
             <header className=" hidden w-full justify-end whitespace-nowrap p-4 sm:relative sm:flex ">
               <button
                 onClick={() => setIsNavExpanded((prev) => !prev)}
