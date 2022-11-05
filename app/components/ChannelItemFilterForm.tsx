@@ -100,7 +100,6 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </label>
           )}
         </fieldset>
-
         {hasFilters && (
           <fieldset className="flex flex-col gap-1 ">
             <Button

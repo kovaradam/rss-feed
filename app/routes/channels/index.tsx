@@ -77,7 +77,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const loadMoreUrl = new URL(request.url);
   loadMoreUrl.searchParams.set(itemCountName, String(itemCountRequest + 10));
-  console.log(request.url);
 
   return json<LoaderData>({
     items: (items as LoaderData['items']) ?? [],
@@ -102,6 +101,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChannelIndexPage() {
   const { items, channels, categories, filters, loadMoreAction } =
     useLoaderData<LoaderData>();
+
   const transition = useTransition();
   const isLoading = transition.state === 'loading';
   const isIdle = transition.state === 'idle';
@@ -153,7 +153,7 @@ export default function ChannelIndexPage() {
             className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-2`}
           >
             {items.map((item) => (
-              <li key={item.link}>
+              <li key={item.link + item.channelId}>
                 <ChannelItemDetail item={item} formMethod="post" />
               </li>
             ))}
