@@ -13,7 +13,10 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
 import { AppTitleClient, AppTitleEmitter } from '~/components/AppTitle';
-import { CreateChannelForm } from '~/components/CreateChannelForm';
+import {
+  CreateChannelForm,
+  useCreateChannelHandle,
+} from '~/components/CreateChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
 import type {
@@ -137,8 +140,12 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChannelsPage() {
   const data = useLoaderData<LoaderData>();
   const user = useUser();
+  const [isNewChannelFormOpen] = useCreateChannelHandle();
 
-  const [isNavExpanded, setIsNavExpanded] = React.useState(false);
+  const [_isNavExpanded, setIsNavExpanded] = React.useState(
+    Boolean(isNewChannelFormOpen)
+  );
+  const isNavExpanded = _isNavExpanded || Boolean(isNewChannelFormOpen);
 
   return (
     <div className="flex flex-col  sm:overflow-x-visible">
