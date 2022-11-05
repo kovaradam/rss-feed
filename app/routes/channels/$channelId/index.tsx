@@ -136,8 +136,6 @@ export default function ChannelDetailsPage() {
     transition.state !== 'idle' && submission?.method === 'PATCH';
   const { channel, items } = data;
 
-  const isLoading = transition.state === 'loading';
-
   const category = channel.category.slice(
     channel.category.startsWith('/') ? 1 : 0,
     channel.category.endsWith('/') ? -1 : undefined
@@ -247,9 +245,7 @@ export default function ChannelDetailsPage() {
             )}
           </React.Fragment>
         ))}
-        {data.moreItemsAction && (
-          <ShowMoreLink to={data.moreItemsAction} isLoading={isLoading} />
-        )}
+        {data.moreItemsAction && <ShowMoreLink to={data.moreItemsAction} />}
       </section>
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">
