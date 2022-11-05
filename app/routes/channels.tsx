@@ -141,7 +141,7 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
 
   return (
-    <div className="flex flex-col overflow-x-clip sm:overflow-x-visible">
+    <div className="flex flex-col  sm:overflow-x-visible">
       <AppTitleEmitter>{title}</AppTitleEmitter>
       <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
@@ -182,7 +182,7 @@ export default function ChannelsPage() {
           console.log(event.currentTarget.clientWidth);
 
           const diff = Number(startX) - event.changedTouches[0]?.clientX;
-          if (!startX || Math.abs(diff) < event.currentTarget.clientWidth / 2) {
+          if (!startX || Math.abs(diff) < event.currentTarget.clientWidth / 3) {
             return;
           }
           event.preventDefault();
