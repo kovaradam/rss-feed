@@ -13,43 +13,17 @@ export async function parseChannelXml(
 
   const rssData = getRssDataFromParsedXml(result);
   const channelData = getChannelDataFromRssData(rssData);
+  const rssVersion = rssData?.$?.version?.[0];
 
-  const channelDataTransformer = new ChannelDataTransformer(channelData);
+  const channelDataTransformer = new ChannelDataTransformer({
+    ...channelData,
+    rssVersion,
+  });
 
-  const channel: ChannelResult = {
-    link: channelDataTransformer.link,
-    title: channelData?.title?.[0] || 'Title is missing',
-    description: channelData?.description?.[0] || 'Description is missing',
-    category: channelData?.category?.[0] || '',
-    imageUrl: channelData?.imageUrl?.[0] || '',
-    language: channelData?.language?.[0] || '',
-    copyright: channelData?.copyright?.[0] ?? '',
-    lastBuildDate: channelDataTransformer.lastBuildDate,
-    rssVersion: rssData?.$?.version?.[0] ?? '',
-  };
-  const items =
-    channelDataTransformer.items?.map(
-      (item: any): ItemParseResult[number] | undefined => {
-        const transformer = new ItemDataTransformer(item);
-
-        return {
-          link: transformer.link,
-          title: transformer.title,
-          description: transformer.description ?? '',
-          author: transformer.author,
-          comments: item?.comments?.[0] ?? '',
-          pubDate: transformer.pubDate as Date,
-          imageUrl:
-            (item?.enclosure as { $: Enclosure }[] | undefined)
-              ?.map((payload) => payload?.['$'])
-              .filter(Boolean)
-              .find((enclosure) => enclosure.type?.includes('image'))?.url ??
-            '',
-          bookmarked: false,
-          read: false,
-        };
-      }
-    ) ?? [];
+  const items = channelDataTransformer.itemTransforms.map((transform) =>
+    transform.getResult()
+  );
+  const channel = channelDataTransformer.getResult();
 
   return [channel, items];
 }
@@ -63,8 +37,14 @@ function getChannelDataFromRssData(rssData: Record<string, any>) {
 }
 
 class ChannelDataTransformer {
-  constructor(private channelData: Record<string, any>) {
+  constructor(
+    private channelData: Record<string, any>,
+    public itemTransforms: ItemDataTransformer[] = []
+  ) {
     this.channelData = channelData;
+    this.itemTransforms = this.items?.map(
+      (item) => new ItemDataTransformer(item)
+    );
   }
 
   get link() {
@@ -78,18 +58,45 @@ class ChannelDataTransformer {
     const lastBuildDate =
       this.channelData?.lastBuildDate?.[0] ?? this.channelData?.updated?.[0];
     try {
-      return new Date(lastBuildDate);
+      return lastBuildDate ? new Date(lastBuildDate) : null;
     } catch (_) {
       return null;
     }
   }
   get items() {
-    const items = this.channelData?.item ?? this.channelData.entry;
-    return items;
+    const items = this.channelData?.item ?? this.channelData.entry ?? [];
+    return items as Array<Record<string, any>>;
+  }
+
+  get parseErrors(): Partial<Pick<Channel, 'itemPubDateParseError'>> {
+    return {
+      itemPubDateParseError: this.itemTransforms.some(
+        (transform) => transform.errors.pubDate
+      ),
+    };
+  }
+
+  getResult(): ChannelResult {
+    return {
+      link: this.link,
+      title: this.channelData?.title?.[0] || 'Title is missing',
+      description:
+        this.channelData?.description?.[0] || 'Description is missing',
+      category: this.channelData?.category?.[0] || '',
+      imageUrl: this.channelData?.imageUrl?.[0] || '',
+      language: this.channelData?.language?.[0] || '',
+      copyright: this.channelData?.copyright?.[0] ?? '',
+      lastBuildDate: this.lastBuildDate,
+      rssVersion: this.channelData.rssVersion ?? '',
+      ...this.parseErrors,
+    };
   }
 }
 
 class ItemDataTransformer {
+  errors: Partial<
+    Record<keyof ReturnType<ItemDataTransformer['getResult']>, boolean>
+  > = {};
   constructor(private itemData: Record<string, any>) {
     this.itemData = itemData;
   }
@@ -123,10 +130,31 @@ class ItemDataTransformer {
       this.itemData?.pubDate?.[0] ??
       this.itemData?.published?.[0] ??
       this.itemData?.updated?.[0];
-    try {
-      return new Date(pubDate);
-    } catch (_) {
-      return null;
+    const pubDateObject = new Date(pubDate);
+
+    if (isNaN(pubDateObject.getTime())) {
+      this.errors.pubDate = true;
+      return new Date();
     }
+
+    return pubDateObject;
+  }
+
+  getResult(): ItemParseResult[number] {
+    return {
+      link: this.link,
+      title: this.title,
+      description: this.description ?? '',
+      author: this.author,
+      comments: this.itemData?.comments?.[0] ?? '',
+      pubDate: this.pubDate,
+      imageUrl:
+        (this.itemData?.enclosure as { $: Enclosure }[] | undefined)
+          ?.map((payload) => payload?.['$'])
+          .filter(Boolean)
+          .find((enclosure) => enclosure.type?.includes('image'))?.url ?? '',
+      bookmarked: false,
+      read: false,
+    };
   }
 }

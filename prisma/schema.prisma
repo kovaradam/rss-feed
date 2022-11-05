@@ -40,6 +40,8 @@ model Channel {
   copyright     String
   language      String
 
+  itemPubDateParseError Boolean?
+
   items    Item[]
   imageUrl String
 

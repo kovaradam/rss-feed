@@ -12,19 +12,21 @@ import type { NavLinkProps } from '@remix-run/react';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
-import invariant from 'tiny-invariant';
 import { AppTitleClient, AppTitleEmitter } from '~/components/AppTitle';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
-import type { Channel, Item } from '~/models/channel.server';
+import type {
+  Channel,
+  CreateFromXmlErrorType,
+  Item,
+} from '~/models/channel.server';
+import { createChannelFromXml } from '~/models/channel.server';
 import { refreshChannel } from '~/models/channel.server';
-import { createChanel, getChannel } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, useUser } from '~/utils';
-import { parseChannelXml } from '../models/parse-xml';
 
 const title = 'Your feed';
 
@@ -76,7 +78,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 const inputNames = ['channel-url'] as const;
 const [channelUrlName] = inputNames;
-const errors = [...inputNames, 'xml-parse', 'create', 'fetch'];
+const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 type ActionData =
   | Partial<Record<typeof errors[number], string | null>>
@@ -98,50 +100,37 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     channelRequest = await fetch(channelUrl);
   } catch (error) {
-    return json<ActionData>({ fetch: 'Could not load RSS feed' });
+    return json<ActionData>({
+      fetch: `Could not load RSS feed from "${channelUrl.origin}"`,
+    });
   }
 
   const channelXml = await channelRequest.text();
-
-  let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
-  let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
-
-  try {
-    [channel, items] = await parseChannelXml(channelXml);
-
-    invariant(channel.link, 'Link is missing in the RSS definition');
-    invariant(
-      typeof channel.link === 'string',
-      'Link has been parsed in wrong format'
-    );
-    invariant(channel.title, 'Title is missing in the RSS definition');
-  } catch (error) {
-    return json<ActionData>({ 'xml-parse': 'Could not parse RSS definition' });
-  }
-
-  try {
-    const dbChannel = await getChannel({
-      where: { link: channel.link, userId },
-    });
-
-    if (dbChannel) {
-      return json<ActionData>({ create: 'RSS feed already exists' });
-    }
-  } catch (_) {
-    return json<ActionData>({ create: 'Cannot save RSS feed at the moment' });
-  }
-
   let newChannel;
   try {
-    newChannel = await createChanel({
-      channel: { ...channel, feedUrl: channelHref } as Channel,
+    newChannel = await createChannelFromXml(channelXml, {
       userId,
-      items: items ?? [],
+      channelHref: channelUrl.href,
     });
   } catch (error) {
-    console.error(error);
-    return json<ActionData>({ create: 'Could not save RSS feed' });
+    let response: ActionData;
+
+    switch ((error as Error).message as CreateFromXmlErrorType) {
+      case 'cannotAccessDb':
+        response = { create: 'Cannot save RSS feed at the moment' };
+        break;
+      case 'channelExists':
+        response = { create: 'RSS feed already exists' };
+        break;
+      case 'incorrectDefinition':
+        response = { 'xml-parse': 'Could not parse RSS definition' };
+        break;
+      default:
+        response = { create: 'Could not save RSS feed' };
+    }
+    return json<ActionData>(response);
   }
+
   return redirect('/channels/'.concat(newChannel.id));
 };
 
@@ -152,7 +141,7 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
 
   return (
-    <div className="flex flex-col overflow-x-hidden sm:overflow-x-visible">
+    <div className="flex flex-col overflow-x-clip sm:overflow-x-visible">
       <AppTitleEmitter>{title}</AppTitleEmitter>
       <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
         <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
@@ -182,7 +171,7 @@ export default function ChannelsPage() {
         </div>
       </header>
       <div
-        className="flex justify-center"
+        className="flex justify-center "
         onTouchStart={(event) => {
           event.currentTarget.dataset.touchStartX = String(
             event.targetTouches[0]?.clientX
@@ -190,8 +179,10 @@ export default function ChannelsPage() {
         }}
         onTouchEnd={(event) => {
           const startX = event.currentTarget.dataset.touchStartX;
+          console.log(event.currentTarget.clientWidth);
+
           const diff = Number(startX) - event.changedTouches[0]?.clientX;
-          if (!startX || Math.abs(diff) < 50) {
+          if (!startX || Math.abs(diff) < event.currentTarget.clientWidth / 2) {
             return;
           }
           event.preventDefault();
@@ -211,7 +202,7 @@ export default function ChannelsPage() {
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
           >
-            <h1 className="hidden text-ellipsis p-4 font-bold sm:block sm:text-3xl">
+            <h1 className="sticky top-0 z-10 hidden text-ellipsis bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
               <AppTitleClient defaultTitle={title}></AppTitleClient>
             </h1>
             <CreateChannelForm<ActionData> />
@@ -295,7 +286,7 @@ function StyledNavLink(props: NavLinkProps) {
       {...props}
       className={({ isActive }) =>
         `m-2 flex gap-2 rounded p-2 text-lg hover:bg-slate-100 sm:text-xl ${
-          isActive ? 'bg-amber-100 text-yellow-900 sm:bg-slate-100' : ''
+          isActive ? ' bg-slate-100 sm:text-yellow-900' : ''
         } ${props.className}`
       }
     >

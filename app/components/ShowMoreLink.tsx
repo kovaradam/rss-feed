@@ -16,7 +16,7 @@ export function ShowMoreLink(props: Props): JSX.Element {
       action={props.to}
       className={`mt-6 flex w-full justify-center ${props.className}`}
     >
-      <button type={'submit'}>
+      <button type={'submit'} className="hover:underline">
         {props.isLoading ? 'Loading...' : 'Show more'}
       </button>
     </Form>

@@ -12,6 +12,7 @@ import invariant from 'tiny-invariant';
 import { Href } from '~/components/Href';
 import { TimeFromNow } from '~/components/TimeFromNow';
 import type { ChannelWithItems } from '~/models/channel.server';
+import { updateChannel } from '~/models/channel.server';
 import {
   deleteChannel,
   getChannel,
@@ -25,6 +26,7 @@ import {
   TrashIcon,
   PencilIcon,
   RefreshIcon,
+  ExclamationCircleIcon,
 } from '@heroicons/react/outline';
 
 import { requireUserId } from '~/session.server';
@@ -97,6 +99,23 @@ export const action: ActionFunction = async ({ request, params }) => {
     return redirect('/channels');
   }
 
+  if (request.method === 'POST') {
+    const formData = await request.formData();
+
+    const updatedParseErrors = {
+      itemPubDateParseError: formData.get('itemPubDateParseError')
+        ? false
+        : undefined,
+    };
+
+    await updateChannel({
+      where: { id: params.channelId },
+      data: updatedParseErrors,
+    });
+
+    return json(updatedParseErrors);
+  }
+
   const channel = await getChannel({
     where: { userId, id: params.channelId },
     select: { feedUrl: true, items: true },
@@ -111,6 +130,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function ChannelDetailsPage() {
   const data = useLoaderData<LoaderData>();
   const transition = useTransition();
+
   const submission = transition.submission;
   const isRefreshing =
     transition.state !== 'idle' && submission?.method === 'PATCH';
@@ -123,8 +143,11 @@ export default function ChannelDetailsPage() {
     channel.category.endsWith('/') ? -1 : undefined
   );
 
+  const isParseErrors = data.channel.itemPubDateParseError;
+  const parseErrorSubmission = transition.submission?.formData;
+
   return (
-    <div className="relative flex flex-col sm:flex-row">
+    <div className="relative flex flex-col sm:flex-row ">
       <AppTitleEmitter>Channel detail</AppTitleEmitter>
       <section className="flex-1">
         <WithEditLink name={'title'}>
@@ -160,14 +183,51 @@ export default function ChannelDetailsPage() {
           </WithEditLink>
         </div>
         <div className="py-6">
-          <WithEditLink name={'language'}>
+          <WithEditLink name={'description'}>
             <span className="text-gray-400">Description</span>
           </WithEditLink>
           <p className="text-xl">
             {data.channel.description || 'Description is missing'}
           </p>
         </div>
+
+        {isParseErrors && (
+          <div className="pb-6">
+            <span className="text-gray-400">
+              Some errors ocurred when parsing channel definition
+            </span>
+            {[
+              {
+                isError: data.channel.itemPubDateParseError,
+                name: 'itemPubDateParseError',
+                message: 'Some article publish dates may be incorrect',
+              },
+            ]
+              .filter((error) => !parseErrorSubmission?.get(error.name))
+              .map((error) => (
+                <ul key={error.name}>
+                  {data.channel.itemPubDateParseError && (
+                    <li>
+                      <Form method="post">
+                        <input type="hidden" name={error.name} value="false" />
+                        <button
+                          title={'Hide this error message'}
+                          type="submit"
+                          className="flex items-center gap-1 text-left text-red-800 hover:underline"
+                        >
+                          <ExclamationCircleIcon className="w-3" />{' '}
+                          {error.message}
+                        </button>
+                      </Form>
+                    </li>
+                  )}
+                </ul>
+              ))}
+          </div>
+        )}
+
         <hr className="mb-8 " />
+
         <h4 className="pb-2 text-2xl font-medium">Articles</h4>
         {items.map((item, index, array) => (
           <React.Fragment key={item.link}>

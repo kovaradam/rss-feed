@@ -2,8 +2,68 @@ import { prisma } from '~/db.server';
 import type { Channel, Collection, Item, User } from '@prisma/client';
 import type { ItemParseResult } from './parse-xml';
 import { parseChannelXml } from './parse-xml';
+import invariant from 'tiny-invariant';
 
 export type { Channel, Item };
+
+export type CreateFromXmlErrorType =
+  | 'channelExists'
+  | 'incorrectDefinition'
+  | 'cannotAccessDb'
+  | 'prismaError';
+
+export async function createChannelFromXml(
+  xmlInput: string,
+  request: { userId: string; channelHref: string }
+) {
+  function createError(cause: CreateFromXmlErrorType) {
+    throw new Error(cause);
+  }
+  let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
+  let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
+
+  try {
+    [channel, items] = await parseChannelXml(xmlInput);
+
+    invariant(channel.link, 'Link is missing in the RSS definition');
+    invariant(
+      typeof channel.link === 'string',
+      'Link has been parsed in wrong format'
+    );
+    invariant(channel.title, 'Title is missing in the RSS definition');
+  } catch (error) {
+    throw createError('incorrectDefinition');
+  }
+  let dbChannel = null;
+  try {
+    dbChannel = await getChannel({
+      where: { link: channel.link, userId: request.userId },
+    });
+  } catch (error) {
+    throw createError('cannotAccessDb');
+  }
+
+  if (dbChannel) {
+    throw createError('channelExists');
+  }
+  console.log(channel);
+
+  let newChannel;
+  try {
+    newChannel = await createChanel({
+      channel: { ...channel, feedUrl: request.channelHref } as Channel,
+      userId: request.userId,
+      items: items ?? [],
+    });
+  } catch (error) {
+    console.error(error);
+    console.log(items);
+
+    throw createError('prismaError');
+  }
+
+  return newChannel;
+}
 
 export async function createChanel(input: {
   userId: User['id'];
