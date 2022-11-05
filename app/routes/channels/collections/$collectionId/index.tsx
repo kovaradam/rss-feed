@@ -138,7 +138,7 @@ export default function ChannelIndexPage() {
   return (
     <>
       <AppTitleEmitter>{collection.title}</AppTitleEmitter>
-      <div className="relative flex min-h-full flex-col sm:flex-row">
+      <div className="relative flex min-h-screen flex-col sm:flex-row">
         <section className="sm:min-w-2/3 relative flex-1">
           <ChannelItemsOverlay />
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">

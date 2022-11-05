@@ -23,7 +23,7 @@ export function NavWrapper(props: Props): JSX.Element {
       <nav
         className={`absolute right-full h-full  w-3/4 bg-white sm:relative sm:right-0 sm:block sm:h-auto sm:w-64 sm:bg-slate-50 lg:w-80`}
       >
-        <div className="sticky top-2 h-screen overflow-y-auto">
+        <div className="sticky top-0 h-screen overflow-y-auto">
           {props.children}
         </div>
       </nav>
