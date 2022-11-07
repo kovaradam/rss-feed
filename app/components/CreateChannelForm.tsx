@@ -24,7 +24,9 @@ export function CreateChannelForm<
       {isOpen ? (
         <Form
           method="put"
-          action={window.location.pathname.concat(window.location.search)}
+          action={window.location.pathname.concat(
+            window.location.search.replace('index=', '')
+          )}
           className="flex flex-col gap-2"
         >
           <button
