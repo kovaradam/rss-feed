@@ -168,9 +168,8 @@ export default function LoginPage() {
               </div>
             </div>
           ))}
-
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <SubmitButton className="w-full sm:w-48 sm:px-8">Log in</SubmitButton>
+
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -188,8 +187,8 @@ export default function LoginPage() {
                 Remember me
               </label>
             </div>
-            <div className="text-center text-sm text-gray-500"></div>
           </div>
+          <SubmitButton className="w-full sm:w-48 sm:px-8">Log in</SubmitButton>
         </Form>
       </div>
     </>

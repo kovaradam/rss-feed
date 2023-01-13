@@ -208,76 +208,73 @@ export default function ChannelsPage() {
             isExpanded={isNavExpanded}
             hide={() => setIsNavExpanded(false)}
           >
-            <h1 className="sticky top-0 z-10 hidden text-ellipsis bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
-              <AppTitleClient defaultTitle={title}></AppTitleClient>
-            </h1>
-            <CreateChannelForm<ActionData> />
-            <hr />
-            <StyledNavLink to={`/channels`} end>
-              <HomeIcon className="w-4" />
-              Feed
-            </StyledNavLink>
-            <hr />
-            <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
-            <ol>
-              {data.collectionListItems?.map((collection) => (
-                <li key={collection.id}>
-                  <StyledNavLink to={`/channels/collections/${collection.id}`}>
-                    <ArchiveIcon className="w-4" />
-                    {collection.title}
-                  </StyledNavLink>
-                </li>
-              ))}
-              <li>
-                <Link
-                  className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
-                  to={`/channels/collections/new`}
-                >
-                  <PlusIcon className="w-4" />
-                  New collection
-                </Link>
-              </li>
-            </ol>
-            <hr />
-            <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>
-            {data.channelListItems.length === 0 ? (
-              <p className="p-4">No channels yet</p>
-            ) : (
-              <ol>
-                {data.channelListItems.map((channel) => (
-                  <li key={channel.id}>
-                    <StyledNavLink className="block" to={channel.id}>
-                      {channel.title}
-                    </StyledNavLink>
+            <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
+              <h1 className="sticky top-0 z-10 hidden text-ellipsis bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
+                <AppTitleClient defaultTitle={title}></AppTitleClient>
+              </h1>
+              <div className="sm:overflow-y-auto">
+                <CreateChannelForm<ActionData> />
+                <hr />
+                <StyledNavLink to={`/channels`} end>
+                  <HomeIcon className="w-4" />
+                  Feed
+                </StyledNavLink>
+                <hr />
+                <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
+                <ol>
+                  {data.collectionListItems?.map((collection) => (
+                    <li key={collection.id}>
+                      <StyledNavLink
+                        to={`/channels/collections/${collection.id}`}
+                      >
+                        <ArchiveIcon className="w-4" />
+                        {collection.title}
+                      </StyledNavLink>
+                    </li>
+                  ))}
+                  <li>
+                    <Link
+                      className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
+                      to={`/channels/collections/new`}
+                    >
+                      <PlusIcon className="w-4" />
+                      New collection
+                    </Link>
                   </li>
-                ))}
-              </ol>
-            )}
-          </NavWrapper>
-          <div className=" flex-1 p-6 sm:pt-0">
-            <header className=" hidden w-full justify-end whitespace-nowrap p-4 sm:relative sm:flex ">
-              <button
-                onClick={() => setIsNavExpanded((prev) => !prev)}
-                className="block rounded py-2  px-4 hover:bg-slate-100 active:bg-slate-200 sm:hidden"
-              >
-                <MenuAlt2Icon className="w-6" />
-              </button>
-
+                </ol>
+                <hr />
+                <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>
+                {data.channelListItems.length === 0 ? (
+                  <p className="p-4">No channels yet</p>
+                ) : (
+                  <ol>
+                    {data.channelListItems.map((channel) => (
+                      <li key={channel.id}>
+                        <StyledNavLink className="block" to={channel.id}>
+                          {channel.title}
+                        </StyledNavLink>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
               <Form
                 action="/logout"
                 method="post"
-                className="flex items-center gap-2"
+                className="hidden p-4 sm:flex sm:items-center"
               >
-                <p className="hidden sm:block">{user?.email}</p>
                 <button
                   type="submit"
-                  className="rounded py-2 px-4 hover:bg-gray-100 active:bg-gray-200"
+                  className="text-md flex w-min items-center gap-4 rounded-md bg-white p-4 shadow-md hover:bg-gray-100 active:bg-gray-200"
                   title="Log out"
                 >
+                  <span className="whitespace-nowrap">{user?.email}</span>
                   <LogoutIcon className="w-6" />
                 </button>
               </Form>
-            </header>
+            </div>
+          </NavWrapper>
+          <div className=" flex-1 p-6 ">
             <Outlet />
           </div>
         </main>
