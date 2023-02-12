@@ -1,7 +1,6 @@
 import { useLocation } from '@remix-run/react';
 import React from 'react';
 import { useEvent } from '~/hooks/use-event';
-import { useCreateChannelHandle } from './CreateChannelForm';
 
 type Props = {
   isExpanded: boolean;
@@ -14,9 +13,8 @@ export function NavWrapper(props: Props): JSX.Element {
   const hide = useEvent(props.hide);
 
   React.useEffect(() => hide(), [pathname, hide]);
-  const [isNewChannelFormOpen] = useCreateChannelHandle();
 
-  const isExpanded = props.isExpanded || isNewChannelFormOpen;
+  const isExpanded = props.isExpanded;
 
   return (
     <>

@@ -6,10 +6,10 @@ import { AppTitleEmitter } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
-import { useCreateChannelHandle } from '~/components/CreateChannelForm';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
+import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters } from '~/models/channel.server';
 import { getChannels } from '~/models/channel.server';
@@ -115,7 +115,6 @@ export default function ChannelIndexPage() {
     }
     submit(form);
   };
-  const [, setIsNewChannelFormOpen] = useCreateChannelHandle();
 
   return (
     <>
@@ -141,12 +140,16 @@ export default function ChannelIndexPage() {
                   <p className="mb-4">
                     You are not subscribed to any RSS feeds.
                     <br />
-                    <button
-                      onClick={() => setIsNewChannelFormOpen(true)}
-                      className="text-rose-400 underline"
-                    >
-                      Add a new channel
-                    </button>{' '}
+                    <NewChannelModalContext.Consumer>
+                      {(context) => (
+                        <button
+                          onClick={() => context.open?.()}
+                          className="text-rose-400 underline"
+                        >
+                          Add a new channel
+                        </button>
+                      )}
+                    </NewChannelModalContext.Consumer>{' '}
                     to get started!
                   </p>
                   <img

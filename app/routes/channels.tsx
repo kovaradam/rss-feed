@@ -9,15 +9,13 @@ import {
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { NavLinkProps, useLocation } from '@remix-run/react';
+import type { NavLinkProps } from '@remix-run/react';
+import { useLocation } from '@remix-run/react';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
 import { AppTitleClient, AppTitleEmitter } from '~/components/AppTitle';
-import {
-  CreateChannelForm,
-  useCreateChannelHandle,
-} from '~/components/CreateChannelForm';
+import { CreateChannelForm } from '~/components/CreateChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
 import type {
@@ -32,6 +30,7 @@ import { requireUserId } from '~/session.server';
 import { createTitle, useUser } from '~/utils';
 import Modal from 'react-modal';
 import { ClientOnly } from '~/components/ClientOnly';
+import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 
 const title = 'Your feed';
 
@@ -296,7 +295,11 @@ export default function ChannelsPage() {
             </div>
           </NavWrapper>
           <div className="flex-1 p-6">
-            <Outlet />
+            <NewChannelModalContext.Provider
+              value={{ open: openNewChannelModal }}
+            >
+              <Outlet />
+            </NewChannelModalContext.Provider>
           </div>
           <ClientOnly>
             {() => (

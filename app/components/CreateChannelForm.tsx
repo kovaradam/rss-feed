@@ -1,13 +1,6 @@
-import { PlusIcon, XIcon } from '@heroicons/react/outline';
-import {
-  Form,
-  useActionData,
-  useSearchParams,
-  useTransition,
-} from '@remix-run/react';
+import { Form, useActionData, useTransition } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
-import { browserApiSwitch } from '~/utils';
 import { SubmitButton } from './Button';
 
 export function CreateChannelForm<
@@ -51,26 +44,4 @@ export function CreateChannelForm<
       </SubmitButton>
     </Form>
   );
-}
-
-const OPEN_CHANNEL_FORM_KEY = 'new-channel';
-
-export function useCreateChannelHandle() {
-  const [searchParams, navigateParams] = useSearchParams();
-
-  const isOpen = browserApiSwitch(
-    searchParams.get(OPEN_CHANNEL_FORM_KEY),
-    null
-  );
-
-  const setIsOpen = (newIsOpen: boolean) => {
-    if (newIsOpen) {
-      searchParams.set(OPEN_CHANNEL_FORM_KEY, String(true));
-    } else {
-      searchParams.delete(OPEN_CHANNEL_FORM_KEY);
-    }
-    navigateParams(searchParams, { replace: true });
-  };
-
-  return [isOpen, setIsOpen] as const;
 }
