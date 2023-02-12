@@ -15,7 +15,11 @@ export default function Welcome() {
             Keep up with the latest web content using an organized RSS feed.
           </p>
         </div>
-        <img src="/reading.svg" alt="Doodle of a person reading"></img>
+        <img
+          src="/reading.svg"
+          alt="Doodle of a person reading"
+          data-from="https://www.opendoodles.com/"
+        ></img>
       </section>
       <section className="flex h-screen items-center justify-center p-4 sm:h-full sm:flex-1 ">
         <div className="flex w-full flex-col gap-8 sm:w-[60ch]">

@@ -45,7 +45,7 @@ export function SubmitButton(props: Props): JSX.Element {
       type="submit"
       className={`flex items-center justify-center rounded  bg-rose-400 px-4 py-2 font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 ${props.className}`}
     >
-      {!isLoading ? props.children : <SpinnerIcon className="w-4" />}
+      {isLoading ? <SpinnerIcon className="w-4" /> : props.children}
     </button>
   );
 }

@@ -4,11 +4,12 @@ import {
   LogoutIcon,
   MenuAlt2Icon,
   PlusIcon,
+  XIcon,
 } from '@heroicons/react/outline';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import type { NavLinkProps } from '@remix-run/react';
+import { NavLinkProps, useLocation } from '@remix-run/react';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
@@ -25,11 +26,12 @@ import type {
   Item,
 } from '~/models/channel.server';
 import { createChannelFromXml } from '~/models/channel.server';
-import { refreshChannel } from '~/models/channel.server';
-import { getChannels } from '~/models/channel.server';
+import { refreshChannel, getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, useUser } from '~/utils';
+import Modal from 'react-modal';
+import { ClientOnly } from '~/components/ClientOnly';
 
 const title = 'Your feed';
 
@@ -140,12 +142,26 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChannelsPage() {
   const data = useLoaderData<LoaderData>();
   const user = useUser();
-  const [isNewChannelFormOpen] = useCreateChannelHandle();
+  const [isNewChannelModalVisible, setIsNewChannelModalVisible] =
+    React.useState(false);
 
-  const [_isNavExpanded, setIsNavExpanded] = React.useState(
-    Boolean(isNewChannelFormOpen)
-  );
-  const isNavExpanded = _isNavExpanded || Boolean(isNewChannelFormOpen);
+  const [isNavExpanded, setIsNavExpanded] = React.useState(false);
+
+  const openNewChannelModal = () => {
+    setIsNewChannelModalVisible(true);
+  };
+
+  const closeNewChannelModal = React.useCallback(() => {
+    setIsNewChannelModalVisible(false);
+  }, []);
+
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (location.pathname !== '/channels') {
+      closeNewChannelModal();
+    }
+  }, [location.pathname, closeNewChannelModal]);
 
   return (
     <div className="flex flex-col  sm:overflow-x-visible">
@@ -158,7 +174,7 @@ export default function ChannelsPage() {
           >
             <MenuAlt2Icon className="w-6" />
           </button>
-          <h1 className="text-ellipsis font-bold sm:text-3xl">
+          <h1 className="truncate font-bold sm:text-3xl">
             <AppTitleClient defaultTitle={title}></AppTitleClient>
           </h1>
           <Form
@@ -209,11 +225,16 @@ export default function ChannelsPage() {
             hide={() => setIsNavExpanded(false)}
           >
             <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
-              <h1 className="sticky top-0 z-10 hidden text-ellipsis bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
+              <h1 className="sticky top-0 z-10 hidden truncate  bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
                 <AppTitleClient defaultTitle={title}></AppTitleClient>
               </h1>
               <div className="sm:overflow-y-auto">
-                <CreateChannelForm<ActionData> />
+                <button
+                  className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-100 peer-focus:hidden"
+                  onClick={openNewChannelModal}
+                >
+                  <PlusIcon className="w-4" /> Add RSS Channel
+                </button>
                 <hr />
                 <StyledNavLink to={`/channels`} end>
                   <HomeIcon className="w-4" />
@@ -274,9 +295,44 @@ export default function ChannelsPage() {
               </Form>
             </div>
           </NavWrapper>
-          <div className=" flex-1 p-6 ">
+          <div className="flex-1 p-6">
             <Outlet />
           </div>
+          <ClientOnly>
+            {() => (
+              <Modal
+                isOpen={isNewChannelModalVisible}
+                style={{
+                  content: {
+                    top: '30%',
+                    left: '50%',
+                    transform: 'translate(-50%,-50%)',
+                    border: 'none',
+                    boxShadow: '0 0.1rem 5rem -1rem #00000046',
+                    borderRadius: '0.7rem',
+                    padding: '0',
+                    height: 'min-content',
+                    width: '80ch',
+                    maxWidth: '90vw',
+                  },
+                }}
+                contentLabel="Add channel modal"
+                appElement={document.body}
+                onRequestClose={closeNewChannelModal}
+              >
+                <h1 className="relative bg-slate-700 px-4 py-2 text-2xl font-medium text-white ">
+                  New channel
+                  <button
+                    className="absolute right-2 p-1"
+                    onClick={closeNewChannelModal}
+                  >
+                    <XIcon className="w-4" />
+                  </button>
+                </h1>
+                <CreateChannelForm className="p-4 pb-6" />
+              </Modal>
+            )}
+          </ClientOnly>
         </main>
       </div>
     </div>

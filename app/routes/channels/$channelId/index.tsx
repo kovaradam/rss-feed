@@ -252,11 +252,13 @@ export default function ChannelDetailsPage() {
           <SubmitButton
             type="submit"
             title="Refresh this channel"
-            className="flex w-full items-center gap-2 "
+            className="flex w-[13ch] items-center gap-2 "
             isLoading={isRefreshing}
           >
             <RefreshIcon
-              className={`w-4 animate-${isRefreshing ? 'spin' : 'none'}`}
+              className={`w-4  ${
+                isRefreshing ? 'animate-spin' : 'animate-none'
+              }`}
             />
             Refresh
           </SubmitButton>

@@ -137,15 +137,26 @@ export default function ChannelIndexPage() {
               {channels.length !== 0 ? (
                 <p>No articles found</p>
               ) : (
-                <>
-                  <p>You are not subscribed to any RSS feeds.</p>
-                  <button
-                    onClick={() => setIsNewChannelFormOpen(true)}
-                    className="text-rose-400 underline"
-                  >
-                    Add a new channel to get started!
-                  </button>
-                </>
+                <div className="mt-8 flex flex-col items-center gap-16">
+                  <p className="mb-4">
+                    You are not subscribed to any RSS feeds.
+                    <br />
+                    <button
+                      onClick={() => setIsNewChannelFormOpen(true)}
+                      className="text-rose-400 underline"
+                    >
+                      Add a new channel
+                    </button>{' '}
+                    to get started!
+                  </p>
+                  <img
+                    alt="Illustration doodle of a person sitting and reading"
+                    src="/sitting-reading.svg"
+                    width={'50%'}
+                    className="opacity-60"
+                    data-from="https://www.opendoodles.com/"
+                  />
+                </div>
               )}
             </div>
           )}
@@ -162,16 +173,18 @@ export default function ChannelIndexPage() {
             <ShowMoreLink to={loadMoreAction} isLoading={isLoading} />
           )}
         </section>
-        <aside className="hidden pl-8 sm:block">
-          <Details title="Filter articles" className="w-60">
-            <ChannelItemFilterForm
-              filters={filters}
-              categories={categories}
-              submitFilters={submitFilters}
-              channels={channels}
-            />
-          </Details>
-        </aside>
+        {channels.length !== 0 && (
+          <aside className="hidden pl-8 sm:block">
+            <Details title="Filter articles" className="w-60">
+              <ChannelItemFilterForm
+                filters={filters}
+                categories={categories}
+                submitFilters={submitFilters}
+                channels={channels}
+              />
+            </Details>
+          </aside>
+        )}
       </div>
     </>
   );
