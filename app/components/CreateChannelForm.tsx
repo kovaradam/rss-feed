@@ -5,7 +5,7 @@ import { SubmitButton } from './Button';
 
 export function CreateChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
->(props: { className: string }): JSX.Element {
+>(props: { className?: string }): JSX.Element {
   const errors = useActionData<ActionData>();
   const transition = useTransition();
   const isCreating =
@@ -17,7 +17,7 @@ export function CreateChannelForm<
       action={window.location.pathname.concat(
         window.location.search.replace('index=', '')
       )}
-      className={'flex flex-col gap-8 '.concat(props.className)}
+      className={'flex flex-col gap-8 '.concat(props.className ?? '')}
     >
       <fieldset className="flex flex-col gap-2">
         <label htmlFor="new-channel-input">RSS feed address</label>

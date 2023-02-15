@@ -4,7 +4,6 @@ import {
   LogoutIcon,
   MenuAlt2Icon,
   PlusIcon,
-  XIcon,
 } from '@heroicons/react/outline';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
@@ -28,9 +27,8 @@ import { refreshChannel, getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, useUser } from '~/utils';
-import Modal from 'react-modal';
-import { ClientOnly } from '~/components/ClientOnly';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
+import { Modal } from '~/components/Modal';
 
 const title = 'Your feed';
 
@@ -301,41 +299,14 @@ export default function ChannelsPage() {
               <Outlet />
             </NewChannelModalContext.Provider>
           </div>
-          <ClientOnly>
-            {() => (
-              <Modal
-                isOpen={isNewChannelModalVisible}
-                style={{
-                  content: {
-                    top: '30%',
-                    left: '50%',
-                    transform: 'translate(-50%,-50%)',
-                    border: 'none',
-                    boxShadow: '0 0.1rem 5rem -1rem #00000046',
-                    borderRadius: '0.7rem',
-                    padding: '0',
-                    height: 'min-content',
-                    width: '80ch',
-                    maxWidth: '90vw',
-                  },
-                }}
-                contentLabel="Add channel modal"
-                appElement={document.body}
-                onRequestClose={closeNewChannelModal}
-              >
-                <h1 className="relative bg-slate-700 px-4 py-2 text-2xl font-medium text-white ">
-                  New channel
-                  <button
-                    className="absolute right-2 p-1"
-                    onClick={closeNewChannelModal}
-                  >
-                    <XIcon className="w-4" />
-                  </button>
-                </h1>
-                <CreateChannelForm className="p-4 pb-6" />
-              </Modal>
-            )}
-          </ClientOnly>
+
+          <Modal
+            isOpen={isNewChannelModalVisible}
+            contentLabel="New Channel"
+            onRequestClose={closeNewChannelModal}
+          >
+            <CreateChannelForm />
+          </Modal>
         </main>
       </div>
     </div>
