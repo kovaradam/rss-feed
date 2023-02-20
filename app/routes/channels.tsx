@@ -229,6 +229,7 @@ export default function ChannelsPage() {
                 <button
                   className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-100 peer-focus:hidden"
                   onClick={openNewChannelModal}
+                  data-silent
                 >
                   <PlusIcon className="w-4" /> Add RSS Channel
                 </button>

@@ -15,6 +15,9 @@ import {
 
 import tailwindStylesheetUrl from './styles/tailwind.css';
 import { getUser } from './session.server';
+import React from 'react';
+import { UseSounds } from './components/UseSounds';
+import { ClientOnly } from './components/ClientOnly';
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }];
@@ -52,6 +55,9 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        <ClientOnly>
+          <UseSounds />
+        </ClientOnly>
       </body>
     </html>
   );

@@ -12,11 +12,14 @@ import { useLocation } from '@remix-run/react';
 import { Form } from '@remix-run/react';
 import { redirect } from '@remix-run/server-runtime';
 import invariant from 'tiny-invariant';
+import useSound from 'use-sound';
 import type { ItemWithChannel } from '~/models/channel.server';
 import { updateChannelItem } from '~/models/channel.server';
 import { ChannelCategoryLinks } from './ChannelCategories';
 import { Href } from './Href';
 import { TimeFromNow } from './TimeFromNow';
+import confirmSound from 'public/sounds/state-change_confirm-up.wav';
+import cancelSound from 'public/sounds/state-change_confirm-down.wav';
 
 type Props = { item: ItemWithChannel; formMethod: FormProps['method'] };
 
@@ -26,6 +29,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   const BookmarkIcon = item.bookmarked
     ? SolidBookmarkIcon
     : OutlineBookmarkIcon;
+
+  const [playConfirm] = useSound(confirmSound);
+  const [playCancel] = useSound(cancelSound);
 
   return (
     <article
@@ -43,6 +49,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               Icon: ReadIcon,
               title: !item.read ? 'Mark as read' : 'Mark as not read yet',
               className: 'hover:bg-green-200',
+              playSubmit: item.read ? playCancel : playConfirm,
             },
             {
               name: ChannelItemDetail.form.names.bookmarked,
@@ -52,6 +59,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                 ? 'Bookmark article'
                 : 'Remove from bookmarked articles',
               className: 'hover:bg-yellow-100',
+              playSubmit: item.bookmarked ? playCancel : playConfirm,
             },
           ].map((formItems) => (
             <Form method={props.formMethod} key={formItems.name}>
@@ -61,11 +69,17 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                 name={formItems.name}
                 value={formItems.value}
               />
-              <button type="submit" title={formItems.title}>
+              <button
+                type="submit"
+                title={formItems.title}
+                className={'rounded p-1 '.concat(formItems.className)}
+                data-silent
+                onClick={formItems.playSubmit}
+              >
                 <formItems.Icon
-                  className={`w-6 rounded p-1 ${
+                  className={`w-4  ${
                     formItems.value === 'false' ? 'text-black' : ''
-                  } ${formItems.className}`}
+                  } pointer-events-none ${formItems.className}`}
                 />
               </button>
             </Form>

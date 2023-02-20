@@ -1,14 +1,23 @@
 import { XIcon } from '@heroicons/react/outline';
-import ReactModal, { Props as ReactModalProps } from 'react-modal';
+import type { Props as ReactModalProps } from 'react-modal';
+import ReactModal from 'react-modal';
 import { ClientOnly } from './ClientOnly';
+import useSound from 'use-sound';
+import closeSound from 'public/sounds/navigation_backward-selection-minimal.wav';
+import openSound from 'public/sounds/navigation_forward-selection-minimal.wav';
 
 type Props = ReactModalProps;
 
 export function Modal(props: Props) {
+  const [playCloseSound] = useSound(closeSound);
+  const [playOpenSound] = useSound(openSound);
+
   return (
     <ClientOnly>
       {() => (
         <ReactModal
+          onAfterOpen={() => playOpenSound()}
+          onAfterClose={() => playCloseSound()}
           {...props}
           style={{
             content: {
@@ -33,6 +42,7 @@ export function Modal(props: Props) {
             <button
               className="absolute right-2 p-1"
               onClick={props.onRequestClose}
+              data-silent
             >
               <XIcon className="w-4" />
             </button>

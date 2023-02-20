@@ -39,6 +39,9 @@ import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { AppTitleEmitter } from '~/components/AppTitle';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
+import useSound from 'use-sound';
+
+import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -143,6 +146,8 @@ export default function ChannelDetailsPage() {
 
   const isParseErrors = data.channel.itemPubDateParseError;
   const parseErrorSubmission = transition.submission?.formData;
+
+  const [playRefresh] = useSound(refreshSound);
 
   return (
     <div className="relative flex flex-col sm:flex-row ">
@@ -250,6 +255,7 @@ export default function ChannelDetailsPage() {
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">
           <SubmitButton
+            onClick={() => playRefresh()}
             type="submit"
             title="Refresh this channel"
             className="flex w-[13ch] items-center gap-2 "

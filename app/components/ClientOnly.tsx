@@ -17,5 +17,6 @@ export function ClientOnly(props: React.PropsWithChildren<unknown>) {
   if (typeof props.children === 'function') {
     return props.children?.();
   }
+
   return props.children;
 }
