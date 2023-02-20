@@ -104,7 +104,6 @@ export default function NewCollectionPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
-  );
+  console.error(error);
+  return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

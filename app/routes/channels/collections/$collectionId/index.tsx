@@ -1,6 +1,7 @@
 import { PencilIcon } from '@heroicons/react/outline';
 import {
   Link,
+  useCatch,
   useLoaderData,
   useSubmit,
   useTransition,
@@ -30,7 +31,7 @@ import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = ({ data }) => {
   return {
-    title: createTitle(data.collection?.title ?? 'Collection feed'),
+    title: createTitle(data?.collection?.title ?? 'Collection feed'),
   };
 };
 
@@ -189,7 +190,20 @@ export default function ChannelIndexPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
-  );
+  console.error(error);
+  return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  if (caught.status === 404) {
+    return (
+      <ErrorMessage>
+        <h4>Collection not found</h4>
+      </ErrorMessage>
+    );
+  }
+
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }

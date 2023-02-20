@@ -177,7 +177,7 @@ export default function ChannelIndexPage() {
           )}
         </section>
         {channels.length !== 0 && (
-          <aside className="hidden pl-8 sm:block">
+          <aside className="hidden pl-4 sm:block ">
             <Details title="Filter articles" className="w-60">
               <ChannelItemFilterForm
                 filters={filters}
@@ -194,7 +194,6 @@ export default function ChannelIndexPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
-  );
+  console.error(error);
+  return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

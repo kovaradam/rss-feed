@@ -330,6 +330,7 @@ function StyledNavLink(props: NavLinkProps) {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
   return (
     <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );

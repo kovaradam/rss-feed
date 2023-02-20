@@ -74,7 +74,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                 title={formItems.title}
                 className={'rounded p-1 '.concat(formItems.className)}
                 data-silent
-                onClick={formItems.playSubmit}
+                onClick={() => formItems.playSubmit()}
               >
                 <formItems.Icon
                   className={`w-4  ${

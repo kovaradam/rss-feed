@@ -6,20 +6,21 @@ import closeSound from 'public/sounds/navigation_backward-selection-minimal.wav'
 import openSound from 'public/sounds/navigation_forward-selection-minimal.wav';
 
 export function UseSounds() {
-  const [playTap] = useSound(tapSound, { volume: 50 });
+  const [playTap] = useSound(tapSound);
   const [playCloseSound] = useSound(closeSound);
   const [playOpenSound] = useSound(openSound);
 
   React.useEffect(() => {
     const tagSoundMap: Record<string, (element: HTMLElement) => void> = {
-      BUTTON: playTap,
-      SUMMARY: (element: HTMLElement) => {
+      BUTTON: () => playTap(),
+      SUMMARY: (element) => {
         if ((element.parentElement as HTMLDetailsElement).open) {
           playCloseSound();
         } else {
           playOpenSound();
         }
       },
+      A: () => playTap(),
     };
     const abortController = new AbortController();
 
@@ -31,7 +32,6 @@ export function UseSounds() {
         }
 
         const element = event.target;
-        console.log(element);
 
         if (element.dataset.silent) {
           return;
