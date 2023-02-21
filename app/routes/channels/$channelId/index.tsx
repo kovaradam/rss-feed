@@ -1,5 +1,9 @@
 import type { Channel, Item } from '@prisma/client';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import {
   Form,
@@ -34,7 +38,6 @@ import React from 'react';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 import { Button, SubmitButton } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import type { MetaFunction } from '@remix-run/react/routeModules';
 import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { AppTitleEmitter } from '~/components/AppTitle';

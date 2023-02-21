@@ -1,6 +1,9 @@
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
-import type { MetaFunction } from '@remix-run/react/routeModules';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import React from 'react';

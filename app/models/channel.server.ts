@@ -84,6 +84,7 @@ export async function createChanel(input: {
 }
 
 export type ChannelWithItems = Channel & { items: Item[] };
+
 export type ItemWithChannel = Item & { channel: Channel };
 
 export async function refreshChannel(params: {

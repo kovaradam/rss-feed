@@ -1,5 +1,5 @@
 import { Outlet } from '@remix-run/react';
-import type { MetaFunction } from '@remix-run/react/routeModules';
+import type { MetaFunction } from '@remix-run/server-runtime';
 import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = () => {

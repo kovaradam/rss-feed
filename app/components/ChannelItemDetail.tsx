@@ -157,7 +157,7 @@ function RequiredFormData(props: { itemLink: string; channelId: string }) {
   );
 }
 
-export async function handleItemStatusUpdate({
+async function handleItemStatusUpdate({
   formData,
   request,
 }: {

@@ -1,17 +1,22 @@
 import {
   ArchiveIcon,
+  CogIcon,
   HomeIcon,
   LogoutIcon,
   MenuAlt2Icon,
   PlusIcon,
+  UserIcon,
 } from '@heroicons/react/outline';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import type { NavLinkProps } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
-import type { MetaFunction } from '@remix-run/react/routeModules';
 import React from 'react';
 import { AppTitleClient, AppTitleEmitter } from '~/components/AppTitle';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
@@ -83,7 +88,7 @@ const [channelUrlName] = inputNames;
 const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 type ActionData =
-  | Partial<Record<typeof errors[number], string | null>>
+  | Partial<Record<(typeof errors)[number], string | null>>
   | undefined;
 
 export const action: ActionFunction = async ({ request }) => {
@@ -174,20 +179,7 @@ export default function ChannelsPage() {
           <h1 className="truncate font-bold sm:text-3xl">
             <AppTitleClient defaultTitle={title}></AppTitleClient>
           </h1>
-          <Form
-            action="/logout"
-            method="post"
-            className="flex items-center gap-2"
-          >
-            <p className="hidden sm:block">{user?.email}</p>
-            <button
-              type="submit"
-              className="rounded py-2 px-4 hover:bg-gray-100 active:bg-gray-200"
-              title="Log out"
-            >
-              <LogoutIcon className="w-6" />
-            </button>
-          </Form>
+          <UserMenu user={user} />
         </div>
       </header>
       <div
@@ -277,20 +269,9 @@ export default function ChannelsPage() {
                   </ol>
                 )}
               </div>
-              <Form
-                action="/logout"
-                method="post"
-                className="hidden p-4 sm:flex sm:items-center"
-              >
-                <button
-                  type="submit"
-                  className="text-md flex w-min items-center gap-4 rounded-md bg-white p-4 shadow-md hover:bg-gray-100 active:bg-gray-200"
-                  title="Log out"
-                >
-                  <span className="whitespace-nowrap">{user?.email}</span>
-                  <LogoutIcon className="w-6" />
-                </button>
-              </Form>
+              <div className="relative hidden h-full w-full items-center px-2 sm:flex ">
+                <UserMenu user={user} />
+              </div>
             </div>
           </NavWrapper>
           <div className="flex-1 p-6">
@@ -314,6 +295,13 @@ export default function ChannelsPage() {
   );
 }
 
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
+  );
+}
+
 function StyledNavLink(props: NavLinkProps) {
   return (
     <NavLink
@@ -329,9 +317,38 @@ function StyledNavLink(props: NavLinkProps) {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
+function UserMenu(props: { user: ReturnType<typeof useUser> }) {
   return (
-    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
+    <details className="relative flex justify-center sm:w-full sm:flex-col-reverse ">
+      <summary className="text-md flex cursor-pointer items-center gap-4 rounded-md bg-white p-4 hover:bg-gray-100 active:bg-gray-200 sm:shadow-md">
+        <UserIcon className="w-4" />
+        <span className="hidden sm:block">{props.user.email}</span>
+      </summary>
+      <ul className="absolute right-0 z-10 w-[91vw] rounded-md bg-white p-2 shadow-md sm:bottom-[100%] sm:w-full">
+        <li>
+          <Form action="/logout" method="post" className="w-full">
+            <button
+              type="submit"
+              title="Log out"
+              className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+            >
+              <LogoutIcon className="w-4" />
+              <span className="gap-4 whitespace-nowrap">Log out</span>
+            </button>
+          </Form>
+        </li>
+        <hr className="my-1" />
+        <li>
+          <a
+            href="/channels/user"
+            title="Update personal info"
+            className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+          >
+            <CogIcon className="w-4" />
+            <span className="gap-4 whitespace-nowrap">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </details>
   );
 }

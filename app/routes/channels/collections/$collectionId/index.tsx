@@ -6,8 +6,11 @@ import {
   useSubmit,
   useTransition,
 } from '@remix-run/react';
-import type { MetaFunction } from '@remix-run/react/routeModules';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderArgs,
+  MetaFunction,
+} from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
@@ -47,7 +50,7 @@ type LoaderData = {
 
 const itemCountName = 'item-count';
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id was not provided');
@@ -100,7 +103,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const loadMoreUrl = new URL(request.url);
   loadMoreUrl.searchParams.set(itemCountName, String(itemCount + 10));
 
-  return json<LoaderData>({
+  return json({
     items: items as LoaderData['items'],
     loadMoreAction:
       items.length >= itemCount
@@ -109,7 +112,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     filters,
     collection,
   });
-};
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -121,7 +124,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function ChannelIndexPage() {
   const { items, loadMoreAction, filters, collection } =
-    useLoaderData<LoaderData>();
+    useLoaderData<typeof loader>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
@@ -158,7 +161,21 @@ export default function ChannelIndexPage() {
           >
             {items.map((item) => (
               <li key={item.link}>
-                <ChannelItemDetail item={item} formMethod="post" />
+                <ChannelItemDetail
+                  item={{
+                    ...item,
+                    pubDate: new Date(item.pubDate),
+                    channel: {
+                      ...item.channel,
+                      updatedAt: new Date(item.channel.updatedAt),
+                      createdAt: new Date(item.channel.createdAt),
+                      lastBuildDate: item.channel.lastBuildDate
+                        ? new Date(item.channel.lastBuildDate)
+                        : null,
+                    },
+                  }}
+                  formMethod="post"
+                />
               </li>
             ))}
           </ul>

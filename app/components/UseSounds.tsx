@@ -11,7 +11,7 @@ export function UseSounds() {
   const [playOpenSound] = useSound(openSound);
 
   React.useEffect(() => {
-    const tagSoundMap: Record<string, (element: HTMLElement) => void> = {
+    const tagNameSoundMap: Record<string, (element: HTMLElement) => void> = {
       BUTTON: () => playTap(),
       SUMMARY: (element) => {
         if ((element.parentElement as HTMLDetailsElement).open) {
@@ -22,6 +22,7 @@ export function UseSounds() {
       },
       A: () => playTap(),
     };
+
     const abortController = new AbortController();
 
     document.addEventListener(
@@ -37,7 +38,7 @@ export function UseSounds() {
           return;
         }
 
-        tagSoundMap[event.target.tagName]?.(element);
+        tagNameSoundMap[event.target.tagName]?.(element);
       },
       {
         signal: abortController.signal,

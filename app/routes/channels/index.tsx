@@ -126,7 +126,14 @@ export default function ChannelIndexPage() {
             <ChannelItemFilterForm
               filters={filters}
               submitFilters={submitFilters}
-              channels={channels}
+              channels={channels.map((channel) => ({
+                ...channel,
+                updatedAt: new Date(channel.updatedAt),
+                createdAt: new Date(channel.createdAt),
+                lastBuildDate: channel.lastBuildDate
+                  ? new Date(channel.lastBuildDate)
+                  : null,
+              }))}
               categories={categories}
               className="pt-4"
             />
@@ -168,7 +175,21 @@ export default function ChannelIndexPage() {
           >
             {items.map((item) => (
               <li key={item.link + item.channelId}>
-                <ChannelItemDetail item={item} formMethod="post" />
+                <ChannelItemDetail
+                  item={{
+                    ...item,
+                    pubDate: new Date(item.pubDate),
+                    channel: {
+                      ...item.channel,
+                      updatedAt: new Date(item.channel.updatedAt),
+                      createdAt: new Date(item.channel.createdAt),
+                      lastBuildDate: item.channel.lastBuildDate
+                        ? new Date(item.channel.lastBuildDate)
+                        : null,
+                    },
+                  }}
+                  formMethod="post"
+                />
               </li>
             ))}
           </ul>
@@ -183,7 +204,14 @@ export default function ChannelIndexPage() {
                 filters={filters}
                 categories={categories}
                 submitFilters={submitFilters}
-                channels={channels}
+                channels={channels.map((channel) => ({
+                  ...channel,
+                  updatedAt: new Date(channel.updatedAt),
+                  createdAt: new Date(channel.createdAt),
+                  lastBuildDate: channel.lastBuildDate
+                    ? new Date(channel.lastBuildDate)
+                    : null,
+                }))}
               />
             </Details>
           </aside>
