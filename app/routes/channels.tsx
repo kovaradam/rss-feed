@@ -88,7 +88,7 @@ const [channelUrlName] = inputNames;
 const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 type ActionData =
-  | Partial<Record<(typeof errors)[number], string | null>>
+  | Partial<Record<typeof errors[number], string | null>>
   | undefined;
 
 export const action: ActionFunction = async ({ request }) => {
@@ -319,12 +319,32 @@ function StyledNavLink(props: NavLinkProps) {
 
 function UserMenu(props: { user: ReturnType<typeof useUser> }) {
   return (
-    <details className="relative flex justify-center sm:w-full sm:flex-col-reverse ">
+    <details
+      className="relative flex justify-center sm:w-full sm:flex-col-reverse"
+      onBlurCapture={(event) => {
+        const thisElement = event.currentTarget;
+        const blurTimeout = setTimeout(() => {
+          thisElement.open = false;
+        });
+        event.currentTarget.dataset.blurTimeout = String(blurTimeout);
+      }}
+      onFocusCapture={(event) => {
+        if (event.currentTarget.contains(event.target)) {
+          clearTimeout(Number(event.currentTarget.dataset.blurTimeout));
+        }
+      }}
+    >
       <summary className="text-md flex cursor-pointer items-center gap-4 rounded-md bg-white p-4 hover:bg-gray-100 active:bg-gray-200 sm:shadow-md">
-        <UserIcon className="w-4" />
-        <span className="hidden sm:block">{props.user.email}</span>
+        <UserIcon className="pointer-events-none w-[1rem] min-w-[1rem] " />
+        <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
+          {props.user.email}
+          {props.user.email}
+        </span>
       </summary>
-      <ul className="absolute right-0 z-10 w-[91vw] rounded-md bg-white p-2 shadow-md sm:bottom-[100%] sm:w-full">
+      <ul
+        className="absolute right-0 z-10 w-[91vw] rounded-md bg-white p-2 shadow-md sm:bottom-[110%] sm:w-full"
+        tabIndex={0}
+      >
         <li>
           <Form action="/logout" method="post" className="w-full">
             <button
