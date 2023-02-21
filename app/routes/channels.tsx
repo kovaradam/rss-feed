@@ -334,15 +334,18 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
         }
       }}
     >
-      <summary className="text-md flex cursor-pointer items-center gap-4 rounded-md bg-white p-4 hover:bg-gray-100 active:bg-gray-200 sm:shadow-md">
-        <UserIcon className="pointer-events-none w-[1rem] min-w-[1rem] " />
+      <style>
+        {/* Hide marker in safari*/}
+        {'.user-summary::-webkit-details-marker {display: none}'}
+      </style>
+      <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-gray-100 active:bg-gray-200 sm:p-4 sm:shadow-md">
+        <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
         <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
-          {props.user.email}
           {props.user.email}
         </span>
       </summary>
       <ul
-        className="absolute right-0 z-10 w-[91vw] rounded-md bg-white p-2 shadow-md sm:bottom-[110%] sm:w-full"
+        className="absolute right-0 z-10 w-[91vw] rounded-md bg-white p-2 shadow-[0_0_100vh_100vw_#00000066] sm:bottom-[110%] sm:w-full sm:shadow-md"
         tabIndex={0}
       >
         <li>
