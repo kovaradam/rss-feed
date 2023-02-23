@@ -1,21 +1,20 @@
-import { requireUser } from '~/session.server';
-import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { Outlet, useLoaderData } from '@remix-run/react';
+import { json } from '@remix-run/server-runtime';
+import { UseAppTitle } from '~/components/AppTitle';
+import { createMeta } from '~/utils';
 
-export async function loader(args: LoaderArgs) {
-  const user = await requireUser(args.request);
-  return json(user);
+export const meta = createMeta();
+
+export function loader() {
+  return json({ title: 'Profile' });
 }
 
-export default function UserPage() {
-  const user = useLoaderData<typeof loader>();
-
+export default function UserIndexPage() {
+  const data = useLoaderData<typeof loader>();
   return (
     <>
-      <AppTitleEmitter>Your profile</AppTitleEmitter>
-      <section>{user.email}</section>
+      <UseAppTitle>{data.title}</UseAppTitle>
+      <Outlet />
     </>
   );
 }

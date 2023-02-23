@@ -1,30 +1,18 @@
 import React from 'react';
 
-export function AppTitleEmitter(props: { children: string }) {
-  const elementRef = React.useRef<HTMLDivElement>(null);
+export function UseAppTitle(props: { children: string }) {
+  const { setTitle } = React.useContext(AppTitle.Context);
   React.useEffect(() => {
-    elementRef.current?.dispatchEvent(
-      new CustomEvent('app-title', {
-        bubbles: true,
-        detail: { title: props.children },
-      })
-    );
-  }, [props.children]);
-
-  return <div style={{ display: 'none' }} ref={elementRef}></div>;
+    setTitle?.(props.children);
+  }, [setTitle, props.children]);
+  return null;
+}
+export function AppTitle(props: { defaultTitle: string }) {
+  const { title } = React.useContext(AppTitle.Context);
+  return <>{title ?? props.defaultTitle}</>;
 }
 
-export function AppTitleClient(props: { defaultTitle: string }) {
-  const [title, setTitle] = React.useState(props.defaultTitle);
-  const titleEventHandler: EventListenerOrEventListenerObject = (event) => {
-    setTitle((event as Event & { detail: { title: string } }).detail.title);
-  };
-  React.useEffect(() => {
-    window.addEventListener('app-title', titleEventHandler);
-    return () => {
-      window.removeEventListener('app-title', titleEventHandler);
-    };
-  }, []);
-
-  return <>{title}</>;
-}
+AppTitle.Context = React.createContext<{
+  title?: string;
+  setTitle?(title: string): void;
+}>({});

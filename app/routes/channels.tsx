@@ -7,18 +7,14 @@ import {
   PlusIcon,
   UserIcon,
 } from '@heroicons/react/outline';
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from '@remix-run/node';
+import type { ActionFunction, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import type { NavLinkProps } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
 import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import React from 'react';
-import { AppTitleClient, AppTitleEmitter } from '~/components/AppTitle';
+import { AppTitle, UseAppTitle } from '~/components/AppTitle';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
@@ -30,35 +26,23 @@ import type {
 import { createChannelFromXml } from '~/models/channel.server';
 import { refreshChannel, getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
-import { requireUserId } from '~/session.server';
-import { createTitle, useUser } from '~/utils';
+import { requireUser, requireUserId } from '~/session.server';
+import { createMeta, useUser } from '~/utils';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import { Modal } from '~/components/Modal';
 
-const title = 'Your feed';
+export const meta = createMeta();
 
-export const meta: MetaFunction = () => ({
-  title: createTitle(title),
-});
-
-type LoaderData = {
-  channelListItems: Awaited<ReturnType<typeof getChannels>>;
-  collectionListItems: Awaited<ReturnType<typeof getCollections>>;
-  activeCollectionId:
-    | Awaited<ReturnType<typeof getCollections>>[number]['id']
-    | null;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const userId = await requireUserId(request);
+export const loader = async ({ request }: LoaderArgs) => {
+  const user = await requireUser(request);
   const channelListItems = (await getChannels({
-    where: { userId },
+    where: { userId: user.id },
     select: { id: true, title: true, feedUrl: true, items: true },
     orderBy: { title: 'asc' },
   })) as (Channel & { items: Item[] })[];
 
   const collectionListItems = await getCollections({
-    where: { userId },
+    where: { userId: user.id },
     orderBy: { title: 'asc' },
   });
 
@@ -67,7 +51,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   );
 
   channelListItems.forEach(async (dbChannel) => {
-    refreshChannel({ channel: dbChannel, userId })
+    refreshChannel({ channel: dbChannel, userId: user.id })
       .then((updatedChannel) => {
         console.log('updated', updatedChannel.feedUrl);
       })
@@ -76,10 +60,11 @@ export const loader: LoaderFunction = async ({ request }) => {
       });
   });
 
-  return json<LoaderData>({
+  return json({
     channelListItems,
     collectionListItems,
     activeCollectionId,
+    title: 'Your feed',
   });
 };
 
@@ -88,13 +73,13 @@ const [channelUrlName] = inputNames;
 const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 type ActionData =
-  | Partial<Record<typeof errors[number], string | null>>
+  | Partial<Record<(typeof errors)[number], string | null>>
   | undefined;
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.formData();
   const channelHref = data.get(channelUrlName);
-  const userId = await requireUserId(request);
+  const user = await requireUser(request);
 
   let channelUrl;
   try {
@@ -116,7 +101,7 @@ export const action: ActionFunction = async ({ request }) => {
   let newChannel;
   try {
     newChannel = await createChannelFromXml(channelXml, {
-      userId,
+      userId: user.id,
       channelHref: channelUrl.href,
     });
   } catch (error) {
@@ -124,7 +109,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     switch ((error as Error).message as CreateFromXmlErrorType) {
       case 'cannotAccessDb':
-        response = { create: 'Cannot save RSS feed at the moment' };
+        response = { create: 'Cannot save RSS feed at this moment' };
         break;
       case 'channelExists':
         response = { create: 'RSS feed already exists' };
@@ -142,16 +127,18 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelsPage() {
-  const data = useLoaderData<LoaderData>();
+  const data = useLoaderData<typeof loader>();
   const user = useUser();
+
   const [isNewChannelModalVisible, setIsNewChannelModalVisible] =
     React.useState(false);
 
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
+  const [title, setTitle] = React.useState(data.title);
 
-  const openNewChannelModal = () => {
+  const openNewChannelModal = React.useCallback(() => {
     setIsNewChannelModalVisible(true);
-  };
+  }, [setIsNewChannelModalVisible]);
 
   const closeNewChannelModal = React.useCallback(() => {
     setIsNewChannelModalVisible(false);
@@ -166,132 +153,142 @@ export default function ChannelsPage() {
   }, [location.pathname, closeNewChannelModal]);
 
   return (
-    <div className="flex flex-col  sm:overflow-x-visible">
-      <AppTitleEmitter>{title}</AppTitleEmitter>
-      <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
-        <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
-          <button
-            onClick={() => setIsNavExpanded((prev) => !prev)}
-            className="block rounded py-2  px-4 hover:bg-slate-100 active:bg-slate-200 sm:hidden"
-          >
-            <MenuAlt2Icon className="w-6" />
-          </button>
-          <h1 className="truncate font-bold sm:text-3xl">
-            <AppTitleClient defaultTitle={title}></AppTitleClient>
-          </h1>
-          <UserMenu user={user} />
-        </div>
-      </header>
-      <div
-        className="flex justify-center "
-        onTouchStart={(event) => {
-          event.currentTarget.dataset.touchStartX = String(
-            event.targetTouches[0]?.clientX
-          );
-        }}
-        onTouchEnd={(event) => {
-          const startX = event.currentTarget.dataset.touchStartX;
+    <AppTitle.Context.Provider value={{ setTitle, title }}>
+      <div className="flex flex-col  sm:overflow-x-visible">
+        <UseAppTitle>{data.title}</UseAppTitle>
+        <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
+          <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
+            <button
+              onClick={() => setIsNavExpanded((prev) => !prev)}
+              className="block rounded py-2  px-4 hover:bg-slate-100 active:bg-slate-200 sm:hidden"
+            >
+              <MenuAlt2Icon className="w-6" />
+            </button>
+            <h1 className="truncate font-bold sm:text-3xl">
+              <AppTitle defaultTitle={data.title} />
+            </h1>
+            <UserMenu user={user} />
+          </div>
+        </header>
+        <div
+          className="flex justify-center "
+          onTouchStart={(event) => {
+            event.currentTarget.dataset.touchStartX = String(
+              event.targetTouches[0]?.clientX
+            );
+          }}
+          onTouchEnd={(event) => {
+            const startX = event.currentTarget.dataset.touchStartX;
 
-          const diff = Number(startX) - event.changedTouches[0]?.clientX;
-          if (!startX || Math.abs(diff) < event.currentTarget.clientWidth / 3) {
-            return;
-          }
-          event.preventDefault();
-          setIsNavExpanded(diff < 0);
-        }}
-      >
-        <main
-          className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
-            isNavExpanded ? 'translate-x-3/4' : ''
-          } duration-200 ease-in sm:translate-x-0`}
-          style={{
-            boxShadow:
-              '-8rem 0 5rem 0rem rgb(248 250 252 / var(--tw-bg-opacity))',
+            const diff = Number(startX) - event.changedTouches[0]?.clientX;
+            if (
+              !startX ||
+              Math.abs(diff) < event.currentTarget.clientWidth / 3
+            ) {
+              return;
+            }
+            event.preventDefault();
+            setIsNavExpanded(diff < 0);
           }}
         >
-          <NavWrapper
-            isExpanded={isNavExpanded}
-            hide={() => setIsNavExpanded(false)}
+          <main
+            className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
+              isNavExpanded ? 'translate-x-3/4' : ''
+            } duration-200 ease-in sm:translate-x-0`}
+            style={{
+              boxShadow:
+                '-8rem 0 5rem 0rem rgb(248 250 252 / var(--tw-bg-opacity))',
+            }}
           >
-            <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
-              <h1 className="sticky top-0 z-10 hidden truncate  bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
-                <AppTitleClient defaultTitle={title}></AppTitleClient>
-              </h1>
-              <div className="sm:overflow-y-auto">
-                <button
-                  className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-100 peer-focus:hidden"
-                  onClick={openNewChannelModal}
-                  data-silent
-                >
-                  <PlusIcon className="w-4" /> Add RSS Channel
-                </button>
-                <hr />
-                <StyledNavLink to={`/channels`} end>
-                  <HomeIcon className="w-4" />
-                  Feed
-                </StyledNavLink>
-                <hr />
-                <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
-                <ol>
-                  {data.collectionListItems?.map((collection) => (
-                    <li key={collection.id}>
-                      <StyledNavLink
-                        to={`/channels/collections/${collection.id}`}
-                      >
-                        <ArchiveIcon className="w-4" />
-                        {collection.title}
-                      </StyledNavLink>
-                    </li>
-                  ))}
-                  <li>
-                    <Link
-                      className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
-                      to={`/channels/collections/new`}
-                    >
-                      <PlusIcon className="w-4" />
-                      New collection
-                    </Link>
-                  </li>
-                </ol>
-                <hr />
-                <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>
-                {data.channelListItems.length === 0 ? (
-                  <p className="p-4">No channels yet</p>
-                ) : (
+            <NavWrapper
+              isExpanded={isNavExpanded}
+              hide={() => setIsNavExpanded(false)}
+            >
+              <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
+                <h1 className="sticky top-0 z-10 hidden truncate  bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
+                  <AppTitle defaultTitle={data.title} />
+                </h1>
+                <div className="sm:overflow-y-auto">
+                  <button
+                    className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-100 peer-focus:hidden"
+                    onClick={openNewChannelModal}
+                    data-silent
+                  >
+                    <PlusIcon className="w-4" /> Add RSS Channel
+                  </button>
+                  <hr />
+                  <StyledNavLink to={`/channels`} end>
+                    <HomeIcon className="w-4" />
+                    Feed
+                  </StyledNavLink>
+                  <hr />
+                  <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
                   <ol>
-                    {data.channelListItems.map((channel) => (
-                      <li key={channel.id}>
-                        <StyledNavLink className="block" to={channel.id}>
-                          {channel.title}
+                    {data.collectionListItems?.map((collection) => (
+                      <li key={collection.id}>
+                        <StyledNavLink
+                          to={`/channels/collections/${collection.id}`}
+                        >
+                          <ArchiveIcon className="w-4" />
+                          {collection.title}
                         </StyledNavLink>
                       </li>
                     ))}
+                    <li>
+                      <Link
+                        className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
+                        to={`/channels/collections/new`}
+                      >
+                        <PlusIcon className="w-4" />
+                        New collection
+                      </Link>
+                    </li>
                   </ol>
+                  <hr />
+                  <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>
+                  {data.channelListItems.length === 0 ? (
+                    <p className="p-4">No channels yet</p>
+                  ) : (
+                    <ol>
+                      {data.channelListItems.map((channel) => (
+                        <li key={channel.id}>
+                          <StyledNavLink className="block" to={channel.id}>
+                            {channel.title}
+                          </StyledNavLink>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+                <div className="relative hidden h-full w-full items-center px-2 sm:flex ">
+                  <UserMenu user={user} />
+                </div>
+              </div>
+            </NavWrapper>
+            <div className="flex-1 p-6">
+              <NewChannelModalContext.Provider
+                value={React.useMemo(
+                  () => ({
+                    open: openNewChannelModal,
+                  }),
+                  [openNewChannelModal]
                 )}
-              </div>
-              <div className="relative hidden h-full w-full items-center px-2 sm:flex ">
-                <UserMenu user={user} />
-              </div>
+              >
+                <Outlet />
+              </NewChannelModalContext.Provider>
             </div>
-          </NavWrapper>
-          <div className="flex-1 p-6">
-            <NewChannelModalContext.Provider
-              value={{ open: openNewChannelModal }}
-            >
-              <Outlet />
-            </NewChannelModalContext.Provider>
-          </div>
 
-          <Modal
-            isOpen={isNewChannelModalVisible}
-            contentLabel="New Channel"
-            onRequestClose={closeNewChannelModal}
-          >
-            <CreateChannelForm />
-          </Modal>
-        </main>
+            <Modal
+              isOpen={isNewChannelModalVisible}
+              contentLabel="New Channel"
+              onRequestClose={closeNewChannelModal}
+            >
+              <CreateChannelForm />
+            </Modal>
+          </main>
+        </div>
       </div>
-    </div>
+    </AppTitle.Context.Provider>
   );
 }
 
@@ -345,7 +342,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
         </span>
       </summary>
       <ul
-        className="absolute right-0 z-10 w-[91vw] rounded-md bg-white p-2 shadow-[0_0_100vh_100vw_#00000066] sm:bottom-[110%] sm:w-full sm:shadow-md"
+        className="absolute right-0 z-10 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2 shadow-[0_0_100vh_100vw_#00000066] sm:bottom-[110%] sm:w-full sm:flex-col sm:shadow-md"
         tabIndex={0}
       >
         <li>
@@ -368,7 +365,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
             className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
           >
             <CogIcon className="w-4" />
-            <span className="gap-4 whitespace-nowrap">Settings</span>
+            <span className="gap-4 whitespace-nowrap">Profile</span>
           </a>
         </li>
       </ul>

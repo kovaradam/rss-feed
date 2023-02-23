@@ -1,4 +1,5 @@
 import { useMatches } from '@remix-run/react';
+import type { MetaFunction } from '@remix-run/server-runtime';
 import React from 'react';
 
 import type { User } from '~/models/user.server';
@@ -74,6 +75,16 @@ export function validateEmail(email: unknown): email is string {
 
 export function createTitle(input: string): string {
   return `Journal | ${input}`;
+}
+
+export function createMeta(metaFunction?: MetaFunction): MetaFunction {
+  return (metaArgs) => {
+    const meta = metaFunction?.(metaArgs);
+    return {
+      ...meta,
+      title: `Journal | ${metaArgs.data.title ?? meta?.title}`,
+    };
+  };
 }
 
 export function uniqueArrayFilter<T>(

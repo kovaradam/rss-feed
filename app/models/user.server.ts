@@ -20,6 +20,7 @@ export async function createUser(email: User['email'], password: string) {
   const user = await prisma.user.create({
     data: {
       email,
+      requestedEmail: email,
       password: {
         create: {
           hash: hashedPassword,
@@ -33,8 +34,28 @@ export async function createUser(email: User['email'], password: string) {
   return user;
 }
 
+export async function validateUserEmail(id: User['id']) {
+  const user = await getUserById(id);
+
+  if (!user) {
+    return null;
+  }
+
+  return await prisma.user.update({
+    where: { id: id },
+    data: {
+      email: user.email,
+      requestedEmail: null,
+    },
+  });
+}
+
 export async function deleteUserByEmail(email: User['email']) {
   return prisma.user.delete({ where: { email } });
+}
+
+export async function deleteUserById(id: User['id']) {
+  return prisma.user.delete({ where: { id: id } });
 }
 
 export async function verifyLogin(

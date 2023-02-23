@@ -2,7 +2,7 @@ import { useLoaderData, useSubmit, useTransition } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -118,7 +118,7 @@ export default function ChannelIndexPage() {
 
   return (
     <>
-      <AppTitleEmitter>Your feed</AppTitleEmitter>
+      <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
           <ChannelItemsOverlay />

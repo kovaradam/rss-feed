@@ -8,7 +8,7 @@ import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { UseAppTitle } from '~/components/AppTitle';
 
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
@@ -35,7 +35,7 @@ export const meta: MetaFunction = ({ data }) => {
   };
 };
 
-type FieldName = typeof fieldNames[number];
+type FieldName = (typeof fieldNames)[number];
 
 type ActionData = {
   errors: Partial<Record<'title', string | null>> | undefined;
@@ -127,7 +127,7 @@ export default function EditCollectionPage() {
   const data = useLoaderData<LoaderData>();
   return (
     <>
-      <AppTitleEmitter>{data.defaultValue.title}</AppTitleEmitter>
+      <UseAppTitle>{data.defaultValue.title}</UseAppTitle>
       <CollectionForm<LoaderData, ActionData>
         title={'Edit collection'}
         deleteFormId="delete-form"

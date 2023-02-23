@@ -55,10 +55,10 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <ClientOnly>
-          <UseSounds />
-        </ClientOnly>
       </body>
+      <ClientOnly>
+        <UseSounds />
+      </ClientOnly>
     </html>
   );
 }

@@ -6,7 +6,7 @@ import type {
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { UseAppTitle } from '~/components/AppTitle';
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
@@ -28,7 +28,7 @@ export const meta: MetaFunction = () => {
   };
 };
 
-type FieldName = typeof fieldNames[number];
+type FieldName = (typeof fieldNames)[number];
 
 type ActionData = {
   errors: Partial<Record<FieldName, string | null>> | undefined;
@@ -97,7 +97,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export default function NewCollectionPage() {
   return (
     <>
-      <AppTitleEmitter>New collection</AppTitleEmitter>
+      <UseAppTitle>New collection</UseAppTitle>
       <CollectionForm title="Create a new collection" />
     </>
   );

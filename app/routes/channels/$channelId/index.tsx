@@ -40,7 +40,7 @@ import { Button, SubmitButton } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { UseAppTitle } from '~/components/AppTitle';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import useSound from 'use-sound';
 
@@ -154,7 +154,7 @@ export default function ChannelDetailsPage() {
 
   return (
     <div className="relative flex flex-col sm:flex-row ">
-      <AppTitleEmitter>Channel detail</AppTitleEmitter>
+      <UseAppTitle>Channel detail</UseAppTitle>
       <section className="flex-1">
         <WithEditLink name={'title'}>
           <h3 className="text-4xl font-bold ">{data.channel.title}</h3>
@@ -257,12 +257,13 @@ export default function ChannelDetailsPage() {
       </section>
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">
-          <SubmitButton
+          <Button
             onClick={() => playRefresh()}
             type="submit"
             title="Refresh this channel"
             className="flex w-[13ch] items-center gap-2 "
             isLoading={isRefreshing}
+            secondary
           >
             <RefreshIcon
               className={`w-4  ${
@@ -270,7 +271,7 @@ export default function ChannelDetailsPage() {
               }`}
             />
             Refresh
-          </SubmitButton>
+          </Button>
         </Form>
         <Link
           title="Edit this channel"
@@ -283,7 +284,6 @@ export default function ChannelDetailsPage() {
           <Button
             type="submit"
             title="Delete this channel"
-            secondary
             className="flex h-full w-fit items-center gap-2"
             isLoading={transition.submission?.method === 'DELETE'}
           >

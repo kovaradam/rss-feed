@@ -14,7 +14,7 @@ import type {
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
@@ -141,7 +141,7 @@ export default function ChannelIndexPage() {
 
   return (
     <>
-      <AppTitleEmitter>{collection.title}</AppTitleEmitter>
+      <UseAppTitle>{collection.title}</UseAppTitle>
       <div className="relative flex min-h-screen flex-col sm:flex-row">
         <section className="sm:min-w-2/3 relative flex-1">
           <ChannelItemsOverlay />

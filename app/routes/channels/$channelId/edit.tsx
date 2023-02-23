@@ -13,7 +13,7 @@ import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
-import { AppTitleEmitter } from '~/components/AppTitle';
+import { UseAppTitle } from '~/components/AppTitle';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { SubmitButton } from '~/components/Button';
 import { useCategoryInput } from '~/components/CategoryInput';
@@ -40,7 +40,7 @@ export const meta: MetaFunction = ({ data }) => {
   };
 };
 
-type FieldName = typeof fieldNames[number];
+type FieldName = (typeof fieldNames)[number];
 
 type ActionData = {
   errors: Partial<Record<FieldName, string | null>> | undefined;
@@ -136,7 +136,7 @@ export default function Channels() {
 
   return (
     <>
-      <AppTitleEmitter>{channel?.title}</AppTitleEmitter>
+      <UseAppTitle>{channel?.title}</UseAppTitle>
       <h3 className="mb-2 text-4xl font-bold">Edit channel</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>

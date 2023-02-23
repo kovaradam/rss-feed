@@ -1,9 +1,16 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
+import { deleteUserById } from '~/models/user.server';
 
-import { logout } from '~/session.server';
+import { getUserId, logout } from '~/session.server';
 
 export const action: ActionFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+
+  if (request.method === 'DELETE' && userId) {
+    await deleteUserById(userId);
+  }
+
   return logout(request);
 };
 
