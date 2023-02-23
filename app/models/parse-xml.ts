@@ -54,6 +54,15 @@ class ChannelDataTransformer {
     }
     return link;
   }
+
+  get title() {
+    const title = this.channelData?.title?.[0];
+    if (typeof title !== 'string') {
+      return title?._;
+    }
+    return title;
+  }
+
   get lastBuildDate() {
     const lastBuildDate =
       this.channelData?.lastBuildDate?.[0] ?? this.channelData?.updated?.[0];
@@ -63,6 +72,7 @@ class ChannelDataTransformer {
       return null;
     }
   }
+
   get items() {
     const items = this.channelData?.item ?? this.channelData.entry ?? [];
     return items as Array<Record<string, any>>;
@@ -79,7 +89,7 @@ class ChannelDataTransformer {
   getResult(): ChannelResult {
     return {
       link: this.link,
-      title: this.channelData?.title?.[0] || 'Title is missing',
+      title: this.title || 'Title is missing',
       description:
         this.channelData?.description?.[0] || 'Description is missing',
       category: this.channelData?.category?.[0] || '',
