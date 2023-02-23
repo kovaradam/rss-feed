@@ -10,6 +10,7 @@ async function seed() {
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
+  console.log('ayy');
 
   await createUser(email, 'racheliscool');
 }
