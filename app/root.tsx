@@ -11,6 +11,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from '@remix-run/react';
 
 import tailwindStylesheetUrl from './styles/tailwind.css';
@@ -44,6 +45,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
+  const data = useLoaderData<LoaderData>();
+  console.log(data.user);
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>
@@ -56,9 +59,11 @@ export default function App() {
         <Scripts />
         <LiveReload />
       </body>
-      <ClientOnly>
-        <UseSounds />
-      </ClientOnly>
+      {data.user?.soundsAllowed && (
+        <ClientOnly>
+          <UseSounds />
+        </ClientOnly>
+      )}
     </html>
   );
 }

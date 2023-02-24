@@ -12,6 +12,7 @@ model User {
   email          String  @unique
   requestedEmail String? @unique
   isAdmin        Boolean @default(false)
+  soundsAllowed  Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

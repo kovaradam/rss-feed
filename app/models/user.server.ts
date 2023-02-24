@@ -1,4 +1,4 @@
-import type { Password, User } from '@prisma/client';
+import type { Password, Prisma, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 import { prisma } from '~/db.server';
@@ -60,6 +60,16 @@ export async function updateUserEmail(id: User['id'], email: string) {
     data: {
       requestedEmail: email,
     },
+  });
+}
+
+export async function updateUser(
+  id: User['id'],
+  data: Prisma.UserUpdateArgs['data']
+) {
+  return await prisma.user.update({
+    where: { id: id },
+    data: data,
   });
 }
 
