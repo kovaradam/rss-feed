@@ -1,9 +1,12 @@
-import { Link, useLoaderData } from '@remix-run/react';
+import { Form, Link, useLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import { getUserById } from '~/models/user.server';
 import { requireUserId } from '~/session.server';
+import { createMeta } from '~/utils';
+
+export const meta = createMeta(() => ({ title: 'Confirm email' }));
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
@@ -13,7 +16,7 @@ export async function loader({ request }: LoaderArgs) {
     return redirect('/');
   }
 
-  return json({ user });
+  return json({ user, allowSkip: process.env.NODE_ENV !== 'production' });
 }
 
 export default function ConfirmEmailPage() {
@@ -32,9 +35,21 @@ export default function ConfirmEmailPage() {
         >
           <b>{data.user?.requestedEmail}</b>
         </a>
-        .
+        .{' '}
       </p>
-      <Link to={data.user.id}>Or nah</Link>
+      <div className="mt-10 flex w-full gap-2 text-slate-400">
+        <Form className=" self-start " action="/logout" method="post">
+          <button type="submit">Logout</button>
+        </Form>
+        {data.allowSkip && (
+          <>
+            |
+            <Link className="" to={data.user.id}>
+              Skip confirmation
+            </Link>
+          </>
+        )}
+      </div>
     </section>
   );
 }

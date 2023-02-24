@@ -4,6 +4,7 @@ import { json } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import {
   ClockIcon,
+  LogoutIcon,
   MailIcon,
   PencilIcon,
   TrashIcon,
@@ -48,15 +49,20 @@ export default function UserPage() {
           </dl>
         </section>
         <AsideWrapper>
+          <Form action="edit">
+            <Button type="submit" secondary className="flex gap-2">
+              <PencilIcon className="w-4" /> Update email
+            </Button>
+          </Form>
+          <Form action="/logout" method="post">
+            <Button type="submit" secondary className="flex gap-2">
+              <LogoutIcon className="w-4" /> Log out
+            </Button>
+          </Form>
           <Form method="delete" action="/logout">
             <Button type="submit" className="flex gap-2">
               <TrashIcon className="w-4" />
               Delete account
-            </Button>
-          </Form>
-          <Form action="edit">
-            <Button type="submit" secondary className="flex gap-2">
-              <PencilIcon className="w-4" /> Update email
             </Button>
           </Form>
         </AsideWrapper>

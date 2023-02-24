@@ -14,6 +14,10 @@ export async function getUserByEmail(email: User['email']) {
   return prisma.user.findUnique({ where: { email } });
 }
 
+export async function getUsers() {
+  return prisma.user.findMany();
+}
+
 export async function createUser(email: User['email'], password: string) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -37,15 +41,24 @@ export async function createUser(email: User['email'], password: string) {
 export async function validateUserEmail(id: User['id']) {
   const user = await getUserById(id);
 
-  if (!user) {
+  if (!user || !user.requestedEmail) {
     return null;
   }
 
   return await prisma.user.update({
     where: { id: id },
     data: {
-      email: user.email,
+      email: user.requestedEmail,
       requestedEmail: null,
+    },
+  });
+}
+
+export async function updateUserEmail(id: User['id'], email: string) {
+  return await prisma.user.update({
+    where: { id: id },
+    data: {
+      requestedEmail: email,
     },
   });
 }
@@ -56,6 +69,10 @@ export async function deleteUserByEmail(email: User['email']) {
 
 export async function deleteUserById(id: User['id']) {
   return prisma.user.delete({ where: { id: id } });
+}
+
+export async function makeUserAdmin(id: User['id'], isAdmin: boolean) {
+  return prisma.user.update({ where: { id: id }, data: { isAdmin: isAdmin } });
 }
 
 export async function verifyLogin(
