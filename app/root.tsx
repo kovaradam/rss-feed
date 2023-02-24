@@ -46,7 +46,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function App() {
   const data = useLoaderData<LoaderData>();
-  console.log(data.user);
+
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>

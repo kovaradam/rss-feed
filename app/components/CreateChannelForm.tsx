@@ -14,9 +14,6 @@ export function CreateChannelForm<
   return (
     <Form
       method="put"
-      action={window.location.pathname.concat(
-        window.location.search.replace('index=', '')
-      )}
       className={'flex flex-col gap-8 '.concat(props.className ?? '')}
     >
       <fieldset className="flex flex-col gap-2">

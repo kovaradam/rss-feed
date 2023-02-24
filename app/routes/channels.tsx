@@ -26,7 +26,7 @@ import type {
 import { createChannelFromXml } from '~/models/channel.server';
 import { refreshChannel, getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
-import { requireUser, requireUserId } from '~/session.server';
+import { requireUser } from '~/session.server';
 import { createMeta, useUser } from '~/utils';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import { Modal } from '~/components/Modal';

@@ -34,18 +34,21 @@ export const secondaryButtonStyle =
 export const primaryButtonStyle =
   'bg-black text-white hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-500';
 
-export function SubmitButton(props: Props): JSX.Element {
+export function SubmitButton({
+  isLoading,
+  ...buttonProps
+}: Props): JSX.Element {
   const transition = useTransition();
-  const isLoading = props.isLoading ?? transition.state === 'submitting';
+  isLoading ??= transition.state === 'submitting';
 
   return (
     <button
-      {...props}
-      disabled={props.disabled || isLoading}
+      {...buttonProps}
+      disabled={buttonProps.disabled || isLoading}
       type="submit"
-      className={`flex items-center justify-center rounded  bg-rose-400 px-4 py-2 font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 ${props.className}`}
+      className={`flex items-center justify-center rounded  bg-rose-400 px-4 py-2 font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 ${buttonProps.className}`}
     >
-      {isLoading ? <SpinnerIcon className="w-4" /> : props.children}
+      {isLoading ? <SpinnerIcon className="w-4" /> : buttonProps.children}
     </button>
   );
 }

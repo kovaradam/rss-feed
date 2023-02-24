@@ -22,12 +22,8 @@ import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
-import type {
-  getItemsByFilters,
-  ItemWithChannel,
-} from '~/models/channel.server';
+import type { ItemWithChannel } from '~/models/channel.server';
 import { getItemsByCollection } from '~/models/channel.server';
-import type { Collection } from '~/models/collection.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle } from '~/utils';
@@ -36,16 +32,6 @@ export const meta: MetaFunction = ({ data }) => {
   return {
     title: createTitle(data?.collection?.title ?? 'Collection feed'),
   };
-};
-
-type LoaderData = {
-  items: ItemWithChannel[];
-  filters: Pick<
-    Parameters<typeof getItemsByFilters>[0]['filters'],
-    'after' | 'before'
-  >;
-  loadMoreAction: string | null;
-  collection: Collection;
 };
 
 const itemCountName = 'item-count';
@@ -74,7 +60,7 @@ export async function loader({ request, params }: LoaderArgs) {
   const itemCountParam = searchParams.get(itemCountName);
   const itemCount = itemCountParam ? Number(itemCountParam) : 30;
 
-  const items = await getItemsByCollection(
+  const items = (await getItemsByCollection(
     { collectionId, userId },
     {
       where: {
@@ -98,16 +84,13 @@ export async function loader({ request, params }: LoaderArgs) {
         },
       },
     }
-  );
-
-  const loadMoreUrl = new URL(request.url);
-  loadMoreUrl.searchParams.set(itemCountName, String(itemCount + 10));
+  )) as ItemWithChannel[];
 
   return json({
-    items: items as LoaderData['items'],
-    loadMoreAction:
+    items: items,
+    cursor:
       items.length >= itemCount
-        ? loadMoreUrl.pathname.concat(loadMoreUrl.search)
+        ? { name: itemCountName, value: String(itemCount + 10) }
         : null,
     filters,
     collection,
@@ -123,8 +106,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, loadMoreAction, filters, collection } =
-    useLoaderData<typeof loader>();
+  const { items, cursor, filters, collection } = useLoaderData<typeof loader>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
   const isIdle = transition.state === 'idle';
@@ -179,9 +161,7 @@ export default function ChannelIndexPage() {
               </li>
             ))}
           </ul>
-          {loadMoreAction && (
-            <ShowMoreLink to={loadMoreAction} isLoading={isSubmitting} />
-          )}
+          {cursor && <ShowMoreLink cursor={cursor} isLoading={isSubmitting} />}
         </section>
         <AsideWrapper>
           <Details

@@ -36,7 +36,7 @@ import {
 import { requireUserId } from '~/session.server';
 import React from 'react';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
-import { Button, SubmitButton } from '~/components/Button';
+import { Button } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
@@ -55,7 +55,7 @@ export const meta: MetaFunction = ({ data }) => {
 type LoaderData = {
   channel: Channel;
   items: Item[];
-  moreItemsAction: string | null;
+  cursor: React.ComponentProps<typeof ShowMoreLink>['cursor'] | null;
 };
 
 const itemCountName = 'itemCount';
@@ -82,15 +82,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     take: take,
   });
 
-  const loadMoreUrl = new URL(request.url);
-  loadMoreUrl.searchParams.set(itemCountName, String(take + 10));
-
   return json<LoaderData>({
     channel: channel,
     items: items ?? [],
-    moreItemsAction:
+    cursor:
       items.length >= take
-        ? loadMoreUrl.pathname.concat(loadMoreUrl.search)
+        ? { name: itemCountName, value: String(take + 10) }
         : null,
   });
 };
@@ -253,7 +250,7 @@ export default function ChannelDetailsPage() {
             )}
           </React.Fragment>
         ))}
-        {data.moreItemsAction && <ShowMoreLink to={data.moreItemsAction} />}
+        {data.cursor && <ShowMoreLink cursor={data.cursor} />}
       </section>
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">
@@ -280,6 +277,7 @@ export default function ChannelDetailsPage() {
         >
           <PencilIcon className="w-4" /> Edit
         </Link>
+        <br />
         <Form method="delete">
           <Button
             type="submit"

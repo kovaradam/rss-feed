@@ -82,7 +82,7 @@ export function createMeta(metaFunction?: MetaFunction): MetaFunction {
     const meta = metaFunction?.(metaArgs);
     return {
       ...meta,
-      title: `Journal | ${metaArgs.data.title ?? meta?.title}`,
+      title: `Journal | ${metaArgs.data?.title ?? meta?.title}`,
     };
   };
 }

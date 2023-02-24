@@ -1,11 +1,12 @@
 import { requireUser } from '~/session.server';
-import { ActionArgs, LoaderArgs, Response } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { Response } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
 import {
+  BookmarkIcon,
   ClockIcon,
   LogoutIcon,
-  MailIcon,
   PencilIcon,
   TrashIcon,
   VolumeOffIcon,
@@ -14,6 +15,8 @@ import {
 import { Button } from '~/components/Button';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { updateUser } from '~/models/user.server';
+import { ChannelCategoryLinks } from '~/components/ChannelCategories';
+import { getChannels } from '~/models/channel.server';
 
 export async function action({ request }: ActionArgs) {
   const user = await requireUser(request);
@@ -24,34 +27,45 @@ export async function action({ request }: ActionArgs) {
     });
     return json({ user: updatedUser });
   }
-
   throw new Response('Not allowed', { status: 405 });
 }
 
 export async function loader(args: LoaderArgs) {
   const user = await requireUser(args.request);
-  return json({ user: user });
+  const channels = await getChannels({ where: { userId: user.id } });
+  const categories = channels
+    .flatMap((channel) => channel.category.split('/').filter(Boolean))
+    .filter((category, idx, array) => array.indexOf(category) === idx)
+    .join('/');
+  return json({ user: user, categories });
 }
 
 export default function UserPage() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, categories } = useLoaderData<typeof loader>();
   const transition = useTransition();
 
   return (
     <>
       <div className="relative flex min-h-screen flex-col sm:flex-row">
         <section className="flex flex-1 flex-col gap-8">
+          <h3 className="text-4xl font-bold ">{user.email}</h3>
           <dl>
             {[
-              {
-                label: 'Email',
-                value: user.email,
-                icon: <MailIcon className="h-4" />,
-              },
               {
                 label: 'Registered on',
                 value: new Date(user.createdAt).toLocaleDateString(),
                 icon: <ClockIcon className="h-4" />,
+              },
+              {
+                label: 'Categories',
+                icon: <BookmarkIcon className="h-4" />,
+                value: categories ? (
+                  <span className="flex flex-wrap gap-1">
+                    <ChannelCategoryLinks category={categories} />
+                  </span>
+                ) : (
+                  'No categories yet'
+                ),
               },
             ].map((item) => (
               <span

@@ -47,7 +47,7 @@ export async function action({ request }: ActionArgs) {
   if (newEmail === currentEmail) {
     return json({
       errors: {
-        'new-email': 'New and old email cannot be the same',
+        'new-email': 'New and current email cannot be the same',
       },
     });
   }

@@ -20,7 +20,7 @@ type LoaderData = {
   channels: Channel[];
   categories: string[];
   filters: Parameters<typeof getItemsByFilters>[0]['filters'];
-  loadMoreAction: string | null;
+  cursor: React.ComponentProps<typeof ShowMoreLink>['cursor'] | null;
 };
 
 const itemCountName = 'item-count';
@@ -28,14 +28,12 @@ const itemCountName = 'item-count';
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
-
   const itemCountParam = searchParams.get(itemCountName);
   const itemCountRequest = itemCountParam ? Number(itemCountParam) : 30;
 
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
   );
-
   const [before, after] = ['before', 'after'].map((name) =>
     searchParams.get(name)
   );
@@ -70,22 +68,18 @@ export const loader: LoaderFunction = async ({ request }) => {
   const channels = await getChannels({ where: { userId } });
 
   const categories = channels
-    .map((channel) => channel.category.split('/'))
-    .flat()
+    .flatMap((channel) => channel.category.split('/'))
     .filter((category, index, array) => index === array.indexOf(category))
     .filter(Boolean);
-
-  const loadMoreUrl = new URL(request.url);
-  loadMoreUrl.searchParams.set(itemCountName, String(itemCountRequest + 10));
 
   return json<LoaderData>({
     items: (items as LoaderData['items']) ?? [],
     channels,
     categories,
     filters,
-    loadMoreAction:
+    cursor:
       items.length >= itemCountRequest
-        ? loadMoreUrl.pathname.concat(loadMoreUrl.search)
+        ? { name: itemCountName, value: String(itemCountRequest + 10) }
         : null,
   });
 };
@@ -99,7 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, channels, categories, filters, loadMoreAction } =
+  const { items, channels, categories, filters, cursor } =
     useLoaderData<LoaderData>();
 
   const transition = useTransition();
@@ -193,9 +187,7 @@ export default function ChannelIndexPage() {
               </li>
             ))}
           </ul>
-          {loadMoreAction && (
-            <ShowMoreLink to={loadMoreAction} isLoading={isLoading} />
-          )}
+          {cursor && <ShowMoreLink cursor={cursor} isLoading={isLoading} />}
         </section>
         {channels.length !== 0 && (
           <aside className="hidden pl-4 sm:block ">

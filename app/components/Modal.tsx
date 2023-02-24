@@ -35,16 +35,6 @@ export function Modal(props: Props) {
       }}
       appElement={document.body}
     >
-      <h1 className="relative bg-slate-700 px-4 py-2 text-2xl font-medium text-white ">
-        {props.contentLabel}
-        <button
-          className="absolute right-2 p-1"
-          onClick={props.onRequestClose}
-          data-silent
-        >
-          <XIcon className="w-4" />
-        </button>
-      </h1>
       <div className="p-4 pb-6">{props.children}</div>
     </ReactModal>
   );
