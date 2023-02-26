@@ -8,7 +8,11 @@ import { json } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import React from 'react';
 import { SubmitButton } from '~/components/Button';
-import { createUser, getUserByEmail } from '~/models/user.server';
+import {
+  createUser,
+  getUserByEmail,
+  sendConfirmEmail,
+} from '~/models/user.server';
 import { createUserSession, getUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createTitle, safeRedirect, validateEmail } from '~/utils';
@@ -68,6 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await createUser(email, password);
+  sendConfirmEmail(user);
 
   return createUserSession({
     request,

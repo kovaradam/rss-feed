@@ -1,12 +1,35 @@
-import { Form, Link, useLoaderData } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from '@remix-run/react';
+import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
-import { getUserById } from '~/models/user.server';
+import { getUserById, sendConfirmEmail } from '~/models/user.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
 
 export const meta = createMeta(() => ({ title: 'Confirm email' }));
+
+export async function action({ request }: ActionArgs) {
+  const userId = await requireUserId(request);
+  if (request.method !== 'PATCH') {
+    throw new Response('Not supported', { status: 405 });
+  }
+
+  const user = await getUserById(userId);
+
+  if (!user) {
+    throw new Response('Not found', { status: 404 });
+  }
+
+  const mailResult = await sendConfirmEmail(user);
+
+  return json({ mail: mailResult });
+}
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
@@ -21,6 +44,8 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function ConfirmEmailPage() {
   const data = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const transition = useTransition();
 
   return (
     <section className="flex flex-col items-center justify-center p-6">
@@ -38,8 +63,22 @@ export default function ConfirmEmailPage() {
         .{' '}
       </p>
       <div className="mt-10 flex w-full gap-2 text-slate-400">
-        <Form className=" self-start " action="/logout" method="post">
-          <button type="submit">Logout</button>
+        <Form method="patch">
+          {transition.submission?.method === 'PATCH' ? (
+            <span>Sending e-mail...</span>
+          ) : (
+            <>
+              {actionData?.mail?.accepted?.length ? (
+                <span>New e-mail has been sent</span>
+              ) : (
+                <button type="submit">Resend e-mail</button>
+              )}
+            </>
+          )}
+        </Form>
+        |
+        <Form action="/logout" method="post">
+          <button type="submit">Log out</button>
         </Form>
         {data.allowSkip && (
           <>

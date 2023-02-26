@@ -11,7 +11,7 @@ import { SubmitButton } from '~/components/Button';
 import {
   getUserByEmail,
   getUserById,
-  updateUserEmail,
+  requestUpdateUserEmail,
 } from '~/models/user.server';
 import { requireUser, requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
@@ -62,7 +62,7 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  await updateUserEmail(userId, newEmail);
+  await requestUpdateUserEmail(userId, newEmail);
 
   return redirect('/');
 }

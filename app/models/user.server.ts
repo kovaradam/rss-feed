@@ -1,8 +1,10 @@
 import type { Password, Prisma, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import invariant from 'tiny-invariant';
 
 import { prisma } from '~/db.server';
 import { createDefaultCollections } from './collection.server';
+import { Mail } from './mail.server';
 
 export type { User } from '@prisma/client';
 
@@ -18,7 +20,11 @@ export async function getUsers() {
   return prisma.user.findMany();
 }
 
-export async function createUser(email: User['email'], password: string) {
+export async function createUser(
+  email: User['email'],
+  password: string,
+  params?: { isAdmin: boolean }
+) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -30,6 +36,7 @@ export async function createUser(email: User['email'], password: string) {
           hash: hashedPassword,
         },
       },
+      isAdmin: params?.isAdmin ?? false,
     },
   });
 
@@ -54,7 +61,21 @@ export async function validateUserEmail(id: User['id']) {
   });
 }
 
-export async function updateUserEmail(id: User['id'], email: string) {
+export async function sendConfirmEmail(
+  user: Pick<User, 'id' | 'requestedEmail'>
+) {
+  invariant(user.requestedEmail, 'Requested email missing');
+
+  const link = `http://localhost:3000/welcome/confirm-email/${user.id}`;
+  return Mail.send(user.requestedEmail, {
+    subject: 'Please confirm your e-mail address ✔', // Subject line
+    html: `Verify your address by clicking this link <a href=${link}>${link}</a>`, // plain text body
+  }).catch(console.error);
+}
+
+export async function requestUpdateUserEmail(id: User['id'], email: string) {
+  sendConfirmEmail({ id, requestedEmail: email });
+
   return await prisma.user.update({
     where: { id: id },
     data: {
