@@ -72,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await createUser(email, password);
-  sendConfirmEmail(user);
+  sendConfirmEmail(user, request);
 
   return createUserSession({
     request,

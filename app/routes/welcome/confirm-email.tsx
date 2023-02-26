@@ -26,7 +26,7 @@ export async function action({ request }: ActionArgs) {
     throw new Response('Not found', { status: 404 });
   }
 
-  const mailResult = await sendConfirmEmail(user);
+  const mailResult = await sendConfirmEmail(user, request);
 
   return json({ mail: mailResult });
 }

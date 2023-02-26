@@ -17,7 +17,7 @@ export class Mail {
       to: recipient, // list of receivers
     });
 
-    console.log('Message sent: %s', info.messageId);
+    console.log('Message sent: ', info.messageId, ' rcpt: ', info.accepted);
 
     // Preview only available when sending through an Ethereal account
     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
@@ -28,7 +28,7 @@ export class Mail {
 }
 
 export async function createTransporter() {
-  const isProduction = true || process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'production';
 
   let account;
   if (isProduction) {

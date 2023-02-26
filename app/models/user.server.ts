@@ -62,24 +62,30 @@ export async function validateUserEmail(id: User['id']) {
 }
 
 export async function sendConfirmEmail(
-  user: Pick<User, 'id' | 'requestedEmail'>
+  user: Pick<User, 'id' | 'requestedEmail'>,
+  request: Request
 ) {
   invariant(user.requestedEmail, 'Requested email missing');
 
-  const link = `http://localhost:3000/welcome/confirm-email/${user.id}`;
+  const requestUrl = new URL(request.url);
+  const link = `${requestUrl.origin}/welcome/confirm-email/${user.id}`;
   return Mail.send(user.requestedEmail, {
     subject: 'Please confirm your e-mail address ✔', // Subject line
     html: `Verify your address by clicking this link <a href=${link}>${link}</a>`, // plain text body
   }).catch(console.error);
 }
 
-export async function requestUpdateUserEmail(id: User['id'], email: string) {
-  sendConfirmEmail({ id, requestedEmail: email });
+export async function requestUpdateUserEmail(
+  id: User['id'],
+  newEmail: string,
+  request: Request
+) {
+  sendConfirmEmail({ id, requestedEmail: newEmail }, request);
 
   return await prisma.user.update({
     where: { id: id },
     data: {
-      requestedEmail: email,
+      requestedEmail: newEmail,
     },
   });
 }

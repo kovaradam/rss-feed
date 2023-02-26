@@ -62,7 +62,7 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  await requestUpdateUserEmail(userId, newEmail);
+  await requestUpdateUserEmail(userId, newEmail, request);
 
   return redirect('/');
 }
