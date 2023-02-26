@@ -68,6 +68,8 @@ export async function sendConfirmEmail(
   invariant(user.requestedEmail, 'Requested email missing');
 
   const requestUrl = new URL(request.url);
+  requestUrl.protocol = 'https://';
+
   const link = `${requestUrl.origin}/welcome/confirm-email/${user.id}`;
   return Mail.send(user.requestedEmail, {
     subject: 'Please confirm your e-mail address ✔', // Subject line
