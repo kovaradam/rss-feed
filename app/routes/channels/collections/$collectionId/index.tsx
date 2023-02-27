@@ -22,6 +22,7 @@ import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
+import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { ItemWithChannel } from '~/models/channel.server';
 import { getItemsByCollection } from '~/models/channel.server';
 import { getCollection } from '~/models/collection.server';
@@ -134,9 +135,33 @@ export default function ChannelIndexPage() {
             />
           </Details>
           {items.length === 0 && isIdle && (
-            <p className="text-center text-lg font-bold">
-              No articles found in this collection
-            </p>
+            <div className="flex flex-col items-center gap-24 p-8">
+              <div>
+                <p className="text-center text-lg font-bold">
+                  No articles were found in this collection.
+                </p>
+                <p className="text-center text-lg text-slate-400">
+                  You may try adding a{' '}
+                  <NewChannelModalContext.Consumer>
+                    {(context) => (
+                      <button
+                        onClick={() => context.open?.()}
+                        className="font-bold text-rose-400 underline"
+                      >
+                        new channel
+                      </button>
+                    )}
+                  </NewChannelModalContext.Consumer>
+                </p>
+              </div>
+              <img
+                alt="Illustration doodle of a person sitting and reading"
+                src="/clumsy.svg"
+                width={'70%'}
+                className="opacity-60"
+                data-from="https://www.opendoodles.com/"
+              />
+            </div>
           )}
           <ul
             className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-2`}

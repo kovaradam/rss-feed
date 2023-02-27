@@ -98,7 +98,6 @@ export default function ChannelIndexPage() {
 
   const transition = useTransition();
   const isLoading = transition.state === 'loading';
-  const isIdle = transition.state === 'idle';
 
   const submit = useSubmit();
 

@@ -102,15 +102,20 @@ export async function updateUser(
   });
 }
 
-export async function deleteUserByEmail(email: User['email']) {
-  return prisma.user.delete({ where: { email } });
-}
-
 export async function deleteUserById(id: User['id']) {
+  const user = await getUserById(id);
+  if (user?.isAdmin) {
+    const adminCount = await prisma.user.count({ where: { isAdmin: true } });
+    invariant(adminCount > 1, 'Cannot delete the only admin user');
+  }
   return prisma.user.delete({ where: { id: id } });
 }
 
 export async function makeUserAdmin(id: User['id'], isAdmin: boolean) {
+  if (!isAdmin) {
+    const adminCount = await prisma.user.count({ where: { isAdmin: true } });
+    invariant(adminCount > 1, 'Cannot disable the only admin user');
+  }
   return prisma.user.update({ where: { id: id }, data: { isAdmin: isAdmin } });
 }
 
