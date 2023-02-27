@@ -7,7 +7,7 @@ import {
   BookmarkIcon,
   ClockIcon,
   LogoutIcon,
-  PencilIcon,
+  MailIcon,
   TrashIcon,
   VolumeOffIcon,
   VolumeUpIcon,
@@ -47,8 +47,8 @@ export default function UserPage() {
   return (
     <>
       <div className="relative flex min-h-screen flex-col sm:flex-row">
-        <section className="flex flex-1 flex-col gap-8">
-          <h3 className="text-4xl font-bold ">{user.email}</h3>
+        <section className="flex flex-1 flex-col gap-8 ">
+          <h3 className="text-3xl font-bold sm:text-4xl ">{user.email}</h3>
           <dl>
             {[
               {
@@ -69,11 +69,12 @@ export default function UserPage() {
               },
             ].map((item) => (
               <span
-                className="mb-1 flex items-center gap-1 text-gray-400"
+                className="mb-3 flex max-w-[89vw] flex-col items-center gap-2 text-gray-400 sm:items-baseline sm:gap-1 md:mb-1 md:flex-row"
                 key={item.label}
               >
-                {item.icon}
-                <dt>{item.label}:</dt>
+                <dt className="flex items-center gap-1">
+                  {item.icon} {item.label}:
+                </dt>
                 <dd className="text-black">{item.value}</dd>
               </span>
             ))}
@@ -89,31 +90,36 @@ export default function UserPage() {
             >
               {user.soundsAllowed ? (
                 <>
-                  <VolumeOffIcon className="w-4" /> Disable sounds
+                  <VolumeOffIcon className="w-4" />{' '}
+                  <span className="hidden sm:block">Disable sounds</span>
                 </>
               ) : (
                 <>
-                  <VolumeUpIcon className="w-4" /> Enable sounds
+                  <VolumeUpIcon className="w-4" />{' '}
+                  <span className="hidden sm:block">Enable sounds</span>
                 </>
               )}
             </Button>
           </Form>
           <Form action="edit-email">
             <Button type="submit" secondary className="flex gap-2">
-              <PencilIcon className="w-4" /> Update email
+              <MailIcon className="w-4" />{' '}
+              <span className="hidden sm:block">Update email</span>
             </Button>
           </Form>
           <br />
           <Form action="/logout" method="post">
             <Button type="submit" secondary className="flex gap-2">
-              <LogoutIcon className="w-4" /> Log out
+              <LogoutIcon className="w-4" />{' '}
+              <span className="hidden sm:block">Log out</span>
             </Button>
           </Form>
-          <br />
+          <br className="flex-1" />
+          <span className="flex-1 sm:hidden" />
           <Form method="delete" action="/logout">
             <Button type="submit" className="flex gap-2">
               <TrashIcon className="w-4" />
-              Delete account
+              <span className="hidden sm:block">Delete account</span>
             </Button>
           </Form>
         </AsideWrapper>
