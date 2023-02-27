@@ -167,7 +167,7 @@ export default function ChannelIndexPage() {
             className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] 2xl:grid-cols-2`}
           >
             {items.map((item) => (
-              <li key={item.link + item.channelId}>
+              <li key={item.id}>
                 <ChannelItemDetail
                   item={{
                     ...item,

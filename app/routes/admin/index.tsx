@@ -7,6 +7,10 @@ import {
 } from '@remix-run/react';
 import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
+import {
+  deleteFailedUpload,
+  getFailedUploads,
+} from '~/models/failed-upload.server';
 import type { User } from '~/models/user.server';
 import { deleteUserById, getUsers, makeUserAdmin } from '~/models/user.server';
 import { requireUser } from '~/session.server';
@@ -26,6 +30,14 @@ export async function action({ request }: ActionArgs) {
 
   if (request.method === 'DELETE') {
     const formData = await request.formData();
+
+    const channelLink = formData.get('channel-link');
+
+    if (typeof channelLink === 'string') {
+      const deletedUpload = await deleteFailedUpload(channelLink);
+      return json({ deletedUpload, action: 'deleted' });
+    }
+
     const userId = String(formData.get('user-id'));
 
     const deletedUser = await deleteUserById(userId);
@@ -52,8 +64,9 @@ export async function loader({ request }: LoaderArgs) {
   requireAdmin(user);
 
   const users = await getUsers();
+  const failedChannelUploads = await getFailedUploads();
 
-  return json({ users });
+  return json({ users, failedChannelUploads });
 }
 
 export default function AdminIndexPage() {
@@ -62,8 +75,8 @@ export default function AdminIndexPage() {
   const transition = useTransition();
 
   return (
-    <>
-      <section className="p-5">
+    <div className="p-5">
+      <section>
         <h2>Users</h2>
         <table className="table-auto ">
           <thead>
@@ -111,13 +124,48 @@ export default function AdminIndexPage() {
         {transition.submission?.method === 'DELETE' && <div>Deleting user</div>}
         {transition.submission?.method === 'PATCH' && <div>Updating user</div>}
 
-        {actionResponse?.user && (
+        {actionResponse && 'user' in actionResponse && (
           <p className="text-green-600">
             {actionResponse.action === 'deleted' ? 'Deleted' : 'Updated'} user{' '}
             <b>{actionResponse.user.email}</b>
           </p>
         )}
       </section>
-    </>
+      <hr className="my-4" />
+      <section>
+        <h2>Failed RSS uploads</h2>
+        {data.failedChannelUploads.length ? (
+          <table>
+            <thead>
+              <tr>
+                <td>Link</td>
+                <td>Error</td>
+                <td>Actions</td>
+              </tr>
+            </thead>
+            <tbody>
+              {data.failedChannelUploads.map((channel) => (
+                <tr key={channel.link}>
+                  <td className="pr-5">{channel.link}</td>
+                  <td className="pr-5">{channel.error}</td>
+                  <td className="pr-5">
+                    <Form method="delete">
+                      <input
+                        type="hidden"
+                        name="channel-link"
+                        value={channel.link}
+                      />
+                      <button type="submit">Delete</button>
+                    </Form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No failed uploads</p>
+        )}
+      </section>
+    </div>
   );
 }

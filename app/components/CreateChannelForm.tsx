@@ -16,7 +16,7 @@ export function CreateChannelForm<
       method="put"
       className={'flex flex-col gap-8 '.concat(props.className ?? '')}
     >
-      <fieldset className="flex flex-col gap-2">
+      <fieldset className="flex flex-col gap-2" disabled={isCreating}>
         <label htmlFor="new-channel-input">RSS feed address</label>
         <input
           type="url"
@@ -24,7 +24,6 @@ export function CreateChannelForm<
           id="new-channel-input"
           autoFocus
           required
-          disabled={isCreating}
           placeholder="https://www.example-web.com/rss.xml"
           className={`${styles.input} `}
           aria-invalid="false"

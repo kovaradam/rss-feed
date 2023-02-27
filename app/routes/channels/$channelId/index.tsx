@@ -233,7 +233,7 @@ export default function ChannelDetailsPage() {
 
         <h4 className="pb-2 text-2xl font-medium">Articles</h4>
         {items.map((item, index, array) => (
-          <React.Fragment key={item.link}>
+          <React.Fragment key={item.id}>
             <article className="flex flex-col pb-2">
               <Href href={item.link}>{item.title}</Href>
               <span className="border-b-gray-400 text-gray-400">

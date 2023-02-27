@@ -2,6 +2,7 @@ import {
   ArchiveIcon,
   CogIcon,
   HomeIcon,
+  KeyIcon,
   LogoutIcon,
   MenuAlt2Icon,
   PlusIcon,
@@ -30,6 +31,7 @@ import { requireUser } from '~/session.server';
 import { createMeta, useUser } from '~/utils';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import { Modal } from '~/components/Modal';
+import { storeFailedUpload } from '~/models/failed-upload.server';
 
 export const meta = createMeta();
 
@@ -78,12 +80,12 @@ type ActionData =
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.formData();
-  const channelHref = data.get(channelUrlName);
+  const inputChannelHref = data.get(channelUrlName);
   const user = await requireUser(request);
 
   let channelUrl;
   try {
-    channelUrl = new URL(String(channelHref));
+    channelUrl = new URL(String(inputChannelHref));
   } catch (error) {
     return json<ActionData>({ [channelUrlName]: 'Provide a valid url' });
   }
@@ -120,6 +122,9 @@ export const action: ActionFunction = async ({ request }) => {
       default:
         response = { create: 'Could not save RSS feed' };
     }
+
+    storeFailedUpload(String(inputChannelHref), String(error));
+
     return json<ActionData>(response);
   }
 
@@ -368,6 +373,21 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
             <span className="gap-4 whitespace-nowrap">Profile</span>
           </a>
         </li>
+        {props.user.isAdmin && (
+          <>
+            <hr className="my-1" />
+            <li>
+              <a
+                href="/admin"
+                title="Admin"
+                className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+              >
+                <KeyIcon className="w-4" />
+                <span className="gap-4 whitespace-nowrap">Admin</span>
+              </a>
+            </li>
+          </>
+        )}
       </ul>
     </details>
   );
