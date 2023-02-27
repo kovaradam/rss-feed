@@ -7,6 +7,7 @@
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Item" (
+    "id" TEXT,
     "link" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -19,8 +20,7 @@ CREATE TABLE "new_Item" (
     "channelId" TEXT NOT NULL,
     CONSTRAINT "Item_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO "new_Item" ("author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title") SELECT "author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title" FROM "Item";
-ALTER TABLE "new_Item" ADD "id" AS ("channelId" + ' ' + "link")
+INSERT INTO "new_Item" ("author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title", "id") SELECT "author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title",'link'||'channelId' FROM "Item";
 DROP TABLE "Item";
 ALTER TABLE "new_Item" RENAME TO "Item";
 CREATE UNIQUE INDEX "Item_id_channelId_key" ON "Item"("id", "channelId");
