@@ -17,6 +17,8 @@ import { AsideWrapper } from '~/components/AsideWrapper';
 import { updateUser } from '~/models/user.server';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 import { getChannels } from '~/models/channel.server';
+import { Modal } from '~/components/Modal';
+import React from 'react';
 
 export async function action({ request }: ActionArgs) {
   const user = await requireUser(request);
@@ -43,6 +45,7 @@ export async function loader(args: LoaderArgs) {
 export default function UserPage() {
   const { user, categories } = useLoaderData<typeof loader>();
   const transition = useTransition();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   return (
     <>
@@ -69,7 +72,7 @@ export default function UserPage() {
               },
             ].map((item) => (
               <span
-                className="mb-3 flex max-w-[89vw] flex-col items-center gap-2 text-gray-400 sm:items-baseline sm:gap-1 md:mb-1 md:flex-row"
+                className="mb-3 flex max-w-[89vw] flex-col items-baseline gap-2 text-gray-400 sm:gap-1 md:mb-1 md:flex-row"
                 key={item.label}
               >
                 <dt className="flex items-center gap-1">
@@ -116,12 +119,44 @@ export default function UserPage() {
           </Form>
           <br className="flex-1" />
           <span className="flex-1 sm:hidden" />
-          <Form method="delete" action="/logout">
-            <Button type="submit" className="flex gap-2">
-              <TrashIcon className="w-4" />
-              <span className="hidden sm:block">Delete account</span>
-            </Button>
-          </Form>
+          <Button
+            className="flex gap-2"
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
+            <TrashIcon className="w-4" />
+            <span className="hidden sm:block">Delete account</span>
+          </Button>
+          <Modal
+            isOpen={isDeleteDialogOpen}
+            onRequestClose={() => setIsDeleteDialogOpen(false)}
+            style={{ content: { maxWidth: '60ch' } }}
+          >
+            <h2 className="text-2xl">Are you sure?</h2>
+            <p className="mt-2 text-slate-500">
+              This will permanently delete your account
+            </p>
+
+            <fieldset className="mt-4 flex place-content-between gap-2">
+              <Button
+                type="button"
+                secondary
+                className="w-1/2"
+                onClick={() => setIsDeleteDialogOpen(false)}
+                data-silent
+              >
+                Cancel
+              </Button>
+              <Form method="delete" action="/logout" className="w-1/2">
+                <Button
+                  type="submit"
+                  className="w-full whitespace-nowrap"
+                  data-silent
+                >
+                  Delete account
+                </Button>
+              </Form>
+            </fieldset>
+          </Modal>
         </AsideWrapper>
       </div>
     </>
