@@ -7,7 +7,7 @@
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Item" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT PRIMARY KEY,
     "link" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
