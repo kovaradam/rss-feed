@@ -21,7 +21,7 @@ CREATE TABLE "new_Item" (
     "channelId" TEXT NOT NULL,
     CONSTRAINT "Item_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO "new_Item" ("author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title", "id") SELECT "author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title", "link" || "channelId" || "title" || datetime(1092941466, 'unixepoch', 'localtime') FROM "Item";
+INSERT INTO "new_Item" ("author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title", "id") SELECT "author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title", "link" || "channelId" || "title" || strftime('%s','now') FROM "Item";
 DROP TABLE "Item";
 ALTER TABLE "new_Item" RENAME TO "Item";
 PRAGMA foreign_key_check;
