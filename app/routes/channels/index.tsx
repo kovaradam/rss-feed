@@ -132,7 +132,7 @@ export default function ChannelIndexPage() {
               className="pt-4"
             />
           </Details>
-          {items.length === 0 && isIdle && (
+          {items.length === 0 && !isLoading && (
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (
                 <p>No articles found</p>
