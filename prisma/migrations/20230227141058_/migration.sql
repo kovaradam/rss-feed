@@ -24,6 +24,5 @@ CREATE TABLE "new_Item" (
 INSERT INTO "new_Item" ("author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title", "id") SELECT "author", "bookmarked", "channelId", "comments", "description", "imageUrl", "link", "pubDate", "read", "title",'link'||'channelId' FROM "Item";
 DROP TABLE "Item";
 ALTER TABLE "new_Item" RENAME TO "Item";
-CREATE UNIQUE INDEX "Item_id_channelId_key" ON "Item"("id", "channelId");
 PRAGMA foreign_key_check;
 PRAGMA foreign_keys=ON;
