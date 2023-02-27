@@ -5,7 +5,7 @@
 
 */
 -- RedefineTables
-DROP TABLE "new_Item";
+DROP TABLE IF EXISTS "new_Item";
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Item" (
     "id" TEXT NOT NULL PRIMARY KEY,
