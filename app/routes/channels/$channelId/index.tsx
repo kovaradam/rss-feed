@@ -152,7 +152,7 @@ export default function ChannelDetailsPage() {
   return (
     <div className="relative flex flex-col sm:flex-row ">
       <UseAppTitle>Channel detail</UseAppTitle>
-      <section className="flex-1">
+      <section className="max-w-[90vw] flex-1">
         <WithEditLink name={'title'}>
           <h3 className="text-4xl font-bold ">{data.channel.title}</h3>
         </WithEditLink>
@@ -258,7 +258,7 @@ export default function ChannelDetailsPage() {
             onClick={() => playRefresh()}
             type="submit"
             title="Refresh this channel"
-            className="flex w-[13ch] items-center gap-2 "
+            className="flex w-[13ch] items-center gap-2"
             isLoading={isRefreshing}
             secondary
           >

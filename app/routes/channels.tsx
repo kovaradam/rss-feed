@@ -161,11 +161,11 @@ export default function ChannelsPage() {
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <div className="flex flex-col  sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
-        <header className="flex w-full justify-center whitespace-nowrap border-b sm:relative sm:hidden">
+        <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden">
           <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
             <button
               onClick={() => setIsNavExpanded((prev) => !prev)}
-              className="block rounded py-2  px-4 hover:bg-slate-100 active:bg-slate-200 sm:hidden"
+              className="block rounded py-2  px-4 hover:bg-slate-200 active:bg-slate-300 sm:hidden"
             >
               <MenuAlt2Icon className="w-6" />
             </button>
@@ -197,12 +197,11 @@ export default function ChannelsPage() {
           }}
         >
           <main
-            className={`relative flex h-full min-h-screen w-screen bg-white xl:w-2/3 ${
+            className={`relative flex h-full min-h-screen w-screen bg-white xl:w-4/5 2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
             } duration-200 ease-in sm:translate-x-0`}
             style={{
-              boxShadow:
-                '-8rem 0 5rem 0rem rgb(248 250 252 / var(--tw-bg-opacity))',
+              boxShadow: '-20rem 0 0rem 20rem rgb(241 245 249)',
             }}
           >
             <NavWrapper
@@ -210,12 +209,12 @@ export default function ChannelsPage() {
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden truncate  bg-slate-50 p-4 font-bold sm:block sm:text-3xl">
+                <h1 className="sticky top-0 z-10 hidden truncate   p-4 font-bold sm:block sm:text-3xl">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">
                   <button
-                    className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-100 peer-focus:hidden"
+                    className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden"
                     onClick={openNewChannelModal}
                     data-silent
                   >
@@ -227,7 +226,9 @@ export default function ChannelsPage() {
                     Feed
                   </StyledNavLink>
                   <hr />
-                  <h6 className="pl-4 pt-2 text-slate-300">Collections</h6>
+                  <h6 className="pl-4 pt-2 text-sm text-slate-300">
+                    Collections
+                  </h6>
                   <ol>
                     {data.collectionListItems?.map((collection) => (
                       <li key={collection.id}>
@@ -250,7 +251,7 @@ export default function ChannelsPage() {
                     </li>
                   </ol>
                   <hr />
-                  <h6 className="pl-4 pt-2 text-slate-300">Channels</h6>
+                  <h6 className="pl-4 pt-2 text-sm text-slate-300">Channels</h6>
                   {data.channelListItems.length === 0 ? (
                     <p className="p-4">No channels yet</p>
                   ) : (
@@ -309,8 +310,8 @@ function StyledNavLink(props: NavLinkProps) {
     <NavLink
       {...props}
       className={({ isActive }) =>
-        `m-2 flex gap-2 rounded p-2 text-lg hover:bg-slate-100 sm:text-xl ${
-          isActive ? ' bg-slate-100 sm:text-yellow-900' : ''
+        `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 sm:text-lg ${
+          isActive ? ' bg-slate-200 sm:text-slate-600' : ''
         } ${props.className}`
       }
     >
@@ -340,7 +341,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
         {/* Hide marker in safari*/}
         {'.user-summary::-webkit-details-marker {display: none}'}
       </style>
-      <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-gray-100 active:bg-gray-200 sm:p-4 sm:shadow-md">
+      <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:p-4 sm:shadow-md sm:hover:bg-white sm:active:bg-slate-100">
         <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
         <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
           {props.user.email}
