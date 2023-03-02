@@ -29,6 +29,7 @@ export function Modal(props: Props) {
           height: 'min-content',
           width: '80ch',
           maxWidth: '90vw',
+          zIndex: '20',
           ...props.style?.content,
         },
         overlay: props.style?.overlay,
