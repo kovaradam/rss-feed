@@ -63,7 +63,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
             },
           ].map((formItems) => (
             <Form method={props.formMethod} key={formItems.name}>
-              <RequiredFormData itemLink={item.link} channelId={channel.id} />
+              <RequiredFormData itemId={item.id} />
               <input
                 type="hidden"
                 name={formItems.name}
@@ -117,8 +117,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
 ChannelItemDetail.form = {
   names: {
-    itemLink: 'itemLink',
-    channelId: 'channelId',
+    itemId: 'itemId',
     bookmarked: 'bookmarked',
     read: 'read',
     redirectTo: 'redirectTo',
@@ -134,19 +133,15 @@ ChannelItemDetail.form = {
   },
 };
 
-function RequiredFormData(props: { itemLink: string; channelId: string }) {
+function RequiredFormData(props: { itemId: string }) {
   const location = useLocation();
+
   return (
     <>
       <input
         type="hidden"
-        name={ChannelItemDetail.form.names.itemLink}
-        value={props.itemLink}
-      />
-      <input
-        type="hidden"
-        name={ChannelItemDetail.form.names.channelId}
-        value={props.channelId}
+        name={ChannelItemDetail.form.names.itemId}
+        value={props.itemId}
       />
       <input
         type="hidden"
@@ -165,20 +160,15 @@ async function handleItemStatusUpdate({
   request: Request;
 }) {
   const { names, getBooleanValue } = ChannelItemDetail.form;
-  const channelId = formData.get(names.channelId);
-  const itemLink = formData.get(names.itemLink);
-  invariant(typeof channelId === 'string', 'Channel id was not provided');
-  invariant(typeof itemLink === 'string', 'Item link was not provided');
+  const itemId = formData.get(names.itemId);
+  invariant(typeof itemId === 'string', 'Item id was not provided');
 
   const bookmarked = formData.get(names.bookmarked);
   const read = formData.get(names.read);
 
   await updateChannelItem({
     where: {
-      link_channelId: {
-        channelId,
-        link: itemLink,
-      },
+      id: itemId,
     },
     data: {
       read: getBooleanValue(read),

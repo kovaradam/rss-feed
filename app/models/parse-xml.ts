@@ -4,7 +4,7 @@ import { parseStringPromise } from 'xml2js';
 export type ChannelResult = Partial<
   Omit<Channel, 'userId' | 'feedUrl' | 'id' | 'updatedAt' | 'createdAt'>
 >;
-export type ItemParseResult = Omit<Item, 'channelId'>[];
+export type ItemParseResult = Omit<Item, 'channelId' | 'id'>[];
 
 export async function parseChannelXml(
   channelXml: string
