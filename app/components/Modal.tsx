@@ -1,4 +1,3 @@
-import { XIcon } from '@heroicons/react/outline';
 import type { Props as ReactModalProps } from 'react-modal';
 import { ClientOnly } from './ClientOnly';
 import useSound from 'use-sound';
