@@ -88,32 +88,32 @@ export default function UserPage() {
             <Button
               type="submit"
               secondary
-              className="flex gap-2"
+              className="flex h-full gap-2"
               disabled={transition.submission?.method === 'PATCH'}
             >
               {user.soundsAllowed ? (
                 <>
-                  <VolumeOffIcon className="w-4" />{' '}
-                  <span className="hidden sm:block">Disable sounds</span>
+                  <VolumeOffIcon className="h-6 w-4" />{' '}
+                  <span className="hidden  sm:block">Disable sounds</span>
                 </>
               ) : (
                 <>
-                  <VolumeUpIcon className="w-4" />{' '}
+                  <VolumeUpIcon className="h-6 w-4" />{' '}
                   <span className="hidden sm:block">Enable sounds</span>
                 </>
               )}
             </Button>
           </Form>
           <Form action="edit-email">
-            <Button type="submit" secondary className="flex gap-2">
-              <MailIcon className="w-4" />{' '}
+            <Button type="submit" secondary className="flex h-full gap-2 ">
+              <MailIcon className="h-6 w-4" />{' '}
               <span className="hidden sm:block">Update email</span>
             </Button>
           </Form>
           <br />
           <Form action="/logout" method="post">
             <Button type="submit" secondary className="flex gap-2">
-              <LogoutIcon className="w-4" />{' '}
+              <LogoutIcon className="h-6 w-4" />{' '}
               <span className="hidden sm:block">Log out</span>
             </Button>
           </Form>
@@ -123,24 +123,24 @@ export default function UserPage() {
             className="flex gap-2"
             onClick={() => setIsDeleteDialogOpen(true)}
           >
-            <TrashIcon className="w-4" />
+            <TrashIcon className="h-6 w-4" />
             <span className="hidden sm:block">Delete account</span>
           </Button>
           <Modal
             isOpen={isDeleteDialogOpen}
             onRequestClose={() => setIsDeleteDialogOpen(false)}
-            style={{ content: { maxWidth: '60ch' } }}
+            style={{ content: { maxWidth: '90vw', width: '50ch' } }}
           >
             <h2 className="text-2xl">Are you sure?</h2>
-            <p className="mt-2 text-slate-500">
+            <p className="my-4 text-slate-500">
               This will permanently delete your account
             </p>
 
-            <fieldset className="mt-4 flex place-content-between gap-2">
+            <fieldset className="mt-4 flex place-content-between gap-4">
               <Button
                 type="button"
                 secondary
-                className="w-1/2"
+                className="w-1/2 max-w-[30ch]"
                 onClick={() => setIsDeleteDialogOpen(false)}
                 data-silent
               >
@@ -149,10 +149,10 @@ export default function UserPage() {
               <Form method="delete" action="/logout" className="w-1/2">
                 <Button
                   type="submit"
-                  className="w-full whitespace-nowrap"
+                  className="w-full max-w-[30ch] whitespace-nowrap"
                   data-silent
                 >
-                  Delete account
+                  Yes, Delete
                 </Button>
               </Form>
             </fieldset>

@@ -322,74 +322,78 @@ function StyledNavLink(props: NavLinkProps) {
 
 function UserMenu(props: { user: ReturnType<typeof useUser> }) {
   return (
-    <details
-      className="relative flex justify-center sm:w-full sm:flex-col-reverse"
-      onBlurCapture={(event) => {
-        const thisElement = event.currentTarget;
-        const blurTimeout = setTimeout(() => {
-          thisElement.open = false;
-        });
-        event.currentTarget.dataset.blurTimeout = String(blurTimeout);
-      }}
-      onFocusCapture={(event) => {
-        if (event.currentTarget.contains(event.target)) {
-          clearTimeout(Number(event.currentTarget.dataset.blurTimeout));
-        }
-      }}
-    >
-      <style>
-        {/* Hide marker in safari*/}
-        {'.user-summary::-webkit-details-marker {display: none}'}
-      </style>
-      <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:p-4 sm:shadow-md sm:hover:bg-white sm:active:bg-slate-100">
-        <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
-        <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
-          {props.user.email}
-        </span>
-      </summary>
-      <ul
-        className="absolute right-0 z-10 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2 shadow-[0_0_100vh_100vw_#00000066] sm:bottom-[110%] sm:w-full sm:flex-col sm:shadow-md"
-        tabIndex={0}
+    <>
+      <details
+        className="peer relative flex justify-center sm:w-full sm:flex-col-reverse"
+        onBlurCapture={(event) => {
+          const thisElement = event.currentTarget;
+          const blurTimeout = setTimeout(() => {
+            thisElement.open = false;
+          });
+          event.currentTarget.dataset.blurTimeout = String(blurTimeout);
+        }}
+        onFocusCapture={(event) => {
+          if (event.currentTarget.contains(event.target)) {
+            clearTimeout(Number(event.currentTarget.dataset.blurTimeout));
+          }
+        }}
       >
-        <li>
-          <Form action="/logout" method="post" className="w-full">
-            <button
-              type="submit"
-              title="Log out"
-              className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
-            >
-              <LogoutIcon className="w-4" />
-              <span className="gap-4 whitespace-nowrap">Log out</span>
-            </button>
-          </Form>
-        </li>
-        <hr className="my-1" />
-        <li>
-          <a
-            href="/channels/user"
-            title="Update personal info"
-            className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
-          >
-            <CogIcon className="w-4" />
-            <span className="gap-4 whitespace-nowrap">Profile</span>
-          </a>
-        </li>
-        {props.user.isAdmin && (
-          <>
-            <hr className="my-1" />
-            <li>
-              <a
-                href="/admin"
-                title="Admin"
+        <style>
+          {/* Hide marker in safari*/}
+          {'.user-summary::-webkit-details-marker {display: none}'}
+        </style>
+
+        <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:p-4 sm:shadow-md sm:hover:bg-white sm:active:bg-slate-100">
+          <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
+          <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
+            {props.user.email}
+          </span>
+        </summary>
+        <ul
+          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col"
+          tabIndex={0}
+        >
+          <li>
+            <Form action="/logout" method="post" className="w-full">
+              <button
+                type="submit"
+                title="Log out"
                 className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
               >
-                <KeyIcon className="w-4" />
-                <span className="gap-4 whitespace-nowrap">Admin</span>
-              </a>
-            </li>
-          </>
-        )}
-      </ul>
-    </details>
+                <LogoutIcon className="w-4" />
+                <span className="gap-4 whitespace-nowrap">Log out</span>
+              </button>
+            </Form>
+          </li>
+          <hr className="my-1" />
+          <li>
+            <a
+              href="/channels/user"
+              title="Update personal info"
+              className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+            >
+              <CogIcon className="w-4" />
+              <span className="gap-4 whitespace-nowrap">Profile</span>
+            </a>
+          </li>
+          {props.user.isAdmin && (
+            <>
+              <hr className="my-1" />
+              <li>
+                <a
+                  href="/admin"
+                  title="Admin"
+                  className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+                >
+                  <KeyIcon className="w-4" />
+                  <span className="gap-4 whitespace-nowrap">Admin</span>
+                </a>
+              </li>
+            </>
+          )}
+        </ul>
+      </details>
+      <div className="invisible absolute top-0 -left-0 z-10 h-full w-full  bg-black opacity-30 peer-open:visible sm:invisible"></div>
+    </>
   );
 }
