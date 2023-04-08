@@ -72,8 +72,9 @@ export async function sendConfirmEmail(
 
   const link = `${requestUrl.origin}/welcome/confirm-email/${user.id}`;
   return Mail.send(user.requestedEmail, {
-    subject: 'Please confirm your e-mail address ✔', // Subject line
-    html: `Verify your address by clicking this link <a href=${link}>${link}</a>`, // plain text body
+    subject: 'Please confirm your e-mail address ✔',
+    html: `Thank you for joining us!<br/><br/> Please verify your address by visiting <a href=${link}>${link}</a>`,
+    text: `Thank you for joining us!\n\n Please verify your address by visiting ${link}`,
   }).catch(console.error);
 }
 
