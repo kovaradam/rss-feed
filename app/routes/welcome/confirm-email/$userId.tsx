@@ -1,9 +1,9 @@
 import type { LoaderArgs } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
 import { getUserById, validateUserEmail } from '~/models/user.server';
+import { logout } from '~/session.server';
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   const userId = params.userId ?? '';
 
   const user = await getUserById(userId);
@@ -11,7 +11,7 @@ export async function loader({ params }: LoaderArgs) {
   const validatedUser = await validateUserEmail(userId);
 
   if (validatedUser) {
-    throw redirect('/');
+    return logout(request, '/welcome/email-confirmed');
   }
 
   return json({ user });

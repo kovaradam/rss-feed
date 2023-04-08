@@ -1,10 +1,17 @@
 import type {
   ActionFunction,
+  LoaderArgs,
   LoaderFunction,
   MetaFunction,
 } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useSearchParams,
+} from '@remix-run/react';
 import * as React from 'react';
 
 import { createUserSession, getUserId } from '~/session.server';
@@ -13,12 +20,15 @@ import { safeRedirect, validateEmail } from '~/utils';
 import { SubmitButton } from '~/components/Button';
 import { styles } from '~/styles/shared';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderArgs) => {
   const userId = await getUserId(request);
+
   if (userId) {
     return redirect('/');
   }
-  return json({});
+  return json({
+    isFirst: Boolean(new URL(request.url).searchParams.get('first')),
+  });
 };
 
 interface ActionData {
@@ -84,6 +94,7 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/channels';
   const actionData = useActionData() as ActionData;
+  const data = useLoaderData<typeof loader>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
 
@@ -98,7 +109,9 @@ export default function LoginPage() {
   return (
     <>
       <div>
-        <h2 className="my-2 text-4xl font-bold">Welcome back!</h2>
+        <h2 className="my-2 text-4xl font-bold">
+          {data.isFirst ? 'Welcome!' : 'Welcome back!'}
+        </h2>
         <p className="text-slate-500">
           Don't have an account?{' '}
           <Link

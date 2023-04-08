@@ -86,6 +86,12 @@ class ChannelDataTransformer {
     };
   }
 
+  get imageUrl() {
+    const imageUrl = this.channelData?.imageUrl?.[0];
+
+    return imageUrl;
+  }
+
   getResult(): ChannelResult {
     return {
       link: this.link,
@@ -93,7 +99,7 @@ class ChannelDataTransformer {
       description:
         this.channelData?.description?.[0] || 'Description is missing',
       category: this.channelData?.category?.[0] || '',
-      imageUrl: this.channelData?.imageUrl?.[0] || '',
+      imageUrl: this.imageUrl,
       language: this.channelData?.language?.[0] || '',
       copyright: this.channelData?.copyright?.[0] ?? '',
       lastBuildDate: this.lastBuildDate,
