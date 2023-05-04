@@ -176,7 +176,7 @@ export default function Channels() {
         <div>
           <WithFormLabel label="Image URL">
             <input
-              defaultValue={channel.imageUrl}
+              defaultValue={channel.imageUrl ?? ''}
               name={'image-url'}
               {...inputProps(focusName === 'image-url')}
             />
