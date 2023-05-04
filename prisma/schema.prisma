@@ -46,7 +46,7 @@ model Channel {
   itemPubDateParseError Boolean?
 
   items    Item[]
-  imageUrl String
+  imageUrl String?
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String

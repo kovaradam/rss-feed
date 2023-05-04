@@ -87,8 +87,7 @@ class ChannelDataTransformer {
   }
 
   get imageUrl() {
-    const imageUrl = this.channelData?.imageUrl?.[0];
-
+    const imageUrl = this.channelData?.imageUrl?.[0] ?? '';
     return imageUrl;
   }
 
