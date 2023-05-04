@@ -1,38 +1,20 @@
-# Remix Indie Stack
-
-Learn more about [Remix Stacks](https://remix.run/stacks).
-
-```
-npx create-remix --template remix-run/indie-stack
-```
-
-## What's in the stack
-
-- [Fly app deployment](https://fly.io) with [Docker](https://www.docker.com/)
-- Production-ready [SQLite Database](https://sqlite.org)
-- Healthcheck endpoint for [Fly backups region fallbacks](https://fly.io/docs/reference/configuration/#services-http_checks)
-- [GitHub Actions](https://github.com/features/actions) for deploy on merge to production and staging environments
-- Email/Password Authentication with [cookie-based sessions](https://remix.run/docs/en/v1/api/remix#createcookiesessionstorage)
-- Database ORM with [Prisma](https://prisma.io)
-- Styling with [Tailwind](https://tailwindcss.com/)
-- End-to-end testing with [Cypress](https://cypress.io)
-- Local third party request mocking with [MSW](https://mswjs.io)
-- Unit testing with [Vitest](https://vitest.dev) and [Testing Library](https://testing-library.com)
-- Code formatting with [Prettier](https://prettier.io)
-- Linting with [ESLint](https://eslint.org)
-- Static Types with [TypeScript](https://typescriptlang.org)
-
-Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
-
-## Quickstart
-
-Click this button to create a [Gitpod](https://gitpod.io) workspace with the project set up and Fly pre-installed
-
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/from-referrer/)
+Made with **Remix Indie Stack**
 
 ## Development
 
-- Initial setup: _If you just generated this project, this step has been done for you._
+- Install dependencies
+
+  ```sh
+  npm i
+  ```
+
+- Create `.env` file based on `env.example`
+
+  ```sh
+  cp .env.example .env
+  ```
+
+- Setup database:
 
   ```sh
   npm run setup
@@ -44,7 +26,7 @@ Click this button to create a [Gitpod](https://gitpod.io) workspace with the pro
   npm run dev
   ```
 
-This starts your app in development mode, rebuilding assets on file changes.
+This starts app in development mode, rebuilding assets on file changes.
 
 The database seed script creates new users with some data you can use to get started:
 
