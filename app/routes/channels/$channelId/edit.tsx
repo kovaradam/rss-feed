@@ -130,7 +130,7 @@ export default function Channels() {
     fakeInputName: 'new-category',
     formId: 'new-category-form',
     name: 'category',
-    autoFocus: inputProps(focusName === 'category').autoFocus,
+    autoFocus: inputProps(focusName === 'new-category').autoFocus,
     inputClassName,
   });
 
