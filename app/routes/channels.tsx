@@ -252,11 +252,12 @@ export default function ChannelsPage() {
                   </ol>
                   <hr />
                   <h6 className="pl-4 pt-2 text-sm text-slate-300">Channels</h6>
-                  {data.channelListItems.length === 0 ? (
+                  {!data.channelListItems ||
+                  data.channelListItems.length === 0 ? (
                     <p className="p-4">No channels yet</p>
                   ) : (
                     <ol>
-                      {data.channelListItems.map((channel) => (
+                      {data.channelListItems?.map((channel) => (
                         <li key={channel.id}>
                           <StyledNavLink className="block" to={channel.id}>
                             {channel.title}
