@@ -92,7 +92,8 @@ class ChannelDataTransformer {
       link: this.link,
       title: this.title || 'Title is missing',
       description:
-        this.channelData?.description?.[0] || 'Description is missing',
+        this.channelData?.description?.[0]?.substring?.(0, 500) ||
+        'Description is missing',
       category: this.channelData?.category?.[0] || '',
       imageUrl: this.imageUrl,
       language: this.channelData?.language?.[0] || '',
