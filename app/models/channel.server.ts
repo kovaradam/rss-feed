@@ -16,9 +16,6 @@ export async function createChannelFromXml(
   xmlInput: string,
   request: { userId: string; channelHref: string }
 ) {
-  function createError(cause: CreateFromXmlErrorType) {
-    throw new Error(cause);
-  }
   let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
   let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
 
@@ -233,4 +230,8 @@ export async function getItemsByFilters(
           : undefined,
     },
   });
+}
+
+function createError(cause: CreateFromXmlErrorType) {
+  return new Error(cause);
 }

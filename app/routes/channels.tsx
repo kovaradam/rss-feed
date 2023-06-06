@@ -197,7 +197,7 @@ export default function ChannelsPage() {
           }}
         >
           <main
-            className={`relative flex h-full min-h-screen w-screen bg-white xl:w-4/5 2xl:w-2/3 ${
+            className={`relative flex h-full min-h-screen w-screen bg-white  2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
             } duration-200 ease-in sm:translate-x-0`}
             style={{

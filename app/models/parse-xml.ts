@@ -14,18 +14,14 @@ export async function parseChannelXml(
   const rssData = getRssDataFromParsedXml(result);
   const channelData = getChannelDataFromRssData(rssData);
   const rssVersion = rssData?.$?.version?.[0];
+  channelData.rssVersion = rssVersion;
 
-  const channelDataTransformer = new ChannelDataTransformer({
-    ...channelData,
-    rssVersion,
-  });
+  const channelDataTransformer = new ChannelDataTransformer(channelData);
 
-  const items = channelDataTransformer.itemTransforms.map((transform) =>
-    transform.getResult()
-  );
-  const channel = channelDataTransformer.getResult();
-
-  return [channel, items];
+  return [
+    channelDataTransformer.getResult(),
+    channelDataTransformer.transformedItems,
+  ];
 }
 
 function getRssDataFromParsedXml(parsedXml: Record<string, any>) {
@@ -39,12 +35,20 @@ function getChannelDataFromRssData(rssData: Record<string, any>) {
 class ChannelDataTransformer {
   constructor(
     private channelData: Record<string, any>,
-    public itemTransforms: ItemDataTransformer[] = []
+    public transformedItems: ReturnType<
+      ItemDataTransformer['getResult']
+    >[] = [],
+    private hasItemPubDateErrors = false
   ) {
     this.channelData = channelData;
-    this.itemTransforms = this.items?.map(
-      (item) => new ItemDataTransformer(item)
-    );
+    this.transformedItems = this.items?.map((item) => {
+      itemTransformer.setItem(item);
+      const newItem = itemTransformer.getResult();
+      this.hasItemPubDateErrors =
+        this.hasItemPubDateErrors || Boolean(itemTransformer.errors.pubDate);
+
+      return newItem;
+    });
   }
 
   get link() {
@@ -78,14 +82,6 @@ class ChannelDataTransformer {
     return items as Array<Record<string, any>>;
   }
 
-  get parseErrors(): Partial<Pick<Channel, 'itemPubDateParseError'>> {
-    return {
-      itemPubDateParseError: this.itemTransforms.some(
-        (transform) => transform.errors.pubDate
-      ),
-    };
-  }
-
   get imageUrl() {
     const imageUrl = this.channelData?.imageUrl?.[0] ?? '';
     return imageUrl;
@@ -103,7 +99,7 @@ class ChannelDataTransformer {
       copyright: this.channelData?.copyright?.[0] ?? '',
       lastBuildDate: this.lastBuildDate,
       rssVersion: this.channelData.rssVersion ?? '',
-      ...this.parseErrors,
+      itemPubDateParseError: this.hasItemPubDateErrors,
     };
   }
 }
@@ -112,9 +108,13 @@ class ItemDataTransformer {
   errors: Partial<
     Record<keyof ReturnType<ItemDataTransformer['getResult']>, boolean>
   > = {};
-  constructor(private itemData: Record<string, any>) {
+  private itemData: Record<string, any> | null = null;
+
+  setItem(itemData: typeof this.itemData) {
     this.itemData = itemData;
+    this.errors = {};
   }
+
   get link() {
     const link = this.itemData?.link?.[0];
     if (typeof link !== 'string') {
@@ -173,3 +173,5 @@ class ItemDataTransformer {
     };
   }
 }
+
+const itemTransformer = new ItemDataTransformer();
