@@ -126,7 +126,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   invariant(channel, 'Channel could not be loaded');
 
-  await refreshChannel({ channel: channel as ChannelWithItems, userId });
+  await refreshChannel({ dbChannel: channel as ChannelWithItems, userId });
   return redirect('/channels/'.concat(params.channelId));
 };
 

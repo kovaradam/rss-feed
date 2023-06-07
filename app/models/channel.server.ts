@@ -43,12 +43,12 @@ export async function createChannelFromXml(
   if (dbChannel) {
     throw createError('channelExists');
   }
-  console.log(channel);
 
   let newChannel;
   try {
+    (channel as Channel).feedUrl = request.channelHref;
     newChannel = await createChanel({
-      channel: { ...channel, feedUrl: request.channelHref } as Channel,
+      channel: channel as Channel,
       userId: request.userId,
       items: items ?? [],
     });
@@ -85,21 +85,22 @@ export type ChannelWithItems = Channel & { items: Item[] };
 export type ItemWithChannel = Item & { channel: Channel };
 
 export async function refreshChannel(params: {
-  channel: Pick<ChannelWithItems, 'feedUrl' | 'items'>;
+  dbChannel: Pick<ChannelWithItems, 'feedUrl' | 'items'>;
   userId: string;
 }) {
-  const channelRequest = await fetch(params.channel.feedUrl);
+  const channelRequest = await fetch(params.dbChannel.feedUrl);
   const channelXml = await channelRequest.text();
   const [parsedChannel, parsedItems] = await parseChannelXml(channelXml);
 
   const newItems = parsedItems.filter(
-    (item) => !params.channel.items.find((dbItem) => dbItem.link === item.link)
+    (item) =>
+      !params.dbChannel.items.find((dbItem) => dbItem.link === item.link)
   );
 
   return updateChannel({
     where: {
       feedUrl_userId: {
-        feedUrl: params.channel.feedUrl,
+        feedUrl: params.dbChannel.feedUrl,
         userId: params.userId,
       },
     },

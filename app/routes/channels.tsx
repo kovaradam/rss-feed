@@ -53,7 +53,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   );
 
   channelListItems.forEach(async (dbChannel) => {
-    refreshChannel({ channel: dbChannel, userId: user.id })
+    refreshChannel({ dbChannel: dbChannel, userId: user.id })
       .then((updatedChannel) => {
         console.log('updated', updatedChannel.feedUrl);
       })
