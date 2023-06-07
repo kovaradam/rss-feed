@@ -209,7 +209,7 @@ export default function ChannelsPage() {
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden truncate p-4  font-bold text-slate-400 sm:block sm:text-3xl">
+                <h1 className="sticky top-0 z-10 hidden truncate p-4  font-bold text-slate-600 sm:block sm:text-3xl">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">

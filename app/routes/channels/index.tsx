@@ -6,6 +6,7 @@ import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
+import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
@@ -163,9 +164,7 @@ export default function ChannelIndexPage() {
               )}
             </div>
           )}
-          <ul
-            className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] xl:grid-cols-2`}
-          >
+          <ChannelItemList>
             {items.map((item) => (
               <li key={item.id}>
                 <ChannelItemDetail
@@ -185,7 +184,7 @@ export default function ChannelIndexPage() {
                 />
               </li>
             ))}
-          </ul>
+          </ChannelItemList>
           {cursor && <ShowMoreLink cursor={cursor} isLoading={isLoading} />}
         </section>
         {channels.length !== 0 && (
