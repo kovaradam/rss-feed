@@ -1,4 +1,10 @@
-import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useActionData,
+  useSearchParams,
+  useTransition,
+} from '@remix-run/react';
 import type {
   ActionFunction,
   LoaderFunction,
@@ -89,6 +95,8 @@ export default function Welcome() {
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
 
+  const transition = useTransition();
+
   React.useEffect(() => {
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
@@ -115,7 +123,11 @@ export default function Welcome() {
           if you already have one.
         </p>
       </div>
-      <div className="w-full max-w-md">
+      <div
+        className={`w-full max-w-md ${
+          transition.type === 'normalLoad' ? 'animate-pulse' : ''
+        }`}
+      >
         <Form method="post" className="space-y-6">
           {[
             {
@@ -171,11 +183,22 @@ export default function Welcome() {
               </div>
             </div>
           ))}
-
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <SubmitButton className="w-full sm:w-48 sm:px-8">
-            Create Account
-          </SubmitButton>
+          <fieldset className="flex flex-col items-center justify-between gap-1 sm:flex-row">
+            <SubmitButton className="w-full sm:w-48 sm:px-8">
+              Create Account
+            </SubmitButton>
+            <span className="text-slate-500">or</span>
+            <Link
+              to={{
+                pathname: 'login',
+                search: searchParams.toString(),
+              }}
+              className={`flex items-center justify-center rounded  bg-gray-50 px-4 py-2 font-medium text-slate-500 sm:w-48 sm:px-8`}
+            >
+              log In
+            </Link>{' '}
+          </fieldset>
         </Form>
       </div>
     </>

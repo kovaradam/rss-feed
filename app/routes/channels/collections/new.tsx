@@ -62,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
     },
   });
 
-  return redirect('/channels?collection='.concat(collection.id));
+  return redirect('/channels/collections/'.concat(collection.id));
 };
 
 type LoaderData = {
@@ -104,6 +104,5 @@ export default function NewCollectionPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

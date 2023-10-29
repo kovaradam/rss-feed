@@ -184,8 +184,12 @@ export default function Channels() {
         </div>
 
         <AsideWrapper className="sm:items-end">
-          <SubmitButton type="submit" disabled={isSaving} className="w-fit">
-            {isSaving ? 'Saving...' : 'Update'}
+          <SubmitButton
+            type="submit"
+            disabled={isSaving}
+            className="w-fit min-w-[20ch]"
+          >
+            {isSaving ? 'Saving...' : 'Save changes'}
           </SubmitButton>
         </AsideWrapper>
       </Form>

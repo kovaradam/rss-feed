@@ -115,7 +115,8 @@ export default function ChannelIndexPage() {
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
-          <ChannelItemsOverlay />
+          {transition.state === 'submitting' &&
+            transition.submission.method === 'GET' && <ChannelItemsOverlay />}
           <Details className="mb-4 w-full sm:hidden" title="Filter articles">
             <ChannelItemFilterForm
               filters={filters}
@@ -132,32 +133,40 @@ export default function ChannelIndexPage() {
               className="pt-4"
             />
           </Details>
-          {items.length === 0 && !isLoading && (
+          {items.length === 0 && (
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (
-                <p>No articles found</p>
+                <>
+                  <p>No articles found</p>
+                  <img
+                    src="/laying.svg"
+                    alt="Doodle of a person laying looking at phone"
+                    className="scale-50"
+                    data-from="https://www.opendoodles.com/"
+                  ></img>
+                </>
               ) : (
                 <div className="mt-8 flex flex-col items-center gap-16">
-                  <p className="mb-4">
-                    You are not subscribed to any RSS feeds.
-                    <br />
-                    <NewChannelModalContext.Consumer>
-                      {(context) => (
-                        <button
-                          onClick={() => context.open?.()}
-                          className="text-rose-400 underline"
-                        >
-                          Add a new channel
-                        </button>
-                      )}
-                    </NewChannelModalContext.Consumer>{' '}
-                    to get started!
-                  </p>
+                  <div>
+                    <p>You are not subscribed to any RSS feeds.</p>
+                    <p className="mb-4 font-normal text-slate-400">
+                      <NewChannelModalContext.Consumer>
+                        {(context) => (
+                          <button
+                            onClick={() => context.open?.()}
+                            className="font-bold text-yellow-900 underline"
+                          >
+                            Add a new channel
+                          </button>
+                        )}
+                      </NewChannelModalContext.Consumer>{' '}
+                      to get started!
+                    </p>
+                  </div>
                   <img
                     alt="Illustration doodle of a person sitting and reading"
                     src="/sitting-reading.svg"
                     width={'50%'}
-                    className="opacity-60"
                     data-from="https://www.opendoodles.com/"
                   />
                 </div>

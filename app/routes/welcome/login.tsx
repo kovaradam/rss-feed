@@ -11,6 +11,7 @@ import {
   useActionData,
   useLoaderData,
   useSearchParams,
+  useTransition,
 } from '@remix-run/react';
 import * as React from 'react';
 
@@ -97,6 +98,7 @@ export default function LoginPage() {
   const data = useLoaderData<typeof loader>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
+  const transition = useTransition();
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
@@ -125,7 +127,11 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-      <div className="w-full max-w-md">
+      <div
+        className={`w-full max-w-md ${
+          transition.type === 'normalLoad' ? 'animate-pulse' : ''
+        }`}
+      >
         <Form method="post" className="space-y-6">
           {[
             {
@@ -201,7 +207,15 @@ export default function LoginPage() {
               </label>
             </div>
           </div>
-          <SubmitButton className="w-full sm:w-48 sm:px-8">Log in</SubmitButton>
+          <SubmitButton
+            className="w-full sm:w-48 sm:px-8"
+            disabled={
+              transition.state === 'submitting' ||
+              transition.state === 'loading'
+            }
+          >
+            Log in
+          </SubmitButton>
         </Form>
       </div>
     </>

@@ -77,7 +77,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   });
 
-  return redirect('/channels?collection='.concat(collection.id));
+  return redirect('/channels/collections/'.concat(collection.id));
 };
 
 type LoaderData = {
@@ -101,7 +101,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!collection) {
     throw new Response('Not Found', { status: 404 });
   }
-
   const channels = await getChannels({
     where: { userId },
     select: { category: true, language: true },
@@ -137,6 +136,5 @@ export default function EditCollectionPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

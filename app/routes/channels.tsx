@@ -13,7 +13,14 @@ import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import type { NavLinkProps } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
-import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useTransition,
+} from '@remix-run/react';
 import React from 'react';
 import { AppTitle, UseAppTitle } from '~/components/AppTitle';
 import { CreateChannelForm } from '~/components/CreateChannelForm';
@@ -87,7 +94,7 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     channelUrl = new URL(String(inputChannelHref));
   } catch (error) {
-    return json<ActionData>({ [channelUrlName]: 'Provide a valid url' });
+    return json<ActionData>({ [channelUrlName]: 'Please provide a valid url' });
   }
 
   let channelRequest;
@@ -134,6 +141,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChannelsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
+  const transition = useTransition();
 
   const [isNewChannelModalVisible, setIsNewChannelModalVisible] =
     React.useState(false);
@@ -209,16 +217,17 @@ export default function ChannelsPage() {
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden truncate p-4  font-bold text-slate-600 sm:block sm:text-3xl">
+                <h1 className="sticky top-0 z-10 hidden truncate p-4  font-bold  sm:block sm:text-3xl">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">
                   <button
-                    className="m-2 flex w-[95%] items-center  gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden"
+                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl font-bold text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden"
                     onClick={openNewChannelModal}
                     data-silent
                   >
-                    <PlusIcon className="w-4" /> Add RSS Channel
+                    <PlusIcon className="w-4 " style={{ strokeWidth: '3px' }} />{' '}
+                    Add RSS Channel
                   </button>
                   <hr />
                   <StyledNavLink to={`/channels`} end>
@@ -272,7 +281,14 @@ export default function ChannelsPage() {
                 </div>
               </div>
             </NavWrapper>
-            <div className="flex-1 p-6">
+            <div
+              className={`flex-1 p-6 ${
+                ['normalLoad', 'normalRedirect'].includes(transition.type) ||
+                transition.submission?.action.includes('logout')
+                  ? 'animate-pulse'
+                  : ''
+              }`}
+            >
               <NewChannelModalContext.Provider
                 value={React.useMemo(
                   () => ({
@@ -290,7 +306,7 @@ export default function ChannelsPage() {
               contentLabel="New Channel"
               onRequestClose={closeNewChannelModal}
             >
-              <CreateChannelForm />
+              <CreateChannelForm onReset={closeNewChannelModal} />
             </Modal>
           </main>
         </div>

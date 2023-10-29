@@ -31,12 +31,10 @@ export function CollectionForm<
   const data = useLoaderData<LoaderData>();
 
   const isSaving =
-    transition.state === 'submitting' &&
-    transition.submission?.method === 'POST';
+    transition.state !== 'idle' && transition.submission?.method === 'POST';
 
   const isDeleting =
-    transition.state === 'submitting' &&
-    transition.submission?.method === 'DELETE';
+    transition.state !== 'idle' && transition.submission?.method === 'DELETE';
 
   const Categories = useCategoryInput({
     categorySuggestions: data.categories,
@@ -47,8 +45,10 @@ export function CollectionForm<
     name: 'category',
   });
 
+  const isEditForm = Boolean(props.deleteFormId);
+
   return (
-    <>
+    <div className={`${transition.type === 'normalLoad' ? 'opacity-60' : ''}`}>
       <h3 className="mb-2 text-4xl font-bold">{props.title}</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
@@ -141,13 +141,22 @@ export function CollectionForm<
               form={props.deleteFormId}
               type="submit"
               disabled={isDeleting}
+              className="min-w-[20ch] "
               secondary
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? 'Deleting...' : 'Delete collection'}
             </Button>
           )}
-          <SubmitButton type="submit" disabled={isSaving}>
-            {isSaving ? 'Submitting...' : 'Submit'}
+          <SubmitButton
+            type="submit"
+            disabled={isSaving}
+            className="min-w-[20ch] flex-1 sm:flex-none"
+          >
+            {isSaving ? (
+              <>{isEditForm ? 'Saving...' : 'Creating...'}</>
+            ) : (
+              <>{isEditForm ? 'Save changes' : 'Create collection'}</>
+            )}
           </SubmitButton>
         </AsideWrapper>
       </Form>
@@ -155,6 +164,6 @@ export function CollectionForm<
       {props.deleteFormId && (
         <Form method="delete" id={props.deleteFormId}></Form>
       )}
-    </>
+    </div>
   );
 }

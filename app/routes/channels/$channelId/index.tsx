@@ -137,6 +137,7 @@ export default function ChannelDetailsPage() {
   const submission = transition.submission;
   const isRefreshing =
     transition.state !== 'idle' && submission?.method === 'PATCH';
+
   const { channel, items } = data;
 
   const category = channel.category.slice(
@@ -150,7 +151,11 @@ export default function ChannelDetailsPage() {
   const [playRefresh] = useSound(refreshSound);
 
   return (
-    <div className="relative flex flex-col sm:flex-row ">
+    <div
+      className={`relative flex flex-col sm:flex-row ${
+        transition.type === 'normalLoad' ? 'opacity-60' : ''
+      }`}
+    >
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="max-w-[90vw] flex-1">
         <WithEditLink name={'title'}>

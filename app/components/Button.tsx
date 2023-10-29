@@ -1,4 +1,3 @@
-import { useTransition } from '@remix-run/react';
 import React from 'react';
 import { SpinnerIcon } from './SpinnerIcon';
 
@@ -38,9 +37,6 @@ export function SubmitButton({
   isLoading,
   ...buttonProps
 }: Props): JSX.Element {
-  const transition = useTransition();
-  isLoading ??= transition.state === 'submitting';
-
   return (
     <button
       {...buttonProps}

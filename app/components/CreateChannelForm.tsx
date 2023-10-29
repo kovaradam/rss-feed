@@ -1,11 +1,11 @@
 import { Form, useActionData, useTransition } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
-import { SubmitButton } from './Button';
+import { Button, SubmitButton } from './Button';
 
 export function CreateChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
->(props: { className?: string }): JSX.Element {
+>(props: { className?: string; onReset(): void }): JSX.Element {
   const errors = useActionData<ActionData>();
   const transition = useTransition();
   const isCreating =
@@ -15,6 +15,7 @@ export function CreateChannelForm<
     <Form
       method="put"
       className={'flex flex-col gap-8 '.concat(props.className ?? '')}
+      onReset={props.onReset}
     >
       <fieldset className="flex flex-col gap-2" disabled={isCreating}>
         <label htmlFor="new-channel-input">RSS feed address</label>
@@ -35,9 +36,20 @@ export function CreateChannelForm<
             </span>
           ))}
       </fieldset>
-      <SubmitButton type="submit" isLoading={isCreating}>
-        {isCreating ? 'Creating...' : 'Add'}
-      </SubmitButton>
+      <fieldset
+        className="flex flex-col-reverse justify-end gap-2 sm:flex-row"
+        disabled={isCreating}
+      >
+        <Button type="reset" secondary className="min-w-[20ch] flex-none">
+          Close
+        </Button>
+        <SubmitButton
+          type="submit"
+          className={'min-w-[20ch] flex-1 sm:flex-none'}
+        >
+          {isCreating ? 'Adding...' : 'Add channel'}
+        </SubmitButton>
+      </fieldset>
     </Form>
   );
 }

@@ -1,4 +1,4 @@
-import { Outlet } from '@remix-run/react';
+import { Outlet, useTransition } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/server-runtime';
 import { createTitle } from '~/utils';
 
@@ -7,6 +7,8 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Welcome() {
+  const transition = useTransition();
+
   return (
     <main className="relative flex h-[200vh] min-h-screen flex-col-reverse justify-center bg-white sm:h-screen sm:flex-row sm:justify-start ">
       <section className="flex h-screen flex-col items-center justify-between bg-blue-100 p-[5%] sm:h-full sm:w-1/3">
@@ -21,8 +23,14 @@ export default function Welcome() {
           data-from="https://www.opendoodles.com/"
         ></img>
       </section>
-      <section className="flex h-screen items-center justify-center p-4 sm:h-full sm:flex-1 ">
-        <div className="flex w-full flex-col gap-8 sm:w-[60ch]">
+      <section
+        className={`flex h-screen items-center justify-center p-4 sm:h-full sm:flex-1 ${
+          ['normalLoad', 'normalRedirect'].includes(transition.type)
+            ? 'animate-pulse'
+            : ''
+        }`}
+      >
+        <div className="flex w-full flex-col gap-8 sm:w-[60ch] ">
           <Outlet />
         </div>
       </section>

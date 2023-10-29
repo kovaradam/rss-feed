@@ -15,7 +15,7 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
-import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
+import {} from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -111,7 +111,6 @@ export default function ChannelIndexPage() {
   const { items, cursor, filters, collection } = useLoaderData<typeof loader>();
   const transition = useTransition();
   const isSubmitting = transition.state === 'submitting';
-  const isIdle = transition.state === 'idle';
 
   const submit = useSubmit();
 
@@ -126,19 +125,22 @@ export default function ChannelIndexPage() {
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
-      <div className="relative flex min-h-screen flex-col sm:flex-row">
+      <div
+        className={`relative flex min-h-screen flex-col sm:flex-row ${
+          transition.type === 'normalLoad' ? 'opacity-60' : ''
+        }`}
+      >
         <section className="sm:min-w-2/3 relative flex-1">
-          <ChannelItemsOverlay />
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
               filters={filters}
               submitFilters={submitFilters}
             />
           </Details>
-          {items.length === 0 && isIdle && (
+          {items.length === 0 && (
             <div className="flex flex-col items-center gap-24 p-8">
               <div>
-                <p className="text-center text-lg font-bold">
+                <p className="mb-2 text-center text-lg font-bold">
                   No articles were found in this collection.
                 </p>
                 <p className="text-center text-lg text-slate-400">
@@ -147,19 +149,22 @@ export default function ChannelIndexPage() {
                     {(context) => (
                       <button
                         onClick={() => context.open?.()}
-                        className="font-bold text-rose-400 underline"
+                        className="font-bold text-yellow-900 underline"
                       >
                         new channel
                       </button>
                     )}
-                  </NewChannelModalContext.Consumer>
+                  </NewChannelModalContext.Consumer>{' '}
+                  or{' '}
+                  <Link to="edit" className=" underline">
+                    edit this collection
+                  </Link>
                 </p>
               </div>
               <img
                 alt="Illustration doodle of a person sitting and reading"
                 src="/clumsy.svg"
                 width={'70%'}
-                className="opacity-60"
                 data-from="https://www.opendoodles.com/"
               />
             </div>
