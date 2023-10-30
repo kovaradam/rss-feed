@@ -222,7 +222,7 @@ export default function ChannelsPage() {
                 </h1>
                 <div className="sm:overflow-y-auto">
                   <button
-                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden sm:font-bold"
+                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden sm:font-bold sm:shadow-sm"
                     onClick={openNewChannelModal}
                     data-silent
                   >

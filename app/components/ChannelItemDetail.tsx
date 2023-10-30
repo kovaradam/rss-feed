@@ -35,7 +35,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
   return (
     <article
-      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-lg`}
+      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md`}
     >
       <span className="flex w-full justify-between">
         <Link to={channel.id} className="truncate pb-2 ">
