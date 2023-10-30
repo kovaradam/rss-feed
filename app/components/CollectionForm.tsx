@@ -141,7 +141,7 @@ export function CollectionForm<
               form={props.deleteFormId}
               type="submit"
               disabled={isDeleting}
-              className="min-w-[20ch] "
+              className="sm:min-w-[20ch] "
               secondary
             >
               {isDeleting ? 'Deleting...' : 'Delete collection'}
@@ -150,7 +150,7 @@ export function CollectionForm<
           <SubmitButton
             type="submit"
             disabled={isSaving}
-            className="min-w-[20ch] flex-1 sm:flex-none"
+            className="flex-1 sm:min-w-[20ch] sm:flex-none"
           >
             {isSaving ? (
               <>{isEditForm ? 'Saving...' : 'Creating...'}</>

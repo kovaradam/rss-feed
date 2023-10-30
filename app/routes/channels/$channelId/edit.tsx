@@ -187,7 +187,7 @@ export default function Channels() {
           <SubmitButton
             type="submit"
             disabled={isSaving}
-            className="w-fit min-w-[20ch]"
+            className="w-fit min-w-[20ch] flex-1"
           >
             {isSaving ? 'Saving...' : 'Save changes'}
           </SubmitButton>
