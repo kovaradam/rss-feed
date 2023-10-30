@@ -3,22 +3,17 @@ import { SpinnerIcon } from './SpinnerIcon';
 
 type Props = {
   secondary?: boolean;
-  isLoading?: boolean | ((props: Props) => boolean);
+  isLoading?: boolean;
 } & React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 >;
 
 export function Button({
-  isLoading: isLoadingProp,
+  isLoading,
   secondary,
   ...buttonProps
 }: Props): JSX.Element {
-  const isLoading =
-    typeof isLoadingProp === 'function'
-      ? isLoadingProp(buttonProps)
-      : isLoadingProp;
-
   return (
     <button
       {...buttonProps}
@@ -39,14 +34,9 @@ export const primaryButtonStyle =
   'bg-black text-white hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-500';
 
 export function SubmitButton({
-  isLoading: isLoadingProp,
+  isLoading,
   ...buttonProps
 }: Props): JSX.Element {
-  const isLoading =
-    typeof isLoadingProp === 'function'
-      ? isLoadingProp(buttonProps)
-      : isLoadingProp;
-
   return (
     <button
       {...buttonProps}
