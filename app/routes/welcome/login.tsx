@@ -213,6 +213,7 @@ export default function LoginPage() {
               transition.state === 'submitting' ||
               transition.state === 'loading'
             }
+            isLoading={(props) => props.disabled === true}
           >
             Log in
           </SubmitButton>

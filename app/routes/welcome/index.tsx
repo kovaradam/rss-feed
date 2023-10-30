@@ -105,6 +105,10 @@ export default function Welcome() {
     }
   }, [actionData]);
 
+  const isSubmitting =
+    transition.type === 'actionSubmission' ||
+    transition.type === 'actionReload';
+
   return (
     <>
       <div>
@@ -183,9 +187,17 @@ export default function Welcome() {
               </div>
             </div>
           ))}
-          <input type="hidden" name="redirectTo" value={redirectTo} />
+          <input
+            type="hidden"
+            name="redirectTo"
+            value={redirectTo}
+            disabled={isSubmitting}
+          />
           <fieldset className="flex flex-col items-center justify-between gap-1 sm:flex-row">
-            <SubmitButton className="w-full sm:w-48 sm:px-8">
+            <SubmitButton
+              className="w-full sm:w-48 sm:px-8"
+              isLoading={isSubmitting}
+            >
               Create Account
             </SubmitButton>
             <span className="text-slate-500">or</span>

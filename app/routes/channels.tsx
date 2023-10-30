@@ -222,7 +222,7 @@ export default function ChannelsPage() {
                 </h1>
                 <div className="sm:overflow-y-auto">
                   <button
-                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl font-bold text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden"
+                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden sm:font-bold"
                     onClick={openNewChannelModal}
                     data-silent
                   >
@@ -316,7 +316,6 @@ export default function ChannelsPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
   return (
     <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
@@ -360,7 +359,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           {'.user-summary::-webkit-details-marker {display: none}'}
         </style>
 
-        <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:p-4 sm:shadow-md sm:hover:bg-white sm:active:bg-slate-100">
+        <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100">
           <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
           <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
             {props.user.email}
