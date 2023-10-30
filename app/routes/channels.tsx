@@ -316,9 +316,7 @@ export default function ChannelsPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
-  );
+  return <ErrorMessage>Something went wrong</ErrorMessage>;
 }
 
 function StyledNavLink(props: NavLinkProps) {

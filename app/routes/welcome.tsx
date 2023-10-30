@@ -1,5 +1,6 @@
 import { Outlet, useTransition } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/server-runtime';
+import { ErrorMessage } from '~/components/ErrorMessage';
 import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = () => {
@@ -35,5 +36,11 @@ export default function Welcome() {
         </div>
       </section>
     </main>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
 }
