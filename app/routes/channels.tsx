@@ -8,18 +8,17 @@ import {
   PlusIcon,
   UserIcon,
 } from '@heroicons/react/outline';
-import type { ActionFunction, LoaderArgs } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionFunction, LoaderFunctionArgs } from '@remix-run/node';
+import { redirect, json } from '@remix-run/node';
 import type { NavLinkProps } from '@remix-run/react';
-import { useLocation } from '@remix-run/react';
 import {
+  useLocation,
   Form,
   Link,
   NavLink,
   Outlet,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
 import React from 'react';
 import { AppTitle, UseAppTitle } from '~/components/AppTitle';
@@ -31,18 +30,21 @@ import type {
   CreateFromXmlErrorType,
   Item,
 } from '~/models/channel.server';
-import { createChannelFromXml } from '~/models/channel.server';
-import { refreshChannel, getChannels } from '~/models/channel.server';
+import {
+  createChannelFromXml,
+  refreshChannel,
+  getChannels,
+} from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUser } from '~/session.server';
-import { createMeta, useUser } from '~/utils';
+import { createMeta, isNormalLoad, useUser } from '~/utils';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import { Modal } from '~/components/Modal';
 import { storeFailedUpload } from '~/models/failed-upload.server';
 
 export const meta = createMeta();
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
   const channelListItems = (await getChannels({
     where: { userId: user.id },
@@ -141,7 +143,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChannelsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
-  const transition = useTransition();
+  const transition = useNavigation();
 
   const [isNewChannelModalVisible, setIsNewChannelModalVisible] =
     React.useState(false);
@@ -173,7 +175,7 @@ export default function ChannelsPage() {
           <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
             <button
               onClick={() => setIsNavExpanded((prev) => !prev)}
-              className="block rounded py-2  px-4 hover:bg-slate-200 active:bg-slate-300 sm:hidden"
+              className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden"
             >
               <MenuAlt2Icon className="w-6" />
             </button>
@@ -283,8 +285,8 @@ export default function ChannelsPage() {
             </NavWrapper>
             <div
               className={`flex-1 p-6 ${
-                ['normalLoad', 'normalRedirect'].includes(transition.type) ||
-                transition.submission?.action.includes('logout')
+                isNormalLoad(transition) ||
+                transition.formAction?.includes('logout')
                   ? 'animate-pulse'
                   : ''
               }`}
@@ -407,7 +409,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           )}
         </ul>
       </details>
-      <div className="invisible absolute top-0 -left-0 z-10 h-full w-full  bg-black opacity-30 peer-open:visible sm:peer-open:invisible"></div>
+      <div className="invisible absolute -left-0 top-0 z-10 h-full w-full  bg-black opacity-30 peer-open:visible sm:peer-open:invisible"></div>
     </>
   );
 }

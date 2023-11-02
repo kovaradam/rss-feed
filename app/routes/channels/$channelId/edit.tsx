@@ -1,16 +1,12 @@
+import type { MetaFunction } from '@remix-run/react';
 import {
   Form,
   useActionData,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -19,12 +15,14 @@ import { SubmitButton } from '~/components/Button';
 import { useCategoryInput } from '~/components/CategoryInput';
 import { WithFormLabel } from '~/components/WithFormLabel';
 import type { Channel } from '~/models/channel.server';
-import { getChannels } from '~/models/channel.server';
-import { updateChannel } from '~/models/channel.server';
-import { getChannel } from '~/models/channel.server';
+import {
+  getChannels,
+  updateChannel,
+  getChannel,
+} from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
-import { createTitle } from '~/utils';
+import { createTitle, isSubmitting } from '~/utils';
 
 const fieldNames = [
   'title',
@@ -34,10 +32,12 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction = ({ data }) => {
-  return {
-    title: createTitle(`Edit ${data?.channel?.title ?? 'channel'}`),
-  };
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    {
+      title: createTitle(`Edit ${data?.channel?.title ?? 'channel'}`),
+    },
+  ];
 };
 
 type FieldName = (typeof fieldNames)[number];
@@ -120,9 +120,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function Channels() {
   const errors = useActionData<ActionData>()?.errors;
-  const transition = useTransition();
+  const transition = useNavigation();
   const { channel, categories, focusName } = useLoaderData<LoaderData>();
-  const isSaving = Boolean(transition.submission);
+  const isSaving = isSubmitting(transition);
 
   const { renderCategoryInput, renderCategoryForm } = useCategoryInput({
     categorySuggestions: categories,

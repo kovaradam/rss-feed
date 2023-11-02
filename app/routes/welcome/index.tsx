@@ -1,17 +1,13 @@
+import type { MetaFunction } from '@remix-run/react';
 import {
   Form,
   Link,
   useActionData,
   useSearchParams,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { json, redirect } from '@remix-run/server-runtime';
 import React from 'react';
 import { SubmitButton } from '~/components/Button';
 import {
@@ -21,10 +17,15 @@ import {
 } from '~/models/user.server';
 import { createUserSession, getUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
-import { createTitle, safeRedirect, validateEmail } from '~/utils';
+import {
+  createTitle,
+  isNormalLoad,
+  safeRedirect,
+  validateEmail,
+} from '~/utils';
 
 export const meta: MetaFunction = () => {
-  return { title: createTitle('Welcome') };
+  return [{ title: createTitle('Welcome') }];
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -95,7 +96,7 @@ export default function Welcome() {
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
 
-  const transition = useTransition();
+  const transition = useNavigation();
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
@@ -106,8 +107,8 @@ export default function Welcome() {
   }, [actionData]);
 
   const isSubmitting =
-    transition.type === 'actionSubmission' ||
-    transition.type === 'actionReload';
+    transition.state === 'submitting' ||
+    (transition.state === 'loading' && Boolean(transition.formMethod));
 
   return (
     <>
@@ -129,7 +130,7 @@ export default function Welcome() {
       </div>
       <div
         className={`w-full max-w-md ${
-          transition.type === 'normalLoad' ? 'animate-pulse' : ''
+          isNormalLoad(transition) ? 'animate-pulse' : ''
         }`}
       >
         <Form method="post" className="space-y-6">

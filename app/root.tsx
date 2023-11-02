@@ -24,14 +24,16 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }];
 };
 
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  title: 'RSS Journal',
-  viewport: 'width=device-width,initial-scale=1',
-  description:
-    'Keep up with the latest web content using an organized RSS feed.',
-  keywords: 'RSS feed, RSS, journal, news',
-});
+export const meta: MetaFunction = () => [
+  { charset: 'utf-8' },
+  { title: 'RSS Journal' },
+  { viewport: 'width=device-width,initial-scale=1' },
+  {
+    description:
+      'Keep up with the latest web content using an organized RSS feed.',
+  },
+  { keywords: 'RSS feed, RSS, journal, news' },
+];
 
 type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>;

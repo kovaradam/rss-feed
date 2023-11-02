@@ -12,6 +12,7 @@ export function ErrorMessage(props: Props): JSX.Element {
         src="/clumsy.svg"
         width={'70%'}
         data-from="https://www.opendoodles.com/"
+        style={{ maxWidth: '40vw' }}
       />
     </div>
   );

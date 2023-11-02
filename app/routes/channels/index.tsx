@@ -1,4 +1,4 @@
-import { useLoaderData, useSubmit, useTransition } from '@remix-run/react';
+import { useLoaderData, useSubmit, useNavigation } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
@@ -97,7 +97,7 @@ export default function ChannelIndexPage() {
   const { items, channels, categories, filters, cursor } =
     useLoaderData<LoaderData>();
 
-  const transition = useTransition();
+  const transition = useNavigation();
   const isLoading = transition.state === 'loading';
 
   const submit = useSubmit();
@@ -116,7 +116,7 @@ export default function ChannelIndexPage() {
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
           {transition.state === 'submitting' &&
-            transition.submission.method === 'GET' && <ChannelItemsOverlay />}
+            transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details className="mb-4 w-full sm:hidden" title="Filter articles">
             <ChannelItemFilterForm
               filters={filters}

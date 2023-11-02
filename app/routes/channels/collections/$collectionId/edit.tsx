@@ -1,8 +1,7 @@
-import { useLoaderData } from '@remix-run/react';
+import { MetaFunction, useLoaderData } from '@remix-run/react';
 import type {
   ActionFunction,
-  LoaderFunction,
-  MetaFunction,
+  LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
@@ -29,10 +28,12 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction = ({ data }) => {
-  return {
-    title: createTitle(`Edit ${data?.collection?.title ?? 'Collection'}`),
-  };
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    {
+      title: createTitle(`Edit ${data?.defaultValue?.title ?? 'Collection'}`),
+    },
+  ];
 };
 
 type FieldName = (typeof fieldNames)[number];
@@ -86,7 +87,7 @@ type LoaderData = {
   defaultValue: Collection;
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id is not defined');
 

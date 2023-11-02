@@ -1,7 +1,6 @@
 import type {
   ActionFunction,
-  LoaderArgs,
-  LoaderFunction,
+  LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
@@ -11,17 +10,17 @@ import {
   useActionData,
   useLoaderData,
   useSearchParams,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
 import * as React from 'react';
 
 import { createUserSession, getUserId } from '~/session.server';
 import { verifyLogin } from '~/models/user.server';
-import { safeRedirect, validateEmail } from '~/utils';
+import { isSubmitting, safeRedirect, validateEmail } from '~/utils';
 import { SubmitButton } from '~/components/Button';
 import { styles } from '~/styles/shared';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
 
   if (userId) {
@@ -86,9 +85,11 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export const meta: MetaFunction = () => {
-  return {
-    title: 'Login',
-  };
+  return [
+    {
+      title: 'Login',
+    },
+  ];
 };
 
 export default function LoginPage() {
@@ -98,7 +99,7 @@ export default function LoginPage() {
   const data = useLoaderData<typeof loader>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
-  const transition = useTransition();
+  const transition = useNavigation();
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
@@ -127,11 +128,7 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-      <div
-        className={`w-full max-w-md ${
-          transition.type === 'normalLoad' ? 'animate-pulse' : ''
-        }`}
-      >
+      <div className={`w-full max-w-md `}>
         <Form method="post" className="space-y-6">
           {[
             {
@@ -209,11 +206,7 @@ export default function LoginPage() {
           </div>
           <SubmitButton
             className="w-full sm:w-48 sm:px-8"
-            disabled={
-              transition.state === 'submitting' ||
-              transition.state === 'loading'
-            }
-            isLoading={(props) => props.disabled === true}
+            isLoading={isSubmitting(transition)}
           >
             Log in
           </SubmitButton>

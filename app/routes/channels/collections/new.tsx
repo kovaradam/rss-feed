@@ -1,8 +1,5 @@
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from '@remix-run/server-runtime';
+import type { MetaFunction } from '@remix-run/node';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
@@ -23,9 +20,11 @@ const fieldNames = [
 ] as const;
 
 export const meta: MetaFunction = () => {
-  return {
-    title: createTitle(`New collection'}`),
-  };
+  return [
+    {
+      title: createTitle(`New collection'}`),
+    },
+  ];
 };
 
 type FieldName = (typeof fieldNames)[number];

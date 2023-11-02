@@ -1,8 +1,7 @@
 import { requireUser } from '~/session.server';
-import type { ActionArgs, LoaderArgs } from '@remix-run/node';
-import { Response } from '@remix-run/node';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import {
   BookmarkIcon,
   ClockIcon,
@@ -20,7 +19,7 @@ import { getChannels } from '~/models/channel.server';
 import { Modal } from '~/components/Modal';
 import React from 'react';
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
 
   if (request.method === 'PATCH') {
@@ -32,7 +31,7 @@ export async function action({ request }: ActionArgs) {
   throw new Response('Not allowed', { status: 405 });
 }
 
-export async function loader(args: LoaderArgs) {
+export async function loader(args: LoaderFunctionArgs) {
   const user = await requireUser(args.request);
   const channels = await getChannels({ where: { userId: user.id } });
   const categories = channels
@@ -44,7 +43,7 @@ export async function loader(args: LoaderArgs) {
 
 export default function UserPage() {
   const { user, categories } = useLoaderData<typeof loader>();
-  const transition = useTransition();
+  const transition = useNavigation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   return (
@@ -89,7 +88,7 @@ export default function UserPage() {
               type="submit"
               secondary
               className="flex h-full gap-2"
-              disabled={transition.submission?.method === 'PATCH'}
+              disabled={transition.formMethod === 'PATCH'}
             >
               {user.soundsAllowed ? (
                 <>
