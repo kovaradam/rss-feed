@@ -82,38 +82,46 @@ export default function UserPage() {
             ))}
           </dl>
         </section>
-        <AsideWrapper>
+        <AsideWrapper className="sm:w-[22ch]">
           <Form method="patch">
             <Button
               type="submit"
               secondary
-              className="flex h-full gap-2"
+              className="flex h-full  gap-2 sm:w-full"
               disabled={transition.formMethod === 'PATCH'}
             >
               {user.soundsAllowed ? (
                 <>
                   <VolumeOffIcon className="h-6 w-4" />{' '}
-                  <span className="hidden  sm:block">Disable sounds</span>
+                  <span className="hidden  sm:block sm:w-full">
+                    Disable sounds
+                  </span>
                 </>
               ) : (
                 <>
                   <VolumeUpIcon className="h-6 w-4" />{' '}
-                  <span className="hidden sm:block">Enable sounds</span>
+                  <span className="hidden sm:block sm:w-full">
+                    Enable sounds
+                  </span>
                 </>
               )}
             </Button>
           </Form>
           <Form action="edit-email">
-            <Button type="submit" secondary className="flex h-full gap-2 ">
+            <Button
+              type="submit"
+              secondary
+              className="flex h-full gap-2 sm:w-full"
+            >
               <MailIcon className="h-6 w-4" />{' '}
-              <span className="hidden sm:block">Update email</span>
+              <span className="hidden sm:block sm:w-full">Update email</span>
             </Button>
           </Form>
           <br />
           <Form action="/logout" method="post">
-            <Button type="submit" secondary className="flex gap-2">
+            <Button type="submit" secondary className="flex gap-2 sm:w-full">
               <LogoutIcon className="h-6 w-4" />{' '}
-              <span className="hidden sm:block">Log out</span>
+              <span className="hidden sm:block sm:w-full">Log out</span>
             </Button>
           </Form>
           <br className="flex-1" />
@@ -123,7 +131,7 @@ export default function UserPage() {
             onClick={() => setIsDeleteDialogOpen(true)}
           >
             <TrashIcon className="h-6 w-4" />
-            <span className="hidden sm:block">Delete account</span>
+            <span className="hidden sm:block sm:w-full">Delete account</span>
           </Button>
           <Modal
             isOpen={isDeleteDialogOpen}

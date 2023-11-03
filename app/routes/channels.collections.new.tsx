@@ -1,7 +1,6 @@
 import type { MetaFunction } from '@remix-run/node';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { CollectionForm } from '~/components/CollectionForm';

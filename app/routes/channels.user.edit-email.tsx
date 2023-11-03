@@ -8,8 +8,7 @@ import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import { SubmitButton } from '~/components/Button';
 import {
   getUserByEmail,

@@ -1,10 +1,10 @@
 import { PencilIcon } from '@heroicons/react/outline';
+import type { MetaFunction } from '@remix-run/react';
 import {
   Link,
   useLoaderData,
   useSubmit,
   useNavigation,
-  MetaFunction,
   isRouteErrorResponse,
   useRouteError,
 } from '@remix-run/react';
@@ -16,7 +16,6 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
-import {} from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -125,6 +124,8 @@ export default function ChannelIndexPage() {
     submit(form);
   };
 
+  const isFilters = Object.values(filters).some(Boolean);
+
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
@@ -143,26 +144,34 @@ export default function ChannelIndexPage() {
           {items.length === 0 && (
             <div className="flex flex-col items-center gap-24 p-8">
               <div>
-                <p className="mb-2 text-center text-lg font-bold">
-                  No articles were found in this collection.
-                </p>
-                <p className="text-center text-lg text-slate-400">
-                  You may try adding a{' '}
-                  <NewChannelModalContext.Consumer>
-                    {(context) => (
-                      <button
-                        onClick={() => context.open?.()}
-                        className="font-bold text-yellow-900 underline"
-                      >
-                        new channel
-                      </button>
-                    )}
-                  </NewChannelModalContext.Consumer>{' '}
-                  or{' '}
-                  <Link to="edit" className=" underline">
-                    edit this collection
-                  </Link>
-                </p>
+                {!isFilters ? (
+                  <>
+                    <p className="mb-2 text-center text-lg font-bold">
+                      No articles were found in this collection.
+                    </p>
+                    <p className="text-center text-lg text-slate-400">
+                      You may try adding a{' '}
+                      <NewChannelModalContext.Consumer>
+                        {(context) => (
+                          <button
+                            onClick={() => context.open?.()}
+                            className="font-bold text-yellow-900 underline"
+                          >
+                            new channel
+                          </button>
+                        )}
+                      </NewChannelModalContext.Consumer>{' '}
+                      or{' '}
+                      <Link to="edit" className=" underline">
+                        edit this collection
+                      </Link>
+                    </p>
+                  </>
+                ) : (
+                  <p className="mb-2 text-center text-lg font-bold">
+                    No articles found matching your criteria.
+                  </p>
+                )}
               </div>
               <img
                 alt="Illustration doodle of a person sitting and reading"

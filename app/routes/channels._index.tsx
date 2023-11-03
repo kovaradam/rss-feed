@@ -12,8 +12,7 @@ import { ErrorMessage } from '~/components/ErrorMessage';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
-import { getItemsByFilters } from '~/models/channel.server';
-import { getChannels } from '~/models/channel.server';
+import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 
 type LoaderData = {
@@ -110,6 +109,8 @@ export default function ChannelIndexPage() {
     submit(form);
   };
 
+  const isFilters = Object.values(filters).some(Boolean);
+
   return (
     <>
       <UseAppTitle>Your feed</UseAppTitle>
@@ -137,7 +138,9 @@ export default function ChannelIndexPage() {
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (
                 <>
-                  <p>No articles found</p>
+                  <p className="mt-6">
+                    No articles found {isFilters && 'matching your criteria'}
+                  </p>
                   <img
                     src="/laying.svg"
                     alt="Doodle of a person laying looking at phone"

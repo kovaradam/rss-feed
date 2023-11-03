@@ -1,10 +1,10 @@
-import { MetaFunction, useLoaderData } from '@remix-run/react';
+import type { MetaFunction } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import type {
   ActionFunction,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -13,10 +13,12 @@ import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
 import type { Collection } from '~/models/collection.server';
-import { getBooleanValue } from '~/models/collection.server';
-import { deleteCollection } from '~/models/collection.server';
-import { updateCollection } from '~/models/collection.server';
-import { getCollection } from '~/models/collection.server';
+import {
+  getBooleanValue,
+  deleteCollection,
+  updateCollection,
+  getCollection,
+} from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, uniqueArrayFilter } from '~/utils';
 

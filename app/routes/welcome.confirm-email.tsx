@@ -9,8 +9,7 @@ import type {
   LoaderFunctionArgs,
   ActionFunctionArgs,
 } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import { getUserById, sendConfirmEmail } from '~/models/user.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
