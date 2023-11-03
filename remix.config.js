@@ -4,4 +4,7 @@
 module.exports = {
   ignoredRouteFiles: ['**/.*'],
   serverModuleFormat: 'cjs',
+  dev: {
+    port: 3000,
+  },
 };

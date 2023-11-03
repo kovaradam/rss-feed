@@ -14,15 +14,18 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 
-import tailwindStylesheetUrl from './styles/tailwind.css';
+import stylesheet from './tailwind.css';
+import { cssBundleHref } from '@remix-run/css-bundle';
+
 import { getUser } from './session.server';
 import React from 'react';
 import { UseSounds } from './components/UseSounds';
 import { ClientOnly } from './components/ClientOnly';
 
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }];
-};
+export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: stylesheet },
+  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
+];
 
 export const meta: MetaFunction = () => [
   { charset: 'utf-8' },
