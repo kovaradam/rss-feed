@@ -110,13 +110,14 @@ export default function ChannelIndexPage() {
   };
 
   const isFilters = Object.values(filters).some(Boolean);
+  console.log(transition);
 
   return (
     <>
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
-          {transition.state === 'submitting' &&
+          {transition.state === 'loading' &&
             transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details className="mb-4 w-full sm:hidden" title="Filter articles">
             <ChannelItemFilterForm

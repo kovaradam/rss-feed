@@ -287,7 +287,7 @@ export default function ChannelsPage() {
               className={`flex-1 p-6 ${
                 isNormalLoad(transition) ||
                 transition.formAction?.includes('logout')
-                  ? 'animate-pulse'
+                  ? 'animate-pulse opacity-60'
                   : ''
               }`}
             >

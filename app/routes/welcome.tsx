@@ -130,7 +130,7 @@ export default function Welcome() {
       </div>
       <div
         className={`w-full max-w-md ${
-          isNormalLoad(transition) ? 'animate-pulse' : ''
+          isNormalLoad(transition) ? 'animate-pulse opacity-60' : ''
         }`}
       >
         <Form method="post" className="space-y-6">

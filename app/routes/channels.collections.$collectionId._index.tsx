@@ -16,6 +16,7 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
+import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -129,11 +130,10 @@ export default function ChannelIndexPage() {
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
-      <div
-        className={`relative flex min-h-screen flex-col sm:flex-row ${
-          transition.state === 'loading' ? 'opacity-60' : ''
-        }`}
-      >
+      <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
+        {transition.state === 'loading' && transition.formMethod === 'GET' && (
+          <ChannelItemsOverlay />
+        )}
         <section className="sm:min-w-2/3 relative flex-1">
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
