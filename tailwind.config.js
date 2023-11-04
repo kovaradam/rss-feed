@@ -20,7 +20,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/line-clamp'),
     plugin(({ addVariant }) => {
       addVariant('active-select-item', '&[data-active-item]');
     }),

@@ -1,11 +1,13 @@
-import { Response } from '@remix-run/node';
 import {
   Form,
   useActionData,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import {
   deleteFailedUpload,
@@ -24,7 +26,7 @@ function requireAdmin(user: User) {
   }
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
   requireAdmin(user);
 
@@ -59,7 +61,7 @@ export async function action({ request }: ActionArgs) {
   throw new Response('Unsupported', { status: 405 });
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request);
   requireAdmin(user);
 
@@ -72,7 +74,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function AdminIndexPage() {
   const data = useLoaderData<typeof loader>();
   const actionResponse = useActionData<typeof action>();
-  const transition = useTransition();
+  const transition = useNavigation();
 
   return (
     <div className="p-5">
@@ -121,8 +123,8 @@ export default function AdminIndexPage() {
             ))}
           </tbody>
         </table>
-        {transition.submission?.method === 'DELETE' && <div>Deleting user</div>}
-        {transition.submission?.method === 'PATCH' && <div>Updating user</div>}
+        {transition.formMethod === 'DELETE' && <div>Deleting user</div>}
+        {transition.formMethod === 'PATCH' && <div>Updating user</div>}
 
         {actionResponse && 'user' in actionResponse && (
           <p className="text-green-600">

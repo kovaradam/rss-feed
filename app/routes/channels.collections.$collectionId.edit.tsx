@@ -1,16 +1,24 @@
+import type { MetaFunction } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import type {
   ActionFunction,
-  LoaderFunction,
-  MetaFunction,
+  LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
+import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
+
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { getChannels } from '~/models/channel.server';
-import { createCollection, getBooleanValue } from '~/models/collection.server';
+import type { Collection } from '~/models/collection.server';
+import {
+  getBooleanValue,
+  deleteCollection,
+  updateCollection,
+  getCollection,
+} from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, uniqueArrayFilter } from '~/utils';
 
@@ -22,25 +30,34 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction = () => {
-  return {
-    title: createTitle(`New collection'}`),
-  };
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    {
+      title: createTitle(`Edit ${data?.defaultValue?.title ?? 'Collection'}`),
+    },
+  ];
 };
 
 type FieldName = (typeof fieldNames)[number];
 
 type ActionData = {
-  errors: Partial<Record<FieldName, string | null>> | undefined;
+  errors: Partial<Record<'title', string | null>> | undefined;
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
+  const collectionId = params.collectionId;
+  invariant(collectionId, 'Collection id is not defined');
   const userId = await requireUserId(request);
   const data = await request.formData();
   const form = Object.fromEntries(data.entries()) as Record<
     FieldName,
     string | null
   >;
+
+  if (request.method === 'DELETE') {
+    await deleteCollection({ where: { id: collectionId } });
+    return redirect('/channels');
+  }
 
   const errors = {} as typeof form;
   if (!form.title) {
@@ -51,7 +68,8 @@ export const action: ActionFunction = async ({ request }) => {
     return json<ActionData>({ errors }, { status: 400 });
   }
 
-  const collection = await createCollection({
+  const collection = await updateCollection({
+    where: { id: collectionId },
     data: {
       userId,
       title: form.title as string,
@@ -68,11 +86,24 @@ export const action: ActionFunction = async ({ request }) => {
 type LoaderData = {
   categories: string[];
   languages: string[];
+  defaultValue: Collection;
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const collectionId = params.collectionId;
+  invariant(collectionId, 'Collection id is not defined');
+
   const userId = await requireUserId(request);
 
+  const collection = await getCollection({
+    where: {
+      id: collectionId,
+    },
+  });
+
+  if (!collection) {
+    throw new Response('Not Found', { status: 404 });
+  }
   const channels = await getChannels({
     where: { userId },
     select: { category: true, language: true },
@@ -91,14 +122,18 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       .filter(Boolean)
       .filter(uniqueArrayFilter) ?? [];
 
-  return json<LoaderData>({ categories, languages });
+  return json<LoaderData>({ categories, languages, defaultValue: collection });
 };
 
-export default function NewCollectionPage() {
+export default function EditCollectionPage() {
+  const data = useLoaderData<LoaderData>();
   return (
     <>
-      <UseAppTitle>New collection</UseAppTitle>
-      <CollectionForm title="Create a new collection" />
+      <UseAppTitle>{data.defaultValue.title}</UseAppTitle>
+      <CollectionForm<LoaderData, ActionData>
+        title={'Edit collection'}
+        deleteFormId="delete-form"
+      />
     </>
   );
 }

@@ -1,21 +1,21 @@
 import { PencilIcon } from '@heroicons/react/outline';
+import type { MetaFunction } from '@remix-run/react';
 import {
   Link,
-  useCatch,
   useLoaderData,
   useSubmit,
-  useTransition,
+  useNavigation,
+  isRouteErrorResponse,
+  useRouteError,
 } from '@remix-run/react';
 import type {
   ActionFunction,
-  LoaderArgs,
-  MetaFunction,
+  LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
-import {} from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
@@ -30,15 +30,17 @@ import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle } from '~/utils';
 
-export const meta: MetaFunction = ({ data }) => {
-  return {
-    title: createTitle(data?.collection?.title ?? 'Collection feed'),
-  };
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    {
+      title: createTitle(data?.collection?.title ?? 'Collection feed'),
+    },
+  ];
 };
 
 const itemCountName = 'item-count';
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id was not provided');
@@ -109,7 +111,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function ChannelIndexPage() {
   const { items, cursor, filters, collection } = useLoaderData<typeof loader>();
-  const transition = useTransition();
+  const transition = useNavigation();
   const isSubmitting = transition.state === 'submitting';
 
   const submit = useSubmit();
@@ -122,12 +124,14 @@ export default function ChannelIndexPage() {
     submit(form);
   };
 
+  const isFilters = Object.values(filters).some(Boolean);
+
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
       <div
         className={`relative flex min-h-screen flex-col sm:flex-row ${
-          transition.type === 'normalLoad' ? 'opacity-60' : ''
+          transition.state === 'loading' ? 'opacity-60' : ''
         }`}
       >
         <section className="sm:min-w-2/3 relative flex-1">
@@ -140,26 +144,34 @@ export default function ChannelIndexPage() {
           {items.length === 0 && (
             <div className="flex flex-col items-center gap-24 p-8">
               <div>
-                <p className="mb-2 text-center text-lg font-bold">
-                  No articles were found in this collection.
-                </p>
-                <p className="text-center text-lg text-slate-400">
-                  You may try adding a{' '}
-                  <NewChannelModalContext.Consumer>
-                    {(context) => (
-                      <button
-                        onClick={() => context.open?.()}
-                        className="font-bold text-yellow-900 underline"
-                      >
-                        new channel
-                      </button>
-                    )}
-                  </NewChannelModalContext.Consumer>{' '}
-                  or{' '}
-                  <Link to="edit" className=" underline">
-                    edit this collection
-                  </Link>
-                </p>
+                {!isFilters ? (
+                  <>
+                    <p className="mb-2 text-center text-lg font-bold">
+                      No articles were found in this collection.
+                    </p>
+                    <p className="text-center text-lg text-slate-400">
+                      You may try adding a{' '}
+                      <NewChannelModalContext.Consumer>
+                        {(context) => (
+                          <button
+                            onClick={() => context.open?.()}
+                            className="font-bold text-yellow-900 underline"
+                          >
+                            new channel
+                          </button>
+                        )}
+                      </NewChannelModalContext.Consumer>{' '}
+                      or{' '}
+                      <Link to="edit" className=" underline">
+                        edit this collection
+                      </Link>
+                    </p>
+                  </>
+                ) : (
+                  <p className="mb-2 text-center text-lg font-bold">
+                    No articles found matching your criteria.
+                  </p>
+                )}
               </div>
               <img
                 alt="Illustration doodle of a person sitting and reading"
@@ -205,7 +217,7 @@ export default function ChannelIndexPage() {
           </Details>
           <Link
             to={`edit`}
-            className="flex w-fit items-center gap-2 rounded bg-slate-100 py-2 px-4 text-slate-600 hover:bg-slate-200"
+            className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200 sm:w-full"
           >
             <PencilIcon className="w-4" /> Edit collection
           </Link>
@@ -216,20 +228,17 @@ export default function ChannelIndexPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
-  return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
-}
+  const caught = useRouteError();
 
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  if (caught.status === 404) {
-    return (
-      <ErrorMessage>
-        <h4>Collection not found</h4>
-      </ErrorMessage>
-    );
+  if (isRouteErrorResponse(caught)) {
+    if (caught.status === 404) {
+      return (
+        <ErrorMessage>
+          <h4>Collection not found</h4>
+        </ErrorMessage>
+      );
+    }
   }
 
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
+  return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

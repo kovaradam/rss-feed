@@ -1,5 +1,5 @@
+import type { MetaFunction, useNavigation } from '@remix-run/react';
 import { useMatches } from '@remix-run/react';
-import type { MetaFunction } from '@remix-run/server-runtime';
 import React from 'react';
 
 import type { User } from '~/models/user.server';
@@ -43,7 +43,7 @@ export function useMatchesData(
     [matchingRoutes, id]
   );
 
-  return route?.data;
+  return route?.data as Record<string, unknown>;
 }
 
 function isUser(user: any): user is User {
@@ -80,10 +80,19 @@ export function createTitle(input: string): string {
 export function createMeta(metaFunction?: MetaFunction): MetaFunction {
   return (metaArgs) => {
     const meta = metaFunction?.(metaArgs);
-    return {
-      ...meta,
-      title: `Journal | ${metaArgs.data?.title ?? meta?.title}`,
-    };
+    const title = (
+      meta?.find((entry) => Object.keys(entry).includes('title')) as Record<
+        'title',
+        string
+      >
+    )?.title;
+    return meta?.concat([
+      {
+        title: `Journal | ${
+          (metaArgs.data as Record<'title', string>)?.title ?? title
+        }`,
+      },
+    ]);
   };
 }
 
@@ -100,4 +109,18 @@ export function browserApiSwitch<T>(input: T, fallback: T) {
     return fallback;
   }
   return input;
+}
+
+export function isNormalLoad({
+  state,
+  formMethod,
+}: ReturnType<typeof useNavigation>) {
+  return state === 'loading' && !formMethod;
+}
+
+export function isSubmitting({
+  state,
+  formMethod,
+}: ReturnType<typeof useNavigation>) {
+  return (state === 'loading' || state === 'submitting') && Boolean(formMethod);
 }

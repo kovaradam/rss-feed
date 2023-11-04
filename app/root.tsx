@@ -14,24 +14,29 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 
-import tailwindStylesheetUrl from './styles/tailwind.css';
+import stylesheet from './tailwind.css';
+import { cssBundleHref } from '@remix-run/css-bundle';
+
 import { getUser } from './session.server';
 import React from 'react';
 import { UseSounds } from './components/UseSounds';
 import { ClientOnly } from './components/ClientOnly';
 
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }];
-};
+export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: stylesheet },
+  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
+];
 
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  title: 'RSS Journal',
-  viewport: 'width=device-width,initial-scale=1',
-  description:
-    'Keep up with the latest web content using an organized RSS feed.',
-  keywords: 'RSS feed, RSS, journal, news',
-});
+export const meta: MetaFunction = () => [
+  { charset: 'utf-8' },
+  { title: 'RSS Journal' },
+  { viewport: 'width=device-width,initial-scale=1' },
+  {
+    description:
+      'Keep up with the latest web content using an organized RSS feed.',
+  },
+  { keywords: 'RSS feed, RSS, journal, news' },
+];
 
 type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>;

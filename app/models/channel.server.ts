@@ -106,6 +106,7 @@ export async function refreshChannel(params: {
     },
     data: {
       lastBuildDate: parsedChannel.lastBuildDate,
+      refreshDate: new Date(),
       items: {
         create: newItems,
       },

@@ -1,4 +1,4 @@
-import { Form, useActionData, useTransition } from '@remix-run/react';
+import { Form, useActionData, useNavigation } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
 import { Button, SubmitButton } from './Button';
@@ -7,9 +7,9 @@ export function CreateChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
 >(props: { className?: string; onReset(): void }): JSX.Element {
   const errors = useActionData<ActionData>();
-  const transition = useTransition();
+  const transition = useNavigation();
   const isCreating =
-    transition.state !== 'idle' && transition.submission?.method === 'PUT';
+    transition.state !== 'idle' && transition.formMethod === 'PUT';
 
   return (
     <Form

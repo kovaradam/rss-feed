@@ -1,42 +1,38 @@
+import type {
+  ActionFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import {
   Form,
   Link,
   useActionData,
+  useLoaderData,
   useSearchParams,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import React from 'react';
-import { SubmitButton } from '~/components/Button';
-import {
-  createUser,
-  getUserByEmail,
-  sendConfirmEmail,
-} from '~/models/user.server';
+import * as React from 'react';
+
 import { createUserSession, getUserId } from '~/session.server';
+import { verifyLogin } from '~/models/user.server';
+import { isSubmitting, safeRedirect, validateEmail } from '~/utils';
+import { SubmitButton } from '~/components/Button';
 import { styles } from '~/styles/shared';
-import { createTitle, safeRedirect, validateEmail } from '~/utils';
 
-export const meta: MetaFunction = () => {
-  return { title: createTitle('Welcome') };
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
+
   if (userId) {
-    return redirect('/channels');
+    return redirect('/');
   }
-  return json({});
+  return json({
+    isFirst: Boolean(new URL(request.url).searchParams.get('first')),
+  });
 };
 
 interface ActionData {
-  errors: {
+  errors?: {
     email?: string;
     password?: string;
   };
@@ -47,6 +43,8 @@ export const action: ActionFunction = async ({ request }) => {
   const email = formData.get('email');
   const password = formData.get('password');
   const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
+
+  const remember = formData.get('remember');
 
   if (!validateEmail(email)) {
     return json<ActionData>(
@@ -69,33 +67,39 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const existingUser = await getUserByEmail(email);
-  if (existingUser) {
+  const user = await verifyLogin(email, password);
+
+  if (!user) {
     return json<ActionData>(
-      { errors: { email: 'User with this email already exists.' } },
+      { errors: { email: 'Invalid email or password' } },
       { status: 400 }
     );
   }
 
-  const user = await createUser(email, password);
-  sendConfirmEmail(user, request);
-
   return createUserSession({
     request,
     userId: user.id,
-    remember: false,
+    remember: remember === 'on' ? true : false,
     redirectTo,
   });
 };
 
-export default function Welcome() {
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: 'Login',
+    },
+  ];
+};
+
+export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') ?? '/channels';
+  const redirectTo = searchParams.get('redirectTo') || '/channels';
   const actionData = useActionData() as ActionData;
+  const data = useLoaderData<typeof loader>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
-
-  const transition = useTransition();
+  const transition = useNavigation();
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
@@ -105,33 +109,26 @@ export default function Welcome() {
     }
   }, [actionData]);
 
-  const isSubmitting =
-    transition.type === 'actionSubmission' ||
-    transition.type === 'actionReload';
-
   return (
     <>
       <div>
-        <h2 className="my-2 text-4xl font-bold">Create your journal</h2>
+        <h2 className="my-2 text-4xl font-bold">
+          {data.isFirst ? 'Welcome!' : 'Welcome back!'}
+        </h2>
         <p className="text-slate-500">
-          Get started with a new account or{' '}
+          Don't have an account?{' '}
           <Link
+            className="font-bold underline"
             to={{
-              pathname: 'login',
+              pathname: '/',
               search: searchParams.toString(),
             }}
-            className={`font-bold underline`}
           >
-            log In
-          </Link>{' '}
-          if you already have one.
+            Sign up
+          </Link>
         </p>
       </div>
-      <div
-        className={`w-full max-w-md ${
-          transition.type === 'normalLoad' ? 'animate-pulse' : ''
-        }`}
-      >
+      <div className={`w-full max-w-md `}>
         <Form method="post" className="space-y-6">
           {[
             {
@@ -187,30 +184,32 @@ export default function Welcome() {
               </div>
             </div>
           ))}
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={redirectTo}
-            disabled={isSubmitting}
-          />
-          <fieldset className="flex flex-col items-center justify-between gap-1 sm:flex-row">
-            <SubmitButton
-              className="w-full sm:w-48 sm:px-8"
-              isLoading={isSubmitting}
-            >
-              Create Account
-            </SubmitButton>
-            <span className="text-slate-500">or</span>
-            <Link
-              to={{
-                pathname: 'login',
-                search: searchParams.toString(),
-              }}
-              className={`flex items-center justify-center rounded  bg-gray-50 px-4 py-2 font-medium text-slate-500 sm:w-48 sm:px-8`}
-            >
-              log In
-            </Link>{' '}
-          </fieldset>
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember"
+                name="remember"
+                type="checkbox"
+                className={
+                  'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                }
+              />
+              <label
+                htmlFor="remember"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                Remember me
+              </label>
+            </div>
+          </div>
+          <SubmitButton
+            className="w-full sm:w-48 sm:px-8"
+            isLoading={isSubmitting(transition)}
+          >
+            Log in
+          </SubmitButton>
         </Form>
       </div>
     </>

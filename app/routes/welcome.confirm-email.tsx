@@ -3,18 +3,20 @@ import {
   Link,
   useActionData,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import type {
+  LoaderFunctionArgs,
+  ActionFunctionArgs,
+} from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import { getUserById, sendConfirmEmail } from '~/models/user.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
 
-export const meta = createMeta(() => ({ title: 'Confirm email' }));
+export const meta = createMeta(() => [{ title: 'Confirm email' }]);
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const userId = await requireUserId(request);
   if (request.method !== 'PATCH') {
     throw new Response('Not supported', { status: 405 });
@@ -31,7 +33,7 @@ export async function action({ request }: ActionArgs) {
   return json({ mail: mailResult });
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
   const user = await getUserById(userId);
 
@@ -45,7 +47,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function ConfirmEmailPage() {
   const data = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const transition = useTransition();
+  const transition = useNavigation();
 
   return (
     <section className="flex flex-col items-center justify-center p-6">
@@ -64,7 +66,7 @@ export default function ConfirmEmailPage() {
       </p>
       <div className="mt-10 flex w-full gap-2 text-slate-400">
         <Form method="patch">
-          {transition.submission?.method === 'PATCH' ? (
+          {transition.formMethod === 'PATCH' ? (
             <span>Sending e-mail...</span>
           ) : (
             <>

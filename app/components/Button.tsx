@@ -18,7 +18,7 @@ export function Button({
     <button
       {...buttonProps}
       disabled={buttonProps.disabled || isLoading}
-      className={`rounded  py-2 px-4 ${
+      className={`rounded  px-4 py-2 ${
         secondary ? secondaryButtonStyle : primaryButtonStyle
       } ${buttonProps.className}`}
     >
@@ -42,7 +42,7 @@ export function SubmitButton({
       {...buttonProps}
       disabled={buttonProps.disabled || isLoading}
       type="submit"
-      className={`flex items-center justify-center rounded  bg-rose-400 px-4 py-2 font-medium text-white hover:bg-rose-500 disabled:bg-rose-300 ${buttonProps.className}`}
+      className={`flex items-center justify-center rounded  bg-rose-500 px-4 py-2 font-medium text-white hover:bg-rose-600 active:bg-rose-400 disabled:bg-rose-400 ${buttonProps.className}`}
     >
       {isLoading ? <SpinnerIcon className="w-4" /> : buttonProps.children}
     </button>

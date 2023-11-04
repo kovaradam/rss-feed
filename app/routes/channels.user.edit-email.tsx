@@ -2,11 +2,13 @@ import {
   Form,
   useActionData,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
+import { redirect, json } from '@remix-run/server-runtime';
 import { SubmitButton } from '~/components/Button';
 import {
   getUserByEmail,
@@ -19,7 +21,7 @@ import { createMeta } from '~/utils';
 
 export const meta = createMeta();
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
@@ -67,7 +69,7 @@ export async function action({ request }: ActionArgs) {
   return redirect('/');
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request);
   return json({ user, title: 'Edit email' });
 }
@@ -75,8 +77,8 @@ export async function loader({ request }: LoaderArgs) {
 export default function UserEditPage() {
   const data = useLoaderData<typeof loader>();
   const actionResponse = useActionData<typeof action>();
-  const transition = useTransition();
-  const isSubmitting = transition.submission?.method === 'PATCH';
+  const transition = useNavigation();
+  const isSubmitting = transition.formMethod === 'PATCH';
 
   return (
     <>

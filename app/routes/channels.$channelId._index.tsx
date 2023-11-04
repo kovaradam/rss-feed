@@ -8,16 +8,17 @@ import { json, redirect } from '@remix-run/node';
 import {
   Form,
   Link,
-  useCatch,
+  isRouteErrorResponse,
   useLoaderData,
-  useTransition,
+  useNavigation,
+  useRouteError,
 } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { Href } from '~/components/Href';
 import { TimeFromNow } from '~/components/TimeFromNow';
 import type { ChannelWithItems } from '~/models/channel.server';
-import { updateChannel } from '~/models/channel.server';
 import {
+  updateChannel,
   deleteChannel,
   getChannel,
   getChannelItems,
@@ -46,10 +47,12 @@ import useSound from 'use-sound';
 
 import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 
-export const meta: MetaFunction = ({ data }) => {
-  return {
-    title: createTitle(data?.channel?.title ?? 'Channel detail'),
-  };
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    {
+      title: createTitle(data?.channel?.title ?? 'Channel detail'),
+    },
+  ];
 };
 
 type LoaderData = {
@@ -125,18 +128,21 @@ export const action: ActionFunction = async ({ request, params }) => {
   });
 
   invariant(channel, 'Channel could not be loaded');
+  try {
+    await refreshChannel({ dbChannel: channel as ChannelWithItems, userId });
+  } catch (error) {
+    console.error(error);
+  }
 
-  await refreshChannel({ dbChannel: channel as ChannelWithItems, userId });
   return redirect('/channels/'.concat(params.channelId));
 };
 
 export default function ChannelDetailsPage() {
   const data = useLoaderData<LoaderData>();
-  const transition = useTransition();
+  const transition = useNavigation();
 
-  const submission = transition.submission;
   const isRefreshing =
-    transition.state !== 'idle' && submission?.method === 'PATCH';
+    transition.state !== 'idle' && transition.formMethod === 'PATCH';
 
   const { channel, items } = data;
 
@@ -146,14 +152,14 @@ export default function ChannelDetailsPage() {
   );
 
   const isParseErrors = data.channel.itemPubDateParseError;
-  const parseErrorSubmission = transition.submission?.formData;
+  const parseErrorSubmission = transition.formData;
 
   const [playRefresh] = useSound(refreshSound);
 
   return (
     <div
       className={`relative flex flex-col sm:flex-row ${
-        transition.type === 'normalLoad' ? 'opacity-60' : ''
+        transition.state === 'loading' ? 'opacity-60' : ''
       }`}
     >
       <UseAppTitle>Channel detail</UseAppTitle>
@@ -168,7 +174,15 @@ export default function ChannelDetailsPage() {
           <span className="flex items-center gap-1 text-gray-400">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
-              <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+              <>
+                <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+                {data.channel.refreshDate && (
+                  <span>
+                    (refreshed{' '}
+                    <TimeFromNow date={new Date(data.channel.refreshDate)} />)
+                  </span>
+                )}
+              </>
             ) : (
               'unknown'
             )}
@@ -194,7 +208,7 @@ export default function ChannelDetailsPage() {
           <WithEditLink name={'description'}>
             <span className="text-gray-400">Description</span>
           </WithEditLink>
-          <p className="text-xl">
+          <p className="text">
             {data.channel.description || 'Description is missing'}
           </p>
         </div>
@@ -278,7 +292,7 @@ export default function ChannelDetailsPage() {
         <Link
           title="Edit this channel"
           to="edit"
-          className="flex w-fit items-center gap-2 rounded bg-slate-100 py-2 px-4 text-slate-600 hover:bg-slate-200"
+          className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200"
         >
           <PencilIcon className="w-4" /> Edit
         </Link>
@@ -288,7 +302,7 @@ export default function ChannelDetailsPage() {
             type="submit"
             title="Delete this channel"
             className="flex h-full w-fit items-center gap-2"
-            isLoading={transition.submission?.method === 'DELETE'}
+            isLoading={transition.formMethod === 'DELETE'}
           >
             <TrashIcon className="w-4" />{' '}
             <span className="hidden sm:block">Delete</span>
@@ -300,23 +314,21 @@ export default function ChannelDetailsPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
+  const caught = useRouteError();
+
+  if (isRouteErrorResponse(caught)) {
+    if (caught.status === 404) {
+      return (
+        <ErrorMessage>
+          <h4>Channel not found</h4>
+        </ErrorMessage>
+      );
+    }
+  }
+
   return (
     <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
   );
-}
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  if (caught.status === 404) {
-    return (
-      <ErrorMessage>
-        <h4>Channel not found</h4>
-      </ErrorMessage>
-    );
-  }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
 function WithEditLink(props: {

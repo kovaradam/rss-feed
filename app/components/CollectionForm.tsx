@@ -3,7 +3,7 @@ import {
   Form,
   useActionData,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
@@ -27,14 +27,14 @@ export function CollectionForm<
   }
 >(props: Props): JSX.Element {
   const errors = useActionData<ActionData>()?.errors;
-  const transition = useTransition();
+  const transition = useNavigation();
   const data = useLoaderData<LoaderData>();
 
   const isSaving =
-    transition.state !== 'idle' && transition.submission?.method === 'POST';
+    transition.state !== 'idle' && transition.formMethod === 'POST';
 
   const isDeleting =
-    transition.state !== 'idle' && transition.submission?.method === 'DELETE';
+    transition.state !== 'idle' && transition.formMethod === 'DELETE';
 
   const Categories = useCategoryInput({
     categorySuggestions: data.categories,
@@ -48,7 +48,7 @@ export function CollectionForm<
   const isEditForm = Boolean(props.deleteFormId);
 
   return (
-    <div className={`${transition.type === 'normalLoad' ? 'opacity-60' : ''}`}>
+    <div className={`${transition.state === 'loading' ? 'opacity-60' : ''}`}>
       <h3 className="mb-2 text-4xl font-bold">{props.title}</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>

@@ -1,4 +1,4 @@
-import { useLoaderData, useSubmit, useTransition } from '@remix-run/react';
+import { useLoaderData, useSubmit, useNavigation } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
@@ -12,8 +12,7 @@ import { ErrorMessage } from '~/components/ErrorMessage';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
-import { getItemsByFilters } from '~/models/channel.server';
-import { getChannels } from '~/models/channel.server';
+import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 
 type LoaderData = {
@@ -97,7 +96,7 @@ export default function ChannelIndexPage() {
   const { items, channels, categories, filters, cursor } =
     useLoaderData<LoaderData>();
 
-  const transition = useTransition();
+  const transition = useNavigation();
   const isLoading = transition.state === 'loading';
 
   const submit = useSubmit();
@@ -110,13 +109,15 @@ export default function ChannelIndexPage() {
     submit(form);
   };
 
+  const isFilters = Object.values(filters).some(Boolean);
+
   return (
     <>
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1">
           {transition.state === 'submitting' &&
-            transition.submission.method === 'GET' && <ChannelItemsOverlay />}
+            transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details className="mb-4 w-full sm:hidden" title="Filter articles">
             <ChannelItemFilterForm
               filters={filters}
@@ -137,7 +138,9 @@ export default function ChannelIndexPage() {
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (
                 <>
-                  <p>No articles found</p>
+                  <p className="mt-6">
+                    No articles found {isFilters && 'matching your criteria'}
+                  </p>
                   <img
                     src="/laying.svg"
                     alt="Doodle of a person laying looking at phone"

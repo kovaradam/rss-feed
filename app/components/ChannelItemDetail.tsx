@@ -7,9 +7,7 @@ import {
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
 import type { FormProps } from '@remix-run/react';
-import { Link } from '@remix-run/react';
-import { useLocation } from '@remix-run/react';
-import { Form } from '@remix-run/react';
+import { Link, useLocation, Form } from '@remix-run/react';
 import { redirect } from '@remix-run/server-runtime';
 import invariant from 'tiny-invariant';
 import useSound from 'use-sound';
@@ -30,8 +28,8 @@ export function ChannelItemDetail(props: Props): JSX.Element {
     ? SolidBookmarkIcon
     : OutlineBookmarkIcon;
 
-  const [playConfirm] = useSound(confirmSound);
-  const [playCancel] = useSound(cancelSound);
+  const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
+  const [playCancel] = useSound(cancelSound, { volume: 0.1 });
 
   return (
     <article
@@ -61,25 +59,26 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               className: 'hover:bg-yellow-100',
               playSubmit: item.bookmarked ? playCancel : playConfirm,
             },
-          ].map((formItems) => (
-            <Form method={props.formMethod} key={formItems.name}>
+          ].map((formItem) => (
+            <Form method={props.formMethod} key={formItem.name}>
               <RequiredFormData itemId={item.id} />
               <input
                 type="hidden"
-                name={formItems.name}
-                value={formItems.value}
+                name={formItem.name}
+                value={formItem.value}
               />
               <button
                 type="submit"
-                title={formItems.title}
-                className={'rounded p-1 '.concat(formItems.className)}
+                title={formItem.title}
+                className={'rounded p-1 '.concat(formItem.className)}
                 data-silent
-                onClick={() => formItems.playSubmit()}
+                aria-label={formItem.title}
+                onClick={() => formItem.playSubmit()}
               >
-                <formItems.Icon
+                <formItem.Icon
                   className={`w-4  ${
-                    formItems.value === 'false' ? 'text-black' : ''
-                  } pointer-events-none ${formItems.className}`}
+                    formItem.value === 'false' ? 'text-black' : ''
+                  } pointer-events-none ${formItem.className}`}
                 />
               </button>
             </Form>
