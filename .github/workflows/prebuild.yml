@@ -1,8 +1,6 @@
-name: Check
-on: push
-permissions:
-  actions: write
-  contents: read
+name: Prebuild
+on:
+  workflow_call:
 
 jobs:
   lint:

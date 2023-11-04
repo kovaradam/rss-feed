@@ -4,14 +4,14 @@ on:
     branches:
       - main
       - dev
-  workflow_run:
-    workflows: [Check]
 
 permissions:
   actions: write
   contents: read
 
 jobs:
+  prebuild:
+    uses: ./.github/workflows/prebuild.yml
   build:
     name: 🐳 Build
     # only build/deploy main branch on pushes

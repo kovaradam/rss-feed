@@ -1,0 +1,10 @@
+name: Prebuild
+on:
+  push:
+    branches-ignore:
+      - main
+      - dev
+
+jobs:
+  check:
+    uses: ./.github/workflows/prebuild.yml
