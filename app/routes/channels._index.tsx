@@ -129,6 +129,9 @@ export default function ChannelIndexPage() {
                 lastBuildDate: channel.lastBuildDate
                   ? new Date(channel.lastBuildDate)
                   : null,
+                refreshDate: channel.refreshDate
+                  ? new Date(channel.refreshDate)
+                  : null,
               }))}
               categories={categories}
               className="pt-4"
@@ -190,6 +193,9 @@ export default function ChannelIndexPage() {
                       lastBuildDate: item.channel.lastBuildDate
                         ? new Date(item.channel.lastBuildDate)
                         : null,
+                      refreshDate: item.channel.refreshDate
+                        ? new Date(item.channel.refreshDate)
+                        : null,
                     },
                   }}
                   formMethod="post"
@@ -212,6 +218,9 @@ export default function ChannelIndexPage() {
                   createdAt: new Date(channel.createdAt),
                   lastBuildDate: channel.lastBuildDate
                     ? new Date(channel.lastBuildDate)
+                    : null,
+                  refreshDate: channel.refreshDate
+                    ? new Date(channel.refreshDate)
                     : null,
                 }))}
               />

@@ -195,6 +195,9 @@ export default function ChannelIndexPage() {
                       lastBuildDate: item.channel.lastBuildDate
                         ? new Date(item.channel.lastBuildDate)
                         : null,
+                      refreshDate: item.channel.refreshDate
+                        ? new Date(item.channel.refreshDate)
+                        : null,
                     },
                   }}
                   formMethod="post"
