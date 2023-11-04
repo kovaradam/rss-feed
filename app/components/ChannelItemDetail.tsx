@@ -106,7 +106,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
         {item.author}
         <TimeFromNow date={new Date(item.pubDate)} />
       </span>
-      <span className="mb-1 flex gap-1 text-sm">
+      <span className="my-1 flex gap-1 text-sm">
         <ChannelCategoryLinks category={channel.category} />
       </span>
       <p className="line-clamp-10">{item.description}</p>

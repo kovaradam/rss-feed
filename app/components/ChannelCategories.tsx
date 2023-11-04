@@ -9,7 +9,8 @@ type Props = {
 };
 
 const className =
-  'flex gap-1 rounded bg-teal-50 p-1 px-2 text-bold text-teal-600';
+  'flex gap-1 rounded text-[#ff9696] p-1 px-2 font-bold bg-[#ff96961c] ';
+
 export function ChannelCategories(props: Props): JSX.Element {
   return (
     <>

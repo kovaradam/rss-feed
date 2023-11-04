@@ -123,6 +123,13 @@ export async function getChannel(
 export async function updateChannel(
   params: Parameters<typeof prisma.channel.update>[0]
 ) {
+  let { category } = params.data;
+  if (typeof category === 'string') {
+    category = category.split('/').filter(Boolean).join('/');
+    if (category) {
+      params.data.category = `/${category}/`;
+    }
+  }
   return prisma.channel.update(params);
 }
 
@@ -219,7 +226,7 @@ export async function getItemsByFilters(
         AND:
           filters.categories.length !== 0
             ? filters.categories?.map((category) => ({
-                category: { contains: category },
+                category: { contains: `/${category}/` },
               }))
             : undefined,
       },

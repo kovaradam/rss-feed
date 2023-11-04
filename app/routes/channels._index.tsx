@@ -110,7 +110,6 @@ export default function ChannelIndexPage() {
   };
 
   const isFilters = Object.values(filters).some(Boolean);
-  console.log(transition);
 
   return (
     <>
