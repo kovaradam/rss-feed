@@ -43,6 +43,7 @@ model Channel {
   copyright     String
   language      String
 
+  refreshDate           DateTime?
   itemPubDateParseError Boolean?
 
   items    Item[]

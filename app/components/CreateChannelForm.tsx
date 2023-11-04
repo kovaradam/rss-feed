@@ -45,9 +45,7 @@ export function CreateChannelForm<
         </Button>
         <SubmitButton
           type="submit"
-          className={
-            'min-w-[20ch] flex-1 bg-yellow-800 hover:bg-yellow-900 active:bg-yellow-700 disabled:bg-yellow-700    sm:flex-none'
-          }
+          className={'min-w-[20ch] flex-1 sm:flex-none'}
         >
           {isCreating ? 'Adding...' : 'Add channel'}
         </SubmitButton>

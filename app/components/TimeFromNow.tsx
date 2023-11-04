@@ -38,8 +38,8 @@ export function TimeFromNow(props: Props): JSX.Element {
   }
 
   return (
-    <span
-      title={props.date.toLocaleDateString()}
-    >{`${difference.seconds} seconds ago`}</span>
+    <span title={props.date.toLocaleDateString()}>{`${Math.ceil(
+      difference.seconds
+    )} second${difference.seconds > 1 ? 's' : ''} ago`}</span>
   );
 }

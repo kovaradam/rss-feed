@@ -174,7 +174,15 @@ export default function ChannelDetailsPage() {
           <span className="flex items-center gap-1 text-gray-400">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
-              <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+              <>
+                <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+                {data.channel.refreshDate && (
+                  <span>
+                    (refreshed{' '}
+                    <TimeFromNow date={new Date(data.channel.refreshDate)} />)
+                  </span>
+                )}
+              </>
             ) : (
               'unknown'
             )}
