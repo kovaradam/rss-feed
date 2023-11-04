@@ -253,7 +253,7 @@ export default function ChannelsPage() {
                     ))}
                     <li>
                       <Link
-                        className={`m-2 flex gap-2 rounded p-2 text-xl text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
+                        className={`m-2 flex gap-2 rounded p-2 text-lg text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
                         to={`/channels/collections/new`}
                       >
                         <PlusIcon className="w-4" />

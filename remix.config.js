@@ -1,10 +1,6 @@
-/**
- * @type {import('@remix-run/dev').AppConfig}
- */
+/** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
-  ignoredRouteFiles: ['**/.*'],
+  cacheDirectory: './node_modules/.cache/remix',
+  ignoredRouteFiles: ['**/.*', '**/*.test.{ts,tsx}'],
   serverModuleFormat: 'cjs',
-  dev: {
-    port: 3000,
-  },
 };

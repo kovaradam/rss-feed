@@ -200,7 +200,7 @@ export default function ChannelDetailsPage() {
           <WithEditLink name={'description'}>
             <span className="text-gray-400">Description</span>
           </WithEditLink>
-          <p className="text-xl">
+          <p className="text">
             {data.channel.description || 'Description is missing'}
           </p>
         </div>
