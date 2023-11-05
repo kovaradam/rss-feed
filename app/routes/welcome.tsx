@@ -25,7 +25,7 @@ export default function Welcome() {
         ></img>
       </section>
       <section
-        className={`flex h-screen items-center justify-center p-8 sm:h-full sm:flex-1 ${
+        className={`flex h-screen items-center justify-center p-4 sm:h-full sm:flex-1 sm:p-8 ${
           isNormalLoad(transition) ? 'animate-pulse opacity-60' : ''
         }`}
       >

@@ -56,6 +56,14 @@ export default function App() {
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>
+        <meta charSet="utf-8" />
+        <title>RSS Journal</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta
+          name="description"
+          content="Keep up with the latest web content using an organized RSS feed."
+        />
+        <meta name="keywords" content="RSS feed, RSS, journal, news" />
         <Meta />
         <Links />
       </head>
