@@ -86,7 +86,8 @@ export function createMeta(metaFunction?: MetaFunction): MetaFunction {
         string
       >
     )?.title;
-    return meta?.concat([
+
+    return (meta ?? []).concat([
       {
         title: `Journal | ${
           (metaArgs.data as Record<'title', string>)?.title ?? title

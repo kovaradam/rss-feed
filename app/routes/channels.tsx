@@ -186,7 +186,7 @@ export default function ChannelsPage() {
           </div>
         </header>
         <div
-          className="flex justify-center "
+          className="flex justify-center bg-white"
           onTouchStart={(event) => {
             event.currentTarget.dataset.touchStartX = String(
               event.targetTouches[0]?.clientX
@@ -211,7 +211,7 @@ export default function ChannelsPage() {
               isNavExpanded ? 'translate-x-3/4' : ''
             } duration-200 ease-in sm:translate-x-0`}
             style={{
-              boxShadow: '-20rem 0 0rem 20rem rgb(241 245 249)',
+              boxShadow: '-40rem 0 0rem 20rem rgb(241 245 249)',
             }}
           >
             <NavWrapper
