@@ -1,38 +1,38 @@
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import type { MetaFunction } from '@remix-run/react';
 import {
   Form,
   Link,
   useActionData,
-  useLoaderData,
   useSearchParams,
   useNavigation,
 } from '@remix-run/react';
-import * as React from 'react';
-
-import { createUserSession, getUserId } from '~/session.server';
-import { verifyLogin } from '~/models/user.server';
-import { isSubmitting, safeRedirect, validateEmail } from '~/utils';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { json, redirect } from '@remix-run/server-runtime';
+import React from 'react';
 import { SubmitButton } from '~/components/Button';
+import {
+  createUser,
+  getUserByEmail,
+  sendConfirmEmail,
+} from '~/models/user.server';
+import { createUserSession, getUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
+import { createTitle, safeRedirect, validateEmail } from '~/utils';
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const meta: MetaFunction = () => {
+  return [{ title: createTitle('Welcome') }];
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
-
   if (userId) {
-    return redirect('/');
+    return redirect('/channels');
   }
-  return json({
-    isFirst: Boolean(new URL(request.url).searchParams.get('first')),
-  });
+  return json({});
 };
 
 interface ActionData {
-  errors?: {
+  errors: {
     email?: string;
     password?: string;
   };
@@ -43,8 +43,6 @@ export const action: ActionFunction = async ({ request }) => {
   const email = formData.get('email');
   const password = formData.get('password');
   const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
-
-  const remember = formData.get('remember');
 
   if (!validateEmail(email)) {
     return json<ActionData>(
@@ -67,38 +65,32 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const user = await verifyLogin(email, password);
-
-  if (!user) {
+  const existingUser = await getUserByEmail(email);
+  if (existingUser) {
     return json<ActionData>(
-      { errors: { email: 'Invalid email or password' } },
+      { errors: { email: 'User with this email already exists.' } },
       { status: 400 }
     );
   }
 
+  const user = await createUser(email, password);
+  sendConfirmEmail(user, request);
+
   return createUserSession({
     request,
     userId: user.id,
-    remember: remember === 'on' ? true : false,
+    remember: false,
     redirectTo,
   });
 };
 
-export const meta: MetaFunction = () => {
-  return [
-    {
-      title: 'Login',
-    },
-  ];
-};
-
-export default function LoginPage() {
+export default function Welcome() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/channels';
+  const redirectTo = searchParams.get('redirectTo') ?? '/channels';
   const actionData = useActionData() as ActionData;
-  const data = useLoaderData<typeof loader>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
+
   const transition = useNavigation();
 
   React.useEffect(() => {
@@ -109,26 +101,29 @@ export default function LoginPage() {
     }
   }, [actionData]);
 
+  const isSubmitting =
+    transition.state === 'submitting' ||
+    (transition.state === 'loading' && Boolean(transition.formMethod));
+
   return (
     <>
       <div>
-        <h2 className="my-2 text-4xl font-bold">
-          {data.isFirst ? 'Welcome!' : 'Welcome back!'}
-        </h2>
+        <h2 className="my-2 text-4xl font-bold">Create your journal</h2>
         <p className="text-slate-500">
-          Don't have an account?{' '}
+          Get started with a new account or{' '}
           <Link
-            className="font-bold underline"
             to={{
-              pathname: '/',
+              pathname: 'login',
               search: searchParams.toString(),
             }}
+            className={`font-bold underline`}
           >
-            Sign up
-          </Link>
+            log In
+          </Link>{' '}
+          if you already have one.
         </p>
       </div>
-      <div className={`w-full sm:max-w-md `}>
+      <div className={`w-full sm:max-w-md`}>
         <Form method="post" className="space-y-6">
           {[
             {
@@ -184,32 +179,30 @@ export default function LoginPage() {
               </div>
             </div>
           ))}
-          <input type="hidden" name="redirectTo" value={redirectTo} />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember"
-                name="remember"
-                type="checkbox"
-                className={
-                  'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
-                }
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
+          <input
+            type="hidden"
+            name="redirectTo"
+            value={redirectTo}
+            disabled={isSubmitting}
+          />
+          <div className="flex flex-col items-center justify-between gap-1 sm:flex-row">
+            <SubmitButton
+              className="w-full sm:w-48 sm:px-8"
+              isLoading={isSubmitting}
+            >
+              Create Account
+            </SubmitButton>
+            <span className="text-slate-500">or</span>
+            <Link
+              to={{
+                pathname: 'login',
+                search: searchParams.toString(),
+              }}
+              className={`flex items-center justify-center rounded  bg-gray-50 px-4 py-2 font-medium text-slate-500 sm:w-48 sm:px-8`}
+            >
+              log In
+            </Link>{' '}
           </div>
-          <SubmitButton
-            className="w-full sm:w-48 sm:px-8"
-            isLoading={isSubmitting(transition)}
-          >
-            Log in
-          </SubmitButton>
         </Form>
       </div>
     </>

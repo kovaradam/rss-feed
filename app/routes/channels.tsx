@@ -237,7 +237,7 @@ export default function ChannelsPage() {
                     Feed
                   </StyledNavLink>
                   <hr />
-                  <h6 className="pl-4 pt-2 text-sm text-slate-300">
+                  <h6 className="pl-4 pt-2 text-sm text-slate-600">
                     Collections
                   </h6>
                   <ol>
@@ -253,7 +253,7 @@ export default function ChannelsPage() {
                     ))}
                     <li>
                       <Link
-                        className={`m-2 flex gap-2 rounded p-2 text-lg text-slate-500 hover:bg-slate-100 hover:text-yellow-900`}
+                        className={`m-2 flex gap-2 rounded p-2 text-lg text-slate-600 hover:bg-slate-100 hover:text-yellow-900`}
                         to={`/channels/collections/new`}
                       >
                         <PlusIcon className="w-4" />
@@ -262,7 +262,7 @@ export default function ChannelsPage() {
                     </li>
                   </ol>
                   <hr />
-                  <h6 className="pl-4 pt-2 text-sm text-slate-300">Channels</h6>
+                  <h6 className="pl-4 pt-2 text-sm text-slate-600">Channels</h6>
                   {!data.channelListItems ||
                   data.channelListItems.length === 0 ? (
                     <p className="p-4">No channels yet</p>

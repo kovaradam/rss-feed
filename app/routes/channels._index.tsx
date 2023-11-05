@@ -155,7 +155,7 @@ export default function ChannelIndexPage() {
                 <div className="mt-8 flex flex-col items-center gap-16">
                   <div>
                     <p>You are not subscribed to any RSS feeds.</p>
-                    <p className="mb-4 font-normal text-slate-400">
+                    <p className="mb-4 font-normal text-slate-500">
                       <NewChannelModalContext.Consumer>
                         {(context) => (
                           <button

@@ -52,14 +52,17 @@ export function CollectionForm<
       <h3 className="mb-2 text-4xl font-bold">{props.title}</h3>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
-          <WithFormLabel label={'Title'} required>
-            <input
-              autoFocus
-              name={'title'}
-              defaultValue={data.defaultValue?.title ?? ''}
-              required
-              className={inputClassName}
-            />
+          <WithFormLabel label={'Title'} required htmlFor="title">
+            {(field) => (
+              <input
+                id={field.htmlFor}
+                autoFocus
+                name={'title'}
+                defaultValue={data.defaultValue?.title ?? ''}
+                required={field.required}
+                className={inputClassName}
+              />
+            )}
           </WithFormLabel>
           {errors?.title && (
             <div className="pt-1 text-red-700" id="title-error">
@@ -92,7 +95,7 @@ export function CollectionForm<
         ).map(({ label, name, values }) => (
           <div key={name}>
             <WithFormLabel label={label}>
-              <fieldset className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 {values.map((radio) => (
                   <label
                     className="flex items-center gap-2"
@@ -112,7 +115,7 @@ export function CollectionForm<
                     {radio.label}
                   </label>
                 ))}
-              </fieldset>
+              </div>
             </WithFormLabel>
           </div>
         ))}

@@ -37,7 +37,7 @@ function CategoryInput(props: Props): JSX.Element {
       <div className="flex gap-1">
         <ChannelCategories category={props.value} delete={deleteCategory} />
       </div>
-      <fieldset className="flex gap-2">
+      <div className="flex gap-2">
         <input
           placeholder="e.g. gardening"
           name={props.fakeInputName}
@@ -59,10 +59,12 @@ function CategoryInput(props: Props): JSX.Element {
           type="submit"
           form={props.formId}
           secondary
+          title="Add category"
+          aria-label="Add category"
         >
           <PlusIcon className="w-4 " />
         </Button>
-      </fieldset>
+      </div>
       <input value={props.value} type="hidden" name={props.name} />
     </div>
   );

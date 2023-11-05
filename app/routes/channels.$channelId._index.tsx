@@ -168,10 +168,10 @@ export default function ChannelDetailsPage() {
           <h3 className="text-4xl font-bold ">{data.channel.title}</h3>
         </WithEditLink>
         <div className="flex flex-col gap-2 pt-2">
-          <span className="flex items-center gap-1 text-gray-400">
+          <span className="flex items-center gap-1 text-slate-500">
             <Href href={channel.link}>{channel.link}</Href>
           </span>
-          <span className="flex items-center gap-1 text-gray-400">
+          <span className="flex items-center gap-1 text-slate-500">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
               <>
@@ -188,7 +188,7 @@ export default function ChannelDetailsPage() {
             )}
           </span>
           <WithEditLink name={'new-category'}>
-            <span className="flex items-center gap-1 text-gray-400">
+            <span className="flex items-center gap-1 text-slate-500">
               <BookmarkIcon className="h-4" />
               {category ? (
                 <ChannelCategoryLinks category={category} />
@@ -198,7 +198,7 @@ export default function ChannelDetailsPage() {
             </span>
           </WithEditLink>
           <WithEditLink name={'language'}>
-            <span className="flex items-center gap-1 text-gray-400">
+            <span className="flex items-center gap-1 text-slate-500">
               <TranslateIcon className="h-4" />
               {channel.language || 'Language is missing'}
             </span>
@@ -206,7 +206,7 @@ export default function ChannelDetailsPage() {
         </div>
         <div className="py-6">
           <WithEditLink name={'description'}>
-            <span className="text-gray-400">Description</span>
+            <span className="text-slate-500">Description</span>
           </WithEditLink>
           <p className="text">
             {data.channel.description || 'Description is missing'}
@@ -215,7 +215,7 @@ export default function ChannelDetailsPage() {
 
         {isParseErrors && (
           <div className="pb-6">
-            <span className="text-gray-400">
+            <span className="text-slate-500">
               Some errors ocurred when parsing channel definition
             </span>
             {[
@@ -255,7 +255,7 @@ export default function ChannelDetailsPage() {
           <React.Fragment key={item.id}>
             <article className="flex flex-col pb-2">
               <Href href={item.link}>{item.title}</Href>
-              <span className="border-b-gray-400 text-gray-400">
+              <span className="border-b-slate-500 text-slate-500">
                 {' '}
                 {item.pubDate ? (
                   <TimeFromNow date={new Date(item.pubDate)} />

@@ -149,7 +149,7 @@ export default function ChannelIndexPage() {
                     <p className="mb-2 text-center text-lg font-bold">
                       No articles were found in this collection.
                     </p>
-                    <p className="text-center text-lg text-slate-400">
+                    <p className="text-center text-lg text-slate-600">
                       You may try adding a{' '}
                       <NewChannelModalContext.Consumer>
                         {(context) => (
