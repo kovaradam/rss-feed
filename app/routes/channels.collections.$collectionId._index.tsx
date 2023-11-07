@@ -23,10 +23,14 @@ import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
+import { ItemSearchForm } from '~/components/ItemSearchForm';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { ItemWithChannel } from '~/models/channel.server';
-import { getItemsByCollection } from '~/models/channel.server';
+import {
+  getItemQueryFilter,
+  getItemsByCollection,
+} from '~/models/channel.server';
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle } from '~/utils';
@@ -47,13 +51,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(collectionId, 'Collection id was not provided');
   const searchParams = new URL(request.url).searchParams;
 
-  const [before, after] = ['before', 'after'].map((name) =>
+  const [before, after, q] = ['before', 'after', 'q'].map((name) =>
     searchParams.get(name)
   );
 
   const filters = {
     after,
     before,
+    q,
   };
 
   const collection = await getCollection({ where: { id: collectionId } });
@@ -76,6 +81,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
                 lte: filters.before ? new Date(filters.before) : undefined,
               }
             : undefined,
+        ...getItemQueryFilter(filters.q ?? ''),
       },
       orderBy: { pubDate: 'desc' },
       take: itemCount,
@@ -134,7 +140,11 @@ export default function ChannelIndexPage() {
         {transition.state === 'loading' && transition.formMethod === 'GET' && (
           <ChannelItemsOverlay />
         )}
-        <section className="sm:min-w-2/3 relative flex-1">
+        <section className="sm:min-w-2/3 relative flex-1 ">
+          <ItemSearchForm
+            onChange={submitFilters}
+            defaultValue={filters.q ?? undefined}
+          />
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
               filters={filters}

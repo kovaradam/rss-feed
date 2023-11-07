@@ -211,6 +211,7 @@ export async function getItemsByFilters(
       categories: string[];
       before: string | null;
       after: string | null;
+      q: string | null;
     };
     userId: User['id'];
   },
@@ -237,10 +238,17 @@ export async function getItemsByFilters(
               lte: filters.before ? new Date(filters.before) : undefined,
             }
           : undefined,
+
+      ...getItemQueryFilter(filters.q ?? ''),
     },
   });
 }
 
 function createError(cause: CreateFromXmlErrorType) {
   return new Error(cause);
+}
+
+export function getItemQueryFilter(query: string) {
+  const searchFilter = query ? { contains: query } : undefined;
+  return { description: searchFilter, title: searchFilter };
 }

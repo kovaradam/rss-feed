@@ -9,6 +9,7 @@ import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
+import { ItemSearchForm } from '~/components/ItemSearchForm';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
@@ -34,7 +35,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
   );
-  const [before, after] = ['before', 'after'].map((name) =>
+  const [before, after, q] = ['before', 'after', 'q'].map((name) =>
     searchParams.get(name)
   );
 
@@ -43,6 +44,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     before,
     categories: filterCategories,
     channels: filterChannels,
+    q: q,
   };
 
   const items = await getItemsByFilters(
@@ -103,6 +105,7 @@ export default function ChannelIndexPage() {
 
   const submitFilters: React.FormEventHandler<HTMLFormElement> = (event) => {
     const form = event.currentTarget;
+
     if (!form) {
       return;
     }
@@ -137,6 +140,10 @@ export default function ChannelIndexPage() {
               className="pt-4"
             />
           </Details>
+          <ItemSearchForm
+            onChange={submitFilters}
+            defaultValue={filters.q ?? undefined}
+          />
           {items.length === 0 && (
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (

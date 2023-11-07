@@ -8,8 +8,7 @@ type Props = {
   delete?: MouseEventHandler<HTMLButtonElement>;
 };
 
-const className =
-  'flex gap-1 rounded text-[#ff9696] p-1 px-2 font-bold bg-[#ff96961c] ';
+const className = 'flex gap-1 rounded text-slate-600 p-1 px-2  bg-slate-100';
 
 export function ChannelCategories(props: Props): JSX.Element {
   return (
@@ -21,7 +20,13 @@ export function ChannelCategories(props: Props): JSX.Element {
           <span className={className} key={category}>
             {category}
             {props.delete && (
-              <button onClick={props.delete} value={category} type="button">
+              <button
+                onClick={props.delete}
+                value={category}
+                type="button"
+                title="Remove category"
+                aria-label="Remove category"
+              >
                 <XIcon className="w-4" />
               </button>
             )}
