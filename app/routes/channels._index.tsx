@@ -206,6 +206,7 @@ export default function ChannelIndexPage() {
                     },
                   }}
                   formMethod="post"
+                  query={filters.q ?? undefined}
                 />
               </li>
             ))}

@@ -249,6 +249,15 @@ function createError(cause: CreateFromXmlErrorType) {
 }
 
 export function getItemQueryFilter(query: string) {
-  const searchFilter = query ? { contains: query } : undefined;
-  return { description: searchFilter, title: searchFilter };
+  if (!query) {
+    return {};
+  }
+  const searchFilter = { contains: query };
+  return {
+    OR: [
+      { description: searchFilter },
+      { title: searchFilter },
+      { channel: { title: searchFilter } },
+    ],
+  };
 }

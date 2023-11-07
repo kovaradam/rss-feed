@@ -141,16 +141,16 @@ export default function ChannelIndexPage() {
           <ChannelItemsOverlay />
         )}
         <section className="sm:min-w-2/3 relative flex-1 ">
-          <ItemSearchForm
-            onChange={submitFilters}
-            defaultValue={filters.q ?? undefined}
-          />
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
               filters={filters}
               submitFilters={submitFilters}
             />
           </Details>
+          <ItemSearchForm
+            onChange={submitFilters}
+            defaultValue={filters.q ?? undefined}
+          />
           {items.length === 0 && (
             <div className="flex flex-col items-center gap-24 p-8">
               <div>
@@ -211,6 +211,7 @@ export default function ChannelIndexPage() {
                     },
                   }}
                   formMethod="post"
+                  query={filters.q ?? undefined}
                 />
               </li>
             ))}

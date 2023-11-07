@@ -18,8 +18,13 @@ import { Href } from './Href';
 import { TimeFromNow } from './TimeFromNow';
 import confirmSound from 'public/sounds/state-change_confirm-up.wav';
 import cancelSound from 'public/sounds/state-change_confirm-down.wav';
+import { Highlight } from './Highlight';
 
-type Props = { item: ItemWithChannel; formMethod: FormProps['method'] };
+type Props = {
+  item: ItemWithChannel;
+  formMethod: FormProps['method'];
+  query?: string;
+};
 
 export function ChannelItemDetail(props: Props): JSX.Element {
   const { channel, ...item } = props.item;
@@ -37,8 +42,13 @@ export function ChannelItemDetail(props: Props): JSX.Element {
     >
       <span className="flex w-full justify-between">
         <Link to={channel.id} className="truncate pb-2 ">
-          {channel.title}
+          {props.query ? (
+            <Highlight input={channel.title} query={props.query} />
+          ) : (
+            channel.title
+          )}
         </Link>
+
         <fieldset className="flex gap-2">
           {[
             {
@@ -99,7 +109,11 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       )}
       <h4>
         <Href href={item.link} className="text-lg text-gray-900 ">
-          {item.title}
+          {props.query ? (
+            <Highlight query={props.query} input={item.title} />
+          ) : (
+            item.title
+          )}
         </Href>
       </h4>
       <span className="flex gap-1 text-slate-400">
@@ -109,7 +123,16 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       <span className="my-1 flex gap-1 text-sm">
         <ChannelCategoryLinks category={channel.category} />
       </span>
-      <p className="line-clamp-10">{item.description}</p>
+      <p className="line-clamp-10">
+        {props.query ? (
+          <Highlight
+            query={props.query}
+            input={item.description.slice(0, 500)}
+          />
+        ) : (
+          item.description
+        )}
+      </p>
     </article>
   );
 }
