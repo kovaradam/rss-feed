@@ -15,7 +15,7 @@ export function ItemSearchForm(props: {
         const form = event.currentTarget;
         debounceHandle.current = window.setTimeout(
           () => props.onChange?.({ ...event, currentTarget: form }),
-          300
+          400
         );
       }}
       className="mb-4"
