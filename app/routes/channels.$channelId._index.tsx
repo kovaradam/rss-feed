@@ -171,7 +171,7 @@ export default function ChannelDetailsPage() {
           <span className="flex items-center gap-1 text-slate-500">
             <Href href={channel.link}>{channel.link}</Href>
           </span>
-          <span className="flex items-center gap-1 text-slate-500">
+          <span className="flex flex-wrap items-center gap-1 text-slate-500">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
               <>

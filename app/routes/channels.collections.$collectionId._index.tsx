@@ -137,9 +137,6 @@ export default function ChannelIndexPage() {
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
       <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
-        {transition.state === 'loading' && transition.formMethod === 'GET' && (
-          <ChannelItemsOverlay />
-        )}
         <section className="sm:min-w-2/3 relative flex-1 ">
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
@@ -151,6 +148,8 @@ export default function ChannelIndexPage() {
             onChange={submitFilters}
             defaultValue={filters.q ?? undefined}
           />
+          {transition.state === 'loading' &&
+            transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           {items.length === 0 && (
             <div className="flex flex-col items-center gap-24 p-8">
               <div>
