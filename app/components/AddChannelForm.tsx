@@ -3,7 +3,7 @@ import React from 'react';
 import { styles } from '~/styles/shared';
 import { Button, SubmitButton } from './Button';
 
-export function CreateChannelForm<
+export function AddChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
 >(props: { className?: string; onReset(): void }): JSX.Element {
   const errors = useActionData<ActionData>();
@@ -29,18 +29,27 @@ export function CreateChannelForm<
           className={`${styles.input} `}
           aria-invalid="false"
         />
-        {errors &&
+        {errors ? (
           Object.entries(errors).map(([type, error]) => (
-            <span key={type} className="pt-1 text-red-700" id="title-error">
+            <span key={type} className="pt-1 text-red-700" id={type}>
               {error}
             </span>
-          ))}
+          ))
+        ) : (
+          <span className="pt-1 text-slate-500">
+            Provide a URL of a RSS feed you wish to add
+          </span>
+        )}
       </fieldset>
       <fieldset
         className="flex flex-col-reverse justify-end gap-2 sm:flex-row"
         disabled={isCreating}
       >
-        <Button type="reset" secondary className="min-w-[20ch] flex-none">
+        <Button
+          type="reset"
+          secondary
+          className="min-w-[20ch] flex-none bg-white"
+        >
           Close
         </Button>
         <SubmitButton

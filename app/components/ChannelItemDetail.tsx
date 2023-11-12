@@ -19,6 +19,8 @@ import { TimeFromNow } from './TimeFromNow';
 import confirmSound from 'public/sounds/state-change_confirm-up.wav';
 import cancelSound from 'public/sounds/state-change_confirm-down.wav';
 import { Highlight } from './Highlight';
+import { convert } from 'html-to-text';
+import React from 'react';
 
 type Props = {
   item: ItemWithChannel;
@@ -35,6 +37,10 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
   const [playCancel] = useSound(cancelSound, { volume: 0.1 });
+
+  const description = React.useMemo(() => {
+    return convert(item.description);
+  }, [item.description]);
 
   return (
     <article
@@ -125,12 +131,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       </span>
       <p className="line-clamp-10">
         {props.query ? (
-          <Highlight
-            query={props.query}
-            input={item.description.slice(0, 500)}
-          />
+          <Highlight query={props.query} input={description.slice(0, 500)} />
         ) : (
-          item.description
+          description
         )}
       </p>
     </article>

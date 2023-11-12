@@ -217,8 +217,9 @@ export async function getItemsByFilters(
   },
   params?: Parameters<typeof prisma.item.findMany>[0]
 ) {
-  return await getChannelItems({
+  const items = await getChannelItems({
     ...params,
+
     where: {
       channel: {
         userId,
@@ -242,6 +243,12 @@ export async function getItemsByFilters(
       ...getItemQueryFilter(filters.q ?? ''),
     },
   });
+
+  items.forEach((item) => {
+    item.description = item.description.slice(0, 1000);
+  });
+
+  return items;
 }
 
 function createError(cause: CreateFromXmlErrorType) {

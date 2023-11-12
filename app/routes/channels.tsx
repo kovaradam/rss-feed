@@ -22,7 +22,7 @@ import {
 } from '@remix-run/react';
 import React from 'react';
 import { AppTitle, UseAppTitle } from '~/components/AppTitle';
-import { CreateChannelForm } from '~/components/CreateChannelForm';
+import { AddChannelForm } from '~/components/AddChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
 import type {
@@ -308,7 +308,7 @@ export default function ChannelsPage() {
               contentLabel="New Channel"
               onRequestClose={closeNewChannelModal}
             >
-              <CreateChannelForm onReset={closeNewChannelModal} />
+              <AddChannelForm onReset={closeNewChannelModal} />
             </Modal>
           </main>
         </div>
