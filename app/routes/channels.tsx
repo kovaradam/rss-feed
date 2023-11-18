@@ -222,13 +222,13 @@ export default function ChannelsPage() {
               isExpanded={isNavExpanded}
               hide={() => setIsNavExpanded(false)}
             >
-              <div className="grid h-full grid-cols-1 grid-rows-[4rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden truncate p-4  font-bold  sm:block sm:text-3xl">
+              <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
+                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-3xl">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">
                   <button
-                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden sm:font-bold sm:shadow-sm"
+                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden sm:font-bold sm:shadow"
                     onClick={openNewChannelModal}
                     data-silent
                   >

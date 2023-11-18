@@ -1,3 +1,4 @@
+import type { ShouldRevalidateFunction } from '@remix-run/react';
 import { useLoaderData, useSubmit, useNavigation } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
@@ -13,6 +14,7 @@ import { ItemSearchForm } from '~/components/ItemSearchForm';
 import { NewItemsAlert } from '~/components/NewItemsAlert';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
+import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
@@ -247,3 +249,10 @@ export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({ formMethod }) => {
+  if (formMethod === useChannelRefreshFetcher.method) {
+    return false;
+  }
+  return true;
+};

@@ -54,8 +54,6 @@ export async function createChannelFromXml(
     });
   } catch (error) {
     console.error(error);
-    console.log(items);
-
     throw createError('prismaError');
   }
 

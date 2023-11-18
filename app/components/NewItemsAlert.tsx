@@ -1,27 +1,41 @@
+import { useFetcher, useFetchers } from '@remix-run/react';
 import React from 'react';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 
 export function NewItemsAlert() {
-  const [, fetcher] = useChannelRefreshFetcher();
+  const revalidateFetcher = useFetcher({ key: 'refresh-revalidate' });
+  const refreshFetcher = useFetchers().find(
+    (fetcher) => fetcher.key === useChannelRefreshFetcher.key
+  );
 
-  if ((fetcher.data?.newItemCount ?? 0) <= 0) {
+  if (
+    (refreshFetcher?.data?.newItemCount ?? 0) <= 0 ||
+    revalidateFetcher.data
+  ) {
     return null;
   }
 
+  const isRevalidating = revalidateFetcher?.state !== 'idle';
+
   return (
     <div className="mb-2 flex justify-center">
-      <fetcher.Form
-        method={useChannelRefreshFetcher.invalidateMethod}
-        action={useChannelRefreshFetcher.path}
-        className="flex w-full justify-center pb-2"
+      <button
+        type="submit"
+        className="w-full rounded bg-slate-50 p-2 text-slate-600 shadow-md hover:bg-slate-100 disabled:opacity-60"
+        onClick={() => {
+          // revalidate();
+          revalidateFetcher.submit(
+            { revalidate: true },
+            {
+              method: useChannelRefreshFetcher.invalidateMethod,
+              action: useChannelRefreshFetcher.path,
+            }
+          );
+        }}
+        disabled={isRevalidating}
       >
-        <button
-          type="submit"
-          className="w-full rounded bg-slate-50 p-2 text-slate-600 shadow-md hover:bg-slate-100"
-        >
-          Show new articles
-        </button>
-      </fetcher.Form>
+        {isRevalidating ? <>Loading new articles</> : <>Show new articles</>}
+      </button>
     </div>
   );
 }
