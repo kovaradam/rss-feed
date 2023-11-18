@@ -2,6 +2,7 @@ import { Form, useActionData, useNavigation } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
 import { Button, SubmitButton } from './Button';
+import { ExclamationCircleIcon } from '@heroicons/react/outline';
 
 export function AddChannelForm<
   ActionData extends Partial<Record<string, string | null>> | undefined
@@ -13,7 +14,7 @@ export function AddChannelForm<
 
   return (
     <Form
-      method="put"
+      method={AddChannelForm.formMethod}
       className={'flex flex-col gap-8 '.concat(props.className ?? '')}
       onReset={props.onReset}
     >
@@ -31,7 +32,12 @@ export function AddChannelForm<
         />
         {errors ? (
           Object.entries(errors).map(([type, error]) => (
-            <span key={type} className="pt-1 text-red-700" id={type}>
+            <span
+              key={type}
+              className="flex w-fit items-center gap-1 rounded bg-red-100 p-1 px-2 pt-1 text-red-700"
+              id={type}
+            >
+              <ExclamationCircleIcon className="w-4" />
               {error}
             </span>
           ))
@@ -62,3 +68,5 @@ export function AddChannelForm<
     </Form>
   );
 }
+
+AddChannelForm.formMethod = 'PUT' as const;

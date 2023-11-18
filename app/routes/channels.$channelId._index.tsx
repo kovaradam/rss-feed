@@ -16,7 +16,6 @@ import {
 import invariant from 'tiny-invariant';
 import { Href } from '~/components/Href';
 import { TimeFromNow } from '~/components/TimeFromNow';
-import type { ChannelWithItems } from '~/models/channel.server';
 import {
   updateChannel,
   deleteChannel,
@@ -129,7 +128,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   invariant(channel, 'Channel could not be loaded');
   try {
-    await refreshChannel({ dbChannel: channel as ChannelWithItems, userId });
+    await refreshChannel({ feedUrl: channel.feedUrl, userId });
   } catch (error) {
     console.error(error);
   }
@@ -297,7 +296,14 @@ export default function ChannelDetailsPage() {
           <PencilIcon className="w-4" /> Edit
         </Link>
         <br />
-        <Form method="delete">
+        <Form
+          method="delete"
+          onSubmit={(event) => {
+            if (!confirm('Are you sure?')) {
+              event.preventDefault();
+            }
+          }}
+        >
           <Button
             type="submit"
             title="Delete this channel"

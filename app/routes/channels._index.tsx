@@ -10,6 +10,7 @@ import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { ItemSearchForm } from '~/components/ItemSearchForm';
+import { NewItemsAlert } from '~/components/NewItemsAlert';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
@@ -144,6 +145,8 @@ export default function ChannelIndexPage() {
             onChange={submitFilters}
             defaultValue={filters.q ?? undefined}
           />
+          <NewItemsAlert />
+
           {items.length === 0 && (
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (

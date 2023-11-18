@@ -85,22 +85,26 @@ export type ChannelWithItems = Channel & { items: Item[] };
 export type ItemWithChannel = Item & { channel: Channel };
 
 export async function refreshChannel(params: {
-  dbChannel: Pick<ChannelWithItems, 'feedUrl' | 'items'>;
+  feedUrl: string;
   userId: string;
+  signal?: AbortSignal;
 }) {
-  const channelRequest = await fetch(params.dbChannel.feedUrl);
+  const channelRequest = await fetch(params.feedUrl, { signal: params.signal });
   const channelXml = await channelRequest.text();
   const [parsedChannel, parsedItems] = await parseChannelXml(channelXml);
+  const dbChannelItems = await getChannelItems({
+    where: { channel: { feedUrl: params.feedUrl, userId: params.userId } },
+    select: { link: true },
+  });
 
   const newItems = parsedItems.filter(
-    (item) =>
-      !params.dbChannel.items.find((dbItem) => dbItem.link === item.link)
+    (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link)
   );
 
-  return updateChannel({
+  const updatedChannel = await updateChannel({
     where: {
       feedUrl_userId: {
-        feedUrl: params.dbChannel.feedUrl,
+        feedUrl: params.feedUrl,
         userId: params.userId,
       },
     },
@@ -112,6 +116,8 @@ export async function refreshChannel(params: {
       },
     },
   });
+
+  return { updatedChannel, newItemCount: newItems.length };
 }
 
 export async function getChannel(
@@ -152,9 +158,9 @@ export function deleteChannel({
   });
 }
 
-export async function getChannelItems(
-  params: Parameters<typeof prisma.item.findMany>[0]
-) {
+export async function getChannelItems<
+  T extends Parameters<typeof prisma.item.findMany>[0]
+>(params: T) {
   return prisma.item.findMany(params);
 }
 

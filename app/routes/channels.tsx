@@ -6,6 +6,7 @@ import {
   LogoutIcon,
   MenuAlt2Icon,
   PlusIcon,
+  RefreshIcon,
   UserIcon,
 } from '@heroicons/react/outline';
 import type { ActionFunction, LoaderFunctionArgs } from '@remix-run/node';
@@ -25,32 +26,25 @@ import { AppTitle, UseAppTitle } from '~/components/AppTitle';
 import { AddChannelForm } from '~/components/AddChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
-import type {
-  Channel,
-  CreateFromXmlErrorType,
-  Item,
-} from '~/models/channel.server';
-import {
-  createChannelFromXml,
-  refreshChannel,
-  getChannels,
-} from '~/models/channel.server';
+import type { CreateFromXmlErrorType } from '~/models/channel.server';
+import { createChannelFromXml, getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUser } from '~/session.server';
 import { createMeta, isNormalLoad, useUser } from '~/utils';
 import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import { Modal } from '~/components/Modal';
 import { storeFailedUpload } from '~/models/failed-upload.server';
+import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 
 export const meta = createMeta();
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
-  const channelListItems = (await getChannels({
+  const channelListItems = await getChannels({
     where: { userId: user.id },
     select: { id: true, title: true, feedUrl: true, items: true },
     orderBy: { title: 'asc' },
-  })) as (Channel & { items: Item[] })[];
+  });
 
   const collectionListItems = await getCollections({
     where: { userId: user.id },
@@ -60,16 +54,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const activeCollectionId = new URL(request.url).searchParams.get(
     'collection'
   );
-
-  channelListItems.forEach(async (dbChannel) => {
-    refreshChannel({ dbChannel: dbChannel, userId: user.id })
-      .then((updatedChannel) => {
-        console.log('updated', updatedChannel.feedUrl);
-      })
-      .catch((error) => {
-        console.error('update failed', error);
-      });
-  });
 
   return json({
     channelListItems,
@@ -85,59 +69,72 @@ const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 type ActionData =
   | Partial<Record<(typeof errors)[number], string | null>>
-  | undefined;
+  | undefined
+  | { newItemCount: number };
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.formData();
   const inputChannelHref = data.get(channelUrlName);
   const user = await requireUser(request);
 
-  let channelUrl;
-  try {
-    channelUrl = new URL(String(inputChannelHref));
-  } catch (error) {
-    return json<ActionData>({ [channelUrlName]: 'Please provide a valid url' });
-  }
-
-  let channelRequest;
-  try {
-    channelRequest = await fetch(channelUrl);
-  } catch (error) {
-    return json<ActionData>({
-      fetch: `Could not load RSS feed from "${channelUrl.origin}"`,
-    });
-  }
-
-  const channelXml = await channelRequest.text();
-  let newChannel;
-  try {
-    newChannel = await createChannelFromXml(channelXml, {
-      userId: user.id,
-      channelHref: channelUrl.href,
-    });
-  } catch (error) {
-    let response: ActionData;
-
-    switch ((error as Error).message as CreateFromXmlErrorType) {
-      case 'cannotAccessDb':
-        response = { create: 'Cannot save RSS feed at this moment' };
-        break;
-      case 'channelExists':
-        response = { create: 'RSS feed already exists' };
-        break;
-      case 'incorrectDefinition':
-        response = { 'xml-parse': 'Could not parse RSS definition' };
-        break;
-      default:
-        response = { create: 'Could not save RSS feed' };
+  if (request.method === AddChannelForm.formMethod) {
+    let channelUrl;
+    try {
+      channelUrl = new URL(String(inputChannelHref));
+    } catch (error) {
+      return json<ActionData>({
+        [channelUrlName]: 'Please provide a valid url',
+      });
     }
 
-    storeFailedUpload(String(inputChannelHref), String(error));
+    let channelRequest;
+    try {
+      channelRequest = await fetch(channelUrl);
+    } catch (error) {
+      return json<ActionData>({
+        fetch: `Could not load RSS feed from "${channelUrl.origin}"`,
+      });
+    }
 
-    return json<ActionData>(response);
+    const channelXml = await channelRequest.text();
+    let newChannel;
+    try {
+      newChannel = await createChannelFromXml(channelXml, {
+        userId: user.id,
+        channelHref: channelUrl.href,
+      });
+    } catch (error) {
+      let response: ActionData;
+
+      switch ((error as Error).message as CreateFromXmlErrorType) {
+        case 'cannotAccessDb':
+          response = {
+            create: 'Cannot save RSS feed at this moment, please try later',
+          };
+          break;
+        case 'channelExists':
+          response = {
+            create:
+              'RSS feed with this address already exists, see the list of your channels',
+          };
+          break;
+        case 'incorrectDefinition':
+          response = {
+            'xml-parse':
+              'Could not parse RSS definition, make sure you provided a correct URL',
+          };
+          break;
+        default:
+          response = { create: 'Could not save RSS feed, please try later' };
+      }
+
+      storeFailedUpload(String(inputChannelHref), String(error));
+
+      return json<ActionData>(response);
+    }
+
+    return redirect('/channels/'.concat(newChannel.id));
   }
-
-  return redirect('/channels/'.concat(newChannel.id));
 };
 
 export default function ChannelsPage() {
@@ -166,6 +163,13 @@ export default function ChannelsPage() {
       closeNewChannelModal();
     }
   }, [location.pathname, closeNewChannelModal]);
+
+  const [load, refreshFetcher] = useChannelRefreshFetcher();
+  const isRefreshing = refreshFetcher.state !== 'idle';
+
+  React.useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
@@ -232,8 +236,20 @@ export default function ChannelsPage() {
                     Add RSS Channel
                   </button>
                   <hr />
-                  <StyledNavLink to={`/channels`} end>
-                    <HomeIcon className="w-4" />
+                  <StyledNavLink
+                    to={`/channels`}
+                    end
+                    title={
+                      isRefreshing
+                        ? 'Looking for new articles'
+                        : 'Go to your feed'
+                    }
+                  >
+                    {isRefreshing ? (
+                      <RefreshIcon className={`w-4 rotate-180 animate-spin`} />
+                    ) : (
+                      <HomeIcon className="w-4" />
+                    )}
                     Feed
                   </StyledNavLink>
                   <hr />
@@ -317,7 +333,7 @@ export default function ChannelsPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary(props: { error: Error }) {
   return <ErrorMessage>Something went wrong</ErrorMessage>;
 }
 

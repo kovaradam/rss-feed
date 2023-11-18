@@ -90,7 +90,7 @@ class ChannelDataTransformer {
   getResult(): ChannelResult {
     return {
       link: this.link,
-      title: this.title || 'Title is missing',
+      title: (this.title || new URL(this.link).hostname) ?? 'Title is missing',
       description:
         this.channelData?.description?.[0]?.substring?.(0, 500) ||
         'Description is missing',
