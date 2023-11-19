@@ -1,5 +1,5 @@
 import type { ShouldRevalidateFunction } from '@remix-run/react';
-import { useLoaderData, useSubmit, useNavigation } from '@remix-run/react';
+import { useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
@@ -104,17 +104,6 @@ export default function ChannelIndexPage() {
   const transition = useNavigation();
   const isLoading = transition.state === 'loading';
 
-  const submit = useSubmit();
-
-  const submitFilters: React.FormEventHandler<HTMLFormElement> = (event) => {
-    const form = event.currentTarget;
-
-    if (!form) {
-      return;
-    }
-    submit(form);
-  };
-
   const isFilters = Object.values(filters).some(Boolean);
 
   return (
@@ -128,7 +117,6 @@ export default function ChannelIndexPage() {
             <ChannelItemFilterForm
               formId={'filter-form'}
               filters={filters}
-              submitFilters={submitFilters}
               channels={channels.map((channel) => ({
                 ...channel,
                 updatedAt: new Date(channel.updatedAt),
@@ -226,7 +214,6 @@ export default function ChannelIndexPage() {
                 formId={'filter-form'}
                 filters={filters}
                 categories={categories}
-                submitFilters={submitFilters}
                 channels={channels.map((channel) => ({
                   ...channel,
                   updatedAt: new Date(channel.updatedAt),

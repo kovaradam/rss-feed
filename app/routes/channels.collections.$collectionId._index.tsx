@@ -3,7 +3,6 @@ import type { MetaFunction } from '@remix-run/react';
 import {
   Link,
   useLoaderData,
-  useSubmit,
   useNavigation,
   isRouteErrorResponse,
   useRouteError,
@@ -121,16 +120,6 @@ export default function ChannelIndexPage() {
   const transition = useNavigation();
   const isSubmitting = transition.state === 'submitting';
 
-  const submit = useSubmit();
-
-  const submitFilters: React.FormEventHandler<HTMLFormElement> = (event) => {
-    const form = event.currentTarget;
-    if (!form) {
-      return;
-    }
-    submit(form);
-  };
-
   const isFilters = Object.values(filters).some(Boolean);
 
   return (
@@ -139,11 +128,7 @@ export default function ChannelIndexPage() {
       <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
         <section className="sm:min-w-2/3 relative flex-1 ">
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
-            <ChannelItemFilterForm
-              formId={'filter-form'}
-              filters={filters}
-              submitFilters={submitFilters}
-            />
+            <ChannelItemFilterForm formId={'filter-form'} filters={filters} />
           </Details>
           <ItemSearchForm
             formId={'filter-form'}
@@ -226,7 +211,6 @@ export default function ChannelIndexPage() {
             <ChannelItemFilterForm
               formId={'filter-form'}
               filters={filters}
-              submitFilters={submitFilters}
               className={'hidden sm:flex'}
             />
           </Details>

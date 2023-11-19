@@ -6,7 +6,6 @@ import { styles } from '~/styles/shared';
 import { Button } from './Button';
 
 type Props = {
-  submitFilters: React.FormEventHandler<HTMLFormElement>;
   filters: Partial<ChannelItemsFilter>;
   channels?: Channel[];
   categories?: string[];
@@ -24,6 +23,8 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
   );
   const { pathname } = useLocation();
   const formRef = React.useRef<HTMLFormElement>(null);
+  const submitButtonRef = React.useRef<HTMLButtonElement>(null);
+
   return (
     <>
       <Form
@@ -31,8 +32,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
         ref={formRef}
         method="get"
         className={`flex flex-col gap-6 ${props.className}`}
-        onChange={props.submitFilters}
-        onSubmit={props.submitFilters}
+        onChange={() => submitButtonRef.current?.click()}
       >
         <fieldset className="flex flex-col gap-4">
           {filters.after !== undefined && (
@@ -58,52 +58,56 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </label>
           )}
         </fieldset>
-        <fieldset className="flex flex-col gap-4 empty:hidden">
+        <div className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
-            <label className={labelClassName}>
-              Filter channels
-              <select
-                name="channels"
-                defaultValue={filters.channels}
-                title={
-                  data.channels?.length
-                    ? 'Select channels'
-                    : 'No channels found'
-                }
-                multiple
-                className={inputClassName}
-              >
+            <fieldset className={labelClassName}>
+              <legend>Show only selected channels</legend>
+              <ul className={styles.input.concat('')}>
                 {data.channels?.map((channel) => (
-                  <option value={channel.id} key={channel.id}>
-                    {channel.title}
-                  </option>
+                  <li key={channel.id}>
+                    <label className="flex cursor-pointer items-baseline gap-2 hover:bg-slate-100">
+                      <input
+                        name="channels"
+                        type="checkbox"
+                        value={channel.id}
+                        id={channel.id}
+                        checked={filters.channels?.includes(channel.id)}
+                      />
+                      {channel.title}
+                    </label>
+                  </li>
                 ))}
-              </select>
-            </label>
+                {(data.channels?.length ?? 0) === 0 && (
+                  <li className="text-slate-500">No channels yet</li>
+                )}
+              </ul>
+            </fieldset>
           )}
           {props.filters.channels !== undefined && (
-            <label className={labelClassName}>
-              Filter categories
-              <select
-                name="categories"
-                defaultValue={filters.categories}
-                className={inputClassName}
-                title={
-                  data.categories?.length
-                    ? 'Select categories'
-                    : 'No categories found'
-                }
-                multiple
-              >
+            <fieldset className={labelClassName}>
+              <legend>Filter by categories</legend>
+              <ul className={styles.input.concat('')}>
                 {data.categories?.map((category) => (
-                  <option value={category} key={category}>
-                    {category}
-                  </option>
+                  <li key={category}>
+                    <label className="flex cursor-pointer items-baseline gap-1 hover:bg-slate-100">
+                      <input
+                        name="categories"
+                        type="checkbox"
+                        value={category}
+                        id={category}
+                        checked={filters.categories?.includes(category)}
+                      />
+                      {category}
+                    </label>
+                  </li>
                 ))}
-              </select>
-            </label>
+                {(data.categories?.length ?? 0) === 0 && (
+                  <li className="text-slate-500">No categories yet</li>
+                )}
+              </ul>
+            </fieldset>
           )}
-        </fieldset>
+        </div>
         {hasFilters && (
           <fieldset className="flex flex-col gap-1 ">
             <Button
@@ -116,6 +120,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </Button>
           </fieldset>
         )}
+        <button type="submit" ref={submitButtonRef} className="hidden"></button>
       </Form>
       {hasFilters && (
         <Form
