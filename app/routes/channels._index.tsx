@@ -145,7 +145,6 @@ export default function ChannelIndexPage() {
             />
           </Details>
           <ItemSearchForm
-            onChange={submitFilters}
             defaultValue={filters.q ?? undefined}
             formId={'filter-form'}
           />
