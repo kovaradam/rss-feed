@@ -126,6 +126,7 @@ export default function ChannelIndexPage() {
             transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details className="mb-4 w-full sm:hidden" title="Filter articles">
             <ChannelItemFilterForm
+              formId={'filter-form'}
               filters={filters}
               submitFilters={submitFilters}
               channels={channels.map((channel) => ({
@@ -146,6 +147,7 @@ export default function ChannelIndexPage() {
           <ItemSearchForm
             onChange={submitFilters}
             defaultValue={filters.q ?? undefined}
+            formId={'filter-form'}
           />
           <NewItemsAlert />
 
@@ -222,6 +224,7 @@ export default function ChannelIndexPage() {
           <aside className="hidden pl-4 sm:block ">
             <Details title="Filter articles" className="w-60">
               <ChannelItemFilterForm
+                formId={'filter-form'}
                 filters={filters}
                 categories={categories}
                 submitFilters={submitFilters}

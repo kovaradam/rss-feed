@@ -140,12 +140,13 @@ export default function ChannelIndexPage() {
         <section className="sm:min-w-2/3 relative flex-1 ">
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
             <ChannelItemFilterForm
+              formId={'filter-form'}
               filters={filters}
               submitFilters={submitFilters}
             />
           </Details>
           <ItemSearchForm
-            onChange={submitFilters}
+            formId={'filter-form'}
             defaultValue={filters.q ?? undefined}
           />
           {transition.state === 'loading' &&
@@ -223,6 +224,7 @@ export default function ChannelIndexPage() {
             className={'mb-2 hidden w-60 sm:flex'}
           >
             <ChannelItemFilterForm
+              formId={'filter-form'}
               filters={filters}
               submitFilters={submitFilters}
               className={'hidden sm:flex'}

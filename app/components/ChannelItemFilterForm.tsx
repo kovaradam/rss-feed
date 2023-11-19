@@ -11,6 +11,7 @@ type Props = {
   channels?: Channel[];
   categories?: string[];
   className?: string;
+  formId: string;
 };
 
 export function ChannelItemFilterForm(props: Props): JSX.Element {
@@ -22,13 +23,16 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
       filters.channels?.length
   );
   const { pathname } = useLocation();
-
+  const formRef = React.useRef<HTMLFormElement>(null);
   return (
     <>
       <Form
+        id={props.formId}
+        ref={formRef}
         method="get"
         className={`flex flex-col gap-6 ${props.className}`}
-        onChangeCapture={props.submitFilters}
+        onChange={props.submitFilters}
+        onSubmit={props.submitFilters}
       >
         <fieldset className="flex flex-col gap-4">
           {filters.after !== undefined && (
@@ -113,7 +117,24 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
           </fieldset>
         )}
       </Form>
-      {hasFilters && <Form id="reset-filters" action={pathname} />}
+      {hasFilters && (
+        <Form
+          id="reset-filters"
+          action={pathname}
+          onSubmit={() => {
+            formRef.current
+              ?.querySelectorAll(`input, select`)
+              .forEach((element) => {
+                (element as HTMLInputElement).value = '';
+              });
+            document
+              .querySelectorAll(`[form='${props.formId}']`)
+              .forEach((element) => {
+                (element as HTMLInputElement).value = '';
+              });
+          }}
+        />
+      )}
     </>
   );
 }
