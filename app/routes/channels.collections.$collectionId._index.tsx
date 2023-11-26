@@ -111,7 +111,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   if (request.method === 'POST') {
-    return ChannelItemDetail.handleAction({ formData, request });
+    return ChannelItemDetail.handleAction({ formData });
   }
 };
 

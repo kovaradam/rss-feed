@@ -23,9 +23,8 @@ export function NewItemsAlert() {
         type="submit"
         className="w-full rounded bg-slate-50 p-2 text-slate-600 shadow-md hover:bg-slate-100 disabled:opacity-60"
         onClick={() => {
-          // revalidate();
           revalidateFetcher.submit(
-            { revalidate: true },
+            {},
             {
               method: useChannelRefreshFetcher.invalidateMethod,
               action: useChannelRefreshFetcher.path,

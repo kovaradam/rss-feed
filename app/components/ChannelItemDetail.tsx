@@ -7,8 +7,7 @@ import {
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
 import type { FormProps } from '@remix-run/react';
-import { Link, useLocation, Form } from '@remix-run/react';
-import { redirect } from '@remix-run/server-runtime';
+import { Link, useFetcher } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import useSound from 'use-sound';
 import type { ItemWithChannel } from '~/models/channel.server';
@@ -30,10 +29,24 @@ type Props = {
 
 export function ChannelItemDetail(props: Props): JSX.Element {
   const { channel, ...item } = props.item;
-  const ReadIcon = item.read ? SolidCheckIcon : CheckCircleIcon;
-  const BookmarkIcon = item.bookmarked
-    ? SolidBookmarkIcon
-    : OutlineBookmarkIcon;
+
+  const fetcher = useFetcher();
+  const [sentBookmarked, sentRead] = [
+    fetcher.formData?.get(ChannelItemDetail.form.names.bookmarked) ?? null,
+    fetcher.formData?.get(ChannelItemDetail.form.names.read) ?? null,
+  ];
+
+  const [bookmarked, read] = [
+    sentBookmarked === null ? item.bookmarked : sentBookmarked === String(true),
+    sentRead === null ? item.read : sentRead === String(true),
+  ];
+
+  if (item.id === 'clpfkrdwc0005zz3fsoc8xd3y') {
+    console.log(bookmarked, sentBookmarked, fetcher.formData);
+  }
+
+  const ReadIcon = read ? SolidCheckIcon : CheckCircleIcon;
+  const BookmarkIcon = bookmarked ? SolidBookmarkIcon : OutlineBookmarkIcon;
 
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
   const [playCancel] = useSound(cancelSound, { volume: 0.1 });
@@ -44,6 +57,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
   return (
     <article
+      id={item.id}
       className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md`}
     >
       <span className="flex w-full justify-between">
@@ -59,30 +73,32 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           {[
             {
               name: ChannelItemDetail.form.names.read,
-              value: String(!item.read),
+              value: String(!read),
               Icon: ReadIcon,
-              title: !item.read ? 'Mark as read' : 'Mark as not read yet',
+              title: !read ? 'Mark as read' : 'Mark as not read yet',
               className: 'hover:bg-green-200',
-              playSubmit: item.read ? playCancel : playConfirm,
+              playSubmit: read ? playCancel : playConfirm,
             },
             {
               name: ChannelItemDetail.form.names.bookmarked,
-              value: String(!item.bookmarked),
+              value: String(!bookmarked),
               Icon: BookmarkIcon,
-              title: !item.bookmarked
+
+              title: !bookmarked
                 ? 'Bookmark article'
                 : 'Remove from bookmarked articles',
               className: 'hover:bg-yellow-100',
-              playSubmit: item.bookmarked ? playCancel : playConfirm,
+              playSubmit: bookmarked ? playCancel : playConfirm,
             },
           ].map((formItem) => (
-            <Form method={props.formMethod} key={formItem.name}>
+            <fetcher.Form method={props.formMethod} key={formItem.name}>
               <RequiredFormData itemId={item.id} />
               <input
                 type="hidden"
                 name={formItem.name}
                 value={formItem.value}
               />
+
               <button
                 type="submit"
                 title={formItem.title}
@@ -97,7 +113,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                   } pointer-events-none ${formItem.className}`}
                 />
               </button>
-            </Form>
+            </fetcher.Form>
           ))}
         </fieldset>
       </span>
@@ -145,7 +161,6 @@ ChannelItemDetail.form = {
     itemId: 'itemId',
     bookmarked: 'bookmarked',
     read: 'read',
-    redirectTo: 'redirectTo',
   },
   getBooleanValue(formValue: FormDataEntryValue | null): boolean | undefined {
     if (formValue === 'true') {
@@ -159,8 +174,6 @@ ChannelItemDetail.form = {
 };
 
 function RequiredFormData(props: { itemId: string }) {
-  const location = useLocation();
-
   return (
     <>
       <input
@@ -168,22 +181,11 @@ function RequiredFormData(props: { itemId: string }) {
         name={ChannelItemDetail.form.names.itemId}
         value={props.itemId}
       />
-      <input
-        type="hidden"
-        name={ChannelItemDetail.form.names.redirectTo}
-        value={location.pathname.concat(location.search)}
-      />
     </>
   );
 }
 
-async function handleItemStatusUpdate({
-  formData,
-  request,
-}: {
-  formData: FormData;
-  request: Request;
-}) {
+async function handleItemStatusUpdate({ formData }: { formData: FormData }) {
   const { names, getBooleanValue } = ChannelItemDetail.form;
   const itemId = formData.get(names.itemId);
   invariant(typeof itemId === 'string', 'Item id was not provided');
@@ -201,7 +203,7 @@ async function handleItemStatusUpdate({
     },
   });
 
-  return redirect(String(formData.get(names.redirectTo) ?? request.url));
+  return null;
 }
 
 ChannelItemDetail.handleAction = handleItemStatusUpdate;

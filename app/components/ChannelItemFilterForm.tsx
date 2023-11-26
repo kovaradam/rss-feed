@@ -41,6 +41,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
               <input
                 name="after"
                 type="date"
+                key={filters.after}
                 className={inputClassName}
                 defaultValue={filters.after ?? undefined}
               />
@@ -52,6 +53,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
               <input
                 name="before"
                 type="date"
+                key={filters.before}
                 className={inputClassName}
                 defaultValue={filters.before ?? undefined}
               />
@@ -67,11 +69,12 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                   <li key={channel.id}>
                     <label className="flex cursor-pointer items-baseline gap-2 hover:bg-slate-100">
                       <input
+                        key={String(filters.channels)}
                         name="channels"
                         type="checkbox"
                         value={channel.id}
                         id={channel.id}
-                        checked={filters.channels?.includes(channel.id)}
+                        defaultChecked={filters.channels?.includes(channel.id)}
                       />
                       {channel.title}
                     </label>
@@ -91,11 +94,12 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                   <li key={category}>
                     <label className="flex cursor-pointer items-baseline gap-1 hover:bg-slate-100">
                       <input
+                        key={String(filters.categories)}
                         name="categories"
                         type="checkbox"
                         value={category}
                         id={category}
-                        checked={filters.categories?.includes(category)}
+                        defaultChecked={filters.categories?.includes(category)}
                       />
                       {category}
                     </label>

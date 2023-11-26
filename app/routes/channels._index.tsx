@@ -93,7 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   if (request.method === 'POST') {
-    return ChannelItemDetail.handleAction({ formData, request });
+    return ChannelItemDetail.handleAction({ formData });
   }
 };
 
@@ -235,7 +235,6 @@ export default function ChannelIndexPage() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }
 

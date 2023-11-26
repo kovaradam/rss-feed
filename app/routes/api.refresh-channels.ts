@@ -6,7 +6,6 @@ import { requireUser } from '~/session.server';
 
 export async function action({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request);
-  await new Promise((r) => setTimeout(r, 5000));
   if (request.method === useChannelRefreshFetcher.method) {
     const channels = await getChannels({
       where: { userId: user.id },
