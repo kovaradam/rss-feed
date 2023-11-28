@@ -8,20 +8,20 @@ export function NewItemsAlert() {
     (fetcher) => fetcher.key === useChannelRefreshFetcher.key
   );
 
+  const isRevalidating = revalidateFetcher?.state !== 'idle';
   if (
-    (refreshFetcher?.data?.newItemCount ?? 0) <= 0 ||
-    revalidateFetcher.data
+    ((refreshFetcher?.data?.newItemCount ?? 0) === 0 ||
+      revalidateFetcher.data) &&
+    !isRevalidating
   ) {
     return null;
   }
-
-  const isRevalidating = revalidateFetcher?.state !== 'idle';
 
   return (
     <div className="mb-2 flex justify-center">
       <button
         type="submit"
-        className="w-full rounded bg-slate-50 p-2 text-slate-600 shadow-md hover:bg-slate-100 disabled:opacity-60"
+        className=" flex h-10 w-full items-center justify-center  rounded p-2 text-gray-900 shadow-md hover:bg-slate-50 disabled:bg-transparent disabled:shadow-none"
         onClick={() => {
           revalidateFetcher.submit(
             {},
@@ -33,8 +33,23 @@ export function NewItemsAlert() {
         }}
         disabled={isRevalidating}
       >
-        {isRevalidating ? <>Loading new articles</> : <>Show new articles</>}
+        {isRevalidating ? <LoadingIcon /> : <>Show new articles</>}
       </button>
+    </div>
+  );
+}
+
+function LoadingIcon() {
+  return (
+    <div className="flex gap-2">
+      <style></style>
+      {[0, 1, 2].map((idx) => (
+        <div
+          key={idx}
+          className="h-2 w-2 rounded-lg bg-slate-200"
+          style={{ animation: `bounce 1s ease ${idx * 100}ms infinite` }}
+        />
+      ))}
     </div>
   );
 }
