@@ -50,7 +50,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     before,
     categories: filterCategories,
     channels: filterChannels,
-    excludeRead: excludeReadParam === String(true),
+    excludeRead: excludeReadParam ? excludeReadParam === String(true) : null,
     q: q,
   };
 

@@ -17,9 +17,16 @@ type Props = {
 export function ChannelItemFilterForm(props: Props): JSX.Element {
   const { filters, ...data } = props;
   const hasFilters = Object.values(filters)
-    .map((filter) =>
-      Array.isArray(filter) ? filter.length : filter != undefined
-    )
+    .map((filter) => {
+      switch (true) {
+        case Array.isArray(filter):
+          return filter.length;
+        case typeof filter === 'boolean':
+          return true;
+        default:
+          return filter;
+      }
+    })
     .some(Boolean);
 
   const { pathname } = useLocation();
