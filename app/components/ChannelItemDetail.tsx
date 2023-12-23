@@ -119,18 +119,21 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       </span>
 
       {item.imageUrl && (
-        <a href={item.link}>
+        <a href={item.link} className="">
           <img
             alt="Article header decoration"
             src={item.imageUrl}
-            className="my-2 h-auto w-full rounded-lg bg-slate-50 sm:rounded-none"
+            className="my-2 h-auto w-full rounded-lg bg-slate-50 italic sm:rounded-none"
             loading="lazy"
             style={{ aspectRatio: '1.4' }}
           />
         </a>
       )}
       <h4>
-        <Href href={item.link} className="text-lg text-gray-900 ">
+        <Href
+          href={item.link}
+          className="bg-slate-100 text-lg text-slate-900 visited:text-slate-600 [&:not(:visited)]:bg-white"
+        >
           {props.query ? (
             <Highlight query={props.query} input={item.title} />
           ) : (

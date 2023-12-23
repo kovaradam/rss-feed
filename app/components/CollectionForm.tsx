@@ -79,7 +79,7 @@ export function CollectionForm<
               values: [
                 { label: 'Ignore', value: null },
                 { label: 'Include only read articles', value: true },
-                { label: 'Include only articles not read yet', value: false },
+                { label: 'Exclude read articles', value: false },
               ],
             },
             {

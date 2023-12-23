@@ -9,6 +9,7 @@ type Props = {
   filters: Partial<ChannelItemsFilter>;
   channels?: Channel[];
   categories?: string[];
+  canExcludeRead?: boolean;
   className?: string;
   formId: string;
 };
@@ -36,34 +37,40 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
       >
         <fieldset className="flex flex-col gap-4">
           {filters.after !== undefined && (
-            <label className={labelClassName}>
-              Published after
+            <fieldset className={labelClassName}>
+              <legend>
+                <label htmlFor="after">Published after</label>
+              </legend>
               <input
                 name="after"
+                id="after"
                 type="date"
                 key={filters.after}
                 className={inputClassName}
                 defaultValue={filters.after ?? undefined}
               />
-            </label>
+            </fieldset>
           )}
           {filters.before !== undefined && (
-            <label className={labelClassName}>
-              Published before
+            <fieldset className={labelClassName}>
+              <legend>
+                <label htmlFor="before">Published before</label>
+              </legend>
               <input
                 name="before"
+                id="before"
                 type="date"
                 key={filters.before}
                 className={inputClassName}
                 defaultValue={filters.before ?? undefined}
               />
-            </label>
+            </fieldset>
           )}
         </fieldset>
         <div className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
             <fieldset className={labelClassName}>
-              <legend>Show only selected channels</legend>
+              <legend>Filter by channels</legend>
               <ul className={styles.input.concat('')}>
                 {data.channels?.map((channel) => (
                   <li key={channel.id}>
@@ -111,6 +118,34 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
               </ul>
             </fieldset>
           )}
+          {props.canExcludeRead && (
+            <fieldset className={labelClassName}>
+              <legend>Filter by state</legend>
+              <ul className={styles.input.concat('')}>
+                {[
+                  {
+                    name: 'exclude-read',
+                    label: 'Exclude read articles',
+                    value: filters.excludeRead ?? false,
+                  },
+                ].map((field) => (
+                  <li key={field.name}>
+                    <label className="flex cursor-pointer items-baseline gap-1 hover:bg-slate-100">
+                      <input
+                        key={String(field.value)}
+                        name={field.name}
+                        type="checkbox"
+                        value={String(field.value)}
+                        id={field.name}
+                        defaultChecked={field.value}
+                      />
+                      {field.label}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </fieldset>
+          )}
         </div>
         {hasFilters && (
           <fieldset className="flex flex-col gap-1 ">
@@ -150,4 +185,5 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
 
 const inputClassName = styles.input;
 
-const labelClassName = 'flex flex-row justify-between gap-2 sm:flex-col';
+const labelClassName =
+  'flex flex-row justify-between gap-2 sm:flex-col text-red';

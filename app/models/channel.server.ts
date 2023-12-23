@@ -215,6 +215,7 @@ export async function getItemsByFilters(
       categories: string[];
       before: string | null;
       after: string | null;
+      excludeRead: boolean | null;
       q: string | null;
     };
     userId: User['id'];
@@ -225,6 +226,7 @@ export async function getItemsByFilters(
     ...params,
 
     where: {
+      read: filters.excludeRead === true ? false : undefined,
       channel: {
         userId,
         id:

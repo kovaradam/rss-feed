@@ -38,15 +38,19 @@ export const loader: LoaderFunction = async ({ request }) => {
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
   );
-  const [before, after, q] = ['before', 'after', 'q'].map((name) =>
-    searchParams.get(name)
-  );
+  const [before, after, q, excludeReadParam] = [
+    'before',
+    'after',
+    'q',
+    'exclude-read',
+  ].map((name) => searchParams.get(name));
 
   const filters = {
     after,
     before,
     categories: filterCategories,
     channels: filterChannels,
+    excludeRead: excludeReadParam === String(true),
     q: q,
   };
 
@@ -225,6 +229,7 @@ export default function ChannelIndexPage() {
                     ? new Date(channel.refreshDate)
                     : null,
                 }))}
+                canExcludeRead
               />
             </Details>
           </aside>
