@@ -19,10 +19,10 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
   const hasFilters = Object.values(filters)
     .map((filter) => {
       switch (true) {
-        case Array.isArray(filter):
-          return filter.length;
         case typeof filter === 'boolean':
           return true;
+        case Array.isArray(filter):
+          return (filter as string[]).length;
         default:
           return filter;
       }
