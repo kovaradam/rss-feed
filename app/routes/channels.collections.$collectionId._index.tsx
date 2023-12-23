@@ -122,13 +122,18 @@ export default function ChannelIndexPage() {
 
   const isFilters = Object.values(filters).some(Boolean);
 
+  const FilterForm = React.useCallback(
+    () => <ChannelItemFilterForm formId={'filter-form'} filters={filters} />,
+    [filters]
+  );
+
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
       <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
         <section className="sm:min-w-2/3 relative flex-1 ">
           <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
-            <ChannelItemFilterForm formId={'filter-form'} filters={filters} />
+            <FilterForm />
           </Details>
           <ItemSearchForm
             formId={'filter-form'}
@@ -208,11 +213,7 @@ export default function ChannelIndexPage() {
             title="Filter articles"
             className={'mb-2 hidden w-60 sm:flex'}
           >
-            <ChannelItemFilterForm
-              formId={'filter-form'}
-              filters={filters}
-              className={'hidden sm:flex'}
-            />
+            <FilterForm />
           </Details>
           <Link
             to={`edit`}

@@ -110,6 +110,29 @@ export default function ChannelIndexPage() {
 
   const isFilters = Object.values(filters).some(Boolean);
 
+  const FilterForm = React.useCallback(
+    () => (
+      <ChannelItemFilterForm
+        formId={'filter-form'}
+        filters={filters}
+        channels={channels.map((channel) => ({
+          ...channel,
+          updatedAt: new Date(channel.updatedAt),
+          createdAt: new Date(channel.createdAt),
+          lastBuildDate: channel.lastBuildDate
+            ? new Date(channel.lastBuildDate)
+            : null,
+          refreshDate: channel.refreshDate
+            ? new Date(channel.refreshDate)
+            : null,
+        }))}
+        categories={categories}
+        canExcludeRead
+      />
+    ),
+    [filters, channels, categories]
+  );
+
   return (
     <>
       <UseAppTitle>Your feed</UseAppTitle>
@@ -118,23 +141,7 @@ export default function ChannelIndexPage() {
           {transition.state === 'loading' &&
             transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details className="mb-4 w-full sm:hidden" title="Filter articles">
-            <ChannelItemFilterForm
-              formId={'filter-form'}
-              filters={filters}
-              channels={channels.map((channel) => ({
-                ...channel,
-                updatedAt: new Date(channel.updatedAt),
-                createdAt: new Date(channel.createdAt),
-                lastBuildDate: channel.lastBuildDate
-                  ? new Date(channel.lastBuildDate)
-                  : null,
-                refreshDate: channel.refreshDate
-                  ? new Date(channel.refreshDate)
-                  : null,
-              }))}
-              categories={categories}
-              className="pt-4"
-            />
+            <FilterForm />
           </Details>
           <ItemSearchForm
             defaultValue={filters.q ?? undefined}
@@ -214,23 +221,7 @@ export default function ChannelIndexPage() {
         {channels.length !== 0 && (
           <aside className="hidden pl-4 sm:block ">
             <Details title="Filter articles" className="w-60">
-              <ChannelItemFilterForm
-                formId={'filter-form'}
-                filters={filters}
-                categories={categories}
-                channels={channels.map((channel) => ({
-                  ...channel,
-                  updatedAt: new Date(channel.updatedAt),
-                  createdAt: new Date(channel.createdAt),
-                  lastBuildDate: channel.lastBuildDate
-                    ? new Date(channel.lastBuildDate)
-                    : null,
-                  refreshDate: channel.refreshDate
-                    ? new Date(channel.refreshDate)
-                    : null,
-                }))}
-                canExcludeRead
-              />
+              <FilterForm />
             </Details>
           </aside>
         )}

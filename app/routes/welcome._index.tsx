@@ -198,7 +198,7 @@ export default function Welcome() {
                 pathname: 'login',
                 search: searchParams.toString(),
               }}
-              className={`flex items-center justify-center rounded  bg-gray-50 px-4 py-2 font-medium text-slate-500 sm:w-48 sm:px-8`}
+              className={`flex w-full items-center justify-center rounded  bg-gray-50 px-4 py-2 font-medium text-slate-500 sm:w-48 sm:px-8`}
             >
               log In
             </Link>{' '}

@@ -16,12 +16,12 @@ type Props = {
 
 export function ChannelItemFilterForm(props: Props): JSX.Element {
   const { filters, ...data } = props;
-  const hasFilters = Boolean(
-    filters.after ||
-      filters.before ||
-      filters.categories?.length ||
-      filters.channels?.length
-  );
+  const hasFilters = Object.values(filters)
+    .map((filter) =>
+      Array.isArray(filter) ? filter.length : filter != undefined
+    )
+    .some(Boolean);
+
   const { pathname } = useLocation();
   const formRef = React.useRef<HTMLFormElement>(null);
   const submitButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -35,7 +35,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
         className={`flex flex-col gap-6 ${props.className}`}
         onChange={() => submitButtonRef.current?.click()}
       >
-        <fieldset className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           {filters.after !== undefined && (
             <fieldset className={labelClassName}>
               <legend>
@@ -66,7 +66,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
               />
             </fieldset>
           )}
-        </fieldset>
+        </div>
         <div className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
             <fieldset className={labelClassName}>
@@ -82,6 +82,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                         value={channel.id}
                         id={channel.id}
                         defaultChecked={filters.channels?.includes(channel.id)}
+                        className="min-w-[1rem]"
                       />
                       {channel.title}
                     </label>
@@ -107,6 +108,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                         value={category}
                         id={category}
                         defaultChecked={filters.categories?.includes(category)}
+                        className="min-w-[1rem]"
                       />
                       {category}
                     </label>
@@ -135,9 +137,10 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                         key={String(field.value)}
                         name={field.name}
                         type="checkbox"
-                        value={String(field.value)}
+                        value={String(true)}
                         id={field.name}
                         defaultChecked={field.value}
+                        className="min-w-[1rem]"
                       />
                       {field.label}
                     </label>

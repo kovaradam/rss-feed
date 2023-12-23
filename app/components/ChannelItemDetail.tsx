@@ -132,7 +132,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       <h4>
         <Href
           href={item.link}
-          className="bg-slate-100 text-lg text-slate-900 visited:text-slate-600 [&:not(:visited)]:bg-white"
+          className="bg-slate-100 text-lg text-slate-900 visited:bg-slate-100 visited:text-slate-600 [&:not(:visited)]:bg-white"
         >
           {props.query ? (
             <Highlight query={props.query} input={item.title} />
