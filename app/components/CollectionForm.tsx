@@ -7,11 +7,12 @@ import {
 } from '@remix-run/react';
 import React from 'react';
 import { styles } from '~/styles/shared';
-import { AsideWrapper } from './AsideWrapper';
-import { Button, SubmitButton } from './Button';
+import { Button } from './Button';
 import { useCategoryInput } from './CategoryInput';
 import { WithFormLabel } from './WithFormLabel';
 import { PageHeading } from './PageHeading';
+import { SubmitSection } from './SubmitSection';
+import { TrashIcon } from '@heroicons/react/outline';
 
 const inputClassName = styles.input;
 
@@ -50,7 +51,24 @@ export function CollectionForm<
 
   return (
     <div className={`${transition.state === 'loading' ? 'opacity-60' : ''}`}>
-      <PageHeading>{props.title}</PageHeading>
+      <header className="flex max-w-xl justify-between">
+        <PageHeading>{props.title}</PageHeading>
+        {props.deleteFormId && (
+          <Button
+            form={props.deleteFormId}
+            type="submit"
+            disabled={isDeleting}
+            className="flex items-center gap-2 md:min-w-[20ch]"
+            secondary
+          >
+            <TrashIcon className="w-4" />
+            <span className="hidden md:block">
+              {isDeleting ? 'Deleting...' : 'Delete collection'}
+            </span>
+          </Button>
+        )}
+      </header>
+
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
           <WithFormLabel label={'Title'} required htmlFor="title">
@@ -139,30 +157,15 @@ export function CollectionForm<
           </label>
         </div>
 
-        <AsideWrapper className="flex-row-reverse justify-end sm:flex-row sm:items-end sm:justify-end md:flex-row">
-          {props.deleteFormId && (
-            <Button
-              form={props.deleteFormId}
-              type="submit"
-              disabled={isDeleting}
-              className="sm:min-w-[20ch] "
-              secondary
-            >
-              {isDeleting ? 'Deleting...' : 'Delete collection'}
-            </Button>
-          )}
-          <SubmitButton
-            type="submit"
-            disabled={isSaving}
-            className="flex-1 sm:min-w-[20ch] sm:flex-none"
-          >
-            {isSaving ? (
-              <>{isEditForm ? 'Saving...' : 'Creating...'}</>
-            ) : (
-              <>{isEditForm ? 'Save changes' : 'Create collection'}</>
-            )}
-          </SubmitButton>
-        </AsideWrapper>
+        <SubmitSection
+          cancelProps={{
+            to: '/channels/collections/'.concat(data.defaultValue?.id ?? ''),
+          }}
+          submitProps={{
+            children: isEditForm ? 'Save changes' : 'Create collection',
+          }}
+          isSubmitting={isSaving}
+        />
       </Form>
       {Categories.renderCategoryForm()}
       {props.deleteFormId && (

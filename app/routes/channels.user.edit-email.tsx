@@ -1,6 +1,5 @@
 import {
   Form,
-  Link,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -10,8 +9,8 @@ import type {
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
 import { redirect, json } from '@remix-run/server-runtime';
-import { SubmitButton } from '~/components/Button';
 import { PageHeading } from '~/components/PageHeading';
+import { SubmitSection } from '~/components/SubmitSection';
 import {
   getUserByEmail,
   getUserById,
@@ -122,14 +121,11 @@ export default function UserEditPage() {
             {item.error && <p className="pt-1 text-red-700">{item.error}</p>}
           </fieldset>
         ))}
-        <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-          <Link className="w-full p-2 text-center sm:w-min" to="/channels/user">
-            Cancel
-          </Link>
-          <SubmitButton className="w-full sm:w-min" isLoading={isSubmitting}>
-            Update
-          </SubmitButton>
-        </div>
+        <SubmitSection
+          cancelProps={{ to: '/channels/user' }}
+          submitProps={{ children: 'Update' }}
+          isSubmitting={isSubmitting}
+        />
       </Form>
     </>
   );

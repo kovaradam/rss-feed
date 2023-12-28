@@ -269,7 +269,14 @@ export default function ChannelDetailsPage() {
             )}
           </React.Fragment>
         ))}
-        {data.cursor && <ShowMoreLink cursor={data.cursor} />}
+        {data.cursor && (
+          <ShowMoreLink
+            cursor={data.cursor}
+            isLoading={
+              transition.state === 'loading' && transition.formMethod === 'GET'
+            }
+          />
+        )}
       </section>
       <AsideWrapper>
         <Form method="patch" className="flex-1 sm:flex-grow-0">

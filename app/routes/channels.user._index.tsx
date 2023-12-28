@@ -20,6 +20,8 @@ import { Modal } from '~/components/Modal';
 import React from 'react';
 import { PageHeading } from '~/components/PageHeading';
 import { UseAppTitle } from '~/components/AppTitle';
+import useSound from 'use-sound';
+import confirmSound from 'public/sounds/state-change_confirm-up.wav';
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
@@ -47,6 +49,7 @@ export default function UserPage() {
   const { user, categories } = useLoaderData<typeof loader>();
   const transition = useNavigation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
 
   return (
     <>
@@ -92,6 +95,11 @@ export default function UserPage() {
               secondary
               className="flex h-full  gap-2 sm:w-full"
               disabled={transition.formMethod === 'PATCH'}
+              onClick={() => {
+                if (!user.soundsAllowed) {
+                  playConfirm();
+                }
+              }}
             >
               {user.soundsAllowed ? (
                 <>

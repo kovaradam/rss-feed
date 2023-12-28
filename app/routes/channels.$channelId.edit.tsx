@@ -10,10 +10,9 @@ import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
-import { AsideWrapper } from '~/components/AsideWrapper';
-import { SubmitButton } from '~/components/Button';
 import { useCategoryInput } from '~/components/CategoryInput';
 import { PageHeading } from '~/components/PageHeading';
+import { SubmitSection } from '~/components/SubmitSection';
 import { WithFormLabel } from '~/components/WithFormLabel';
 import type { Channel } from '~/models/channel.server';
 import {
@@ -184,15 +183,11 @@ export default function Channels() {
           </WithFormLabel>
         </div>
 
-        <AsideWrapper className="sm:items-end">
-          <SubmitButton
-            type="submit"
-            disabled={isSaving}
-            className="w-fit min-w-[20ch] flex-1"
-          >
-            {isSaving ? 'Saving...' : 'Save changes'}
-          </SubmitButton>
-        </AsideWrapper>
+        <SubmitSection
+          cancelProps={{ to: '/channels/'.concat(channel.id) }}
+          submitProps={{ children: 'Save changes' }}
+          isSubmitting={isSaving}
+        />
       </Form>
       {renderCategoryForm()}
     </>

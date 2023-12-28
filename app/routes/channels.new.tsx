@@ -10,8 +10,8 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
-import { SubmitButton } from '~/components/Button';
 import { PageHeading } from '~/components/PageHeading';
+import { SubmitSection } from '~/components/SubmitSection';
 import type { CreateFromXmlErrorType } from '~/models/channel.server';
 import { createChannelFromXml } from '~/models/channel.server';
 import { storeFailedUpload } from '~/models/failed-upload.server';
@@ -146,15 +146,11 @@ export default function NewChannelPage() {
             </span>
           )}
         </fieldset>
-        <div className="flex flex-col-reverse justify-end gap-2 pt-2 sm:flex-row">
-          <SubmitButton
-            type="submit"
-            className={'min-w-[20ch] flex-1 sm:flex-none'}
-            disabled={isSaving}
-          >
-            {isSaving ? 'Adding...' : 'Add channel'}
-          </SubmitButton>
-        </div>
+        <SubmitSection
+          isSubmitting={isSaving}
+          cancelProps={{ to: '/channels' }}
+          submitProps={{ children: 'Add channel' }}
+        />
       </Form>
     </>
   );

@@ -44,7 +44,10 @@ export function SubmitButton({
       type="submit"
       className={`flex items-center justify-center rounded  bg-rose-500 px-4 py-2 font-medium text-white hover:bg-rose-600 active:bg-rose-400 disabled:bg-rose-400 ${buttonProps.className}`}
     >
-      {isLoading ? <SpinnerIcon className="w-4" /> : buttonProps.children}
+      <span className={`${isLoading ? 'opacity-0' : ''}`}>
+        {buttonProps.children}
+      </span>
+      {isLoading && <SpinnerIcon className="absolute w-4" />}
     </button>
   );
 }
