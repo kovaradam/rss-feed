@@ -18,20 +18,15 @@ export function Button({
     <button
       {...buttonProps}
       disabled={buttonProps.disabled || isLoading}
-      className={`rounded  px-4 py-2 ${
-        secondary ? secondaryButtonStyle : primaryButtonStyle
-      } ${buttonProps.className}`}
+      className={`rounded px-4 py-2 ${buttonStyle} ${buttonProps.className}`}
     >
       {buttonProps.children}
     </button>
   );
 }
 
-export const secondaryButtonStyle =
-  'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300';
-
-export const primaryButtonStyle =
-  'bg-black text-white hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-500';
+export const buttonStyle =
+  'px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300';
 
 export function SubmitButton({
   isLoading,
@@ -42,7 +37,7 @@ export function SubmitButton({
       {...buttonProps}
       disabled={buttonProps.disabled || isLoading}
       type="submit"
-      className={`flex items-center justify-center rounded  bg-rose-500 px-4 py-2 font-medium text-white hover:bg-rose-600 active:bg-rose-400 disabled:bg-rose-400 ${buttonProps.className}`}
+      className={`flex items-center justify-center rounded  bg-rose-600 px-4 py-2 font-medium text-white hover:bg-rose-700 active:bg-rose-500 disabled:bg-rose-500 ${buttonProps.className}`}
     >
       <span className={`${isLoading ? 'opacity-0' : ''}`}>
         {buttonProps.children}

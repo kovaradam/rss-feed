@@ -96,7 +96,7 @@ export default function UserEditPage() {
             name: 'new-email',
             label: (
               <div>
-                New email <span className="text-slate-400">(required)</span>
+                New email <span className="text-slate-500">(required)</span>
               </div>
             ),
             required: true,

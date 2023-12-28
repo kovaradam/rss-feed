@@ -14,7 +14,7 @@ export function WithFormLabel(props: Props): JSX.Element {
     <fieldset className="flex w-full flex-col gap-1">
       <legend className="mb-1 flex items-center gap-2" {...legendProps}>
         <label htmlFor={htmlFor}>{label}</label>{' '}
-        {required && <span className="text-slate-400">(required)</span>}
+        {required && <span className="text-slate-500">(required)</span>}
       </legend>
       {typeof children === 'function' ? children(props) : children}
     </fieldset>

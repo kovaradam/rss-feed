@@ -77,6 +77,7 @@ export default function ChannelsPage() {
         <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden">
           <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
             <button
+              aria-label="Toggle navigation"
               onClick={() => setIsNavExpanded((prev) => !prev)}
               className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden"
             >
@@ -155,9 +156,9 @@ export default function ChannelsPage() {
                     Feed
                   </StyledNavLink>
                   <hr />
-                  <h6 className="pl-4 pt-2 text-sm text-slate-600">
+                  <h2 className="pl-4 pt-2 text-sm text-slate-600">
                     Collections
-                  </h6>
+                  </h2>
                   <ol>
                     {data.collectionListItems?.map((collection) => (
                       <li key={collection.id}>
@@ -180,7 +181,7 @@ export default function ChannelsPage() {
                     </li>
                   </ol>
                   <hr />
-                  <h6 className="pl-4 pt-2 text-sm text-slate-600">Channels</h6>
+                  <h2 className="pl-4 pt-2 text-sm text-slate-600">Channels</h2>
                   {!data.channelListItems ||
                   data.channelListItems.length === 0 ? (
                     <p className="p-4">No channels yet</p>

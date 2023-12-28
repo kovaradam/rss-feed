@@ -205,7 +205,7 @@ export default function LoginPage() {
             </div>
           </div>
           <SubmitButton
-            className="w-full sm:w-48 sm:px-8"
+            className="w-full self-end  sm:px-8"
             isLoading={isSubmitting(transition)}
           >
             Log in

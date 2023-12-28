@@ -26,7 +26,7 @@ import confirmSound from 'public/sounds/state-change_confirm-up.wav';
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
 
-  if (request.method === 'PATCH') {
+  if (request.method === 'POST') {
     const updatedUser = updateUser(user.id, {
       soundsAllowed: !user.soundsAllowed,
     });
@@ -89,7 +89,7 @@ export default function UserPage() {
           </dl>
         </section>
         <AsideWrapper className="sm:w-[22ch]">
-          <Form method="patch">
+          <Form method="post">
             <Button
               type="submit"
               secondary

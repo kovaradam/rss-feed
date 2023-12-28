@@ -25,6 +25,8 @@ type Props = {
   item: ItemWithChannel;
   formMethod: FormProps['method'];
   query?: string;
+  hideImage?: boolean;
+  wrapperClassName?: string;
 };
 
 export function ChannelItemDetail(props: Props): JSX.Element {
@@ -54,10 +56,10 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   return (
     <article
       id={item.id}
-      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md`}
+      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${props.wrapperClassName}`}
     >
       <span className="flex w-full justify-between">
-        <Link to={channel.id} className="truncate pb-2 ">
+        <Link to={`/channels/${channel.id}`} className="truncate pb-2 ">
           {props.query ? (
             <Highlight input={channel.title} query={props.query} />
           ) : (
@@ -114,30 +116,28 @@ export function ChannelItemDetail(props: Props): JSX.Element {
         </fieldset>
       </span>
 
-      {item.imageUrl && (
+      {item.imageUrl && !props.hideImage && (
         <a href={item.link} className="">
           <img
             alt="Article header decoration"
             src={item.imageUrl}
             className="my-2 h-auto w-full rounded-lg bg-slate-50 italic sm:rounded-none"
             loading="lazy"
-            style={{ aspectRatio: '1.4' }}
+            // style={{ aspectRatio: '1.4' }}
           />
         </a>
       )}
-      <h3>
-        <Href
-          href={item.link}
-          className="bg-slate-100 text-lg text-slate-900 visited:bg-slate-100 visited:text-slate-600 [&:not(:visited)]:bg-white"
-        >
-          {props.query ? (
-            <Highlight query={props.query} input={item.title} />
-          ) : (
-            item.title
-          )}
-        </Href>
-      </h3>
-      <span className="flex gap-1 text-slate-400">
+      <Href
+        href={item.link}
+        className="bg-slate-100 text-lg text-slate-900 visited:bg-slate-100 visited:text-slate-600 [&:not(:visited)]:bg-white"
+      >
+        {props.query ? (
+          <Highlight query={props.query} input={item.title} />
+        ) : (
+          item.title
+        )}
+      </Href>
+      <span className="flex gap-1 text-slate-500">
         {item.author}
         <TimeFromNow date={new Date(item.pubDate)} />
       </span>

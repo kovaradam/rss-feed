@@ -46,6 +46,7 @@ import useSound from 'use-sound';
 
 import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 import { PageHeading } from '~/components/PageHeading';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -105,9 +106,13 @@ export const action: ActionFunction = async ({ request, params }) => {
     return redirect('/channels');
   }
 
-  if (request.method === 'POST') {
-    const formData = await request.formData();
+  const formData = await request.formData();
 
+  if (request.method === 'PUT') {
+    return ChannelItemDetail.handleAction({ formData });
+  }
+
+  if (request.method === 'POST') {
     const updatedParseErrors = {
       itemPubDateParseError: formData.get('itemPubDateParseError')
         ? false
@@ -251,22 +256,28 @@ export default function ChannelDetailsPage() {
         <hr className="mb-8 " />
 
         <h4 className="pb-2 text-2xl font-medium">Articles</h4>
-        {items.map((item, index, array) => (
+        {items.map((item) => (
           <React.Fragment key={item.id}>
-            <article className="flex flex-col pb-2">
-              <Href href={item.link}>{item.title}</Href>
-              <span className="border-b-slate-500 text-slate-500">
-                {' '}
-                {item.pubDate ? (
-                  <TimeFromNow date={new Date(item.pubDate)} />
-                ) : (
-                  'unknown'
-                )}
-              </span>
-            </article>
-            {index !== array.length - 1 && (
-              <hr className="mb-4 border-dashed" />
-            )}
+            <ChannelItemDetail
+              hideImage
+              item={{
+                ...item,
+                pubDate: new Date(item.pubDate),
+                channel: {
+                  ...channel,
+                  lastBuildDate: channel.lastBuildDate
+                    ? new Date(channel.lastBuildDate)
+                    : null,
+                  refreshDate: channel.refreshDate
+                    ? new Date(channel.refreshDate)
+                    : null,
+                  createdAt: new Date(channel.createdAt),
+                  updatedAt: new Date(channel.updatedAt),
+                },
+              }}
+              formMethod="put"
+              wrapperClassName="sm:shadow-none sm:px-0 sm:rounded-none"
+            />
           </React.Fragment>
         ))}
         {data.cursor && (
@@ -299,7 +310,7 @@ export default function ChannelDetailsPage() {
         <Link
           title="Edit this channel"
           to="edit"
-          className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200"
+          className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-700 hover:bg-slate-200 sm:w-full"
         >
           <PencilIcon className="w-4" /> Edit
         </Link>
@@ -315,7 +326,7 @@ export default function ChannelDetailsPage() {
           <Button
             type="submit"
             title="Delete this channel"
-            className="flex h-full w-fit items-center gap-2"
+            className="flex h-full w-fit items-center gap-2 sm:w-full"
             isLoading={transition.formMethod === 'DELETE'}
           >
             <TrashIcon className="w-4" />{' '}

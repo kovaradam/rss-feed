@@ -127,7 +127,7 @@ export function CollectionForm<
                           : data.defaultValue[name] === radio.value
                       }
                       type="radio"
-                      className="accent-rose-400"
+                      className="accent-rose-600"
                       value={String(radio.value)}
                       name={name}
                     />

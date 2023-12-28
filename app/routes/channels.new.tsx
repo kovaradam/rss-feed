@@ -6,7 +6,10 @@ import {
   useLoaderData,
   useNavigation,
 } from '@remix-run/react';
-import type { ActionFunctionArgs } from '@remix-run/server-runtime';
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
 import { redirect, json } from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -27,8 +30,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ];
 };
 
-export const loader = async () => {
-  return json({ title: 'Add new channel' });
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const channelUrlParam = new URL(request.url).searchParams.get(channelUrlName);
+  return json({
+    title: 'Add new channel',
+    channelUrlParam: channelUrlParam ? String(channelUrlParam) : null,
+  });
 };
 
 const inputNames = ['channel-url'] as const;
@@ -105,7 +112,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function NewChannelPage() {
   const errors = useActionData<typeof action>();
-  const { title } = useLoaderData<typeof loader>();
+  const { title, channelUrlParam } = useLoaderData<typeof loader>();
   const transition = useNavigation();
   const isSaving = isSubmitting(transition);
 
@@ -121,13 +128,14 @@ export default function NewChannelPage() {
           <label htmlFor="new-channel-input">RSS feed address</label>
           <input
             type="url"
-            name="channel-url"
+            name={channelUrlName}
             id="new-channel-input"
             autoFocus
             required
             placeholder="https://www.example-web.com/rss.xml"
             className={`${styles.input} `}
             aria-invalid="false"
+            defaultValue={channelUrlParam ?? ''}
           />
           {errors ? (
             Object.entries(errors).map(([type, error]) => (
