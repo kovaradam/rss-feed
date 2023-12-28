@@ -24,9 +24,9 @@ import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { ItemSearchForm } from '~/components/ItemSearchForm';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
-import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import type { ItemWithChannel } from '~/models/channel.server';
 import {
+  getChannels,
   getItemQueryFilter,
   getItemsByCollection,
 } from '~/models/channel.server';
@@ -96,6 +96,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     }
   )) as ItemWithChannel[];
 
+  const channels = await getChannels({
+    where: { userId },
+    select: { id: true },
+  });
+
   return json({
     items: items,
     cursor:
@@ -104,6 +109,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         : null,
     filters,
     collection,
+    channelCount: channels.length,
   });
 }
 
@@ -116,7 +122,8 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ChannelIndexPage() {
-  const { items, cursor, filters, collection } = useLoaderData<typeof loader>();
+  const { items, cursor, filters, collection, channelCount } =
+    useLoaderData<typeof loader>();
   const transition = useNavigation();
   const isSubmitting = transition.state === 'submitting';
 
@@ -132,7 +139,7 @@ export default function ChannelIndexPage() {
       <UseAppTitle>{collection.title}</UseAppTitle>
       <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
         <section className="sm:min-w-2/3 relative flex-1 ">
-          <Details title="Filter articles" className="mb-4 w-full  sm:hidden">
+          <Details title="Filter articles" className="mb-4 w-full sm:hidden">
             <FilterForm />
           </Details>
           <ItemSearchForm
@@ -146,21 +153,17 @@ export default function ChannelIndexPage() {
               <div>
                 {!isFilters ? (
                   <>
-                    <p className="mb-2 text-center text-lg font-bold">
+                    <p className=" text-center text-lg font-bold">
                       No articles were found in this collection.
                     </p>
                     <p className="text-center text-lg text-slate-600">
                       You may try adding a{' '}
-                      <NewChannelModalContext.Consumer>
-                        {(context) => (
-                          <button
-                            onClick={() => context.open?.()}
-                            className="font-bold text-yellow-900 underline"
-                          >
-                            new channel
-                          </button>
-                        )}
-                      </NewChannelModalContext.Consumer>{' '}
+                      <Link
+                        to={'/channels/new'}
+                        className="font-bold text-yellow-900 underline"
+                      >
+                        new channel
+                      </Link>{' '}
                       or{' '}
                       <Link to="edit" className=" underline">
                         edit this collection
@@ -208,20 +211,22 @@ export default function ChannelIndexPage() {
           </ChannelItemList>
           {cursor && <ShowMoreLink cursor={cursor} isLoading={isSubmitting} />}
         </section>
-        <AsideWrapper>
-          <Details
-            title="Filter articles"
-            className={'mb-2 hidden w-60 sm:flex'}
-          >
-            <FilterForm />
-          </Details>
-          <Link
-            to={`edit`}
-            className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200 sm:w-full"
-          >
-            <PencilIcon className="w-4" /> Edit collection
-          </Link>
-        </AsideWrapper>
+        {channelCount !== 0 && (
+          <AsideWrapper>
+            <Details
+              title="Filter articles"
+              className={'mb-2 hidden w-60 sm:flex'}
+            >
+              <FilterForm />
+            </Details>
+            <Link
+              to={`edit`}
+              className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200 sm:w-full"
+            >
+              <PencilIcon className="w-4" /> Edit collection
+            </Link>
+          </AsideWrapper>
+        )}
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import type { ShouldRevalidateFunction } from '@remix-run/react';
-import { useLoaderData, useNavigation } from '@remix-run/react';
+import { Link, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import React from 'react';
@@ -13,7 +13,6 @@ import { ErrorMessage } from '~/components/ErrorMessage';
 import { ItemSearchForm } from '~/components/ItemSearchForm';
 import { NewItemsAlert } from '~/components/NewItemsAlert';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
-import { NewChannelModalContext } from '~/hooks/new-channel-modal';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters, getChannels } from '~/models/channel.server';
@@ -168,16 +167,12 @@ export default function ChannelIndexPage() {
                   <div>
                     <p>You are not subscribed to any RSS feeds.</p>
                     <p className="mb-4 font-normal text-slate-500">
-                      <NewChannelModalContext.Consumer>
-                        {(context) => (
-                          <button
-                            onClick={() => context.open?.()}
-                            className="font-bold text-yellow-900 underline"
-                          >
-                            Add a new channel
-                          </button>
-                        )}
-                      </NewChannelModalContext.Consumer>{' '}
+                      <Link
+                        to={'/channels/new'}
+                        className="font-bold text-yellow-900 underline"
+                      >
+                        Add a new channel
+                      </Link>{' '}
                       to get started!
                     </p>
                   </div>

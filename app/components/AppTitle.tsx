@@ -1,6 +1,8 @@
 import React from 'react';
 
-export function UseAppTitle(props: { children: string }) {
+export function UseAppTitle(
+  props: { children: string } | { default: true; children?: undefined }
+) {
   const { setTitle } = React.useContext(AppTitle.Context);
   React.useEffect(() => {
     setTitle?.(props.children);
@@ -14,5 +16,5 @@ export function AppTitle(props: { defaultTitle: string }) {
 
 AppTitle.Context = React.createContext<{
   title?: string;
-  setTitle?(title: string): void;
+  setTitle?(title: string | undefined): void;
 }>({});

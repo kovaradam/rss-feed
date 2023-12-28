@@ -18,6 +18,8 @@ import { ChannelCategoryLinks } from '~/components/ChannelCategories';
 import { getChannels } from '~/models/channel.server';
 import { Modal } from '~/components/Modal';
 import React from 'react';
+import { PageHeading } from '~/components/PageHeading';
+import { UseAppTitle } from '~/components/AppTitle';
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
@@ -48,9 +50,10 @@ export default function UserPage() {
 
   return (
     <>
+      <UseAppTitle>Your profile</UseAppTitle>
       <div className="relative flex min-h-screen flex-col sm:flex-row">
         <section className="flex flex-1 flex-col gap-8 ">
-          <h3 className="text-3xl font-bold sm:text-4xl ">{user.email}</h3>
+          <PageHeading>{user.email}</PageHeading>
           <dl>
             {[
               {

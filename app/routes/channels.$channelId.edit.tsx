@@ -13,6 +13,7 @@ import { UseAppTitle } from '~/components/AppTitle';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { SubmitButton } from '~/components/Button';
 import { useCategoryInput } from '~/components/CategoryInput';
+import { PageHeading } from '~/components/PageHeading';
 import { WithFormLabel } from '~/components/WithFormLabel';
 import type { Channel } from '~/models/channel.server';
 import {
@@ -137,7 +138,7 @@ export default function Channels() {
   return (
     <>
       <UseAppTitle>{channel?.title}</UseAppTitle>
-      <h3 className="mb-2 text-4xl font-bold">Edit channel</h3>
+      <PageHeading>Edit channel</PageHeading>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
           <WithFormLabel label="Title" required>

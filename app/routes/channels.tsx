@@ -9,13 +9,10 @@ import {
   RefreshIcon,
   UserIcon,
 } from '@heroicons/react/outline';
-import type { ActionFunction, LoaderFunctionArgs } from '@remix-run/node';
-import { redirect, json } from '@remix-run/node';
+import { json, type LoaderFunctionArgs } from '@remix-run/node';
 import type { NavLinkProps } from '@remix-run/react';
 import {
-  useLocation,
   Form,
-  Link,
   NavLink,
   Outlet,
   useLoaderData,
@@ -23,18 +20,13 @@ import {
 } from '@remix-run/react';
 import React from 'react';
 import { AppTitle, UseAppTitle } from '~/components/AppTitle';
-import { AddChannelForm } from '~/components/AddChannelForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
-import type { CreateFromXmlErrorType } from '~/models/channel.server';
-import { createChannelFromXml, getChannels } from '~/models/channel.server';
 import { getCollections } from '~/models/collection.server';
 import { requireUser } from '~/session.server';
 import { createMeta, isNormalLoad, useUser } from '~/utils';
-import { NewChannelModalContext } from '~/hooks/new-channel-modal';
-import { Modal } from '~/components/Modal';
-import { storeFailedUpload } from '~/models/failed-upload.server';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
+import { getChannels } from '~/models/channel.server';
 
 export const meta = createMeta();
 
@@ -63,106 +55,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 };
 
-const inputNames = ['channel-url'] as const;
-const [channelUrlName] = inputNames;
-const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
-
-type ActionData =
-  | Partial<Record<(typeof errors)[number], string | null>>
-  | undefined
-  | { newItemCount: number };
-
-export const action: ActionFunction = async ({ request }) => {
-  const data = await request.formData();
-  const inputChannelHref = data.get(channelUrlName);
-  const user = await requireUser(request);
-
-  if (request.method === AddChannelForm.formMethod) {
-    let channelUrl;
-    try {
-      channelUrl = new URL(String(inputChannelHref));
-    } catch (error) {
-      return json<ActionData>({
-        [channelUrlName]: 'Please provide a valid url',
-      });
-    }
-
-    let channelRequest;
-    try {
-      channelRequest = await fetch(channelUrl);
-    } catch (error) {
-      return json<ActionData>({
-        fetch: `Could not load RSS feed from "${channelUrl.origin}"`,
-      });
-    }
-
-    const channelXml = await channelRequest.text();
-    let newChannel;
-    try {
-      newChannel = await createChannelFromXml(channelXml, {
-        userId: user.id,
-        channelHref: channelUrl.href,
-      });
-    } catch (error) {
-      let response: ActionData;
-
-      switch ((error as Error).message as CreateFromXmlErrorType) {
-        case 'cannotAccessDb':
-          response = {
-            create: 'Cannot save RSS feed at this moment, please try later',
-          };
-          break;
-        case 'channelExists':
-          response = {
-            create:
-              'RSS feed with this address already exists, see the list of your channels',
-          };
-          break;
-        case 'incorrectDefinition':
-          response = {
-            'xml-parse':
-              'Could not parse RSS definition, make sure you provided a correct URL',
-          };
-          break;
-        default:
-          response = { create: 'Could not save RSS feed, please try later' };
-      }
-
-      storeFailedUpload(String(inputChannelHref), String(error));
-
-      return json<ActionData>(response);
-    }
-
-    return redirect('/channels/'.concat(newChannel.id));
-  }
-};
-
 export default function ChannelsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
   const transition = useNavigation();
 
-  const [isNewChannelModalVisible, setIsNewChannelModalVisible] =
-    React.useState(false);
-
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
-  const [title, setTitle] = React.useState(data.title);
-
-  const openNewChannelModal = React.useCallback(() => {
-    setIsNewChannelModalVisible(true);
-  }, [setIsNewChannelModalVisible]);
-
-  const closeNewChannelModal = React.useCallback(() => {
-    setIsNewChannelModalVisible(false);
-  }, []);
-
-  const location = useLocation();
-
-  React.useEffect(() => {
-    if (location.pathname !== '/channels') {
-      closeNewChannelModal();
-    }
-  }, [location.pathname, closeNewChannelModal]);
+  const [title, setTitle] = React.useState(data.title as string | undefined);
 
   const [load, refreshFetcher] = useChannelRefreshFetcher();
   const isRefreshing = refreshFetcher.state !== 'idle';
@@ -223,18 +122,21 @@ export default function ChannelsPage() {
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-3xl">
+                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-4xl">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">
-                  <button
-                    className="m-2 flex w-[95%] items-center gap-2 rounded p-2 text-left text-xl text-yellow-900 hover:bg-slate-200 active:bg-slate-300 peer-focus:hidden sm:font-bold sm:shadow"
-                    onClick={openNewChannelModal}
-                    data-silent
+                  <StyledNavLink
+                    className={({ isActive }) =>
+                      `${
+                        !isActive ? 'text-yellow-900' : ''
+                      } hover:bg-slate-200 active:bg-slate-300 sm:font-bold sm:shadow`
+                    }
+                    to={'/channels/new'}
                   >
                     <PlusIcon className="w-4 " style={{ strokeWidth: '3px' }} />{' '}
                     Add RSS Channel
-                  </button>
+                  </StyledNavLink>
                   <hr />
                   <StyledNavLink
                     to={`/channels`}
@@ -268,13 +170,13 @@ export default function ChannelsPage() {
                       </li>
                     ))}
                     <li>
-                      <Link
-                        className={`m-2 flex gap-2 rounded p-2 text-lg text-slate-600 hover:bg-slate-100 hover:text-yellow-900`}
+                      <StyledNavLink
+                        className={` hover:bg-slate-100 hover:text-yellow-900`}
                         to={`/channels/collections/new`}
                       >
                         <PlusIcon className="w-4" />
                         New collection
-                      </Link>
+                      </StyledNavLink>
                     </li>
                   </ol>
                   <hr />
@@ -307,25 +209,8 @@ export default function ChannelsPage() {
                   : ''
               }`}
             >
-              <NewChannelModalContext.Provider
-                value={React.useMemo(
-                  () => ({
-                    open: openNewChannelModal,
-                  }),
-                  [openNewChannelModal]
-                )}
-              >
-                <Outlet />
-              </NewChannelModalContext.Provider>
+              <Outlet />
             </div>
-
-            <Modal
-              isOpen={isNewChannelModalVisible}
-              contentLabel="New Channel"
-              onRequestClose={closeNewChannelModal}
-            >
-              <AddChannelForm onReset={closeNewChannelModal} />
-            </Modal>
           </main>
         </div>
       </div>
@@ -341,10 +226,14 @@ function StyledNavLink(props: NavLinkProps) {
   return (
     <NavLink
       {...props}
-      className={({ isActive }) =>
+      className={(state) =>
         `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 sm:text-lg ${
-          isActive ? ' bg-slate-200 sm:text-slate-600' : ''
-        } ${props.className}`
+          state.isActive ? ' bg-slate-200 text-slate-600' : ''
+        } ${
+          typeof props.className === 'function'
+            ? props.className(state)
+            : props.className
+        }`
       }
     >
       {props.children}

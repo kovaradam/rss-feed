@@ -11,6 +11,7 @@ import { AsideWrapper } from './AsideWrapper';
 import { Button, SubmitButton } from './Button';
 import { useCategoryInput } from './CategoryInput';
 import { WithFormLabel } from './WithFormLabel';
+import { PageHeading } from './PageHeading';
 
 const inputClassName = styles.input;
 
@@ -49,7 +50,7 @@ export function CollectionForm<
 
   return (
     <div className={`${transition.state === 'loading' ? 'opacity-60' : ''}`}>
-      <h3 className="mb-2 text-4xl font-bold">{props.title}</h3>
+      <PageHeading>{props.title}</PageHeading>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         <div>
           <WithFormLabel label={'Title'} required htmlFor="title">

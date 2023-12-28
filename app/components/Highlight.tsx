@@ -20,7 +20,9 @@ export function Highlight(props: { query: string; input: string }) {
     startIndices.forEach((startIdx, arrayIdx) => {
       elements.push({
         element: (
-          <b>{props.input.slice(startIdx, startIdx + props.query.length)}</b>
+          <strong>
+            {props.input.slice(startIdx, startIdx + props.query.length)}
+          </strong>
         ),
         key: startIdx,
       });

@@ -1,5 +1,6 @@
 import {
   Form,
+  Link,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -10,6 +11,7 @@ import type {
 } from '@remix-run/server-runtime';
 import { redirect, json } from '@remix-run/server-runtime';
 import { SubmitButton } from '~/components/Button';
+import { PageHeading } from '~/components/PageHeading';
 import {
   getUserByEmail,
   getUserById,
@@ -82,8 +84,8 @@ export default function UserEditPage() {
 
   return (
     <>
-      <h3 className="mb-2 text-4xl font-bold">{data.title}</h3>
-      <Form className="flex flex-col gap-4" method="patch">
+      <PageHeading>{data.title}</PageHeading>
+      <Form className="flex max-w-xl flex-col gap-4" method="patch">
         {[
           {
             name: 'current-email',
@@ -120,9 +122,14 @@ export default function UserEditPage() {
             {item.error && <p className="pt-1 text-red-700">{item.error}</p>}
           </fieldset>
         ))}
-        <SubmitButton className="self-end" isLoading={isSubmitting}>
-          Update
-        </SubmitButton>
+        <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
+          <Link className="w-full p-2 text-center sm:w-min" to="/channels/user">
+            Cancel
+          </Link>
+          <SubmitButton className="w-full sm:w-min" isLoading={isSubmitting}>
+            Update
+          </SubmitButton>
+        </div>
       </Form>
     </>
   );

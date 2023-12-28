@@ -45,6 +45,7 @@ import { ShowMoreLink } from '~/components/ShowMoreLink';
 import useSound from 'use-sound';
 
 import refreshSound from 'public/sounds/ui_refresh-feed.wav';
+import { PageHeading } from '~/components/PageHeading';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -164,7 +165,7 @@ export default function ChannelDetailsPage() {
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="max-w-[90vw] flex-1">
         <WithEditLink name={'title'}>
-          <h3 className="text-4xl font-bold ">{data.channel.title}</h3>
+          <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
         <div className="flex flex-col gap-2 pt-2">
           <span className="flex items-center gap-1 text-slate-500">

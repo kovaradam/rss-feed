@@ -41,10 +41,6 @@ export function ChannelItemDetail(props: Props): JSX.Element {
     sentRead === null ? item.read : sentRead === String(true),
   ];
 
-  if (item.id === 'clpfkrdwc0005zz3fsoc8xd3y') {
-    console.log(bookmarked, sentBookmarked, fetcher.formData);
-  }
-
   const ReadIcon = read ? SolidCheckIcon : CheckCircleIcon;
   const BookmarkIcon = bookmarked ? SolidBookmarkIcon : OutlineBookmarkIcon;
 
@@ -129,7 +125,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           />
         </a>
       )}
-      <h4>
+      <h3>
         <Href
           href={item.link}
           className="bg-slate-100 text-lg text-slate-900 visited:bg-slate-100 visited:text-slate-600 [&:not(:visited)]:bg-white"
@@ -140,7 +136,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
             item.title
           )}
         </Href>
-      </h4>
+      </h3>
       <span className="flex gap-1 text-slate-400">
         {item.author}
         <TimeFromNow date={new Date(item.pubDate)} />
