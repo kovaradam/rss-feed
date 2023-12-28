@@ -58,7 +58,7 @@ export function CollectionForm<
             form={props.deleteFormId}
             type="submit"
             disabled={isDeleting}
-            className="flex items-center gap-2 md:min-w-[20ch]"
+            className="flex h-fit items-center gap-2 md:min-w-[20ch]"
             secondary
           >
             <TrashIcon className="w-4" />
