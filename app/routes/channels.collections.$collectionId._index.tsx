@@ -223,7 +223,9 @@ export default function ChannelIndexPage() {
             </Details>
             <Link to={`edit`} className={buttonStyle.concat(' w-full')}>
               <PencilIcon className="w-4" />
-              <span className="flex-1 text-center">Edit collection</span>
+              <span className="pointer-events-none flex-1 text-center ">
+                Edit collection
+              </span>
             </Link>
           </AsideWrapper>
         )}

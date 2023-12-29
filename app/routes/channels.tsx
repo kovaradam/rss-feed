@@ -64,12 +64,17 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
   const [title, setTitle] = React.useState(data.title as string | undefined);
 
-  const [load, refreshFetcher] = useChannelRefreshFetcher();
+  const [refreshChannels, refreshFetcher] = useChannelRefreshFetcher();
   const isRefreshing = refreshFetcher.state !== 'idle';
 
   React.useEffect(() => {
-    load();
-  }, [load]);
+    refreshChannels();
+  }, [refreshChannels]);
+
+  React.useEffect(() => {
+    window.addEventListener('focus', refreshChannels);
+    return () => window.removeEventListener('focus', refreshChannels);
+  }, [refreshChannels]);
 
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
@@ -258,13 +263,8 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           }
         }}
       >
-        <style>
-          {/* Hide marker in safari*/}
-          {'.user-summary::-webkit-details-marker {display: none}'}
-        </style>
-
         <summary
-          className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700"
+          className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700 [&::-webkit-details-marker]:hidden"
           aria-label="Toggle user menu"
         >
           <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />

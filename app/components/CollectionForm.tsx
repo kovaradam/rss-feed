@@ -62,7 +62,7 @@ export function CollectionForm<
             secondary
           >
             <TrashIcon className="w-4" />
-            <span className="hidden md:block">
+            <span className="pointer-events-none hidden md:block">
               {isDeleting ? 'Deleting...' : 'Delete collection'}
             </span>
           </Button>
