@@ -2,6 +2,7 @@ import { XIcon } from '@heroicons/react/outline';
 import { Link } from '@remix-run/react';
 import type { MouseEventHandler } from 'react';
 import React from 'react';
+import { Tooltip } from './Tooltip';
 
 type Props = {
   category: string;
@@ -24,10 +25,11 @@ export function ChannelCategories(props: Props): JSX.Element {
                 onClick={props.delete}
                 value={category}
                 type="button"
-                title="Remove category"
                 aria-label="Remove category"
+                className="relative"
               >
                 <XIcon className="w-4" />
+                <Tooltip />
               </button>
             )}
           </span>
@@ -46,12 +48,12 @@ export function ChannelCategoryLinks(
         .filter(Boolean)
         .map((category) => (
           <Link
-            title="View articles with this category"
-            className={className}
+            className={'relative '.concat(className)}
             key={category}
             to={`/channels?categories=${category}`}
           >
             {category}
+            <Tooltip>View articles with this category</Tooltip>
           </Link>
         ))}
     </>

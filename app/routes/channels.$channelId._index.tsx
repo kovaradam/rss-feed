@@ -47,6 +47,7 @@ import useSound from 'use-sound';
 import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 import { PageHeading } from '~/components/PageHeading';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
+import { Tooltip } from '~/components/Tooltip';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -238,12 +239,13 @@ export default function ChannelDetailsPage() {
                       <Form method="post">
                         <input type="hidden" name={error.name} value="false" />
                         <button
-                          title={'Hide this error message'}
+                          aria-label={'Hide this error message'}
                           type="submit"
-                          className="flex items-center gap-1 text-left text-red-800 hover:underline"
+                          className="relative flex items-center gap-1 text-left text-red-800 hover:underline"
                         >
                           <ExclamationCircleIcon className="w-3" />{' '}
                           {error.message}
+                          <Tooltip />
                         </button>
                       </Form>
                     </li>
@@ -294,7 +296,6 @@ export default function ChannelDetailsPage() {
           <Button
             onClick={() => playRefresh()}
             type="submit"
-            title="Refresh this channel"
             className="flex w-[13ch] items-center gap-2"
             isLoading={isRefreshing}
             secondary
@@ -304,15 +305,15 @@ export default function ChannelDetailsPage() {
                 isRefreshing ? 'animate-spin' : 'animate-none'
               }`}
             />
-            Refresh
+            <div className="flex-1 text-center">Refresh</div>
           </Button>
         </Form>
         <Link
-          title="Edit this channel"
           to="edit"
           className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-700 hover:bg-slate-200 sm:w-full"
         >
-          <PencilIcon className="w-4" /> Edit
+          <PencilIcon className="w-4" />
+          <div className="flex-1 text-center">Edit</div>
         </Link>
         <br />
         <Form
@@ -330,7 +331,7 @@ export default function ChannelDetailsPage() {
             isLoading={transition.formMethod === 'DELETE'}
           >
             <TrashIcon className="w-4" />{' '}
-            <span className="hidden sm:block">Delete</span>
+            <span className="hidden flex-1 text-center sm:block">Delete</span>
           </Button>
         </Form>
       </AsideWrapper>

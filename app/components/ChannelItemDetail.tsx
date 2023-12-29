@@ -20,6 +20,7 @@ import cancelSound from 'public/sounds/state-change_confirm-down.wav';
 import { Highlight } from './Highlight';
 import { convert } from 'html-to-text';
 import React from 'react';
+import { Tooltip } from './Tooltip';
 
 type Props = {
   item: ItemWithChannel;
@@ -58,8 +59,8 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       id={item.id}
       className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${props.wrapperClassName}`}
     >
-      <span className="flex w-full justify-between">
-        <Link to={`/channels/${channel.id}`} className="truncate pb-2 ">
+      <span className="flex w-full justify-between gap-2">
+        <Link to={`/channels/${channel.id}`} className=" truncate ">
           {props.query ? (
             <Highlight input={channel.title} query={props.query} />
           ) : (
@@ -99,8 +100,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
               <button
                 type="submit"
-                title={formItem.title}
-                className={'rounded p-1 '.concat(formItem.className)}
+                className={'relative rounded p-1'.concat(formItem.className)}
                 data-silent
                 aria-label={formItem.title}
                 onClick={() => formItem.playSubmit()}
@@ -110,27 +110,26 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                     formItem.value === 'false' ? 'text-black' : ''
                   } pointer-events-none ${formItem.className}`}
                 />
+                <Tooltip>{formItem.title}</Tooltip>
               </button>
             </fetcher.Form>
           ))}
         </fieldset>
       </span>
 
-      {item.imageUrl && !props.hideImage && (
-        <a href={item.link} className="">
+      <Href
+        href={item.link}
+        className="mt-2  bg-white text-lg text-slate-900   visited:text-violet-900"
+      >
+        {item.imageUrl && !props.hideImage && (
           <img
             alt="Article header decoration"
             src={item.imageUrl}
-            className="my-2 h-auto w-full rounded-lg bg-slate-50 italic sm:rounded-none"
+            className="mb-2 h-auto w-full rounded-lg bg-slate-50 italic sm:rounded-none"
             loading="lazy"
             // style={{ aspectRatio: '1.4' }}
           />
-        </a>
-      )}
-      <Href
-        href={item.link}
-        className="bg-slate-100 text-lg text-slate-900 visited:bg-slate-100 visited:text-slate-600 [&:not(:visited)]:bg-white"
-      >
+        )}
         {props.query ? (
           <Highlight query={props.query} input={item.title} />
         ) : (

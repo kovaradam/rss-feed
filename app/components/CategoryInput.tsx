@@ -3,6 +3,7 @@ import { Form } from '@remix-run/react';
 import React from 'react';
 import { Button } from './Button';
 import { ChannelCategories } from './ChannelCategories';
+import { Tooltip } from './Tooltip';
 
 type Props = {
   fakeInputName: string;
@@ -55,14 +56,14 @@ function CategoryInput(props: Props): JSX.Element {
           ))}
         </datalist>
         <Button
-          className="rounded  bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
+          className="relative rounded bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
           type="submit"
           form={props.formId}
           secondary
-          title="Add category"
           aria-label="Add category"
         >
           <PlusIcon className="w-4 " />
+          <Tooltip />
         </Button>
       </div>
       <input value={props.value} type="hidden" name={props.name} />

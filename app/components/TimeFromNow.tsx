@@ -1,3 +1,5 @@
+import { Tooltip } from './Tooltip';
+
 function getTimeDifference(firstDate: Date, secondDate: Date) {
   const differenceInMillis = firstDate.getTime() - secondDate.getTime();
 
@@ -30,16 +32,20 @@ export function TimeFromNow(props: Props): JSX.Element {
     const [value, label] = entries[i];
     if (value >= 1) {
       return (
-        <span
-          title={props.date.toLocaleDateString()}
-        >{`${value.toFixed()} ${label}${value > 1 ? 's' : ''} ago`}</span>
+        <span className={'relative'}>
+          {`${value.toFixed()} ${label}${value > 1 ? 's' : ''} ago`}
+          <Tooltip>{props.date.toLocaleDateString()}</Tooltip>
+        </span>
       );
     }
   }
 
   return (
-    <span title={props.date.toLocaleDateString()}>{`${Math.ceil(
-      difference.seconds
-    )} second${difference.seconds > 1 ? 's' : ''} ago`}</span>
+    <span className={'relative'}>
+      {`${Math.ceil(difference.seconds)} second${
+        difference.seconds > 1 ? 's' : ''
+      } ago`}
+      <Tooltip>{props.date.toLocaleDateString()}</Tooltip>
+    </span>
   );
 }

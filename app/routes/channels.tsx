@@ -27,6 +27,7 @@ import { requireUser } from '~/session.server';
 import { createMeta, isNormalLoad, useUser } from '~/utils';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import { getChannels } from '~/models/channel.server';
+import { Tooltip } from '~/components/Tooltip';
 
 export const meta = createMeta();
 
@@ -139,20 +140,18 @@ export default function ChannelsPage() {
                     Add RSS Channel
                   </StyledNavLink>
                   <hr />
-                  <StyledNavLink
-                    to={`/channels`}
-                    end
-                    title={
-                      isRefreshing
-                        ? 'Looking for new articles'
-                        : 'Go to your feed'
-                    }
-                  >
+                  <StyledNavLink to={`/channels`} end>
                     {isRefreshing ? (
-                      <RefreshIcon className={`w-4 rotate-180 animate-spin`} />
+                      <div className={'relative flex items-center'}>
+                        <RefreshIcon
+                          className={`w-4 rotate-180 animate-spin`}
+                        />
+                        <Tooltip>Looking for new articles</Tooltip>
+                      </div>
                     ) : (
                       <HomeIcon className="w-4" />
                     )}
+                    <Tooltip>Looking for new articles</Tooltip>
                     Feed
                   </StyledNavLink>
                   <hr />
@@ -279,7 +278,6 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
             <Form action="/logout" method="post" className="w-full">
               <button
                 type="submit"
-                title="Log out"
                 className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
               >
                 <LogoutIcon className="w-4" />
@@ -291,11 +289,13 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           <li>
             <a
               href="/channels/user"
-              title="Update personal info"
-              className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+              className="relative flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
             >
               <CogIcon className="w-4" />
               <span className="gap-4 whitespace-nowrap">Profile</span>
+              <Tooltip position={{ x: 'left-box' }}>
+                Update your profile
+              </Tooltip>
             </a>
           </li>
           {props.user.isAdmin && (

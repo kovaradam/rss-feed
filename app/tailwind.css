@@ -10,3 +10,9 @@
     translate: 0 0;
   }
 }
+
+*:focus-visible {
+  outline-offset: 2px;
+  outline-style: solid;
+  outline-color: black;
+}

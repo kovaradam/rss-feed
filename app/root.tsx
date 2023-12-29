@@ -67,7 +67,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full w-screen overflow-x-hidden ">
+      <body className="[:focus-visible]:outline-yellow-900 h-full w-screen overflow-x-hidden accent-rose-600 ">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
