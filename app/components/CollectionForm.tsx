@@ -161,7 +161,9 @@ export function CollectionForm<
 
         <SubmitSection
           cancelProps={{
-            to: '/channels/collections/'.concat(data.defaultValue?.id ?? ''),
+            to: data.defaultValue?.id
+              ? '/channels/collections/'.concat(data.defaultValue?.id ?? '')
+              : '/channels',
           }}
           submitProps={{
             children: isEditForm ? 'Save changes' : 'Create collection',
