@@ -15,6 +15,7 @@ import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { PageHeading } from '~/components/PageHeading';
 import { SubmitSection } from '~/components/SubmitSection';
+import { WithFormLabel } from '~/components/WithFormLabel';
 import type { CreateFromXmlErrorType } from '~/models/channel.server';
 import { createChannelFromXml } from '~/models/channel.server';
 import { storeFailedUpload } from '~/models/failed-upload.server';
@@ -124,8 +125,7 @@ export default function NewChannelPage() {
         method={NewChannelPage.formMethod}
         className={'flex max-w-xl flex-col gap-4'}
       >
-        <fieldset className="flex flex-col gap-2" disabled={isSaving}>
-          <label htmlFor="new-channel-input">RSS feed address</label>
+        <WithFormLabel htmlFor="new-channel-input" label="RSS feed address">
           <input
             type="url"
             name={channelUrlName}
@@ -141,7 +141,7 @@ export default function NewChannelPage() {
             Object.entries(errors).map(([type, error]) => (
               <span
                 key={type}
-                className="flex w-fit items-center gap-1 rounded bg-red-100 p-1 px-2 pt-1 text-red-700"
+                className="mt-1 flex w-fit items-center gap-1 rounded bg-red-100 p-1 px-2 pt-1 text-red-700"
                 id={type}
               >
                 <ExclamationCircleIcon className="min-w-[2ch] max-w-[2ch]" />
@@ -149,11 +149,11 @@ export default function NewChannelPage() {
               </span>
             ))
           ) : (
-            <span className="pt-1 text-slate-500">
+            <span className="pt-1 text-slate-500 dark:text-slate-400">
               Provide a URL of a RSS feed you wish to add
             </span>
           )}
-        </fieldset>
+        </WithFormLabel>
         <SubmitSection
           isSubmitting={isSaving}
           cancelProps={{ to: '/channels' }}

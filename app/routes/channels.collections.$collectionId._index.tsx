@@ -17,6 +17,7 @@ import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
+import { buttonStyle } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
@@ -153,14 +154,14 @@ export default function ChannelIndexPage() {
               <div>
                 {!isFilters ? (
                   <>
-                    <p className=" text-center text-lg font-bold">
+                    <p className=" text-center text-lg font-bold dark:text-white">
                       No articles were found in this collection.
                     </p>
-                    <p className="text-center text-lg text-slate-600">
+                    <p className="text-center text-lg text-slate-600 dark:text-slate-300">
                       You may try adding a{' '}
                       <Link
                         to={'/channels/new'}
-                        className="font-bold text-yellow-900 underline"
+                        className="font-bold text-yellow-900 underline dark:text-white"
                       >
                         new channel
                       </Link>{' '}
@@ -171,16 +172,17 @@ export default function ChannelIndexPage() {
                     </p>
                   </>
                 ) : (
-                  <p className="mb-2 text-center text-lg font-bold">
+                  <p className="mb-2 text-center text-lg font-bold dark:text-white">
                     No articles found matching your criteria.
                   </p>
                 )}
               </div>
               <img
-                alt="Illustration doodle of a person sitting and reading"
+                alt="Illustration of a person struggling with sheets of paper"
                 src="/clumsy.svg"
                 width={'70%'}
                 data-from="https://www.opendoodles.com/"
+                className="dark:invert-[.8]"
               />
             </div>
           )}
@@ -219,11 +221,9 @@ export default function ChannelIndexPage() {
             >
               <FilterForm />
             </Details>
-            <Link
-              to={`edit`}
-              className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200 sm:w-full"
-            >
-              <PencilIcon className="w-4" /> Edit collection
+            <Link to={`edit`} className={buttonStyle.concat(' w-full')}>
+              <PencilIcon className="w-4" />
+              <span className="flex-1 text-center">Edit collection</span>
             </Link>
           </AsideWrapper>
         )}

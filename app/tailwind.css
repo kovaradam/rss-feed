@@ -14,5 +14,18 @@
 *:focus-visible {
   outline-offset: 2px;
   outline-style: solid;
+  outline-width: 2px;
   outline-color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  *:focus-visible {
+    outline-color: white;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --svg-fill: white;
+  }
 }

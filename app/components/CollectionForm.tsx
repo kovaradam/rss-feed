@@ -117,7 +117,7 @@ export function CollectionForm<
               <div className="flex flex-col gap-2">
                 {values.map((radio) => (
                   <label
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 dark:text-white"
                     key={String(radio.value)}
                   >
                     <input
@@ -140,22 +140,24 @@ export function CollectionForm<
         ))}
 
         <div>{Categories.renderCategoryInput()}</div>
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Language: </span>
-            <input
-              name={'language'}
-              className={inputClassName}
-              list="language-suggestions"
-              defaultValue={data.defaultValue?.language ?? ''}
-            />
-            <datalist id="language-suggestions">
-              {data.languages.map((language) => (
-                <option value={language} key={language} />
-              ))}
-            </datalist>
-          </label>
-        </div>
+        <WithFormLabel label="Language">
+          {({ htmlFor }) => (
+            <>
+              <input
+                id={htmlFor}
+                name={'language'}
+                className={inputClassName}
+                list="language-suggestions"
+                defaultValue={data.defaultValue?.language ?? ''}
+              />
+              <datalist id="language-suggestions">
+                {data.languages.map((language) => (
+                  <option value={language} key={language} />
+                ))}
+              </datalist>
+            </>
+          )}
+        </WithFormLabel>
 
         <SubmitSection
           cancelProps={{

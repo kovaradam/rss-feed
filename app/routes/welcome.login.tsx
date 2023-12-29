@@ -19,6 +19,7 @@ import { verifyLogin } from '~/models/user.server';
 import { isSubmitting, safeRedirect, validateEmail } from '~/utils';
 import { SubmitButton } from '~/components/Button';
 import { styles } from '~/styles/shared';
+import { WithFormLabel } from '~/components/WithFormLabel';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
@@ -112,10 +113,10 @@ export default function LoginPage() {
   return (
     <>
       <div>
-        <h2 className="my-2 text-4xl font-bold">
+        <h1 className="my-2 text-4xl font-bold dark:text-white">
           {data.isFirst ? 'Welcome!' : 'Welcome back!'}
-        </h2>
-        <p className="text-slate-500">
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400">
           Don't have an account?{' '}
           <Link
             className="font-bold underline"
@@ -154,58 +155,52 @@ export default function LoginPage() {
               error: actionData?.errors?.password,
             },
           ].map((formField) => (
-            <div key={formField.id}>
-              <label
-                htmlFor={formField.id}
-                className="block text-sm font-medium text-gray-700"
-              >
-                {formField.label}
-              </label>
-              <div className="mt-1">
-                <input
-                  ref={formField.ref}
-                  id={formField.id}
-                  required
-                  name={formField.name}
-                  type={formField.type}
-                  placeholder={formField.placeholder}
-                  aria-invalid={formField.ariaInvalid}
-                  aria-describedby={formField.ariaDescribedBy}
-                  className={styles.input}
-                />
-                {formField.error && (
-                  <div
-                    className="pt-1 text-red-800"
-                    id={formField.ariaDescribedBy}
-                  >
-                    {formField.error}
-                  </div>
-                )}
-              </div>
-            </div>
+            <WithFormLabel
+              key={formField.id}
+              htmlFor={formField.id}
+              label={formField.label}
+            >
+              <input
+                ref={formField.ref}
+                id={formField.id}
+                required
+                name={formField.name}
+                type={formField.type}
+                placeholder={formField.placeholder}
+                aria-invalid={formField.ariaInvalid}
+                aria-describedby={formField.ariaDescribedBy}
+                className={styles.input}
+              />
+              {formField.error && (
+                <div
+                  className="pt-1 text-red-800 dark:text-red-400"
+                  id={formField.ariaDescribedBy}
+                >
+                  {formField.error}
+                </div>
+              )}
+            </WithFormLabel>
           ))}
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pb-2">
             <div className="flex items-center">
               <input
                 id="remember"
                 name="remember"
                 type="checkbox"
-                className={
-                  'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
-                }
+                className={'h-4 w-4 '}
               />
               <label
                 htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
+                className="ml-2 block text-sm text-gray-900 dark:text-white"
               >
                 Remember me
               </label>
             </div>
           </div>
           <SubmitButton
-            className="w-full self-end  sm:px-8"
+            className=" w-full self-end"
             isLoading={isSubmitting(transition)}
           >
             Log in

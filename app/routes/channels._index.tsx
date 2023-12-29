@@ -152,24 +152,26 @@ export default function ChannelIndexPage() {
             <div className="flex flex-col gap-2 text-center text-lg font-bold">
               {channels.length !== 0 ? (
                 <>
-                  <p className="mt-6">
+                  <p className="mt-6 dark:text-white">
                     No articles found {isFilters && 'matching your criteria'}
                   </p>
                   <img
                     src="/laying.svg"
                     alt="Doodle of a person laying looking at phone"
-                    className="scale-50"
+                    className="scale-50 dark:invert-[.8]"
                     data-from="https://www.opendoodles.com/"
                   ></img>
                 </>
               ) : (
                 <div className="mt-8 flex flex-col items-center gap-16">
                   <div>
-                    <p>You are not subscribed to any RSS feeds.</p>
-                    <p className="mb-4 font-normal text-slate-500">
+                    <p className="dark:text-white">
+                      You are not subscribed to any RSS feeds.
+                    </p>
+                    <p className="mb-4 font-normal text-slate-500 dark:text-slate-300">
                       <Link
                         to={'/channels/new'}
-                        className="font-bold text-yellow-900 underline"
+                        className="font-bold text-yellow-900 underline dark:text-white"
                       >
                         Add a new channel
                       </Link>{' '}
@@ -181,6 +183,7 @@ export default function ChannelIndexPage() {
                     src="/sitting-reading.svg"
                     width={'50%'}
                     data-from="https://www.opendoodles.com/"
+                    className="dark:invert-[.7]"
                   />
                 </div>
               )}

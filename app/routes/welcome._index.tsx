@@ -9,7 +9,8 @@ import {
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json, redirect } from '@remix-run/server-runtime';
 import React from 'react';
-import { SubmitButton } from '~/components/Button';
+import { SubmitButton, buttonStyle } from '~/components/Button';
+import { WithFormLabel } from '~/components/WithFormLabel';
 import {
   createUser,
   getUserByEmail,
@@ -108,8 +109,10 @@ export default function Welcome() {
   return (
     <>
       <div>
-        <h2 className="my-2 text-4xl font-bold">Create your journal</h2>
-        <p className="text-slate-500">
+        <h1 className="my-2 text-4xl font-bold dark:text-white">
+          Create your journal
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400">
           Get started with a new account or{' '}
           <Link
             to={{
@@ -149,35 +152,31 @@ export default function Welcome() {
               error: actionData?.errors?.password,
             },
           ].map((formField) => (
-            <div key={formField.id}>
-              <label
-                htmlFor={formField.id}
-                className="block text-sm font-medium text-gray-700"
-              >
-                {formField.label}
-              </label>
-              <div className="mt-1">
-                <input
-                  ref={formField.ref}
-                  id={formField.id}
-                  required
-                  name={formField.name}
-                  type={formField.type}
-                  placeholder={formField.placeholder}
-                  aria-invalid={formField.ariaInvalid}
-                  aria-describedby={formField.ariaDescribedBy}
-                  className={styles.input}
-                />
-                {formField.error && (
-                  <div
-                    className="pt-1 text-red-800"
-                    id={formField.ariaDescribedBy}
-                  >
-                    {formField.error}
-                  </div>
-                )}
-              </div>
-            </div>
+            <WithFormLabel
+              htmlFor={formField.id}
+              label={formField.label}
+              key={formField.id}
+            >
+              <input
+                ref={formField.ref}
+                id={formField.id}
+                required
+                name={formField.name}
+                type={formField.type}
+                placeholder={formField.placeholder}
+                aria-invalid={formField.ariaInvalid}
+                aria-describedby={formField.ariaDescribedBy}
+                className={styles.input}
+              />
+              {formField.error && (
+                <div
+                  className="pt-1 text-red-800 dark:text-red-400"
+                  id={formField.ariaDescribedBy}
+                >
+                  {formField.error}
+                </div>
+              )}
+            </WithFormLabel>
           ))}
           <input
             type="hidden"
@@ -185,7 +184,7 @@ export default function Welcome() {
             value={redirectTo}
             disabled={isSubmitting}
           />
-          <div className="flex flex-col items-center justify-between gap-1 sm:flex-row">
+          <div className="flex flex-col items-center justify-between gap-1 pt-4 sm:flex-row">
             <SubmitButton
               className="w-full sm:w-48 sm:px-8"
               isLoading={isSubmitting}
@@ -198,7 +197,7 @@ export default function Welcome() {
                 pathname: 'login',
                 search: searchParams.toString(),
               }}
-              className={`flex w-full items-center justify-center rounded  bg-gray-50 px-4 py-2 font-medium text-slate-500 sm:w-48 sm:px-8`}
+              className={`${buttonStyle} w-full justify-center sm:w-48 `}
             >
               log In
             </Link>{' '}

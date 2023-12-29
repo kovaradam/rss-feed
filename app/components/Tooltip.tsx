@@ -76,7 +76,7 @@ export function Tooltip(
 
   return (
     <div
-      className="absolute z-10 flex items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white"
+      className="absolute z-10 flex items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white dark:border"
       style={{
         visibility: position ? 'visible' : 'hidden',
         left: {

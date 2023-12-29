@@ -83,7 +83,7 @@ export default function UserPage() {
                 <dt className="flex items-center gap-1">
                   {item.icon} {item.label}:
                 </dt>
-                <dd className="text-black">{item.value}</dd>
+                <dd className="text-black dark:text-white">{item.value}</dd>
               </span>
             ))}
           </dl>
@@ -104,14 +104,14 @@ export default function UserPage() {
               {user.soundsAllowed ? (
                 <>
                   <VolumeOffIcon className="h-6 w-4" />{' '}
-                  <span className="hidden  sm:block sm:w-full">
+                  <span className="pointer-events-none hidden sm:block sm:w-full">
                     Disable sounds
                   </span>
                 </>
               ) : (
                 <>
                   <VolumeUpIcon className="h-6 w-4" />{' '}
-                  <span className="hidden sm:block sm:w-full">
+                  <span className="pointer-events-none hidden sm:block sm:w-full">
                     Enable sounds
                   </span>
                 </>
@@ -125,7 +125,9 @@ export default function UserPage() {
               className="flex h-full gap-2 sm:w-full"
             >
               <MailIcon className="h-6 w-4" />{' '}
-              <span className="hidden sm:block sm:w-full">Update email</span>
+              <span className="pointer-events-none hidden sm:block sm:w-full">
+                Update email
+              </span>
             </Button>
           </Form>
           <br />
@@ -138,7 +140,7 @@ export default function UserPage() {
           <br className="flex-1" />
           <span className="flex-1 sm:hidden" />
           <Button
-            className="flex gap-2"
+            className="flex sm:w-full "
             onClick={() => setIsDeleteDialogOpen(true)}
           >
             <TrashIcon className="h-6 w-4" />

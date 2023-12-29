@@ -57,9 +57,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   return (
     <article
       id={item.id}
-      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:border-t-0 sm:p-4 sm:pt-4 sm:shadow-md ${props.wrapperClassName}`}
+      className={`flex flex-col gap-1 border-b py-4 dark:border-b-slate-600 sm:rounded-lg sm:p-4 sm:pt-4 sm:shadow-md dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
     >
-      <span className="flex w-full justify-between gap-2">
+      <span className="flex w-full justify-between gap-2 dark:text-white">
         <Link to={`/channels/${channel.id}`} className=" truncate ">
           {props.query ? (
             <Highlight input={channel.title} query={props.query} />
@@ -75,7 +75,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               value: String(!read),
               Icon: ReadIcon,
               title: !read ? 'Mark as read' : 'Mark as not read yet',
-              className: 'hover:bg-green-200',
+              className: 'hover:bg-green-200 dark:hover:bg-slate-900',
               playSubmit: read ? playCancel : playConfirm,
             },
             {
@@ -86,7 +86,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               title: !bookmarked
                 ? 'Bookmark article'
                 : 'Remove from bookmarked articles',
-              className: 'hover:bg-yellow-100',
+              className: 'hover:bg-yellow-100 dark:hover:bg-slate-900',
               playSubmit: bookmarked ? playCancel : playConfirm,
             },
           ].map((formItem) => (
@@ -100,14 +100,16 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
               <button
                 type="submit"
-                className={'relative rounded p-1'.concat(formItem.className)}
+                className={'relative rounded p-1 '.concat(formItem.className)}
                 data-silent
                 aria-label={formItem.title}
                 onClick={() => formItem.playSubmit()}
               >
                 <formItem.Icon
                   className={`w-4  ${
-                    formItem.value === 'false' ? 'text-black' : ''
+                    formItem.value === 'false'
+                      ? 'text-black dark:text-white'
+                      : ''
                   } pointer-events-none ${formItem.className}`}
                 />
                 <Tooltip>{formItem.title}</Tooltip>
@@ -119,15 +121,14 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
       <Href
         href={item.link}
-        className="mt-2  bg-white text-lg text-slate-900   visited:text-violet-900"
+        className="mt-2 text-lg text-slate-900 visited:text-violet-900 dark:text-white dark:visited:text-violet-200"
       >
         {item.imageUrl && !props.hideImage && (
           <img
             alt="Article header decoration"
             src={item.imageUrl}
-            className="mb-2 h-auto w-full rounded-lg bg-slate-50 italic sm:rounded-none"
+            className="mb-2 h-auto w-full rounded-lg bg-slate-50 italic dark:bg-slate-950 sm:rounded-none"
             loading="lazy"
-            // style={{ aspectRatio: '1.4' }}
           />
         )}
         {props.query ? (
@@ -136,14 +137,14 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           item.title
         )}
       </Href>
-      <span className="flex gap-1 text-slate-500">
+      <span className="flex gap-1 text-slate-500 dark:text-slate-400">
         {item.author}
         <TimeFromNow date={new Date(item.pubDate)} />
       </span>
       <span className="my-1 flex gap-1 text-sm">
         <ChannelCategoryLinks category={channel.category} />
       </span>
-      <p className="line-clamp-10">
+      <p className="line-clamp-10 dark:text-white">
         {props.query ? (
           <Highlight query={props.query} input={description.slice(0, 500)} />
         ) : (

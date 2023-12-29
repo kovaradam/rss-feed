@@ -36,7 +36,7 @@ import {
 import { requireUserId } from '~/session.server';
 import React from 'react';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
-import { Button } from '~/components/Button';
+import { Button, buttonStyle } from '~/components/Button';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
@@ -174,10 +174,10 @@ export default function ChannelDetailsPage() {
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
         <div className="flex flex-col gap-2 pt-2">
-          <span className="flex items-center gap-1 text-slate-500">
+          <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
             <Href href={channel.link}>{channel.link}</Href>
           </span>
-          <span className="flex flex-wrap items-center gap-1 text-slate-500">
+          <span className="flex flex-wrap items-center gap-1 text-slate-500 dark:text-slate-400">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
               <>
@@ -194,7 +194,7 @@ export default function ChannelDetailsPage() {
             )}
           </span>
           <WithEditLink name={'new-category'}>
-            <span className="flex items-center gap-1 text-slate-500">
+            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
               <BookmarkIcon className="h-4" />
               {category ? (
                 <ChannelCategoryLinks category={category} />
@@ -204,7 +204,7 @@ export default function ChannelDetailsPage() {
             </span>
           </WithEditLink>
           <WithEditLink name={'language'}>
-            <span className="flex items-center gap-1 text-slate-500">
+            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
               <TranslateIcon className="h-4" />
               {channel.language || 'Language is missing'}
             </span>
@@ -212,9 +212,11 @@ export default function ChannelDetailsPage() {
         </div>
         <div className="py-6">
           <WithEditLink name={'description'}>
-            <span className="text-slate-500">Description</span>
+            <span className="text-slate-500 dark:text-slate-400">
+              Description
+            </span>
           </WithEditLink>
-          <p className="text">
+          <p className="dark:text-slate-300">
             {data.channel.description || 'Description is missing'}
           </p>
         </div>
@@ -255,9 +257,9 @@ export default function ChannelDetailsPage() {
           </div>
         )}
 
-        <hr className="mb-8 " />
+        <hr className="mb-8 dark:border-slate-600" />
 
-        <h4 className="pb-2 text-2xl font-medium">Articles</h4>
+        <h4 className="pb-2 text-2xl font-medium dark:text-white">Articles</h4>
         {items.map((item) => (
           <React.Fragment key={item.id}>
             <ChannelItemDetail
@@ -278,8 +280,9 @@ export default function ChannelDetailsPage() {
                 },
               }}
               formMethod="put"
-              wrapperClassName="sm:shadow-none sm:px-0 sm:rounded-none"
+              wrapperClassName=" sm:shadow-none sm:px-0 sm:rounded-none dark:sm:bg-transparent dark:sm:border-b-slate-600 dark:sm:border-b"
             />
+            <hr className="hidden dark:block dark:border-slate-600" />
           </React.Fragment>
         ))}
         {data.cursor && (
@@ -308,12 +311,9 @@ export default function ChannelDetailsPage() {
             <div className="flex-1 text-center">Refresh</div>
           </Button>
         </Form>
-        <Link
-          to="edit"
-          className="flex w-fit items-center gap-2 rounded bg-slate-100 px-4 py-2 text-slate-700 hover:bg-slate-200 sm:w-full"
-        >
+        <Link to="edit" className={buttonStyle.concat(' sm:w-full')}>
           <PencilIcon className="w-4" />
-          <div className="flex-1 text-center">Edit</div>
+          <div className="pointer-events-none flex-1 text-center">Edit</div>
         </Link>
         <br />
         <Form
@@ -331,7 +331,9 @@ export default function ChannelDetailsPage() {
             isLoading={transition.formMethod === 'DELETE'}
           >
             <TrashIcon className="w-4" />{' '}
-            <span className="hidden flex-1 text-center sm:block">Delete</span>
+            <span className="pointer-events-none hidden flex-1 text-center sm:block">
+              Delete
+            </span>
           </Button>
         </Form>
       </AsideWrapper>
@@ -364,7 +366,7 @@ function WithEditLink(props: {
   const [isHover, setIsHover] = React.useState(false);
   return (
     <div
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 dark:text-white"
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >

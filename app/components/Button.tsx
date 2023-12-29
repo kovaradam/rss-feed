@@ -18,7 +18,7 @@ export function Button({
     <button
       {...buttonProps}
       disabled={buttonProps.disabled || isLoading}
-      className={`rounded px-4 py-2 ${buttonStyle} ${buttonProps.className}`}
+      className={`${buttonStyle} ${buttonProps.className}`}
     >
       {buttonProps.children}
     </button>
@@ -26,7 +26,7 @@ export function Button({
 }
 
 export const buttonStyle =
-  'px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300';
+  'flex w-fit items-center gap-2 rounded px-4 py-2 bg-slate-100 dark:bg-slate-500 dark:text-white dark:hover:bg-slate-600 dark:active:bg-slate-500 text-slate-700 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300';
 
 export function SubmitButton({
   isLoading,

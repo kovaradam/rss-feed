@@ -4,6 +4,7 @@ import React from 'react';
 import { Button } from './Button';
 import { ChannelCategories } from './ChannelCategories';
 import { Tooltip } from './Tooltip';
+import { WithFormLabel } from './WithFormLabel';
 
 type Props = {
   fakeInputName: string;
@@ -33,8 +34,7 @@ function CategoryInput(props: Props): JSX.Element {
   };
 
   return (
-    <div className="flex w-full flex-col gap-1">
-      <label htmlFor={showInputId}>Category: </label>
+    <WithFormLabel label="Category:" htmlFor={showInputId}>
       <div className="flex gap-1">
         <ChannelCategories category={props.value} delete={deleteCategory} />
       </div>
@@ -66,8 +66,9 @@ function CategoryInput(props: Props): JSX.Element {
           <Tooltip />
         </Button>
       </div>
+
       <input value={props.value} type="hidden" name={props.name} />
-    </div>
+    </WithFormLabel>
   );
 }
 

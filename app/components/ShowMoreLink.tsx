@@ -13,7 +13,7 @@ export function ShowMoreLink(props: Props): JSX.Element {
   const isLoading = props.isLoading;
   return (
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
-      <button type={'submit'} className="hover:underline">
+      <button type={'submit'} className="hover:underline dark:text-white">
         <input
           type="hidden"
           name={props.cursor.name}

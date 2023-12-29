@@ -75,12 +75,12 @@ export default function ChannelsPage() {
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <div className="flex flex-col  sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
-        <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden">
+        <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white dark:border-b-slate-700 dark:bg-slate-900  dark:text-white sm:relative sm:hidden">
           <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
             <button
               aria-label="Toggle navigation"
               onClick={() => setIsNavExpanded((prev) => !prev)}
-              className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden"
+              className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 dark:hover:bg-slate-800 sm:hidden"
             >
               <MenuAlt2Icon className="w-6" />
             </button>
@@ -91,7 +91,7 @@ export default function ChannelsPage() {
           </div>
         </header>
         <div
-          className="flex justify-center bg-white"
+          className="flex justify-center bg-white dark:bg-slate-900"
           onTouchStart={(event) => {
             event.currentTarget.dataset.touchStartX = String(
               event.targetTouches[0]?.clientX
@@ -112,19 +112,16 @@ export default function ChannelsPage() {
           }}
         >
           <main
-            className={`relative flex h-full min-h-screen w-screen bg-white  2xl:w-2/3 ${
+            className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
-            } duration-200 ease-in sm:translate-x-0`}
-            style={{
-              boxShadow: '-40rem 0 0rem 20rem rgb(241 245 249)',
-            }}
+            } shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] duration-200 ease-in dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] sm:translate-x-0`}
           >
             <NavWrapper
               isExpanded={isNavExpanded}
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-4xl">
+                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold dark:text-slate-300 sm:flex sm:text-4xl">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">
@@ -139,7 +136,7 @@ export default function ChannelsPage() {
                     <PlusIcon className="w-4 " style={{ strokeWidth: '3px' }} />{' '}
                     Add RSS Channel
                   </StyledNavLink>
-                  <hr />
+                  <hr className="dark:border-slate-800" />
                   <StyledNavLink to={`/channels`} end>
                     {isRefreshing ? (
                       <div className={'relative flex items-center'}>
@@ -154,8 +151,8 @@ export default function ChannelsPage() {
                     <Tooltip>Looking for new articles</Tooltip>
                     Feed
                   </StyledNavLink>
-                  <hr />
-                  <h2 className="pl-4 pt-2 text-sm text-slate-600">
+                  <hr className="dark:border-slate-800" />
+                  <h2 className="pl-4 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Collections
                   </h2>
                   <ol>
@@ -171,7 +168,7 @@ export default function ChannelsPage() {
                     ))}
                     <li>
                       <StyledNavLink
-                        className={` hover:bg-slate-100 hover:text-yellow-900`}
+                        className={` hover:bg-slate-100 hover:text-yellow-900 dark:hover:text-slate-300`}
                         to={`/channels/collections/new`}
                       >
                         <PlusIcon className="w-4" />
@@ -179,11 +176,13 @@ export default function ChannelsPage() {
                       </StyledNavLink>
                     </li>
                   </ol>
-                  <hr />
-                  <h2 className="pl-4 pt-2 text-sm text-slate-600">Channels</h2>
+                  <hr className="dark:border-slate-800" />
+                  <h2 className="pl-4 pt-2 text-sm text-slate-600 dark:text-slate-400">
+                    Channels
+                  </h2>
                   {!data.channelListItems ||
                   data.channelListItems.length === 0 ? (
-                    <p className="p-4">No channels yet</p>
+                    <p className="p-4 dark:text-slate-500">No channels yet</p>
                   ) : (
                     <ol>
                       {data.channelListItems?.map((channel) => (
@@ -227,8 +226,8 @@ function StyledNavLink(props: NavLinkProps) {
     <NavLink
       {...props}
       className={(state) =>
-        `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 sm:text-lg ${
-          state.isActive ? ' bg-slate-200 text-slate-600' : ''
+        `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-900 sm:text-lg ${
+          state.isActive ? ' bg-slate-200 text-slate-600 dark:bg-slate-800' : ''
         } ${
           typeof props.className === 'function'
             ? props.className(state)
@@ -245,7 +244,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
   return (
     <>
       <details
-        className="peer relative flex justify-center sm:w-full sm:flex-col-reverse"
+        className="peer relative flex justify-center  sm:w-full sm:flex-col-reverse"
         onBlurCapture={(event) => {
           const thisElement = event.currentTarget;
           const blurTimeout = setTimeout(() => {
@@ -264,21 +263,24 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           {'.user-summary::-webkit-details-marker {display: none}'}
         </style>
 
-        <summary className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100">
+        <summary
+          className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700"
+          aria-label="Toggle user menu"
+        >
           <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
           <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
             {props.user.email}
           </span>
         </summary>
         <ul
-          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col"
+          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md dark:bg-slate-800 sm:bottom-[110%] sm:w-full sm:flex-col "
           tabIndex={0}
         >
           <li>
             <Form action="/logout" method="post" className="w-full">
               <button
                 type="submit"
-                className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+                className="flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
               >
                 <LogoutIcon className="w-4" />
                 <span className="gap-4 whitespace-nowrap">Log out</span>
@@ -289,7 +291,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           <li>
             <a
               href="/channels/user"
-              className="relative flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+              className="relative flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
             >
               <CogIcon className="w-4" />
               <span className="gap-4 whitespace-nowrap">Profile</span>

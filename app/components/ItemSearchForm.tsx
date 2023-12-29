@@ -22,7 +22,7 @@ export function ItemSearchForm(props: {
             500
           );
         }}
-        className={styles.input.concat(' mb-4 py-2')}
+        className={styles.input.concat(' mb-4 py-2 text-center sm:text-left')}
       />
       <button
         type="submit"

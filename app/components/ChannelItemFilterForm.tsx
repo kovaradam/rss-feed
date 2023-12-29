@@ -4,6 +4,7 @@ import React from 'react';
 import type { Channel, ChannelItemsFilter } from '~/models/channel.server';
 import { styles } from '~/styles/shared';
 import { Button } from './Button';
+import { WithFormLabel } from './WithFormLabel';
 
 type Props = {
   filters: Partial<ChannelItemsFilter>;
@@ -44,44 +45,41 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
       >
         <div className="flex flex-col gap-4">
           {filters.after !== undefined && (
-            <fieldset className={labelClassName}>
-              <legend>
-                <label htmlFor="after">Published after</label>
-              </legend>
-              <input
-                name="after"
-                id="after"
-                type="date"
-                key={filters.after}
-                className={inputClassName}
-                defaultValue={filters.after ?? undefined}
-              />
-            </fieldset>
+            <WithFormLabel label="Published after" htmlFor="after">
+              {({ htmlFor }) => (
+                <input
+                  name="after"
+                  id={htmlFor}
+                  type="date"
+                  key={filters.after}
+                  className={inputClassName}
+                  defaultValue={filters.after ?? undefined}
+                />
+              )}
+            </WithFormLabel>
           )}
           {filters.before !== undefined && (
-            <fieldset className={labelClassName}>
-              <legend>
-                <label htmlFor="before">Published before</label>
-              </legend>
-              <input
-                name="before"
-                id="before"
-                type="date"
-                key={filters.before}
-                className={inputClassName}
-                defaultValue={filters.before ?? undefined}
-              />
-            </fieldset>
+            <WithFormLabel htmlFor="before" label="Published before">
+              {({ htmlFor }) => (
+                <input
+                  name="before"
+                  id={htmlFor}
+                  type="date"
+                  key={filters.before}
+                  className={inputClassName}
+                  defaultValue={filters.before ?? undefined}
+                />
+              )}
+            </WithFormLabel>
           )}
         </div>
         <div className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
-            <fieldset className={labelClassName}>
-              <legend>Filter by channels</legend>
+            <WithFormLabel label="Filter by channels">
               <ul className={styles.input.concat('')}>
                 {data.channels?.map((channel) => (
                   <li key={channel.id}>
-                    <label className="flex cursor-pointer items-baseline gap-2 hover:bg-slate-100">
+                    <label className="flex cursor-pointer items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
                       <input
                         key={String(filters.channels)}
                         name="channels"
@@ -99,15 +97,14 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                   <li className="text-slate-500">No channels yet</li>
                 )}
               </ul>
-            </fieldset>
+            </WithFormLabel>
           )}
           {props.filters.channels !== undefined && (
-            <fieldset className={labelClassName}>
-              <legend>Filter by categories</legend>
+            <WithFormLabel label={'Filter by categories'}>
               <ul className={styles.input.concat('')}>
                 {data.categories?.map((category) => (
                   <li key={category}>
-                    <label className="flex cursor-pointer items-baseline gap-1 hover:bg-slate-100">
+                    <label className="flex cursor-pointer items-baseline gap-1 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
                       <input
                         key={String(filters.categories)}
                         name="categories"
@@ -125,11 +122,10 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                   <li className="text-slate-500">No categories yet</li>
                 )}
               </ul>
-            </fieldset>
+            </WithFormLabel>
           )}
           {props.canExcludeRead && (
-            <fieldset className={labelClassName}>
-              <legend>Filter by state</legend>
+            <WithFormLabel label={'Filter by state'}>
               <ul className={styles.input.concat('')}>
                 {[
                   {
@@ -139,7 +135,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                   },
                 ].map((field) => (
                   <li key={field.name}>
-                    <label className="flex cursor-pointer items-baseline gap-1 hover:bg-slate-100">
+                    <label className="flex cursor-pointer items-baseline gap-1 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
                       <input
                         key={String(field.value)}
                         name={field.name}
@@ -154,7 +150,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                   </li>
                 ))}
               </ul>
-            </fieldset>
+            </WithFormLabel>
           )}
         </div>
         {hasFilters && (
@@ -163,9 +159,10 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
               secondary
               form="reset-filters"
               type="submit"
-              className="flex items-center justify-center gap-2"
+              className="w-full "
             >
-              <BanIcon className="w-4" /> Disable filters
+              <BanIcon className="w-4" />
+              <span className="flex-1 items-center">Disable filters</span>
             </Button>
           </fieldset>
         )}
@@ -194,6 +191,3 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
 }
 
 const inputClassName = styles.input;
-
-const labelClassName =
-  'flex flex-row justify-between gap-2 sm:flex-col text-red';
