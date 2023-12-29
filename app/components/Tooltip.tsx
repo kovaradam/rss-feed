@@ -13,10 +13,12 @@ export function Tooltip(
 ) {
   const id = React.useId();
   const elementRef = React.useRef<HTMLDivElement>(null);
+  const positionTimeoutRef = React.useRef(-1);
   const [position, setPosition] = React.useState<Position | null>(null);
   const target = props.target ?? elementRef.current?.parentElement;
 
   const show = React.useCallback(() => {
+    clearTimeout(positionTimeoutRef.current);
     if (!target) {
       return null;
     }
@@ -26,17 +28,24 @@ export function Tooltip(
       top: targetRect.top + (targetRect.bottom - targetRect.top) / 2,
     };
 
-    setPosition({
-      x:
-        props.position?.x ??
-        (targetCenter.left / window.innerWidth > 0.5 ? 'left' : 'right'),
-      y:
-        props.position?.y ??
-        (targetCenter.top / window.innerHeight > 0.5 ? 'top' : 'bottom'),
-    });
+    positionTimeoutRef.current = window.setTimeout(
+      () =>
+        setPosition({
+          x:
+            props.position?.x ??
+            (targetCenter.left / window.innerWidth > 0.5 ? 'left' : 'right'),
+          y:
+            props.position?.y ??
+            (targetCenter.top / window.innerHeight > 0.5 ? 'top' : 'bottom'),
+        }),
+      500
+    );
   }, [target, props.position]);
 
-  const hide = React.useCallback(() => setPosition(null), []);
+  const hide = React.useCallback(() => {
+    clearTimeout(positionTimeoutRef.current);
+    setPosition(null);
+  }, []);
 
   React.useEffect(() => {
     if (!target) {
@@ -78,8 +87,8 @@ export function Tooltip(
 
   return (
     <div
-      className={`absolute z-10 hidden ${
-        position ? 'sm:flex' : ''
+      className={`absolute z-10 ${
+        position ? 'flex' : 'hidden'
       } items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white dark:border`}
       style={{
         left: {
