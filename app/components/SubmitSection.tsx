@@ -11,7 +11,7 @@ export function SubmitSection(props: {
     <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
       <Link
         {...props.cancelProps}
-        className={`${buttonStyle} w-full rounded bg-slate-200 p-2 text-center sm:w-min ${props.cancelProps.className}`}
+        className={`${buttonStyle} w-full justify-center rounded bg-slate-200 p-2 sm:w-min ${props.cancelProps.className}`}
         to={props.cancelProps.to}
       >
         {props.cancelProps.children ?? 'Cancel'}
