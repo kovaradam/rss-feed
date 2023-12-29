@@ -48,12 +48,14 @@ export function Tooltip(
     target.addEventListener('focus', show);
     target.addEventListener('blur', hide);
     target.addEventListener('mouseleave', hide);
+    target.addEventListener('click', hide);
 
     return () => {
       target.removeEventListener('hover', show);
       target.removeEventListener('focus', show);
       target.removeEventListener('blur', hide);
       target.removeEventListener('mouseleave', hide);
+      target.removeEventListener('click', hide);
     };
   }, [id, target, show, hide]);
 
@@ -76,9 +78,10 @@ export function Tooltip(
 
   return (
     <div
-      className="absolute z-10 flex items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white dark:border"
+      className={`absolute z-10 hidden ${
+        position ? 'sm:flex' : ''
+      } items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white dark:border`}
       style={{
-        visibility: position ? 'visible' : 'hidden',
         left: {
           right: '100%',
           'left-box': 0,
