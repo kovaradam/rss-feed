@@ -48,6 +48,7 @@ import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 import { PageHeading } from '~/components/PageHeading';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { Tooltip } from '~/components/Tooltip';
+import { useWebsiteMeta } from '~/hooks/useWebsiteMeta';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -169,14 +170,24 @@ export default function ChannelDetailsPage() {
       }`}
     >
       <UseAppTitle>Channel detail</UseAppTitle>
-      <section className="max-w-[90vw] flex-1">
+      <section className="relative z-0 max-w-[90vw] flex-1">
+        {channel.imageUrl ? (
+          <ChannelImage
+            src={channel.imageUrl}
+            alt={`Decoration for channel ${channel.title}`}
+          />
+        ) : (
+          <MetaImage chanelUrl={new URL(channel.link).origin} />
+        )}
         <WithEditLink name={'title'}>
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
-        <div className="flex flex-col gap-2 pt-2">
+
+        <div className="  flex flex-col gap-2 pt-2 ">
           <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
             <Href href={channel.link}>{channel.link}</Href>
           </span>
+
           <span className="flex flex-wrap items-center gap-1 text-slate-500 dark:text-slate-400">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
@@ -376,6 +387,31 @@ function WithEditLink(props: {
           <PencilIcon className="w-4" />
         </Link>
       )}
+    </div>
+  );
+}
+
+function MetaImage(props: { chanelUrl: string }) {
+  const meta = useWebsiteMeta(props.chanelUrl);
+  if (!meta?.image) {
+    return null;
+  }
+  return (
+    <ChannelImage
+      src={meta.image}
+      alt={meta.imageAlt ?? `Title image of a website ${props.chanelUrl}`}
+    />
+  );
+}
+
+function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  return (
+    <div
+      className={`absolute right-0 -z-10 w-full overflow-hidden rounded ${props.className} `}
+    >
+      <div className='after:content-[" "] relative to-transparent opacity-30 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'>
+        <img {...props} alt={props.alt} className={``} />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useLocation } from '@remix-run/react';
 import React from 'react';
-import { useEvent } from '~/hooks/use-event';
+import { useEvent } from '~/hooks/useEvent';
 
 type Props = {
   isExpanded: boolean;

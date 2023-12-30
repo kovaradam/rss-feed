@@ -16,7 +16,7 @@ export function Details(props: Props): JSX.Element {
     >
       <summary
         className={`flex px-2 ${
-          props.icon ? '' : '[&::-webkit-details-marker]:hidden'
+          props.icon ? '[&::-webkit-details-marker]:hidden' : ''
         }`}
       >
         {props.icon}

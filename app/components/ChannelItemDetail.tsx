@@ -127,7 +127,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           <img
             alt="Article header decoration"
             src={item.imageUrl}
-            className="mb-2 h-auto w-full rounded-lg bg-slate-50 italic dark:bg-slate-950 sm:rounded-none"
+            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 text-sm italic dark:bg-slate-950 sm:rounded-none"
             loading="lazy"
           />
         )}
