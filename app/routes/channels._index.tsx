@@ -1,3 +1,4 @@
+import { FilterIcon } from '@heroicons/react/outline';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
 import { Link, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
@@ -139,7 +140,11 @@ export default function ChannelIndexPage() {
         <section className="min-w-2/3 relative flex-1">
           {transition.state === 'loading' &&
             transition.formMethod === 'GET' && <ChannelItemsOverlay />}
-          <Details className="mb-4 w-full sm:hidden" title="Filter articles">
+          <Details
+            className="mb-4 w-full sm:hidden"
+            title="Filter articles"
+            icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+          >
             <FilterForm />
           </Details>
           <ItemSearchForm
@@ -218,7 +223,11 @@ export default function ChannelIndexPage() {
         </section>
         {channels.length !== 0 && (
           <aside className="hidden pl-4 sm:block ">
-            <Details title="Filter articles" className="w-60">
+            <Details
+              title="Filter articles"
+              className="w-60"
+              icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+            >
               <FilterForm />
             </Details>
           </aside>

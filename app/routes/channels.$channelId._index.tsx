@@ -313,7 +313,7 @@ export default function ChannelDetailsPage() {
         </Form>
         <Link to="edit" className={buttonStyle.concat(' sm:w-full')}>
           <PencilIcon className="w-4" />
-          <div className="pointer-events-none flex-1 text-center">Edit</div>
+          <div className=" flex-1 text-center">Edit</div>
         </Link>
         <br />
         <Form

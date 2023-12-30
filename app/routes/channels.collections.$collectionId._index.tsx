@@ -1,4 +1,4 @@
-import { PencilIcon } from '@heroicons/react/outline';
+import { FilterIcon, PencilIcon } from '@heroicons/react/outline';
 import type { MetaFunction } from '@remix-run/react';
 import {
   Link,
@@ -140,7 +140,11 @@ export default function ChannelIndexPage() {
       <UseAppTitle>{collection.title}</UseAppTitle>
       <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
         <section className="sm:min-w-2/3 relative flex-1 ">
-          <Details title="Filter articles" className="mb-4 w-full sm:hidden">
+          <Details
+            title="Filter articles"
+            className="mb-4 w-full sm:hidden"
+            icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+          >
             <FilterForm />
           </Details>
           <ItemSearchForm
@@ -218,6 +222,7 @@ export default function ChannelIndexPage() {
             <Details
               title="Filter articles"
               className={'mb-2 hidden w-60 sm:flex'}
+              icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
             >
               <FilterForm />
             </Details>
