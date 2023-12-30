@@ -191,17 +191,15 @@ export default function ChannelDetailsPage() {
           <span className="flex flex-wrap items-center gap-1 text-slate-500 dark:text-slate-400">
             <ClockIcon className="h-4" /> Last build date:{' '}
             {data.channel.lastBuildDate ? (
-              <>
-                <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
-                {data.channel.refreshDate && (
-                  <span>
-                    (refreshed{' '}
-                    <TimeFromNow date={new Date(data.channel.refreshDate)} />)
-                  </span>
-                )}
-              </>
+              <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
             ) : (
               'unknown'
+            )}
+            {data.channel.refreshDate && (
+              <span>
+                (refreshed{' '}
+                <TimeFromNow date={new Date(data.channel.refreshDate)} />)
+              </span>
             )}
           </span>
           <WithEditLink name={'new-category'}>
@@ -393,6 +391,7 @@ function WithEditLink(props: {
 
 function MetaImage(props: { chanelUrl: string }) {
   const meta = useWebsiteMeta(props.chanelUrl);
+
   if (!meta?.image) {
     return null;
   }
