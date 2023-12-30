@@ -78,10 +78,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const channelXml = await channelRequest.text();
   let newChannel;
   try {
-    newChannel = await createChannelFromXml(channelXml, {
-      userId: user.id,
-      channelHref: channelUrl.href,
-    });
+    newChannel = await createChannelFromXml(
+      channelXml,
+      {
+        userId: user.id,
+        channelHref: channelUrl.href,
+      },
+      request.signal
+    );
   } catch (error) {
     let response: ActionData;
 

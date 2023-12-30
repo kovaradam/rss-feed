@@ -3,12 +3,14 @@ import type { Channel, Collection, Item, User } from '@prisma/client';
 import type { ItemParseResult } from './parse-xml';
 import { parseChannelXml } from './parse-xml';
 import invariant from 'tiny-invariant';
+import { JSDOM } from 'jsdom';
 
 export type { Channel, Item };
 
 export async function createChannelFromXml(
   xmlInput: string,
-  request: { userId: string; channelHref: string }
+  request: { userId: string; channelHref: string },
+  abortSignal: AbortSignal
 ) {
   let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
   let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
@@ -25,6 +27,7 @@ export async function createChannelFromXml(
   } catch (error) {
     throw new IncorrectDefinitionError();
   }
+
   let dbChannel = null;
   try {
     dbChannel = await getChannel({
@@ -36,6 +39,18 @@ export async function createChannelFromXml(
 
   if (dbChannel) {
     throw new ChannelExistsError(dbChannel);
+  }
+
+  if (!channel.imageUrl) {
+    try {
+      const channelPageMeta = await getChannelPageMeta(
+        new URL(request.channelHref).origin,
+        abortSignal
+      );
+      channel.imageUrl = channelPageMeta.image;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   let newChannel;
@@ -79,7 +94,7 @@ export type ItemWithChannel = Item & { channel: Channel };
 export async function refreshChannel(params: {
   feedUrl: string;
   userId: string;
-  signal?: AbortSignal;
+  signal: AbortSignal;
 }) {
   const channelRequest = await fetch(params.feedUrl, { signal: params.signal });
   const channelXml = await channelRequest.text();
@@ -108,6 +123,27 @@ export async function refreshChannel(params: {
       },
     },
   });
+
+  if (!updatedChannel.imageUrl) {
+    getChannelPageMeta(new URL(updatedChannel.link).origin, params.signal)
+      .then((meta) => {
+        if (!meta.image) {
+          return;
+        }
+        updateChannel({
+          where: {
+            feedUrl_userId: {
+              feedUrl: params.feedUrl,
+              userId: params.userId,
+            },
+          },
+          data: {
+            imageUrl: meta.image,
+          },
+        });
+      })
+      .catch(console.error);
+  }
 
   return { updatedChannel, newItemCount: newItems.length };
 }
@@ -274,3 +310,20 @@ export class ChannelExistsError extends Error {
 export class UnavailableDbError extends Error {}
 
 export class IncorrectDefinitionError extends Error {}
+
+async function getChannelPageMeta(url: string, signal: AbortSignal) {
+  const response = await fetch(url, {
+    signal: signal,
+  });
+  const { window } = new JSDOM(await response.arrayBuffer());
+
+  function getContent(selector: string) {
+    const node = window.document.querySelector(selector);
+    return node?.getAttribute('content');
+  }
+
+  return {
+    image: getContent('meta[property$="image"], meta[name$="image"]'),
+    imageAlt: getContent('meta[property$="image:alt"]'),
+  };
+}

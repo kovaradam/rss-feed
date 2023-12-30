@@ -48,7 +48,6 @@ import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 import { PageHeading } from '~/components/PageHeading';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { Tooltip } from '~/components/Tooltip';
-import { useWebsiteMeta } from '~/hooks/useWebsiteMeta';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -136,7 +135,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   invariant(channel, 'Channel could not be loaded');
   try {
-    await refreshChannel({ feedUrl: channel.feedUrl, userId });
+    await refreshChannel({
+      feedUrl: channel.feedUrl,
+      userId,
+      signal: request.signal,
+    });
   } catch (error) {
     console.error(error);
   }
@@ -171,13 +174,11 @@ export default function ChannelDetailsPage() {
     >
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="relative z-0 max-w-[90vw] flex-1">
-        {channel.imageUrl ? (
+        {channel.imageUrl && (
           <ChannelImage
             src={channel.imageUrl}
             alt={`Decoration for channel ${channel.title}`}
           />
-        ) : (
-          <MetaImage chanelUrl={new URL(channel.link).origin} />
         )}
         <WithEditLink name={'title'}>
           <PageHeading>{data.channel.title}</PageHeading>
@@ -389,26 +390,12 @@ function WithEditLink(props: {
   );
 }
 
-function MetaImage(props: { chanelUrl: string }) {
-  const meta = useWebsiteMeta(props.chanelUrl);
-
-  if (!meta?.image) {
-    return null;
-  }
-  return (
-    <ChannelImage
-      src={meta.image}
-      alt={meta.imageAlt ?? `Title image of a website ${props.chanelUrl}`}
-    />
-  );
-}
-
 function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return (
     <div
       className={`absolute right-0 -z-10 w-full overflow-hidden rounded ${props.className} `}
     >
-      <div className='after:content-[" "] relative to-transparent opacity-30 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'>
+      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'>
         <img {...props} alt={props.alt} className={``} />
       </div>
     </div>
