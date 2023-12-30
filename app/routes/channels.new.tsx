@@ -16,8 +16,12 @@ import { UseAppTitle } from '~/components/AppTitle';
 import { PageHeading } from '~/components/PageHeading';
 import { SubmitSection } from '~/components/SubmitSection';
 import { WithFormLabel } from '~/components/WithFormLabel';
-import type { CreateFromXmlErrorType } from '~/models/channel.server';
-import { createChannelFromXml } from '~/models/channel.server';
+import {
+  ChannelExistsError,
+  IncorrectDefinitionError,
+  UnavailableDbError,
+  createChannelFromXml,
+} from '~/models/channel.server';
 import { storeFailedUpload } from '~/models/failed-upload.server';
 import { requireUser } from '~/session.server';
 import { styles } from '~/styles/shared';
@@ -81,22 +85,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   } catch (error) {
     let response: ActionData;
 
-    switch ((error as Error).message as CreateFromXmlErrorType) {
-      case 'cannotAccessDb':
+    switch (true) {
+      case error instanceof ChannelExistsError:
+        response = {
+          create: `RSS feed with this address already exists, see channel "${
+            (error as ChannelExistsError).channel.title
+          }"`,
+        };
+        break;
+      case error instanceof UnavailableDbError:
         response = {
           create: 'Cannot save RSS feed at this moment, please try later',
         };
         break;
-      case 'channelExists':
-        response = {
-          create:
-            'RSS feed with this address already exists, see the list of your channels',
-        };
-        break;
-      case 'incorrectDefinition':
+      case error instanceof IncorrectDefinitionError:
         response = {
           'xml-parse':
-            'Could not parse RSS definition, make sure you provided a correct URL',
+            'Could not parse RSS definition, please make sure you provided a correct URL',
         };
         break;
       default:

@@ -6,12 +6,6 @@ import invariant from 'tiny-invariant';
 
 export type { Channel, Item };
 
-export type CreateFromXmlErrorType =
-  | 'channelExists'
-  | 'incorrectDefinition'
-  | 'cannotAccessDb'
-  | 'prismaError';
-
 export async function createChannelFromXml(
   xmlInput: string,
   request: { userId: string; channelHref: string }
@@ -29,7 +23,7 @@ export async function createChannelFromXml(
     );
     invariant(channel.title, 'Title is missing in the RSS definition');
   } catch (error) {
-    throw createError('incorrectDefinition');
+    throw new IncorrectDefinitionError();
   }
   let dbChannel = null;
   try {
@@ -37,11 +31,11 @@ export async function createChannelFromXml(
       where: { link: channel.link, userId: request.userId },
     });
   } catch (error) {
-    throw createError('cannotAccessDb');
+    throw new UnavailableDbError();
   }
 
   if (dbChannel) {
-    throw createError('channelExists');
+    throw new ChannelExistsError(dbChannel);
   }
 
   let newChannel;
@@ -54,7 +48,7 @@ export async function createChannelFromXml(
     });
   } catch (error) {
     console.error(error);
-    throw createError('prismaError');
+    throw error;
   }
 
   return newChannel;
@@ -257,10 +251,6 @@ export async function getItemsByFilters(
   return items;
 }
 
-function createError(cause: CreateFromXmlErrorType) {
-  return new Error(cause);
-}
-
 export function getItemQueryFilter(query: string) {
   if (!query) {
     return {};
@@ -274,3 +264,13 @@ export function getItemQueryFilter(query: string) {
     ],
   };
 }
+
+export class ChannelExistsError extends Error {
+  constructor(public channel: Channel) {
+    super();
+  }
+}
+
+export class UnavailableDbError extends Error {}
+
+export class IncorrectDefinitionError extends Error {}
