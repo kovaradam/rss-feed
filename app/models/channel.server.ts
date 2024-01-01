@@ -170,7 +170,10 @@ export async function updateChannel(
 export async function getChannels(
   params: Parameters<typeof prisma.channel.findMany>[0]
 ) {
-  return prisma.channel.findMany(params);
+  return prisma.channel.findMany({
+    ...params,
+    orderBy: { title: 'asc', ...params?.orderBy },
+  });
 }
 
 export async function deleteChannels() {

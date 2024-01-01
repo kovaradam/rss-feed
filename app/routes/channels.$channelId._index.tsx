@@ -174,12 +174,7 @@ export default function ChannelDetailsPage() {
     >
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="relative z-0 max-w-[90vw] flex-1">
-        {channel.imageUrl && (
-          <ChannelImage
-            src={channel.imageUrl}
-            alt={`Decoration for channel ${channel.title}`}
-          />
-        )}
+        {channel.imageUrl && <ChannelImage src={channel.imageUrl} />}
         <WithEditLink name={'title'}>
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
@@ -393,11 +388,9 @@ function WithEditLink(props: {
 function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return (
     <div
-      className={`absolute right-0 -z-10 w-full overflow-hidden rounded ${props.className} `}
+      className={`absolute right-0 -z-10 w-full overflow-hidden rounded ${props.className} bg-[url(${props.src})]`}
     >
-      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'>
-        <img {...props} alt={props.alt} className={``} />
-      </div>
+      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'></div>
     </div>
   );
 }

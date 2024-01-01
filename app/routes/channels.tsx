@@ -35,8 +35,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
   const channelListItems = await getChannels({
     where: { userId: user.id },
-    select: { id: true, title: true, feedUrl: true, items: true },
-    orderBy: { title: 'asc' },
+    select: { id: true, title: true },
   });
 
   const collectionListItems = await getCollections({
