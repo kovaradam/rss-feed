@@ -388,9 +388,15 @@ function WithEditLink(props: {
 function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return (
     <div
-      className={`absolute right-0 -z-10 w-full overflow-hidden rounded ${props.className} bg-[url(${props.src})]`}
+      className={`absolute right-0 -z-10 w-full overflow-hidden rounded ${props.className}`}
     >
-      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'></div>
+      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-60% dark:after:to-slate-900'>
+        <img
+          {...props}
+          alt={props.alt}
+          className={`border-none text-transparent`}
+        />
+      </div>{' '}
     </div>
   );
 }
