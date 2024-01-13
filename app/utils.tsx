@@ -80,18 +80,18 @@ export function createTitle(input: string): string {
 export function createMeta(metaFunction?: MetaFunction): MetaFunction {
   return (metaArgs) => {
     const meta = metaFunction?.(metaArgs);
-    const title = (
-      meta?.find((entry) => Object.keys(entry).includes('title')) as Record<
-        'title',
-        string
-      >
-    )?.title;
+    const title =
+      (metaArgs.data as Record<'title', string>)?.title ??
+      (
+        meta?.find((entry) => Object.keys(entry).includes('title')) as Record<
+          'title',
+          string
+        >
+      )?.title;
 
     return (meta ?? []).concat([
       {
-        title: `Journal | ${
-          (metaArgs.data as Record<'title', string>)?.title ?? title
-        }`,
+        title: `Journal | ${title}`,
       },
     ]);
   };

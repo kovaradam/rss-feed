@@ -57,7 +57,6 @@ export default function App() {
     <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>
         <meta charSet="utf-8" />
-        <title>RSS Journal</title>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta
           name="description"
