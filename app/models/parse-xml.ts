@@ -1,4 +1,4 @@
-import type { Channel, Enclosure, Item } from '@prisma/client';
+import type { Channel, Item } from '@prisma/client';
 import { parseStringPromise } from 'xml2js';
 
 export type ChannelResult = Partial<
@@ -165,7 +165,11 @@ class ItemDataTransformer {
       comments: this.itemData?.comments?.[0] ?? '',
       pubDate: this.pubDate,
       imageUrl:
-        (this.itemData?.enclosure as { $: Enclosure }[] | undefined)
+        (
+          this.itemData?.enclosure as
+            | { $: { type: string; url: string } }[]
+            | undefined
+        )
           ?.map((payload) => payload?.['$'])
           .filter(Boolean)
           .find((enclosure) => enclosure.type?.includes('image'))?.url ?? '',

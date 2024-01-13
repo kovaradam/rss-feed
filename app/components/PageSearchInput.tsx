@@ -1,9 +1,10 @@
 import React from 'react';
 import { styles } from '~/styles/shared';
 
-export function ItemSearchForm(props: {
+export function PageSearchInput(props: {
   defaultValue?: string;
   formId: string;
+  placeholder?: string;
 }) {
   const submitButtonRef = React.useRef<HTMLButtonElement>(null);
   const debounceId = React.useRef(-1);
@@ -13,8 +14,9 @@ export function ItemSearchForm(props: {
       <input
         form={props.formId}
         name="q"
+        type="search"
         defaultValue={props.defaultValue}
-        placeholder="Search in articles"
+        placeholder={props.placeholder}
         onChange={() => {
           window.clearTimeout(debounceId.current);
           debounceId.current = window.setTimeout(

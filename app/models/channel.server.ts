@@ -195,6 +195,73 @@ export async function getChannelItems<
   return prisma.item.findMany(params);
 }
 
+export async function getChannelItem(itemId: string, userId: string) {
+  return prisma.item.findFirst({
+    where: { id: itemId, channel: { userId: userId } },
+  });
+}
+
+export async function getQuotesByUser(userId: string, query: string | null) {
+  const queryFilter = query ? { contains: query as string } : undefined;
+  return prisma.quote.findMany({
+    where: {
+      item: {
+        channel: { userId },
+      },
+      content: queryFilter,
+    },
+    orderBy: { createdAt: 'desc' },
+    select: {
+      content: true,
+      createdAt: true,
+      id: true,
+      itemId: true,
+      item: {
+        select: {
+          title: true,
+          id: true,
+          channel: {
+            select: {
+              title: true,
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function getQuotesByItem(itemId: string, userId: string) {
+  return prisma.quote.findMany({
+    where: { itemId, item: { channel: { userId } } },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function addQuoteToItem(
+  content: string,
+  { itemId, userId }: { itemId: string; userId: string }
+) {
+  const item = await prisma.item.findFirst({
+    where: { id: itemId, channel: { userId } },
+  });
+  invariant(item);
+  return prisma.quote.create({
+    data: { content: content.slice(0, 1000), itemId: item.id },
+  });
+}
+
+export async function deleteQuote(id: string, userId: string) {
+  const item = await prisma.item.findFirst({
+    where: { quotes: { some: { id } }, channel: { userId } },
+  });
+  invariant(item);
+  return prisma.quote.delete({
+    where: { id },
+  });
+}
+
 export async function updateChannelItem(
   params: Parameters<typeof prisma.item.update>[0]
 ) {

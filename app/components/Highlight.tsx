@@ -2,6 +2,9 @@ import React from 'react';
 
 export function Highlight(props: { query: string; input: string }) {
   const elements = React.useMemo(() => {
+    if (!props.query) {
+      return [{ element: props.input, key: 0 }];
+    }
     const startIndices: number[] = [];
     const query = props.query.toLowerCase();
     const input = props.input.toLowerCase();
@@ -12,9 +15,9 @@ export function Highlight(props: { query: string; input: string }) {
       startIndices.push(lastIdx);
       lastIdx = input.indexOf(query, lastIdx + 1);
     }
-
+    let key = 0;
     let elements: { element: React.ReactNode; key: number }[] = [
-      { element: props.input.slice(0, startIndices[0]), key: 0 },
+      { element: props.input.slice(0, startIndices[0]), key: key++ },
     ];
 
     startIndices.forEach((startIdx, arrayIdx) => {
@@ -24,14 +27,14 @@ export function Highlight(props: { query: string; input: string }) {
             {props.input.slice(startIdx, startIdx + props.query.length)}
           </strong>
         ),
-        key: startIdx,
+        key: key++,
       });
       elements.push({
         element: props.input.slice(
           startIdx + props.query.length,
           startIndices[arrayIdx + 1]
         ),
-        key: startIdx + props.query.length,
+        key: key++,
       });
     });
     return elements;

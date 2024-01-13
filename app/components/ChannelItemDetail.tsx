@@ -144,13 +144,19 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       <span className="my-1 flex gap-1 text-sm">
         <ChannelCategoryLinks category={channel.category} />
       </span>
-      <p className="line-clamp-10 dark:text-white">
+      <p className="line-clamp-10 dark:text-white ">
         {props.query ? (
           <Highlight query={props.query} input={description.slice(0, 500)} />
         ) : (
           description
         )}
       </p>
+      <Link
+        to={`/channels/${channel.id}/articles/${item.id}`}
+        className="pt-1 text-slate-500 dark:text-slate-400"
+      >
+        See details
+      </Link>
     </article>
   );
 }

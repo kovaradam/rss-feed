@@ -10,7 +10,7 @@ export function Href(props: Props): JSX.Element {
       rel="noopener noreferrer"
       className={`underline ${props.className}`}
     >
-      {props.children}
+      {props.children ?? props.href}
     </a>
   );
 }

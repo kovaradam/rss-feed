@@ -1,5 +1,6 @@
 import {
   ArchiveIcon,
+  ChatAltIcon,
   CogIcon,
   HomeIcon,
   KeyIcon,
@@ -140,21 +141,43 @@ export default function ChannelsPage() {
                     <PlusIcon className="w-4 " style={{ strokeWidth: '3px' }} />{' '}
                     Add RSS Channel
                   </StyledNavLink>
-                  <hr className="dark:border-slate-800" />
-                  <StyledNavLink to={`/channels`} end>
-                    {isRefreshing ? (
-                      <div className={'relative flex items-center'}>
-                        <RefreshIcon
-                          className={`w-4 rotate-180 animate-spin`}
-                        />
-                        <Tooltip>Looking for new articles</Tooltip>
-                      </div>
-                    ) : (
-                      <HomeIcon className="w-4" />
-                    )}
-                    <Tooltip>Looking for new articles</Tooltip>
-                    Feed
-                  </StyledNavLink>
+                  {[
+                    {
+                      to: `/channels`,
+                      content: (
+                        <>
+                          {isRefreshing ? (
+                            <div className={'relative flex items-center'}>
+                              <RefreshIcon
+                                className={`w-4 rotate-180 animate-spin`}
+                              />
+                              <Tooltip>Looking for new articles</Tooltip>
+                            </div>
+                          ) : (
+                            <HomeIcon className="w-4" />
+                          )}
+                          <Tooltip>Looking for new articles</Tooltip>
+                          Feed
+                        </>
+                      ),
+                    },
+                    {
+                      to: '/channels/quotes',
+                      content: (
+                        <>
+                          <ChatAltIcon className="w-4" />
+                          Quotes
+                        </>
+                      ),
+                    },
+                  ].map((link) => (
+                    <React.Fragment key={link.to}>
+                      <hr className="dark:border-slate-800" />
+                      <StyledNavLink to={link.to} end>
+                        {link.content}
+                      </StyledNavLink>
+                    </React.Fragment>
+                  ))}
                   <hr className="dark:border-slate-800" />
                   <h2 className="pl-4 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Collections

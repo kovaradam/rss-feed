@@ -48,6 +48,7 @@ import refreshSound from 'public/sounds/ui_refresh-feed.wav';
 import { PageHeading } from '~/components/PageHeading';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail';
 import { Tooltip } from '~/components/Tooltip';
+import { DescriptionList } from '~/components/DescriptionList';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -179,52 +180,66 @@ export default function ChannelDetailsPage() {
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
 
-        <div className="  flex flex-col gap-2 pt-2 ">
-          <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
-            <Href href={channel.link}>{channel.link}</Href>
+        <DescriptionList className="pt-2 ">
+          <span className="flex items-center gap-1 ">
+            <DescriptionList.Detail>
+              <Href href={channel.link}>{channel.link}</Href>
+            </DescriptionList.Detail>
           </span>
 
-          <span className="flex flex-wrap items-center gap-1 text-slate-500 dark:text-slate-400">
-            <ClockIcon className="h-4" /> Last build date:{' '}
-            {data.channel.lastBuildDate ? (
-              <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
-            ) : (
-              'unknown'
-            )}
-            {data.channel.refreshDate && (
-              <span>
-                (refreshed{' '}
-                <TimeFromNow date={new Date(data.channel.refreshDate)} />)
-              </span>
-            )}
+          <span className="flex flex-wrap items-center gap-1 ">
+            <DescriptionList.Term className="flex items-center gap-1">
+              <ClockIcon className="h-4" /> Last build date:
+            </DescriptionList.Term>
+            <DescriptionList.Detail className="flex flex-wrap gap-1">
+              {data.channel.lastBuildDate ? (
+                <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+              ) : (
+                'unknown'
+              )}
+              {data.channel.refreshDate && (
+                <span>
+                  (refreshed{' '}
+                  <TimeFromNow date={new Date(data.channel.refreshDate)} />)
+                </span>
+              )}
+            </DescriptionList.Detail>
           </span>
           <WithEditLink name={'new-category'}>
-            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
-              <BookmarkIcon className="h-4" />
-              {category ? (
-                <ChannelCategoryLinks category={category} />
-              ) : (
-                'Category is missing'
-              )}
+            <span className="flex items-center gap-1 ">
+              <DescriptionList.Term className="flex items-center gap-1">
+                <BookmarkIcon className="h-4" /> Bookmarks:
+              </DescriptionList.Term>
+              <DescriptionList.Detail className="flex flex-wrap gap-1">
+                {category ? (
+                  <ChannelCategoryLinks category={category} />
+                ) : (
+                  'Category is missing'
+                )}
+              </DescriptionList.Detail>
             </span>
           </WithEditLink>
           <WithEditLink name={'language'}>
-            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
-              <TranslateIcon className="h-4" />
-              {channel.language || 'Language is missing'}
+            <span className="flex items-center gap-1 ">
+              <DescriptionList.Term className="flex items-center gap-1">
+                <TranslateIcon className="h-4" /> Language:
+              </DescriptionList.Term>
+              <DescriptionList.Detail>
+                {channel.language || 'Language is missing'}
+              </DescriptionList.Detail>
             </span>
           </WithEditLink>
-        </div>
-        <div className="py-6">
-          <WithEditLink name={'description'}>
-            <span className="text-slate-500 dark:text-slate-400">
-              Description
-            </span>
-          </WithEditLink>
-          <p className="dark:text-slate-300">
-            {data.channel.description || 'Description is missing'}
-          </p>
-        </div>
+          <div className="py-6">
+            <WithEditLink name={'description'}>
+              <DescriptionList.Term>Description:</DescriptionList.Term>
+            </WithEditLink>
+            <DescriptionList.Detail>
+              <p className="text-slate-900 dark:text-slate-300">
+                {data.channel.description || 'Description is missing'}
+              </p>
+            </DescriptionList.Detail>
+          </div>
+        </DescriptionList>
 
         {isParseErrors && (
           <div className="pb-6">

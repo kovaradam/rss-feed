@@ -75,6 +75,8 @@ model Item {
   channelId String
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
+  quotes Quote[]
+
   @@unique([id, channelId])
 }
 
@@ -84,12 +86,6 @@ model Image {
   link  String
 
   channelLink String
-}
-
-model Enclosure {
-  id   String @id @default(cuid())
-  url  String
-  type String
 }
 
 model Collection {
@@ -108,4 +104,14 @@ model Collection {
 model FailedChannelUpload {
   link  String @id
   error String
+}
+
+model Quote {
+  id      String @id @default(cuid())
+  content String
+
+  createdAt DateTime @default(now())
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
 }

@@ -11,7 +11,7 @@ import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { ItemSearchForm } from '~/components/ItemSearchForm';
+import { PageSearchInput } from '~/components/PageSearchInput';
 import { NewItemsAlert } from '~/components/NewItemsAlert';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
@@ -147,9 +147,10 @@ export default function ChannelIndexPage() {
           >
             <FilterForm />
           </Details>
-          <ItemSearchForm
+          <PageSearchInput
             defaultValue={filters.q ?? undefined}
             formId={'filter-form'}
+            placeholder="Search in articles"
           />
           <NewItemsAlert />
 

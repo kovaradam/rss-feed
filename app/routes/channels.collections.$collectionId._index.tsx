@@ -23,7 +23,7 @@ import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { ItemSearchForm } from '~/components/ItemSearchForm';
+import { PageSearchInput } from '~/components/PageSearchInput';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import type { ItemWithChannel } from '~/models/channel.server';
 import {
@@ -147,9 +147,10 @@ export default function ChannelIndexPage() {
           >
             <FilterForm />
           </Details>
-          <ItemSearchForm
+          <PageSearchInput
             formId={'filter-form'}
             defaultValue={filters.q ?? undefined}
+            placeholder="Search in articles"
           />
           {transition.state === 'loading' &&
             transition.formMethod === 'GET' && <ChannelItemsOverlay />}

@@ -8,7 +8,9 @@ type Props = {
 };
 
 export function WithFormLabel(props: Props): JSX.Element {
-  const { label, required, htmlFor, children, ...legendProps } = props;
+  const { label, required, children, ...legendProps } = props;
+  const id = React.useId();
+  const htmlFor = props.htmlFor ?? id;
 
   return (
     <fieldset className="flex w-full flex-col gap-1">
