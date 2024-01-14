@@ -1,5 +1,10 @@
-import { ClockIcon, TrashIcon, UserIcon } from '@heroicons/react/outline';
-import { useFetcher, useLoaderData } from '@remix-run/react';
+import {
+  ChevronDoubleLeftIcon,
+  ClockIcon,
+  TrashIcon,
+  UserIcon,
+} from '@heroicons/react/outline';
+import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import {
   json,
   type ActionFunctionArgs,
@@ -13,6 +18,7 @@ import { SubmitButton } from '~/components/Button';
 import { DescriptionList } from '~/components/DescriptionList';
 import { Href } from '~/components/Href';
 import { PageHeading } from '~/components/PageHeading';
+import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { TimeFromNow } from '~/components/TimeFromNow';
 import { WithFormLabel } from '~/components/WithFormLabel';
 import {
@@ -47,7 +53,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const quote = form.get('quote');
 
   if (!quote || typeof quote !== 'string') {
-    return json({ quote: 'Please provide a quote content' });
+    return json({ error: 'Please provide a quote content' });
   }
 
   const result = await addQuoteToItem(quote, { itemId, userId });
@@ -58,20 +64,38 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
   const item = await getChannelItem(params.itemId as string, userId);
-  const quotes = await getQuotesByItem(params.itemId as string, userId);
+  const countParam = new URL(request.url).searchParams.get('count');
+  const quoteCount =
+    !countParam || isNaN(Number(countParam)) ? 30 : Number(countParam);
+
+  const [quotes, totalQuoteCount] = await getQuotesByItem(
+    params.itemId as string,
+    userId,
+    {
+      count: quoteCount,
+    }
+  );
 
   if (!item) {
     throw new Response('Not found', { status: 404 });
   }
 
-  return json({ item, title: item?.title, quotes });
+  return json({
+    item,
+    title: item?.title,
+    quotes,
+    cursor:
+      quotes.length < totalQuoteCount
+        ? { name: 'count', value: String(quotes.length + 10) }
+        : null,
+  });
 }
 
 export default function ItemDetailPage() {
   const data = useLoaderData<typeof loader>();
   const { item } = data;
 
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
   const submittedQuote = fetcher.formData?.get('quote');
   const quotes =
     typeof submittedQuote === 'string'
@@ -88,9 +112,17 @@ export default function ItemDetailPage() {
     return convert(item.description);
   }, [item.description]);
 
+  const formRef = React.useRef<React.ElementRef<'form'>>(null);
+
   return (
     <>
       <UseAppTitle>Article detail</UseAppTitle>
+      <Link
+        to={`/channels/${item.channelId}`}
+        className="mb-2 flex gap-1 text-slate-500 dark:text-slate-400"
+      >
+        <ChevronDoubleLeftIcon className="w-4" /> {item.channel.title}
+      </Link>
       <PageHeading>{item.title}</PageHeading>
       <DescriptionList className="py-2">
         {[
@@ -140,12 +172,17 @@ export default function ItemDetailPage() {
       <h4 className="py-2 text-2xl  font-bold dark:text-white sm:text-2xl">
         Quotes
       </h4>
-      <fetcher.Form method="post">
+      <fetcher.Form
+        method="post"
+        onSubmit={() => setTimeout(() => formRef.current?.reset())}
+        ref={formRef}
+      >
         <WithFormLabel label="New quote">
           {({ htmlFor }) => (
             <div className="flex flex-col gap-2 md:flex-row">
               <textarea
                 name="quote"
+                required
                 id={htmlFor}
                 className={styles.input}
                 maxLength={1000}
@@ -154,6 +191,9 @@ export default function ItemDetailPage() {
             </div>
           )}
         </WithFormLabel>
+        {fetcher.data?.error && (
+          <p className="text-red-700">{fetcher.data?.error}</p>
+        )}
       </fetcher.Form>
 
       <hr className="mt-2" />
@@ -162,6 +202,7 @@ export default function ItemDetailPage() {
           <Quote key={quote.id} {...quote} />
         ))}
       </ul>
+      {data.cursor && <ShowMoreLink cursor={data.cursor} />}
     </>
   );
 }
@@ -178,7 +219,9 @@ function Quote(props: { content: string; createdAt: string; id: string }) {
       key={props.id}
       className="flex flex-col border-b border-dashed py-2  last:border-none"
     >
-      <p className="italic dark:text-white">„{props.content}“</p>
+      <p className="overflow-hidden text-ellipsis italic dark:text-white">
+        „{props.content}“
+      </p>
 
       <div className="flex justify-between text-slate-500 dark:text-slate-400">
         <TimeFromNow date={new Date(props.createdAt)} />
@@ -186,7 +229,7 @@ function Quote(props: { content: string; createdAt: string; id: string }) {
           <input type="hidden" name="intent" value="delete" />
           <input type="hidden" name="id" value={props.id} />
           <button type="submit" aria-label="Delete quote">
-            <TrashIcon className="w-4" />
+            <TrashIcon className="pointer-events-none w-4" />
           </button>
         </fetcher.Form>
       </div>

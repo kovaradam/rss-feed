@@ -233,7 +233,7 @@ export default function ChannelsPage() {
                 transition.formAction?.includes('logout')
                   ? 'animate-pulse opacity-60'
                   : ''
-              }`}
+              } overflow-hidden`}
             >
               <Outlet />
             </div>

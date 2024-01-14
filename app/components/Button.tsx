@@ -37,9 +37,9 @@ export function SubmitButton({
       {...buttonProps}
       disabled={buttonProps.disabled || isLoading}
       type="submit"
-      className={`flex items-center justify-center rounded  bg-rose-600 px-4 py-2 font-medium text-white hover:bg-rose-700 active:bg-rose-500 disabled:bg-rose-500 ${buttonProps.className}`}
+      className={`flex items-center justify-center rounded bg-rose-600  px-4 py-2 font-medium text-white hover:bg-rose-700 active:bg-rose-500 disabled:bg-rose-500 [&>*]:pointer-events-none ${buttonProps.className}`}
     >
-      <span className={`${isLoading ? 'opacity-0' : ''}`}>
+      <span className={`${isLoading ? 'opacity-0' : ''} `}>
         {buttonProps.children}
       </span>
       {isLoading && <SpinnerIcon className="absolute w-4" />}

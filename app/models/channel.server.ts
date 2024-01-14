@@ -198,45 +198,67 @@ export async function getChannelItems<
 export async function getChannelItem(itemId: string, userId: string) {
   return prisma.item.findFirst({
     where: { id: itemId, channel: { userId: userId } },
+    include: {
+      channel: true,
+    },
   });
 }
 
-export async function getQuotesByUser(userId: string, query: string | null) {
-  const queryFilter = query ? { contains: query as string } : undefined;
-  return prisma.quote.findMany({
-    where: {
-      item: {
-        channel: { userId },
-      },
-      content: queryFilter,
+export async function getQuotesByUser(
+  userId: string,
+  params?: { query: string | null; count?: number }
+) {
+  const queryFilter = params?.query
+    ? { contains: params?.query as string }
+    : undefined;
+  const where = {
+    item: {
+      channel: { userId },
     },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      content: true,
-      createdAt: true,
-      id: true,
-      itemId: true,
-      item: {
-        select: {
-          title: true,
-          id: true,
-          channel: {
-            select: {
-              title: true,
-              id: true,
+    content: queryFilter,
+  };
+  return prisma.$transaction([
+    prisma.quote.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        content: true,
+        createdAt: true,
+        id: true,
+        itemId: true,
+        item: {
+          select: {
+            title: true,
+            id: true,
+            channel: {
+              select: {
+                title: true,
+                id: true,
+              },
             },
           },
         },
       },
-    },
-  });
+      take: params?.count ? Math.min(params.count, 1000) : undefined,
+    }),
+    prisma.quote.count({ where }),
+  ]);
 }
 
-export async function getQuotesByItem(itemId: string, userId: string) {
-  return prisma.quote.findMany({
-    where: { itemId, item: { channel: { userId } } },
-    orderBy: { createdAt: 'desc' },
-  });
+export async function getQuotesByItem(
+  itemId: string,
+  userId: string,
+  params?: { count?: number }
+) {
+  const where = { itemId, item: { channel: { userId } } };
+  return prisma.$transaction([
+    prisma.quote.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: params?.count ? Math.min(params?.count, 1000) : undefined,
+    }),
+    prisma.quote.count({ where }),
+  ]);
 }
 
 export async function addQuoteToItem(

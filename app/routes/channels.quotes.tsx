@@ -4,19 +4,37 @@ import { json } from '@remix-run/server-runtime';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { Highlight } from '~/components/Highlight';
 import { PageSearchInput } from '~/components/PageSearchInput';
+import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { getQuotesByUser } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
 
 export const meta = createMeta();
 
+const countParamName = 'count';
 export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
-  let q = new URL(request.url).searchParams.get('q');
+  let [q, countParam] = ['q', countParamName].map((key) =>
+    new URL(request.url).searchParams.get(key)
+  );
   q = typeof q === 'string' ? q : null;
-  const quotes = await getQuotesByUser(userId, q);
+  const count =
+    !countParam || isNaN(Number(countParam)) ? 30 : Number(countParam);
 
-  return json({ title: 'Your quotes', quotes, q });
+  const [quotes, totalCount] = await getQuotesByUser(userId, {
+    query: q,
+    count,
+  });
+
+  return json({
+    title: 'Your quotes',
+    quotes,
+    q,
+    cursor:
+      totalCount > count
+        ? { name: countParamName, value: String(count + 10) }
+        : null,
+  });
 }
 
 export default function QuotesPage() {
@@ -66,7 +84,7 @@ export default function QuotesPage() {
           <li
             id={quote.id}
             key={quote.id}
-            className="flex flex-col border-b border-dashed py-4  last:border-none"
+            className="flex flex-col overflow-hidden border-b border-dashed  py-4 last:border-none"
           >
             <Link
               to={`/channels/${quote.item.channel.id}`}
@@ -75,7 +93,7 @@ export default function QuotesPage() {
               {quote.item.channel.title}
             </Link>
 
-            <p className="relative py-2 text-lg italic before:absolute before:right-full before:text-slate-500 before:content-['„']  dark:text-white">
+            <p className="relative overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic  before:text-slate-500 before:content-['„']  dark:text-white">
               <Highlight input={quote.content.trim()} query={data.q ?? ''} />
               <span className="text-slate-500">“</span>
             </p>
@@ -90,6 +108,7 @@ export default function QuotesPage() {
           </li>
         ))}
       </ul>
+      {data.cursor && <ShowMoreLink cursor={data.cursor} />}
     </div>
   );
 }

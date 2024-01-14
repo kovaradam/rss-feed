@@ -132,7 +132,7 @@ class ItemDataTransformer {
   }
   get description() {
     const description = this.itemData?.description?.[0];
-    return typeof description === 'string' ? description : '';
+    return typeof description === 'string' ? description?.slice(0, 1000) : '';
   }
   get author() {
     const author = this.itemData?.author?.[0];
