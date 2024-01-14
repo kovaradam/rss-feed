@@ -196,7 +196,7 @@ export default function ItemDetailPage() {
         )}
       </fetcher.Form>
 
-      <hr className="mt-2" />
+      <hr className="my-2 mt-4" />
       <ul>
         {quotes.map((quote) => (
           <Quote key={quote.id} {...quote} />

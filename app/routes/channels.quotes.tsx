@@ -108,7 +108,12 @@ export default function QuotesPage() {
           </li>
         ))}
       </ul>
-      {data.cursor && <ShowMoreLink cursor={data.cursor} />}
+      {data.cursor && (
+        <ShowMoreLink
+          cursor={data.cursor}
+          otherValues={[{ name: 'q', value: data.q ?? '' }]}
+        />
+      )}
     </div>
   );
 }

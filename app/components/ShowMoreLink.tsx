@@ -4,6 +4,7 @@ import React from 'react';
 type Props = React.ComponentProps<typeof Form> & {
   isLoading?: boolean;
   cursor: { name: string; value: string };
+  otherValues?: { name: string; value: string }[];
 };
 
 /**
@@ -19,6 +20,9 @@ export function ShowMoreLink(props: Props): JSX.Element {
           name={props.cursor.name}
           value={props.cursor.value}
         />
+        {props.otherValues?.map(({ value, name }) => (
+          <input type="hidden" name={name} value={value} key={name} />
+        ))}
         {isLoading ? 'Loading...' : 'Show more'}
       </button>
     </Form>
