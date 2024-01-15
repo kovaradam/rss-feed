@@ -108,7 +108,7 @@ export async function refreshChannel(params: {
     (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link)
   );
 
-  const updatedChannel = await updateChannel({
+  const updatedChannel = await updateChannel(params.userId, {
     where: {
       feedUrl_userId: {
         feedUrl: params.feedUrl,
@@ -130,7 +130,7 @@ export async function refreshChannel(params: {
         if (!meta.image) {
           return;
         }
-        updateChannel({
+        updateChannel(params.userId, {
           where: {
             feedUrl_userId: {
               feedUrl: params.feedUrl,
@@ -155,8 +155,10 @@ export async function getChannel(
 }
 
 export async function updateChannel(
+  userId: string,
   params: Parameters<typeof prisma.channel.update>[0]
 ) {
+  invariant(await getChannel({ where: { id: params.where.id, userId } }));
   let { category } = params.data;
   if (typeof category === 'string') {
     category = category.split('/').filter(Boolean).join('/');
@@ -164,6 +166,7 @@ export async function updateChannel(
       params.data.category = `/${category}/`;
     }
   }
+
   return prisma.channel.update(params);
 }
 
@@ -285,8 +288,11 @@ export async function deleteQuote(id: string, userId: string) {
 }
 
 export async function updateChannelItem(
+  userId: string,
   params: Parameters<typeof prisma.item.update>[0]
 ) {
+  const itemId = params.where.id;
+  invariant(await getChannelItem(itemId ?? '', userId));
   return prisma.item.update(params);
 }
 

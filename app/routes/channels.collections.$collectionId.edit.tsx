@@ -55,7 +55,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   >;
 
   if (request.method === 'DELETE') {
-    await deleteCollection({ where: { id: collectionId } });
+    await deleteCollection(collectionId, userId);
     return redirect('/channels');
   }
 
@@ -68,8 +68,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json<ActionData>({ errors }, { status: 400 });
   }
 
-  const collection = await updateCollection({
-    where: { id: collectionId },
+  const collection = await updateCollection(collectionId, userId, {
+    where: {},
     data: {
       userId,
       title: form.title as string,
@@ -95,11 +95,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const userId = await requireUserId(request);
 
-  const collection = await getCollection({
-    where: {
-      id: collectionId,
-    },
-  });
+  const collection = await getCollection(collectionId, userId);
 
   if (!collection) {
     throw new Response('Not Found', { status: 404 });

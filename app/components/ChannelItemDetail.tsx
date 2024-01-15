@@ -21,6 +21,7 @@ import { Highlight } from './Highlight';
 import { convert } from 'html-to-text';
 import React from 'react';
 import { Tooltip } from './Tooltip';
+import { requireUserId } from '~/session.server';
 
 type Props = {
   item: ItemWithChannel;
@@ -190,15 +191,17 @@ function RequiredFormData(props: { itemId: string }) {
   );
 }
 
-async function handleItemStatusUpdate({ formData }: { formData: FormData }) {
+async function handleItemStatusUpdate(request: Request) {
+  const userId = await requireUserId(request);
+  invariant(userId, '');
   const { names, getBooleanValue } = ChannelItemDetail.form;
-  const itemId = formData.get(names.itemId);
+  const form = await request.formData();
+  const itemId = form.get(names.itemId);
   invariant(typeof itemId === 'string', 'Item id was not provided');
 
-  const bookmarked = formData.get(names.bookmarked);
-  const read = formData.get(names.read);
-
-  await updateChannelItem({
+  const bookmarked = form.get(names.bookmarked);
+  const read = form.get(names.read);
+  await updateChannelItem(userId, {
     where: {
       id: itemId,
     },

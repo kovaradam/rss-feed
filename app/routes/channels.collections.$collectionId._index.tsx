@@ -61,7 +61,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     q,
   };
 
-  const collection = await getCollection({ where: { id: collectionId } });
+  const collection = await getCollection(collectionId, userId);
 
   if (!collection) {
     throw new Response('Not Found', { status: 404 });
@@ -115,10 +115,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-
   if (request.method === 'POST') {
-    return ChannelItemDetail.handleAction({ formData });
+    return ChannelItemDetail.handleAction(request);
   }
 };
 

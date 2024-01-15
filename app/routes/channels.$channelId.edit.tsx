@@ -49,6 +49,7 @@ type ActionData = {
 export const action: ActionFunction = async ({ request, params }) => {
   const channelId = params.channelId;
   invariant(channelId, 'ChannelId was not provided');
+  const userId = await requireUserId(request);
 
   const data = await request.formData();
   const form = Object.fromEntries(data.entries()) as Record<
@@ -65,7 +66,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json<ActionData>({ errors }, { status: 400 });
   }
 
-  const channel = await updateChannel({
+  const channel = await updateChannel(userId, {
     where: { id: channelId },
     data: {
       title: form.title as string,

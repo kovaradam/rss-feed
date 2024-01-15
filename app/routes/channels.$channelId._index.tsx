@@ -108,11 +108,11 @@ export const action: ActionFunction = async ({ request, params }) => {
     return redirect('/channels');
   }
 
-  const formData = await request.formData();
-
   if (request.method === 'PUT') {
-    return ChannelItemDetail.handleAction({ formData });
+    return ChannelItemDetail.handleAction(request);
   }
+
+  const formData = await request.formData();
 
   if (request.method === 'POST') {
     const updatedParseErrors = {
@@ -121,7 +121,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         : undefined,
     };
 
-    await updateChannel({
+    await updateChannel(userId, {
       where: { id: params.channelId },
       data: updatedParseErrors,
     });

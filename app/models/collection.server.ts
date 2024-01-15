@@ -1,24 +1,26 @@
 import { prisma } from '~/db.server';
 import type { FirstParam } from './utils';
 import type { Collection } from 'prisma/prisma-client';
+import invariant from 'tiny-invariant';
 export type { Collection };
 
 export async function createDefaultCollections(userId: string) {
-  await prisma.collection.create({
-    data: {
-      title: 'Bookmarked',
-      bookmarked: true,
-      userId,
-    },
-  });
-
-  return prisma.collection.create({
-    data: {
-      title: 'Read',
-      read: true,
-      userId,
-    },
-  });
+  return prisma.$transaction([
+    prisma.collection.create({
+      data: {
+        title: 'Bookmarked',
+        bookmarked: true,
+        userId,
+      },
+    }),
+    prisma.collection.create({
+      data: {
+        title: 'Read',
+        read: true,
+        userId,
+      },
+    }),
+  ]);
 }
 
 export async function getCollections(
@@ -28,9 +30,14 @@ export async function getCollections(
 }
 
 export async function getCollection(
-  params: FirstParam<typeof prisma.collection.findFirst>
+  id: string,
+  userId: string,
+  params?: FirstParam<typeof prisma.collection.findFirst>
 ) {
-  return prisma.collection.findFirst(params);
+  return prisma.collection.findFirst({
+    ...params,
+    where: { ...params?.where, id, userId },
+  });
 }
 
 export async function createCollection(
@@ -40,15 +47,20 @@ export async function createCollection(
 }
 
 export async function updateCollection(
+  id: string,
+  userId: string,
   params: FirstParam<typeof prisma.collection.update>
 ) {
-  return prisma.collection.update(params);
+  invariant(await getCollection(id, userId));
+  return prisma.collection.update({
+    ...params,
+    where: { id: id },
+  });
 }
 
-export async function deleteCollection(
-  params: FirstParam<typeof prisma.collection.delete>
-) {
-  return prisma.collection.delete(params);
+export async function deleteCollection(id: string, userId: string) {
+  invariant(await getCollection(id, userId));
+  return prisma.collection.delete({ where: { id } });
 }
 
 export function getBooleanValue(input: string | null) {
