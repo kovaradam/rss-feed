@@ -99,8 +99,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request);
   invariant(params.channelId, 'channelId not found');
+  const userId = await requireUserId(request);
 
   if (request.method === 'DELETE') {
     await deleteChannel({ userId, id: params.channelId });

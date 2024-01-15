@@ -23,7 +23,7 @@ import {
   createChannelFromXml,
 } from '~/models/channel.server';
 import { storeFailedUpload } from '~/models/failed-upload.server';
-import { requireUser } from '~/session.server';
+import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createTitle, isSubmitting } from '~/utils';
 
@@ -55,7 +55,7 @@ type ActionData =
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData();
   const inputChannelHref = data.get(channelUrlName);
-  const user = await requireUser(request);
+  const userId = await requireUserId(request);
 
   let channelUrl;
   try {
@@ -81,7 +81,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     newChannel = await createChannelFromXml(
       channelXml,
       {
-        userId: user.id,
+        userId,
         channelHref: channelUrl.href,
       },
       request.signal

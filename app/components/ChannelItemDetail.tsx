@@ -193,7 +193,6 @@ function RequiredFormData(props: { itemId: string }) {
 
 async function handleItemStatusUpdate(request: Request) {
   const userId = await requireUserId(request);
-  invariant(userId, '');
   const { names, getBooleanValue } = ChannelItemDetail.form;
   const form = await request.formData();
   const itemId = form.get(names.itemId);
