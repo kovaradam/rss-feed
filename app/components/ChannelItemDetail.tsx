@@ -58,7 +58,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   return (
     <article
       id={item.id}
-      className={`flex flex-col gap-1 border-b py-4 dark:border-b-slate-600 sm:rounded-lg sm:p-4 sm:pt-4 sm:shadow-md dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
+      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
     >
       <span className="flex w-full justify-between gap-2 dark:text-white">
         <Link to={`/channels/${channel.id}`} className=" truncate ">
@@ -126,9 +126,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       >
         {item.imageUrl && !props.hideImage && (
           <img
-            alt="Article header decoration"
+            alt=""
             src={item.imageUrl}
-            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 text-sm italic dark:bg-slate-950 sm:rounded-none"
+            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 text-sm italic sm:rounded-none dark:bg-slate-950"
             loading="lazy"
           />
         )}
