@@ -96,7 +96,7 @@ function CategoryInputForm(
           ) {
             return prev;
           }
-          (event.target as HTMLFormElement)['new-category'].value = '';
+          (event.target as HTMLFormElement)[props.fakeInputName].value = '';
           return prev.concat('/').concat(category).concat('/');
         });
       }}
