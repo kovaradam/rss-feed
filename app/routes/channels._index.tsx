@@ -141,7 +141,7 @@ export default function ChannelIndexPage() {
           <Details
             className="mb-4 w-full sm:hidden"
             title="Filter articles"
-            icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+            icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
           >
             <FilterForm />
           </Details>
@@ -225,7 +225,7 @@ export default function ChannelIndexPage() {
             <Details
               title="Filter articles"
               className="w-60"
-              icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+              icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
             >
               <FilterForm />
             </Details>
@@ -236,7 +236,7 @@ export default function ChannelIndexPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary(props: { error: Error }) {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }
 

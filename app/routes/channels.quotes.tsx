@@ -43,7 +43,7 @@ export default function QuotesPage() {
 
   if (!data.quotes.length && !data.q) {
     return (
-      <div className="flex flex-col gap-2 text-center text-lg font-bold">
+      <div className="flex flex-col gap-2 text-center text-lg font-bold ">
         {data.quotes.length === 0 && (
           <div className="mt-8 flex flex-col items-center gap-16">
             <div>
@@ -70,7 +70,7 @@ export default function QuotesPage() {
     );
   }
   return (
-    <div className="sm:min-w-2/3">
+    <div>
       <Form id="search">
         <PageSearchInput
           placeholder="Search in quotes"
@@ -93,7 +93,7 @@ export default function QuotesPage() {
               {quote.item.channel.title}
             </Link>
 
-            <p className="relative overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic  before:text-slate-500 before:content-['„']  dark:text-white">
+            <p className="relative max-w-[90vw] overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic before:text-slate-500 before:content-['„'] sm:max-w-[60ch]  dark:text-white">
               <Highlight input={quote.content.trim()} query={data.q ?? ''} />
               <span className="text-slate-500">“</span>
             </p>

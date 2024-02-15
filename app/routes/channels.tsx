@@ -80,12 +80,12 @@ export default function ChannelsPage() {
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <div className="flex flex-col  sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
-        <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white dark:border-b-slate-700 dark:bg-slate-900  dark:text-white sm:relative sm:hidden">
+        <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
           <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
             <button
               aria-label="Toggle navigation"
               onClick={() => setIsNavExpanded((prev) => !prev)}
-              className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 dark:hover:bg-slate-800 sm:hidden"
+              className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800"
             >
               <MenuAlt2Icon className="w-6" />
             </button>
@@ -119,14 +119,14 @@ export default function ChannelsPage() {
           <main
             className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
-            } shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] duration-200 ease-in dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] sm:translate-x-0`}
+            } shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] duration-200 ease-in sm:translate-x-0 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
           >
             <NavWrapper
               isExpanded={isNavExpanded}
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold dark:text-slate-300 sm:flex sm:text-4xl">
+                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-4xl dark:text-slate-300">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
                 <div className="sm:overflow-y-auto">
@@ -233,7 +233,7 @@ export default function ChannelsPage() {
                 transition.formAction?.includes('logout')
                   ? 'animate-pulse opacity-60'
                   : ''
-              } overflow-hidden`}
+              } `}
             >
               <Outlet />
             </div>
@@ -245,6 +245,9 @@ export default function ChannelsPage() {
 }
 
 export function ErrorBoundary(props: { error: Error }) {
+  if (!props.error) {
+    return null;
+  }
   return <ErrorMessage>Something went wrong</ErrorMessage>;
 }
 
@@ -253,7 +256,7 @@ function StyledNavLink(props: NavLinkProps) {
     <NavLink
       {...props}
       className={(state) =>
-        `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-900 sm:text-lg ${
+        `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 sm:text-lg dark:text-slate-300 dark:hover:bg-slate-900 ${
           state.isActive ? ' bg-slate-200 text-slate-600 dark:bg-slate-800' : ''
         } ${
           typeof props.className === 'function'
@@ -286,7 +289,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
         }}
       >
         <summary
-          className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700 [&::-webkit-details-marker]:hidden"
+          className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700 [&::-webkit-details-marker]:hidden"
           aria-label="Toggle user menu"
         >
           <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
@@ -295,7 +298,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           </span>
         </summary>
         <ul
-          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md dark:bg-slate-800 sm:bottom-[110%] sm:w-full sm:flex-col "
+          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col dark:bg-slate-800 "
           tabIndex={0}
         >
           <li>

@@ -208,13 +208,13 @@ export default function ChannelDetailsPage() {
           <WithEditLink name={'new-category'}>
             <span className="flex items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
-                <BookmarkIcon className="h-4" /> Bookmarks:
+                <BookmarkIcon className="h-4" /> Categories:
               </DescriptionList.Term>
               <DescriptionList.Detail className="flex flex-wrap gap-1">
                 {category ? (
                   <ChannelCategoryLinks category={category} />
                 ) : (
-                  'Category is missing'
+                  'None'
                 )}
               </DescriptionList.Detail>
             </span>
@@ -225,7 +225,7 @@ export default function ChannelDetailsPage() {
                 <TranslateIcon className="h-4" /> Language:
               </DescriptionList.Term>
               <DescriptionList.Detail>
-                {channel.language || 'Language is missing'}
+                {channel.language || 'None'}
               </DescriptionList.Detail>
             </span>
           </WithEditLink>
