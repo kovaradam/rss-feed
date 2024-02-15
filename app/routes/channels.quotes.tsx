@@ -50,7 +50,7 @@ export default function QuotesPage() {
               <p className="dark:text-white">
                 Store memorable quotes from articles
               </p>
-              <p className="mb-4 font-normal text-slate-500 dark:text-slate-300">
+              <p className="mb-4 font-normal text-slate-500 [overflow-wrap:anywhere] dark:text-slate-300">
                 Add a quote to any article from your{' '}
                 <Link to="/channels" className="underline">
                   feed
@@ -93,7 +93,7 @@ export default function QuotesPage() {
               {quote.item.channel.title}
             </Link>
 
-            <p className="relative max-w-[90vw] overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic before:text-slate-500 before:content-['„'] sm:max-w-[60ch]  dark:text-white">
+            <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic [overflow-wrap:anywhere] before:text-slate-500 before:content-['„'] dark:text-white">
               <Highlight input={quote.content.trim()} query={data.q ?? ''} />
               <span className="text-slate-500">“</span>
             </p>

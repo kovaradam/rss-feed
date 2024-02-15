@@ -164,12 +164,14 @@ export default function ItemDetailPage() {
             Description:
           </DescriptionList.Term>
           <DescriptionList.Detail>
-            <p className="dark:text-white">{description || 'missing'}</p>
+            <p className="[overflow-wrap:anywhere] dark:text-white">
+              {description || 'missing'}
+            </p>
           </DescriptionList.Detail>
         </span>
       </DescriptionList>
       <hr className="my-2" />
-      <h4 className="py-2 text-2xl  font-bold dark:text-white sm:text-2xl">
+      <h4 className="py-2 text-2xl  font-bold sm:text-2xl dark:text-white">
         Quotes
       </h4>
       <fetcher.Form
@@ -219,7 +221,7 @@ function Quote(props: { content: string; createdAt: string; id: string }) {
       key={props.id}
       className="flex flex-col border-b border-dashed py-2  last:border-none"
     >
-      <p className="overflow-hidden text-ellipsis italic dark:text-white">
+      <p className="overflow-hidden text-ellipsis italic [overflow-wrap:anywhere] dark:text-white">
         „{props.content}“
       </p>
 

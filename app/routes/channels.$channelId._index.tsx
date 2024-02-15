@@ -234,7 +234,7 @@ export default function ChannelDetailsPage() {
               <DescriptionList.Term>Description:</DescriptionList.Term>
             </WithEditLink>
             <DescriptionList.Detail>
-              <p className="text-slate-900 dark:text-slate-300">
+              <p className="text-slate-900 [overflow-wrap:anywhere] dark:text-slate-300">
                 {data.channel.description || 'Description is missing'}
               </p>
             </DescriptionList.Detail>
