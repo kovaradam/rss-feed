@@ -42,7 +42,7 @@ export function TimeFromNow(props: Props): JSX.Element {
 
   return (
     <span className={'relative'}>
-      {`${Math.ceil(difference.seconds)} second${
+      {`${Math.max(Math.ceil(difference.seconds), 0)} second${
         difference.seconds > 1 ? 's' : ''
       } ago`}
       <Tooltip>{props.date.toLocaleDateString()}</Tooltip>
