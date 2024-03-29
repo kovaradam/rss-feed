@@ -8,6 +8,7 @@ import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { getQuotesByUser } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
+import { getMissingTitle } from '~/utils/missing-title';
 
 export const meta = createMeta();
 
@@ -102,7 +103,7 @@ export default function QuotesPage() {
               <Link
                 to={`/channels/${quote.item.channel.id}/articles/${quote.itemId}`}
               >
-                ~ {quote.item.title}
+                ~ {getMissingTitle(quote.item.title, quote.item.description)}
               </Link>
             </div>
           </li>

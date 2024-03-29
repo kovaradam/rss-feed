@@ -227,12 +227,14 @@ export async function getQuotesByUser(
       select: {
         content: true,
         createdAt: true,
+
         id: true,
         itemId: true,
         item: {
           select: {
             title: true,
             id: true,
+            description: true,
             channel: {
               select: {
                 title: true,

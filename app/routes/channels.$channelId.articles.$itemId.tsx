@@ -30,6 +30,7 @@ import {
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createMeta } from '~/utils';
+import { getMissingTitle } from '~/utils/missing-title';
 
 export const meta = createMeta();
 
@@ -123,7 +124,7 @@ export default function ItemDetailPage() {
       >
         <ChevronDoubleLeftIcon className="w-4" /> {item.channel.title}
       </Link>
-      <PageHeading>{item.title}</PageHeading>
+      <PageHeading>{getMissingTitle(item.title, item.description)}</PageHeading>
       <DescriptionList className="py-2">
         {[
           {

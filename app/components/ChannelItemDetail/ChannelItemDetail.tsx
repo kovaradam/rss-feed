@@ -19,6 +19,7 @@ import { Highlight } from '../Highlight';
 import { convert } from 'html-to-text';
 import React from 'react';
 import { Tooltip } from '../Tooltip';
+import { getMissingTitle } from '~/utils/missing-title';
 
 type Props = {
   item: ItemWithChannel;
@@ -51,6 +52,10 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   const description = React.useMemo(() => {
     return convert(item.description);
   }, [item.description]);
+
+  const itemTitle = React.useMemo(() => {
+    return getMissingTitle(item.title, description);
+  }, [item.title, description]);
 
   return (
     <article
@@ -130,9 +135,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           />
         )}
         {props.query ? (
-          <Highlight query={props.query} input={item.title} />
+          <Highlight query={props.query} input={itemTitle} />
         ) : (
-          item.title
+          itemTitle
         )}
       </Href>
       <span className="flex gap-1 text-slate-500 dark:text-slate-400">
