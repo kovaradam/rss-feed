@@ -44,7 +44,7 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
         with:
-          useLockFile: true
+          useLockFile: false
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
