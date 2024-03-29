@@ -18,7 +18,8 @@ import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { buttonStyle } from '~/components/Button';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
+import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
@@ -116,7 +117,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export const action: ActionFunction = async ({ request }) => {
   if (request.method === 'POST') {
-    return ChannelItemDetail.handleAction(request);
+    return ChannelItemDetailService.handleAction(request);
   }
 };
 
@@ -141,7 +142,7 @@ export default function ChannelIndexPage() {
           <Details
             title="Filter articles"
             className="mb-4 w-full sm:hidden"
-            icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+            icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
           >
             <FilterForm />
           </Details>
@@ -221,7 +222,7 @@ export default function ChannelIndexPage() {
             <Details
               title="Filter articles"
               className={'mb-2 hidden w-60 sm:flex'}
-              icon={<FilterIcon className="min-w-4 pointer-events-none w-4" />}
+              icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
             >
               <FilterForm />
             </Details>

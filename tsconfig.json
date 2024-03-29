@@ -1,13 +1,21 @@
 {
-  "exclude": ["./cypress", "./cypress.config.ts"],
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/.server/**/*.ts",
+    "**/.server/**/*.tsx",
+    "**/.client/**/*.ts",
+    "**/.client/**/*.tsx"
+  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
+    "types": ["@remix-run/node", "vite/client"],
+
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "target": "ES2019",
     "strict": true,
@@ -19,7 +27,7 @@
     },
     "skipLibCheck": true,
 
-    // Remix takes care of building everything in `remix build`.
+    // Vite takes care of building everything, not tsc.
     "noEmit": true
   }
 }

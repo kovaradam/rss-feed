@@ -2,11 +2,12 @@
   "name": "just-rss-48a8",
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev --manual -c \"npm run dev:serve\"",
     "dev:serve": "binode -- @remix-run/serve:remix-serve ./build/index.js",
-    "start": "remix-serve ./build/index.js",
+    "dev": "remix vite:dev",
+    "build": "remix vite:build",
+    "start": "remix-serve ./build/server/index.js",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "setup": "prisma migrate dev && prisma db seed",
@@ -25,11 +26,9 @@
   "dependencies": {
     "@heroicons/react": "^1.0.6",
     "@prisma/client": "^4.10.1",
-    "@remix-run/css-bundle": "^2.5.0",
-    "@remix-run/node": "^2.5.0",
-    "@remix-run/react": "^2.5.0",
-    "@remix-run/serve": "^2.5.0",
-    "@remix-run/server-runtime": "^2.5.0",
+    "@remix-run/node": "^2.8.1",
+    "@remix-run/react": "^2.8.1",
+    "@remix-run/serve": "^2.8.1",
     "bcryptjs": "^2.4.3",
     "html-to-text": "^9.0.5",
     "isbot": "^3.7.0",
@@ -42,18 +41,17 @@
     "react-modal": "^3.16.1",
     "tailwind": "^4.0.0",
     "tiny-invariant": "^1.2.0",
-    "use-sound": "^4.0.1",
+    "use-sound-esm": "file:../use-sound",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.5.0",
-    "@remix-run/eslint-config": "^2.5.0",
+    "@remix-run/dev": "^2.8.1",
+    "@remix-run/eslint-config": "^2.8.1",
     "@types/bcryptjs": "^2.4.2",
     "@types/eslint": "^8.4.3",
     "@types/html-to-text": "^9.0.4",
     "@types/jsdom": "^21.1.6",
     "@types/marked": "^4.0.3",
-    "@types/node": "^17.0.41",
     "@types/nodemailer": "^6.4.7",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
@@ -76,7 +74,9 @@
     "tailwindcss": "^3.1.0",
     "ts-node": "^10.8.1",
     "tsconfig-paths": "^4.0.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vite": "^5.2.6",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "engines": {
     "node": ">=18"
@@ -87,6 +87,13 @@
   "lint-staged": {
     "app/**/*.{ts,css,tsx}": [
       "prettier --write"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "@remix-run/eslint-config",
+      "@remix-run/eslint-config/node",
+      "prettier"
     ]
   }
 }

@@ -6,7 +6,6 @@ import type {
 import { json } from '@remix-run/node';
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -14,8 +13,7 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 
-import stylesheet from './tailwind.css';
-import { cssBundleHref } from '@remix-run/css-bundle';
+import stylesheet from './tailwind.css?url';
 
 import { getUser } from './session.server';
 import React from 'react';
@@ -24,7 +22,6 @@ import { ClientOnly } from './components/ClientOnly';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
-  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 ];
 
 export const meta: MetaFunction = () => [
@@ -70,7 +67,6 @@ export default function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
       {data.user?.soundsAllowed && (
         <ClientOnly>

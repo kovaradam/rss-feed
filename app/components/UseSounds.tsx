@@ -1,9 +1,9 @@
 import React from 'react';
-import useSound from 'use-sound';
+import useSound from 'use-sound-esm';
 
-import tapSound from 'public/sounds/ui_tap-variant-01.wav';
-import closeSound from 'public/sounds/navigation_backward-selection-minimal.wav';
-import openSound from 'public/sounds/navigation_forward-selection-minimal.wav';
+import tapSound from '/sounds/ui_tap-variant-01.wav?url';
+import closeSound from '/sounds/navigation_backward-selection-minimal.wav?url';
+import openSound from '/sounds/navigation_forward-selection-minimal.wav?url';
 
 export function UseSounds() {
   const [playTap] = useSound(tapSound);

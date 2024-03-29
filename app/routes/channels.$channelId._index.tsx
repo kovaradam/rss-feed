@@ -42,13 +42,14 @@ import { createTitle } from '~/utils';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { UseAppTitle } from '~/components/AppTitle';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
-import useSound from 'use-sound';
+import useSound from 'use-sound-esm';
 
-import refreshSound from 'public/sounds/ui_refresh-feed.wav';
+import refreshSound from '/sounds/ui_refresh-feed.wav?url';
 import { PageHeading } from '~/components/PageHeading';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { Tooltip } from '~/components/Tooltip';
 import { DescriptionList } from '~/components/DescriptionList';
+import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -109,7 +110,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (request.method === 'PUT') {
-    return ChannelItemDetail.handleAction(request);
+    return ChannelItemDetailService.handleAction(request);
   }
 
   const formData = await request.formData();

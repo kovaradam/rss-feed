@@ -1,8 +1,8 @@
 import type { Props as ReactModalProps } from 'react-modal';
 import { ClientOnly } from './ClientOnly';
-import useSound from 'use-sound';
-import closeSound from 'public/sounds/navigation_backward-selection-minimal.wav';
-import openSound from 'public/sounds/navigation_forward-selection-minimal.wav';
+import useSound from 'use-sound-esm';
+import closeSound from '/sounds/navigation_backward-selection-minimal.wav?url';
+import openSound from '/sounds/navigation_forward-selection-minimal.wav?url';
 import ReactModal from 'react-modal';
 import React from 'react';
 
