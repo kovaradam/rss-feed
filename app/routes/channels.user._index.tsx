@@ -11,7 +11,7 @@ import {
   VolumeOffIcon,
   VolumeUpIcon,
 } from '@heroicons/react/outline';
-import { Button } from '~/components/Button';
+import { Button, SubmitButton } from '~/components/Button';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { updateUser } from '~/models/user.server';
 import { ChannelCategoryLinks } from '~/components/ChannelCategories';
@@ -20,8 +20,8 @@ import { Modal } from '~/components/Modal';
 import React from 'react';
 import { PageHeading } from '~/components/PageHeading';
 import { UseAppTitle } from '~/components/AppTitle';
-import useSound from 'use-sound';
-import confirmSound from 'public/sounds/state-change_confirm-up.wav';
+import confirmSound from '/sounds/state-change_confirm-up.wav?url';
+import useSound from '~/utils/use-sound';
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
@@ -156,24 +156,24 @@ export default function UserPage() {
               This will permanently delete your account
             </p>
 
-            <fieldset className="mt-4 flex place-content-between gap-4">
+            <fieldset className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row">
               <Button
                 type="button"
                 secondary
-                className="w-1/2 max-w-[30ch]"
+                className=" flex w-full justify-center"
                 onClick={() => setIsDeleteDialogOpen(false)}
                 data-silent
               >
-                Cancel
+                <span>Cancel</span>
               </Button>
-              <Form method="delete" action="/logout" className="w-1/2">
-                <Button
+              <Form method="delete" action="/logout" className="w-full">
+                <SubmitButton
                   type="submit"
-                  className="w-full max-w-[30ch] whitespace-nowrap"
+                  className="w-full whitespace-nowrap "
                   data-silent
                 >
                   Yes, Delete
-                </Button>
+                </SubmitButton>
               </Form>
             </fieldset>
           </Modal>

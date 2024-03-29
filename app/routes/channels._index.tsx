@@ -6,7 +6,7 @@ import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
 import { Details } from '~/components/Details';
@@ -18,6 +18,7 @@ import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import type { Channel, ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
+import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
 
 type LoaderData = {
   items: ItemWithChannel[];
@@ -95,7 +96,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export const action: ActionFunction = async ({ request }) => {
   if (request.method === 'POST') {
-    return ChannelItemDetail.handleAction(request);
+    return ChannelItemDetailService.handleAction(request);
   }
 };
 

@@ -1,7 +1,7 @@
-const plugin = require('tailwindcss/plugin');
+import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ['./app/**/*.{ts,tsx,jsx,js}'],
   theme: {
     extend: {
@@ -24,4 +24,4 @@ module.exports = {
       addVariant('active-select-item', '&[data-active-item]');
     }),
   ],
-};
+} satisfies Config;
