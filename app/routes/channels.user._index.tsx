@@ -20,8 +20,8 @@ import { Modal } from '~/components/Modal';
 import React from 'react';
 import { PageHeading } from '~/components/PageHeading';
 import { UseAppTitle } from '~/components/AppTitle';
-import useSound from 'use-sound-esm';
 import confirmSound from '/sounds/state-change_confirm-up.wav?url';
+import useSound from '~/utils/use-sound';
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);

@@ -1,5 +1,5 @@
 import React from 'react';
-import useSound from 'use-sound-esm';
+import useSound from '~/utils/use-sound';
 
 import tapSound from '/sounds/ui_tap-variant-01.wav?url';
 import closeSound from '/sounds/navigation_backward-selection-minimal.wav?url';

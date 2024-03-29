@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/solid';
 import type { FormProps } from '@remix-run/react';
 import { Link, useFetcher } from '@remix-run/react';
-import useSound from 'use-sound-esm';
+import useSound from '~/utils/use-sound';
 import type { ItemWithChannel } from '~/models/channel.server';
 import { ChannelCategoryLinks } from '../ChannelCategories';
 import { Href } from '../Href';
