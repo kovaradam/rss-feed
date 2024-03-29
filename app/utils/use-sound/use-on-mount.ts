@@ -1,5 +1,6 @@
 import * as React from 'react';
 
 export default function useOnMount(callback: React.EffectCallback) {
-  React.useState(callback);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(callback, []);
 }
