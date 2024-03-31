@@ -19,7 +19,6 @@ import { Highlight } from '../Highlight';
 import { convert } from 'html-to-text';
 import React from 'react';
 import { Tooltip } from '../Tooltip';
-import { getMissingTitle } from '~/utils/missing-title';
 
 type Props = {
   item: ItemWithChannel;
@@ -53,9 +52,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
     return convert(item.description);
   }, [item.description]);
 
-  const itemTitle = React.useMemo(() => {
-    return getMissingTitle(item.title, description);
-  }, [item.title, description]);
+  const itemTitle = ChannelItemDetail.Title({ description, title: item.title });
 
   return (
     <article
@@ -135,7 +132,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
           />
         )}
         {props.query ? (
-          <Highlight query={props.query} input={itemTitle} />
+          <Highlight query={props.query} input={itemTitle as string} />
         ) : (
           itemTitle
         )}
@@ -192,3 +189,19 @@ function RequiredFormData(props: { itemId: string }) {
     </>
   );
 }
+
+ChannelItemDetail.Title = function ChannelItemDetailTitle({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}): string {
+  return React.useMemo(() => {
+    if (title) {
+      return title;
+    }
+    const result = convert(description.slice(0, 30));
+    return result.slice(0, result.lastIndexOf(' ')).concat(' ...');
+  }, [description, title]);
+};

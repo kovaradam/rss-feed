@@ -15,6 +15,7 @@ import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
 import { SubmitButton } from '~/components/Button';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { DescriptionList } from '~/components/DescriptionList';
 import { Href } from '~/components/Href';
 import { PageHeading } from '~/components/PageHeading';
@@ -30,7 +31,6 @@ import {
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createMeta } from '~/utils';
-import { getMissingTitle } from '~/utils/missing-title';
 
 export const meta = createMeta();
 
@@ -124,7 +124,12 @@ export default function ItemDetailPage() {
       >
         <ChevronDoubleLeftIcon className="w-4" /> {item.channel.title}
       </Link>
-      <PageHeading>{getMissingTitle(item.title, item.description)}</PageHeading>
+      <PageHeading>
+        <ChannelItemDetail.Title
+          title={item.title}
+          description={item.description}
+        />
+      </PageHeading>
       <DescriptionList className="py-2">
         {[
           {

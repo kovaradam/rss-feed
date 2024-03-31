@@ -2,13 +2,13 @@ import { Form, Link, useLoaderData, useNavigation } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
+import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { Highlight } from '~/components/Highlight';
 import { PageSearchInput } from '~/components/PageSearchInput';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { getQuotesByUser } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
-import { getMissingTitle } from '~/utils/missing-title';
 
 export const meta = createMeta();
 
@@ -103,7 +103,11 @@ export default function QuotesPage() {
               <Link
                 to={`/channels/${quote.item.channel.id}/articles/${quote.itemId}`}
               >
-                ~ {getMissingTitle(quote.item.title, quote.item.description)}
+                ~{' '}
+                <ChannelItemDetail.Title
+                  title={quote.item.title}
+                  description={quote.item.title}
+                />
               </Link>
             </div>
           </li>
