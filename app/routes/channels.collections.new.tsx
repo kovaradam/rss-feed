@@ -21,7 +21,7 @@ const fieldNames = [
 export const meta: MetaFunction = () => {
   return [
     {
-      title: createTitle(`New collection'}`),
+      title: createTitle(`New collection`),
     },
   ];
 };
