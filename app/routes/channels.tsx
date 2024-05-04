@@ -129,7 +129,7 @@ export default function ChannelsPage() {
                 <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-4xl dark:text-slate-300">
                   <AppTitle defaultTitle={data.title} />
                 </h1>
-                <div className="sm:overflow-y-auto">
+                <div className="overscroll-contain sm:overflow-y-auto ">
                   <StyledNavLink
                     className={({ isActive }) =>
                       `${
