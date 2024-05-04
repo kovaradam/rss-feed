@@ -63,7 +63,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full w-screen overflow-x-hidden accent-rose-600 ">
+      <body className="h-full w-screen overflow-x-hidden caret-rose-600 accent-rose-600">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
