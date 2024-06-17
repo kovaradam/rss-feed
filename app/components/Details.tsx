@@ -12,7 +12,7 @@ export function Details(props: Props): JSX.Element {
         props.onClick?.(event);
       }}
       {...props}
-      className={` cursor-pointer rounded-md border p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
+      className={` cursor-pointer rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
     >
       <summary
         className={`flex px-2 ${

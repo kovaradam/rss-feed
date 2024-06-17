@@ -96,7 +96,7 @@ export default function ChannelsPage() {
           </div>
         </header>
         <div
-          className="flex justify-center bg-white dark:bg-slate-900"
+          className="polka flex justify-center dark:bg-slate-900"
           onTouchStart={(event) => {
             event.currentTarget.dataset.touchStartX = String(
               event.targetTouches[0]?.clientX

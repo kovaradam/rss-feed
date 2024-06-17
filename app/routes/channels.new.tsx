@@ -2,6 +2,7 @@ import { ExclamationCircleIcon } from '@heroicons/react/outline';
 import type { MetaFunction } from '@remix-run/react';
 import {
   Form,
+  Link,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -26,6 +27,7 @@ import { storeFailedUpload } from '~/models/failed-upload.server';
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createTitle, isSubmitting } from '~/utils';
+import { mapValue } from '~/utils/map-value';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -92,9 +94,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     switch (true) {
       case error instanceof ChannelExistsError:
         response = {
-          create: `RSS feed with this address already exists, see channel "${
-            (error as ChannelExistsError).channel.title
-          }"`,
+          create: `RSS feed with this address already exists, see channel [${error.channel.title}](/channels/${error.channel.id})`,
         };
         break;
       case error instanceof UnavailableDbError:
@@ -154,7 +154,9 @@ export default function NewChannelPage() {
                 id={type}
               >
                 <ExclamationCircleIcon className="min-w-[2ch] max-w-[2ch]" />
-                {error}
+                <span>
+                  <TextWithLink text={error} />
+                </span>
               </span>
             ))
           ) : (
@@ -174,3 +176,39 @@ export default function NewChannelPage() {
 }
 
 NewChannelPage.formMethod = 'PUT' as const;
+
+function TextWithLink(props: { text: string }) {
+  const links = props.text.match(linkRegExp);
+
+  if (!links?.length) {
+    return props.text;
+  }
+
+  const linkElements = (
+    links.map((link) => link.slice(1, -1).split('](')) as Array<
+      [label: string, to: string]
+    >
+  ).map(([label, to]) => ({ label, to }));
+
+  props.text.split(linkRegExp).map(console.log);
+
+  return (
+    <>
+      {props.text.split(linkRegExp).map((slice, index) => (
+        <React.Fragment key={slice}>
+          {slice}
+          {mapValue(linkElements[index])(
+            (props) =>
+              props && (
+                <Link to={props.to} className="underline">
+                  {props.label}
+                </Link>
+              )
+          )}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
+
+const linkRegExp = /\[.*\]\(.*\)/;

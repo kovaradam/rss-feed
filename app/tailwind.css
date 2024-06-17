@@ -10,3 +10,11 @@
     translate: 0 0;
   }
 }
+
+@media not (prefers-color-scheme: dark) {
+  .polka {
+    background-image: radial-gradient(#e6e6e6 0.8px, #fff 0);
+    background-position: 0 0, 16px 16px;
+    background-size: 32px 32px;
+  }
+}

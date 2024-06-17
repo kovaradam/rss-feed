@@ -57,7 +57,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   return (
     <article
       id={item.id}
-      className={`flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
+      className={`flex flex-col gap-1 border-b bg-white py-4 sm:rounded-lg sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
     >
       <span className="flex w-full justify-between gap-2 dark:text-white">
         <Link to={`/channels/${channel.id}`} className=" truncate ">
