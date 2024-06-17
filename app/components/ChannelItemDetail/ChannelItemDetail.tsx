@@ -60,7 +60,10 @@ export function ChannelItemDetail(props: Props): JSX.Element {
       className={`relative flex flex-col gap-1 overflow-hidden border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
     >
       <span className="flex w-full justify-between gap-2 dark:text-white">
-        <Link to={`/channels/${channel.id}`} className="max-w-[30ch] truncate">
+        <Link
+          to={`/channels/${channel.id}`}
+          className="max-w-[60vw] truncate sm:max-w-[40ch]"
+        >
           {props.query ? (
             <Highlight input={channel.title} query={props.query} />
           ) : (
