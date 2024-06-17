@@ -21,7 +21,7 @@ export function NewItemsAlert() {
     <div className="mb-2 flex justify-center">
       <button
         type="submit"
-        className="flex h-10 w-full items-center justify-center rounded  p-2 text-gray-900 shadow-md hover:bg-slate-50 disabled:bg-transparent disabled:shadow-none dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+        className="flex h-10 w-full items-center justify-center rounded  bg-white p-2 text-gray-900 shadow-md hover:bg-slate-50 disabled:bg-transparent disabled:shadow-none dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
         onClick={() => {
           revalidateFetcher.submit(
             {},
