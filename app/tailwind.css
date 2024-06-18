@@ -13,7 +13,10 @@
 
 @media not (prefers-color-scheme: dark) {
   .polka {
-    background-image: radial-gradient(#e6e6e6 0.8px, #fff 0);
+    --size: 0.1ex;
+
+    background-image: radial-gradient(#e2e8f0 var(--size), transparent 0),
+      radial-gradient(#e2e8f0 var(--size), #fff 0);
     background-position: 0 0, 16px 16px;
     background-size: 32px 32px;
   }

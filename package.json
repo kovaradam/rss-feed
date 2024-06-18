@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev:serve": "binode -- @remix-run/serve:remix-serve ./build/index.js",
-    "dev": "remix vite:dev",
+    "dev": "remix vite:dev --host",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
     "format": "prettier --write .",

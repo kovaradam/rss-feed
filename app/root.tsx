@@ -63,7 +63,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full w-screen overflow-x-hidden caret-rose-600 accent-rose-600 dark:caret-white dark:accent-white">
+      <body className="polka h-full w-screen overflow-x-hidden caret-rose-600 accent-rose-600 dark:bg-slate-900 dark:caret-white dark:accent-white">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
