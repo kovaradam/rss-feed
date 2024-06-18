@@ -8,6 +8,7 @@ import {
   MenuAlt2Icon,
   PlusIcon,
   RefreshIcon,
+  SearchIcon,
   UserIcon,
 } from '@heroicons/react/outline';
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
@@ -23,6 +24,7 @@ import React from 'react';
 import { AppTitle, UseAppTitle } from '~/components/AppTitle';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { NavWrapper } from '~/components/NavWrapper';
+import { Highlight } from '~/components/Highlight';
 import { getCollections } from '~/models/collection.server';
 import { requireUser } from '~/session.server';
 import { createMeta, isNormalLoad, useUser } from '~/utils';
@@ -75,6 +77,8 @@ export default function ChannelsPage() {
     window.addEventListener('focus', refreshChannels);
     return () => window.removeEventListener('focus', refreshChannels);
   }, [refreshChannels]);
+
+  const [channelFilter, setChannelFilter] = React.useState('');
 
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
@@ -204,21 +208,56 @@ export default function ChannelsPage() {
                     </li>
                   </ol>
                   <hr className="dark:border-slate-800" />
-                  <h2 className="pl-4 pt-2 text-sm text-slate-600 dark:text-slate-400">
+                  <h2 className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Channels
+                    <form
+                      className="script-only relative flex w-full items-center"
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <input
+                        value={channelFilter}
+                        className={
+                          'absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400'
+                        }
+                        type="search"
+                        onChange={(e) =>
+                          setChannelFilter(e.currentTarget.value)
+                        }
+                        name="channels-filter"
+                        id="channels-filter"
+                      />
+                      <label
+                        className="absolute right-1 z-10"
+                        htmlFor="channels-filter"
+                      >
+                        <SearchIcon
+                          className="w-4 "
+                          aria-label="Filter channels"
+                        />
+                      </label>
+                    </form>
                   </h2>
                   {!data.channelListItems ||
                   data.channelListItems.length === 0 ? (
                     <p className="p-4 dark:text-slate-500">No channels yet</p>
                   ) : (
                     <ol>
-                      {data.channelListItems?.map((channel) => (
-                        <li key={channel.id}>
-                          <StyledNavLink className="block" to={channel.id}>
-                            {channel.title}
-                          </StyledNavLink>
-                        </li>
-                      ))}
+                      {data.channelListItems
+                        ?.filter((channel) =>
+                          channel.title.toLowerCase().includes(channelFilter)
+                        )
+                        .map((channel) => (
+                          <li key={channel.id}>
+                            <StyledNavLink className="block" to={channel.id}>
+                              <span>
+                                <Highlight
+                                  input={channel.title}
+                                  query={channelFilter}
+                                />
+                              </span>
+                            </StyledNavLink>
+                          </li>
+                        ))}
                     </ol>
                   )}
                 </div>
