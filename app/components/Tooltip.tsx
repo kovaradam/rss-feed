@@ -87,7 +87,7 @@ export function Tooltip(
 
   return (
     <div
-      className={`absolute z-10 ${
+      className={`absolute z-50 ${
         position ? 'flex' : 'hidden'
       } items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white dark:border`}
       style={{

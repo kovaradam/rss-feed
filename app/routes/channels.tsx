@@ -244,7 +244,9 @@ export default function ChannelsPage() {
                     <ol>
                       {data.channelListItems
                         ?.filter((channel) =>
-                          channel.title.toLowerCase().includes(channelFilter)
+                          channel.title
+                            .toLowerCase()
+                            .includes(channelFilter.toLocaleLowerCase())
                         )
                         .map((channel) => (
                           <li key={channel.id}>
