@@ -82,10 +82,10 @@ export default function ChannelsPage() {
 
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
-      <div className="background flex flex-col sm:overflow-x-visible ">
+      <div className="flex flex-col sm:overflow-x-visible ">
         <UseAppTitle>{data.title}</UseAppTitle>
         <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
-          <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
+          <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
             <button
               aria-label="Toggle navigation"
               onClick={() => setIsNavExpanded((prev) => !prev)}
@@ -100,7 +100,7 @@ export default function ChannelsPage() {
           </div>
         </header>
         <div
-          className="flex justify-center"
+          className="background flex justify-center"
           onTouchStart={(event) => {
             event.currentTarget.dataset.touchStartX = String(
               event.targetTouches[0]?.clientX
@@ -123,7 +123,7 @@ export default function ChannelsPage() {
           <main
             className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
-            } shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] duration-200 ease-in sm:translate-x-0 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
+            } duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
           >
             <NavWrapper
               isExpanded={isNavExpanded}
