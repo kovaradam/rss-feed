@@ -82,7 +82,7 @@ export default function ChannelsPage() {
 
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
-      <div className="flex  flex-col sm:overflow-x-visible">
+      <div className="background flex flex-col sm:overflow-x-visible ">
         <UseAppTitle>{data.title}</UseAppTitle>
         <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
           <div className="flex w-full items-center justify-between p-4 xl:w-2/3">
