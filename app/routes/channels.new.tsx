@@ -37,6 +37,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ];
 };
 
+const inputNames = ['channel-url'] as const;
+const [channelUrlName] = inputNames;
+const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const channelUrlParam = new URL(request.url).searchParams.get(channelUrlName);
   return json({
@@ -44,10 +48,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     channelUrlParam: channelUrlParam ? String(channelUrlParam) : null,
   });
 };
-
-const inputNames = ['channel-url'] as const;
-const [channelUrlName] = inputNames;
-const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 type ActionData =
   | Partial<Record<(typeof errors)[number], string | null>>
