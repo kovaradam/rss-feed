@@ -68,7 +68,7 @@ export default function UserPage() {
                 label: 'Categories',
                 icon: <BookmarkIcon className="h-4" />,
                 value: categories ? (
-                  <span className="flex flex-wrap gap-1">
+                  <span className="flex flex-wrap gap-1 ">
                     <ChannelCategoryLinks category={categories} />
                   </span>
                 ) : (

@@ -184,7 +184,9 @@ export default function ChannelDetailsPage() {
         <DescriptionList className="pt-2 ">
           <span className="flex items-center gap-1 ">
             <DescriptionList.Detail>
-              <Href href={channel.link}>{channel.link}</Href>
+              <Href href={channel.link} className="">
+                {channel.link}
+              </Href>
             </DescriptionList.Detail>
           </span>
 
@@ -207,7 +209,7 @@ export default function ChannelDetailsPage() {
             </DescriptionList.Detail>
           </span>
           <WithEditLink name={'new-category'}>
-            <span className="flex items-center gap-1 ">
+            <span className="flex flex-wrap items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
                 <BookmarkIcon className="h-4" /> Categories:
               </DescriptionList.Term>

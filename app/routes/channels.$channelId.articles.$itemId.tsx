@@ -120,9 +120,10 @@ export default function ItemDetailPage() {
       <UseAppTitle>Article detail</UseAppTitle>
       <Link
         to={`/channels/${item.channelId}`}
-        className="mb-2 flex gap-1 text-slate-500 dark:text-slate-400"
+        className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
       >
-        <ChevronDoubleLeftIcon className="w-4" /> {item.channel.title}
+        <ChevronDoubleLeftIcon className="h-[2.9ex] w-4 min-w-4 " />{' '}
+        {item.channel.title}
       </Link>
       <PageHeading>
         <ChannelItemDetail.Title
@@ -130,11 +131,11 @@ export default function ItemDetailPage() {
           description={item.description}
         />
       </PageHeading>
-      <DescriptionList className="py-2">
+      <DescriptionList className=" py-2">
         {[
           {
             label: <></>,
-            content: <Href href={item.link} />,
+            content: <Href href={item.link} className="break-all" />,
             id: 'link',
           },
           {
