@@ -84,26 +84,12 @@ export default function ChannelsPage() {
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <div className="flex flex-col sm:overflow-x-visible ">
         <UseAppTitle>{data.title}</UseAppTitle>
-        <header className="z-10 flex w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
-          <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
-            <button
-              aria-label="Toggle navigation"
-              onClick={() => setIsNavExpanded((prev) => !prev)}
-              className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800"
-            >
-              <MenuAlt2Icon className="w-6" />
-            </button>
-            <h1 className="truncate font-bold sm:text-3xl">
-              <AppTitle defaultTitle={data.title} />
-            </h1>
-            <UserMenu user={user} />
-          </div>
-        </header>
+
         <div
           className="background flex justify-center"
           {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}
         >
-          <main
+          <div
             className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
             } duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
@@ -122,7 +108,7 @@ export default function ChannelsPage() {
                     className={({ isActive }) =>
                       `${
                         !isActive ? 'text-yellow-900' : ''
-                      } hover:bg-slate-200 active:bg-slate-300 sm:font-bold sm:shadow`
+                      }  hover:bg-slate-200 active:bg-slate-300 sm:h-auto sm:py-2 sm:font-bold sm:shadow`
                     }
                     to={'/channels/new'}
                   >
@@ -252,17 +238,34 @@ export default function ChannelsPage() {
                 </div>
               </div>
             </NavWrapper>
-            <div
-              className={`flex-1 p-6 ${
-                isNormalLoad(transition) ||
-                transition.formAction?.includes('logout')
-                  ? 'animate-pulse opacity-60'
-                  : ''
-              } `}
-            >
-              <Outlet />
+            <div className="flex-1">
+              <header className="z-10 flex  w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
+                <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
+                  <button
+                    aria-label="Toggle navigation"
+                    onClick={() => setIsNavExpanded((prev) => !prev)}
+                    className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800"
+                  >
+                    <MenuAlt2Icon className="w-6" />
+                  </button>
+                  <h1 className="truncate font-bold sm:text-3xl">
+                    <AppTitle defaultTitle={data.title} />
+                  </h1>
+                  <UserMenu user={user} />
+                </div>
+              </header>
+              <main
+                className={`p-6 ${
+                  isNormalLoad(transition) ||
+                  transition.formAction?.includes('logout')
+                    ? 'animate-pulse opacity-60'
+                    : ''
+                } `}
+              >
+                <Outlet />
+              </main>
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </AppTitle.Context.Provider>

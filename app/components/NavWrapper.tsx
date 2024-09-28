@@ -32,7 +32,7 @@ export function NavWrapper(props: Props): JSX.Element {
         className={`absolute right-full h-full w-3/4 border-r bg-white sm:relative sm:right-0 sm:block sm:h-auto sm:w-64 sm:bg-slate-100 lg:w-80 dark:border-r-0 dark:bg-slate-950 sm:dark:bg-slate-950`}
       >
         <div
-          className="sticky top-0 h-[90vh] overflow-y-auto overflow-x-hidden sm:h-screen"
+          className="sticky top-0 h-[100svh] overflow-y-auto overflow-x-hidden sm:h-screen"
           ref={scrollElementRef}
         >
           {props.children}
@@ -40,7 +40,7 @@ export function NavWrapper(props: Props): JSX.Element {
       </nav>
       <div
         className={`absolute right-0 top-0 z-10 h-full  w-full bg-black opacity-10 ${
-          props.isExpanded ? 'visible' : 'hidden'
+          props.isExpanded ? 'visible touch-none' : 'hidden'
         } sm:hidden`}
         onClick={props.hide}
       />
