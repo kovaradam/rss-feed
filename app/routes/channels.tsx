@@ -101,29 +101,13 @@ export default function ChannelsPage() {
         </header>
         <div
           className="background flex justify-center"
-          onTouchStart={(event) => {
-            event.currentTarget.dataset.touchStartX = String(
-              event.targetTouches[0]?.clientX
-            );
-          }}
-          onTouchEnd={(event) => {
-            const startX = event.currentTarget.dataset.touchStartX;
-
-            const diff = Number(startX) - event.changedTouches[0]?.clientX;
-            if (
-              !startX ||
-              Math.abs(diff) < event.currentTarget.clientWidth / 3
-            ) {
-              return;
-            }
-            event.preventDefault();
-            setIsNavExpanded(diff < 0);
-          }}
+          {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}
         >
           <main
             className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
               isNavExpanded ? 'translate-x-3/4' : ''
             } duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
+            data-nav-sliding-element
           >
             <NavWrapper
               isExpanded={isNavExpanded}
@@ -386,4 +370,61 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
       <div className="invisible absolute -left-0 top-0 z-10 h-full w-full  bg-black opacity-30 peer-open:visible sm:peer-open:invisible"></div>
     </>
   );
+}
+
+function registerNavSwipeCallbacks(
+  isExpanded: boolean,
+  setIsExpanded: (value: boolean) => void
+): Pick<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onTouchStart' | 'onTouchMove' | 'onTouchEnd'
+> {
+  return {
+    onTouchStart: (event) => {
+      event.currentTarget.dataset.touchStartX = String(
+        event.targetTouches[0]?.clientX
+      );
+      event.currentTarget.dataset.touchStartY = String(
+        event.targetTouches[0]?.clientY
+      );
+    },
+    onTouchMove: (event) => {
+      const diffX =
+        Number(event.currentTarget.dataset.touchStartX) -
+        event.changedTouches[0]?.clientX;
+      const diffY =
+        Number(event.currentTarget.dataset.touchStartY) -
+        event.changedTouches[0]?.clientY;
+
+      event.currentTarget?.setAttribute('data-slide-diff', String(diffX));
+
+      if (
+        Math.abs(diffX) > Math.abs(diffY) &&
+        (isExpanded ? diffX > 0 : diffX < 0)
+      ) {
+        const slidingElement = event.currentTarget.querySelector(
+          '[data-nav-sliding-element]'
+        );
+        slidingElement?.setAttribute(
+          'style',
+          `translate:${-1 * diffX}px;transition:none;`
+        );
+      }
+    },
+    onTouchEnd: (event) => {
+      const slidingElement = event.currentTarget.querySelector(
+        '[data-nav-sliding-element]'
+      );
+
+      slidingElement?.setAttribute('style', '');
+
+      const diff = Number(event.currentTarget.getAttribute('data-slide-diff'));
+
+      if (Math.abs(diff) < event.currentTarget.clientWidth / 4) {
+        return;
+      }
+
+      setIsExpanded(diff < 0);
+    },
+  };
 }
