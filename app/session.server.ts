@@ -20,7 +20,7 @@ export const sessionStorage = createCookieSessionStorage({
 
 const USER_SESSION_KEY = 'userId';
 
-export async function getSession(request: Request) {
+async function getSession(request: Request) {
   const cookie = request.headers.get('Cookie');
   return sessionStorage.getSession(cookie);
 }
@@ -85,22 +85,34 @@ export async function createUserSession({
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
+
   return redirect(redirectTo, {
-    headers: {
-      'Set-Cookie': await sessionStorage.commitSession(session, {
-        maxAge: remember
-          ? 60 * 60 * 24 * 7 // 7 days
-          : undefined,
-      }),
-    },
+    headers: new Headers([
+      [
+        'Set-Cookie',
+        await sessionStorage.commitSession(session, {
+          maxAge: remember
+            ? 60 * 60 * 24 * 7 // 7 days
+            : undefined,
+        }),
+      ],
+      ['Set-Cookie', KNOWN_USER_COOKIE],
+    ]),
   });
 }
 
 export async function logout(request: Request, target = '/') {
   const session = await getSession(request);
   return redirect(target, {
-    headers: {
-      'Set-Cookie': await sessionStorage.destroySession(session),
-    },
+    headers: new Headers([
+      ['Set-Cookie', await sessionStorage.destroySession(session)],
+      ['Set-Cookie', KNOWN_USER_COOKIE],
+    ]),
   });
 }
+
+export function isKnownUser(request: Request) {
+  return request.headers.get('Cookie')?.includes(KNOWN_USER_COOKIE);
+}
+
+const KNOWN_USER_COOKIE = 'known-user=true';
