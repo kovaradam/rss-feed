@@ -4,7 +4,7 @@ import type {
   ActionFunction,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { redirect, json } from '@remix-run/server-runtime';
+import { redirect, data } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -48,8 +48,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id is not defined');
   const userId = await requireUserId(request);
-  const data = await request.formData();
-  const form = Object.fromEntries(data.entries()) as Record<
+  const formData = await request.formData();
+  const form = Object.fromEntries(formData.entries()) as Record<
     FieldName,
     string | null
   >;
@@ -65,7 +65,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (Object.keys(errors).length !== 0) {
-    return json<ActionData>({ errors }, { status: 400 });
+    return data<ActionData>({ errors }, { status: 400 });
   }
 
   const collection = await updateCollection(collectionId, userId, {
@@ -89,7 +89,10 @@ type LoaderData = {
   defaultValue: Collection;
 };
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({
+  request,
+  params,
+}: LoaderFunctionArgs): Promise<LoaderData> => {
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id is not defined');
 
@@ -118,11 +121,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       .filter(Boolean)
       .filter(uniqueArrayFilter) ?? [];
 
-  return json<LoaderData>({ categories, languages, defaultValue: collection });
+  return { categories, languages, defaultValue: collection };
 };
 
 export default function EditCollectionPage() {
-  const data = useLoaderData<LoaderData>();
+  const data = useLoaderData<typeof loader>();
   return (
     <>
       <UseAppTitle>{data.defaultValue.title}</UseAppTitle>

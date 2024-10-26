@@ -5,8 +5,11 @@ import {
   useLoaderData,
   useNavigation,
 } from '@remix-run/react';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
-import { redirect, json } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
+import { redirect, data } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -51,8 +54,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   invariant(channelId, 'ChannelId was not provided');
   const userId = await requireUserId(request);
 
-  const data = await request.formData();
-  const form = Object.fromEntries(data.entries()) as Record<
+  const formData = await request.formData();
+  const form = Object.fromEntries(formData.entries()) as Record<
     FieldName,
     string | null
   >;
@@ -63,7 +66,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (Object.keys(errors).length !== 0) {
-    return json<ActionData>({ errors }, { status: 400 });
+    return data<ActionData>({ errors }, { status: 400 });
   }
 
   const channel = await updateChannel(userId, {
@@ -86,7 +89,10 @@ type LoaderData = {
   focusName: string | null;
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({
+  request,
+  params,
+}: LoaderFunctionArgs): Promise<LoaderData> => {
   const channelId = params.channelId;
   invariant(channelId, 'ChannelId was not provided');
   const userId = await requireUserId(request);
@@ -116,13 +122,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw new Response('Not Found', { status: 404 });
   }
 
-  return json<LoaderData>({ channel, categories, focusName });
+  return { channel, categories, focusName };
 };
 
 export default function Channels() {
   const errors = useActionData<ActionData>()?.errors;
   const transition = useNavigation();
-  const { channel, categories, focusName } = useLoaderData<LoaderData>();
+  const { channel, categories, focusName } = useLoaderData<typeof loader>();
   const isSaving = isSubmitting(transition);
 
   const { renderCategoryInput, renderCategoryForm } = useCategoryInput({

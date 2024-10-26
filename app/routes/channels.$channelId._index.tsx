@@ -1,10 +1,10 @@
 import type { Channel, Item } from '@prisma/client';
 import type {
   ActionFunction,
-  LoaderFunction,
+  LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import {
   Form,
   Link,
@@ -67,7 +67,10 @@ type LoaderData = {
 
 const itemCountName = 'itemCount';
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({
+  request,
+  params,
+}: LoaderFunctionArgs): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const requestUrl = new URL(request.url);
   const itemCount = requestUrl.searchParams.get(itemCountName);
@@ -89,14 +92,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     take: take,
   });
 
-  return json<LoaderData>({
+  return {
     channel: channel,
     items: items ?? [],
     cursor:
       items.length >= take
         ? { name: itemCountName, value: String(take + 10) }
         : null,
-  });
+  };
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -127,7 +130,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       data: updatedParseErrors,
     });
 
-    return json(updatedParseErrors);
+    return updatedParseErrors;
   }
 
   const channel = await getChannel({
@@ -150,7 +153,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function ChannelDetailsPage() {
-  const data = useLoaderData<LoaderData>();
+  const data = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   const isRefreshing =
@@ -196,14 +199,13 @@ export default function ChannelDetailsPage() {
             </DescriptionList.Term>
             <DescriptionList.Detail className="flex flex-wrap gap-1">
               {data.channel.lastBuildDate ? (
-                <TimeFromNow date={new Date(data.channel.lastBuildDate)} />
+                <TimeFromNow date={data.channel.lastBuildDate} />
               ) : (
                 'unknown'
               )}
               {data.channel.refreshDate && (
                 <span>
-                  (refreshed{' '}
-                  <TimeFromNow date={new Date(data.channel.refreshDate)} />)
+                  (refreshed <TimeFromNow date={data.channel.refreshDate} />)
                 </span>
               )}
             </DescriptionList.Detail>
@@ -289,17 +291,13 @@ export default function ChannelDetailsPage() {
               hideImage
               item={{
                 ...item,
-                pubDate: new Date(item.pubDate),
+                pubDate: item.pubDate,
                 channel: {
                   ...channel,
-                  lastBuildDate: channel.lastBuildDate
-                    ? new Date(channel.lastBuildDate)
-                    : null,
-                  refreshDate: channel.refreshDate
-                    ? new Date(channel.refreshDate)
-                    : null,
-                  createdAt: new Date(channel.createdAt),
-                  updatedAt: new Date(channel.updatedAt),
+                  lastBuildDate: channel.lastBuildDate,
+                  refreshDate: channel.refreshDate,
+                  createdAt: channel.createdAt,
+                  updatedAt: channel.updatedAt,
                 },
               }}
               formMethod="put"

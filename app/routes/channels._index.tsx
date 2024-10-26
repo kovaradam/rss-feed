@@ -1,8 +1,10 @@
 import { FilterIcon } from '@heroicons/react/outline';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
 import { Link, useLoaderData, useNavigation } from '@remix-run/react';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
@@ -30,7 +32,9 @@ type LoaderData = {
 
 const itemCountName = 'item-count';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({
+  request,
+}: LoaderFunctionArgs): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
   const itemCountParam = searchParams.get(itemCountName);
@@ -82,7 +86,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     .filter((category, index, array) => index === array.indexOf(category))
     .filter(Boolean);
 
-  return json<LoaderData>({
+  return {
     items: (items as LoaderData['items']) ?? [],
     channels,
     categories,
@@ -91,7 +95,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       items.length >= itemCountRequest
         ? { name: itemCountName, value: String(itemCountRequest + 10) }
         : null,
-  });
+  };
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -102,7 +106,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function ChannelIndexPage() {
   const { items, channels, categories, filters, cursor } =
-    useLoaderData<LoaderData>();
+    useLoaderData<typeof loader>();
 
   const transition = useNavigation();
   const isLoading = transition.state === 'loading';
@@ -116,14 +120,10 @@ export default function ChannelIndexPage() {
         filters={filters}
         channels={channels.map((channel) => ({
           ...channel,
-          updatedAt: new Date(channel.updatedAt),
-          createdAt: new Date(channel.createdAt),
-          lastBuildDate: channel.lastBuildDate
-            ? new Date(channel.lastBuildDate)
-            : null,
-          refreshDate: channel.refreshDate
-            ? new Date(channel.refreshDate)
-            : null,
+          updatedAt: channel.updatedAt,
+          createdAt: channel.createdAt,
+          lastBuildDate: channel.lastBuildDate,
+          refreshDate: channel.refreshDate,
         }))}
         categories={categories}
         canExcludeRead
@@ -200,17 +200,13 @@ export default function ChannelIndexPage() {
                 <ChannelItemDetail
                   item={{
                     ...item,
-                    pubDate: new Date(item.pubDate),
+                    pubDate: item.pubDate,
                     channel: {
                       ...item.channel,
-                      updatedAt: new Date(item.channel.updatedAt),
-                      createdAt: new Date(item.channel.createdAt),
-                      lastBuildDate: item.channel.lastBuildDate
-                        ? new Date(item.channel.lastBuildDate)
-                        : null,
-                      refreshDate: item.channel.refreshDate
-                        ? new Date(item.channel.refreshDate)
-                        : null,
+                      updatedAt: item.channel.updatedAt,
+                      createdAt: item.channel.createdAt,
+                      lastBuildDate: item.channel.lastBuildDate,
+                      refreshDate: item.channel.refreshDate,
                     },
                   }}
                   formMethod="post"

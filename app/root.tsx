@@ -1,9 +1,8 @@
 import type {
   LinksFunction,
-  LoaderFunction,
+  LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
-import { json } from '@remix-run/node';
 import {
   Links,
   Meta,
@@ -39,16 +38,18 @@ type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>;
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({
+  request,
+}: LoaderFunctionArgs): Promise<LoaderData> => {
   const user = await getUser(request);
 
-  return json<LoaderData>({
+  return {
     user,
-  });
+  };
 };
 
 export default function App() {
-  const data = useLoaderData<LoaderData>();
+  const data = useLoaderData<typeof loader>();
 
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">

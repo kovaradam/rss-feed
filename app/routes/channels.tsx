@@ -11,7 +11,7 @@ import {
   SearchIcon,
   UserIcon,
 } from '@heroicons/react/outline';
-import { json, type LoaderFunctionArgs } from '@remix-run/node';
+import { type LoaderFunctionArgs } from '@remix-run/node';
 import type { NavLinkProps } from '@remix-run/react';
 import {
   Form,
@@ -50,12 +50,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     'collection'
   );
 
-  return json({
+  return {
     channelListItems,
     collectionListItems,
     activeCollectionId,
     title: 'Your feed',
-  });
+  };
 };
 
 export default function ChannelsPage() {

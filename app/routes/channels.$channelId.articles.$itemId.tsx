@@ -6,7 +6,6 @@ import {
 } from '@heroicons/react/outline';
 import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import {
-  json,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
@@ -54,12 +53,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const quote = form.get('quote');
 
   if (!quote || typeof quote !== 'string') {
-    return json({ error: 'Please provide a quote content' });
+    return { error: 'Please provide a quote content' };
   }
 
   const result = await addQuoteToItem(quote, { itemId, userId });
 
-  return json({ quote: result.content });
+  return { quote: result.content };
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -81,7 +80,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response('Not found', { status: 404 });
   }
 
-  return json({
+  return {
     item,
     title: item?.title,
     quotes,
@@ -89,7 +88,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       quotes.length < totalQuoteCount
         ? { name: 'count', value: String(quotes.length + 10) }
         : null,
-  });
+  };
 }
 
 export default function ItemDetailPage() {
@@ -104,7 +103,7 @@ export default function ItemDetailPage() {
           {
             content: submittedQuote,
             id: 'new',
-            createdAt: new Date().toString(),
+            createdAt: new Date(),
           },
         ].concat(data.quotes)
       : data.quotes;
@@ -153,7 +152,7 @@ export default function ItemDetailPage() {
                 <ClockIcon className="w-4" /> Published:
               </>
             ),
-            content: <TimeFromNow date={new Date(item.pubDate)} />,
+            content: <TimeFromNow date={item.pubDate} />,
             id: 'published',
           },
         ].map((entry) => (
@@ -208,7 +207,12 @@ export default function ItemDetailPage() {
       <hr className="my-2 mt-4" />
       <ul>
         {quotes.map((quote) => (
-          <Quote key={quote.id} {...quote} />
+          <Quote
+            key={quote.id}
+            content={quote.content}
+            createdAt={quote.createdAt}
+            id={quote.id}
+          />
         ))}
       </ul>
       {data.cursor && <ShowMoreLink cursor={data.cursor} />}
@@ -216,7 +220,7 @@ export default function ItemDetailPage() {
   );
 }
 
-function Quote(props: { content: string; createdAt: string; id: string }) {
+function Quote(props: { content: string; createdAt: Date; id: string }) {
   const fetcher = useFetcher();
   if (fetcher.formData) {
     return null;
@@ -233,7 +237,7 @@ function Quote(props: { content: string; createdAt: string; id: string }) {
       </p>
 
       <div className="flex justify-between text-slate-500 dark:text-slate-400">
-        <TimeFromNow date={new Date(props.createdAt)} />
+        <TimeFromNow date={props.createdAt} />
         <fetcher.Form method="post">
           <input type="hidden" name="intent" value="delete" />
           <input type="hidden" name="id" value={props.id} />

@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { data, redirect } from '@remix-run/node';
 import {
   Form,
   Link,
@@ -27,9 +27,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (userId) {
     return redirect('/');
   }
-  return json({
+  return {
     isFirst: Boolean(new URL(request.url).searchParams.get('first')),
-  });
+  };
 };
 
 interface ActionData {
@@ -48,21 +48,21 @@ export const action: ActionFunction = async ({ request }) => {
   const remember = formData.get('remember');
 
   if (!validateEmail(email)) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { email: 'Email is invalid' } },
       { status: 400 }
     );
   }
 
   if (typeof password !== 'string' || password.length === 0) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { password: 'Password is required' } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { password: 'Password is too short' } },
       { status: 400 }
     );
@@ -71,7 +71,7 @@ export const action: ActionFunction = async ({ request }) => {
   const user = await verifyLogin(email, password);
 
   if (!user) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { email: 'Invalid email or password' } },
       { status: 400 }
     );

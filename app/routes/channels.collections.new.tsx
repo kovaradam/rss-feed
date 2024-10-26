@@ -1,6 +1,9 @@
 import type { MetaFunction } from '@remix-run/node';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
-import { redirect, json } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
+import { redirect, data } from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { CollectionForm } from '~/components/CollectionForm';
@@ -34,8 +37,8 @@ type ActionData = {
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  const data = await request.formData();
-  const form = Object.fromEntries(data.entries()) as Record<
+  const formData = await request.formData();
+  const form = Object.fromEntries(formData.entries()) as Record<
     FieldName,
     string | null
   >;
@@ -46,7 +49,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (Object.keys(errors).length !== 0) {
-    return json<ActionData>({ errors }, { status: 400 });
+    return data<ActionData>({ errors }, { status: 400 });
   }
 
   const collection = await createCollection({
@@ -68,7 +71,9 @@ type LoaderData = {
   languages: string[];
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({
+  request,
+}: LoaderFunctionArgs): Promise<LoaderData> => {
   const userId = await requireUserId(request);
 
   const channels = await getChannels({
@@ -89,7 +94,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       .filter(Boolean)
       .filter(uniqueArrayFilter) ?? [];
 
-  return json<LoaderData>({ categories, languages });
+  return { categories, languages };
 };
 
 export default function NewCollectionPage() {

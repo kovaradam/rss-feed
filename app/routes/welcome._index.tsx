@@ -6,8 +6,11 @@ import {
   useSearchParams,
   useNavigation,
 } from '@remix-run/react';
-import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
-import { json, redirect } from '@remix-run/server-runtime';
+import type {
+  ActionFunction,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
+import { data, redirect } from '@remix-run/server-runtime';
 import React from 'react';
 import { SubmitButton, buttonStyle } from '~/components/Button';
 import { WithFormLabel } from '~/components/WithFormLabel';
@@ -24,12 +27,12 @@ export const meta: MetaFunction = () => {
   return [{ title: createTitle('Welcome') }];
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
   if (userId) {
     return redirect('/channels');
   }
-  return json({});
+  return {};
 };
 
 interface ActionData {
@@ -46,21 +49,21 @@ export const action: ActionFunction = async ({ request }) => {
   const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
 
   if (!validateEmail(email)) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { email: 'Email is invalid' } },
       { status: 400 }
     );
   }
 
   if (typeof password !== 'string' || password.length === 0) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { password: 'Password is required' } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { password: 'Password is too short' } },
       { status: 400 }
     );
@@ -68,7 +71,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
-    return json<ActionData>(
+    return data<ActionData>(
       { errors: { email: 'User with this email already exists.' } },
       { status: 400 }
     );

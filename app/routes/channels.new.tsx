@@ -11,7 +11,7 @@ import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { redirect, json } from '@remix-run/server-runtime';
+import { redirect, data } from '@remix-run/server-runtime';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { PageHeading } from '~/components/PageHeading';
@@ -43,10 +43,10 @@ const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const channelUrlParam = new URL(request.url).searchParams.get(channelUrlName);
-  return json({
+  return {
     title: 'Add new channel',
     channelUrlParam: channelUrlParam ? String(channelUrlParam) : null,
-  });
+  };
 };
 
 type ActionData =
@@ -55,15 +55,15 @@ type ActionData =
   | { newItemCount: number };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const data = await request.formData();
-  const inputChannelHref = data.get(channelUrlName);
+  const formData = await request.formData();
+  const inputChannelHref = formData.get(channelUrlName);
   const userId = await requireUserId(request);
 
   let channelUrl;
   try {
     channelUrl = new URL(String(inputChannelHref));
   } catch (error) {
-    return json<ActionData>({
+    return data<ActionData>({
       [channelUrlName]: 'Please provide a valid url',
     });
   }
@@ -72,7 +72,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     channelRequest = await fetch(channelUrl);
   } catch (error) {
-    return json<ActionData>({
+    return data<ActionData>({
       fetch: `Could not load RSS feed from "${channelUrl.origin}"`,
     });
   }
@@ -114,7 +114,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     storeFailedUpload(String(inputChannelHref), String(error));
 
-    return json<ActionData>(response);
+    return data<ActionData>(response);
   }
 
   return redirect('/channels/'.concat(newChannel.id));
