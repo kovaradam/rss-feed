@@ -112,13 +112,6 @@ export function browserApiSwitch<T>(input: T, fallback: T) {
   return input;
 }
 
-export function isNormalLoad({
-  state,
-  formMethod,
-}: ReturnType<typeof useNavigation>) {
-  return state === 'loading' && !formMethod;
-}
-
 export function isSubmitting({
   state,
   formMethod,

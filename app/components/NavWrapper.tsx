@@ -20,7 +20,7 @@ export function NavWrapper(props: Props): JSX.Element {
 
   const scrollElementRef = React.useRef<HTMLDivElement>(null);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     if (props.isExpanded) {
       scrollElementRef.current?.scroll({ top: 0 });
     }

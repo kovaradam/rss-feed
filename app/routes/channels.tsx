@@ -27,7 +27,7 @@ import { NavWrapper } from '~/components/NavWrapper';
 import { Highlight } from '~/components/Highlight';
 import { getCollections } from '~/models/collection.server';
 import { requireUser } from '~/session.server';
-import { createMeta, isNormalLoad, useUser } from '~/utils';
+import { createMeta, useUser } from '~/utils';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import { getChannels } from '~/models/channel.server';
 import { Tooltip } from '~/components/Tooltip';
@@ -61,7 +61,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function ChannelsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
-  const transition = useNavigation();
+  const navigation = useNavigation();
 
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
   const [title, setTitle] = React.useState(data.title as string | undefined);
@@ -256,8 +256,7 @@ export default function ChannelsPage() {
               </header>
               <main
                 className={`p-6 ${
-                  isNormalLoad(transition) ||
-                  transition.formAction?.includes('logout')
+                  navigation.formAction?.includes('logout')
                     ? 'animate-pulse opacity-60'
                     : ''
                 } `}

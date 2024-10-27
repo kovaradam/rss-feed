@@ -121,7 +121,7 @@ export default function LoginPage() {
           <Link
             className="font-bold underline"
             to={{
-              pathname: '/',
+              pathname: '/welcome',
               search: searchParams.toString(),
             }}
           >

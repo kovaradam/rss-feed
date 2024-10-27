@@ -10,6 +10,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useNavigation,
 } from '@remix-run/react';
 
 import stylesheet from './tailwind.css?url';
@@ -50,6 +51,7 @@ export const loader = async ({
 
 export default function App() {
   const data = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
 
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
@@ -65,6 +67,15 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
+        {!navigation.formAction && (
+          <div
+            data-loading={navigation.state === 'loading'}
+            className="progress"
+          >
+            <div className="" />
+          </div>
+        )}
+
         <Outlet />
         <ScrollRestoration />
         <Scripts />

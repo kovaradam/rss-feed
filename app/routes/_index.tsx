@@ -1,4 +1,4 @@
-import type { MetaFunction } from '@remix-run/react';
+import { type MetaFunction } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import { getUserId, isKnownUser } from '~/session.server';

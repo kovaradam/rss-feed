@@ -1,15 +1,13 @@
 import type { MetaFunction } from '@remix-run/react';
-import { Outlet, useNavigation } from '@remix-run/react';
+import { Outlet } from '@remix-run/react';
 import { ErrorMessage } from '~/components/ErrorMessage';
-import { createTitle, isNormalLoad } from '~/utils';
+import { createTitle } from '~/utils';
 
 export const meta: MetaFunction = () => {
   return [{ title: createTitle('Welcome') }];
 };
 
 export default function Welcome() {
-  const transition = useNavigation();
-
   return (
     <main className="relative flex h-[200vh] min-h-screen flex-col-reverse justify-center bg-white sm:h-screen sm:flex-row sm:justify-start dark:bg-slate-900 ">
       <section className="flex h-screen flex-col items-center justify-between bg-blue-100 p-[5%] sm:h-full sm:w-1/3 dark:bg-slate-950">
@@ -30,9 +28,7 @@ export default function Welcome() {
         />
       </section>
       <section
-        className={`flex h-screen items-center justify-center p-4 sm:h-full sm:flex-1 sm:p-8 ${
-          isNormalLoad(transition) ? 'animate-pulse opacity-60' : ''
-        }`}
+        className={`flex h-screen items-center justify-center p-4 sm:h-full sm:flex-1 sm:p-8`}
       >
         <div className="flex w-full flex-col gap-8 sm:w-[60ch]">
           <Outlet />
