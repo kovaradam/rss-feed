@@ -221,7 +221,7 @@ export default function ChannelsPage() {
                         .map((channel) => (
                           <li key={channel.id}>
                             <StyledNavLink className="block" to={channel.id}>
-                              <span>
+                              <span className="pointer-events-none">
                                 <Highlight
                                   input={channel.title}
                                   query={channelFilter}
