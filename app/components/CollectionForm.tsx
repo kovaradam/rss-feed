@@ -50,7 +50,7 @@ export function CollectionForm<
   const isEditForm = Boolean(props.deleteFormId);
 
   return (
-    <div className={`${transition.state === 'loading' ? 'opacity-60' : ''}`}>
+    <div>
       <header className="flex max-w-xl justify-between">
         <PageHeading>{props.title}</PageHeading>
         {props.deleteFormId && (

@@ -172,11 +172,7 @@ export default function ChannelDetailsPage() {
   const [playRefresh] = useSound(refreshSound);
 
   return (
-    <div
-      className={`relative flex flex-col sm:flex-row ${
-        transition.state === 'loading' ? 'opacity-60' : ''
-      }`}
-    >
+    <div className={`relative flex flex-col sm:flex-row`}>
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="relative z-0 max-w-[90vw] flex-1">
         {channel.imageUrl && <ChannelImage src={channel.imageUrl} />}
