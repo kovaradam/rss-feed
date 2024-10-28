@@ -35,27 +35,32 @@
 }
 
 .progress {
-  --delay: 500ms;
-  --timeout: 1s;
+  --duration: 1s;
   @apply absolute top-0 z-20 h-1 w-0 bg-rose-700 bg-opacity-25;
 }
 
 .progress[data-loading='true'] {
-  transition: width var(--timeout);
-  transition-delay: var(--delay);
+  transition: width var(--duration);
+  transition-delay: var(500ms);
   @apply w-full;
 }
 
-.progress div {
+.progress[data-loading='true'] div {
   @apply h-full w-1/2 bg-rose-500;
-  animation: progress var(--timeout) ease-in-out var(--delay) infinite;
+  animation: progress;
+  animation-duration: var(--duration);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-delay: calc(var(--duration) / 2);
+
+  transform: translateX(-100%);
 }
 
 @keyframes progress {
   from {
-    transform: translateX(-100%);
+    transform: translateX(-100%) scaleX(80%);
   }
   to {
-    transform: translateX(200%);
+    transform: translateX(200%) scaleX(100%);
   }
 }
