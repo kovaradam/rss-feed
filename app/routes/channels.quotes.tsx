@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function QuotesPage() {
   const data = useLoaderData<typeof loader>();
-  const { state } = useNavigation();
+  const navigation = useNavigation();
 
   if (!data.quotes.length && !data.q) {
     return (
@@ -80,7 +80,9 @@ export default function QuotesPage() {
         />
       </Form>
       <ul className="relative">
-        {state === 'loading' && <ChannelItemsOverlay />}
+        {navigation.formData && navigation.state === 'loading' && (
+          <ChannelItemsOverlay />
+        )}
         {data.quotes.map((quote) => (
           <li
             id={quote.id}
