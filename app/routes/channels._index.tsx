@@ -43,11 +43,12 @@ export const loader = async ({
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
   );
-  const [before, after, q, excludeReadParam] = [
-    'before',
-    'after',
-    'q',
-    'exclude-read',
+  const [before, after, search, excludeReadParam, includeHiddenFromFeed] = [
+    ChannelItemFilterForm.names.before,
+    ChannelItemFilterForm.names.after,
+    PageSearchInput.names.search,
+    ChannelItemFilterForm.names.excludeRead,
+    ChannelItemFilterForm.names.includeHiddenFromFeed,
   ].map((name) => searchParams.get(name));
 
   const filters = {
@@ -56,13 +57,18 @@ export const loader = async ({
     categories: filterCategories,
     channels: filterChannels,
     excludeRead: excludeReadParam ? excludeReadParam === String(true) : null,
-    q: q,
+    excludeHiddenFromFeed:
+      includeHiddenFromFeed === String(true) ? false : true,
+    search,
   };
 
   const items = await getItemsByFilters(
     {
       userId,
-      filters,
+      filters: {
+        ...filters,
+        excludeHiddenFromFeed: !filters.search && filters.excludeHiddenFromFeed,
+      },
     },
     {
       orderBy: { pubDate: 'desc' },
@@ -147,7 +153,7 @@ export default function ChannelIndexPage() {
             <FilterForm />
           </Details>
           <PageSearchInput
-            defaultValue={filters.q ?? undefined}
+            defaultValue={filters.search ?? undefined}
             formId={'filter-form'}
             placeholder="Search in articles"
           />
@@ -210,7 +216,7 @@ export default function ChannelIndexPage() {
                     },
                   }}
                   formMethod="post"
-                  query={filters.q ?? undefined}
+                  query={filters.search ?? undefined}
                 />
               </li>
             ))}

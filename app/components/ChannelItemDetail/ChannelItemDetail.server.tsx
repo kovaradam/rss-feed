@@ -13,6 +13,8 @@ export const ChannelItemDetailService = {
 
     const bookmarked = form.get(names.bookmarked);
     const read = form.get(names.read);
+    const hiddenFromFeed = form.get(names.hiddenFromFeed);
+
     await updateChannelItem(userId, {
       where: {
         id: itemId,
@@ -20,6 +22,7 @@ export const ChannelItemDetailService = {
       data: {
         read: getBooleanValue(read),
         bookmarked: getBooleanValue(bookmarked),
+        hiddenFromFeed: getBooleanValue(hiddenFromFeed),
       },
     });
 

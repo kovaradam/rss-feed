@@ -175,6 +175,7 @@ class ItemDataTransformer {
           .find((enclosure) => enclosure.type?.includes('image'))?.url ?? '',
       bookmarked: false,
       read: false,
+      hiddenFromFeed: false,
     };
   }
 }

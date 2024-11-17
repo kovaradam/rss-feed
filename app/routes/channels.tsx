@@ -36,24 +36,19 @@ export const meta = createMeta();
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
-  const channelListItems = await getChannels({
+  const channelListItems = getChannels({
     where: { userId: user.id },
     select: { id: true, title: true },
   });
 
-  const collectionListItems = await getCollections({
+  const collectionListItems = getCollections({
     where: { userId: user.id },
     orderBy: { title: 'asc' },
   });
 
-  const activeCollectionId = new URL(request.url).searchParams.get(
-    'collection'
-  );
-
   return {
-    channelListItems,
-    collectionListItems,
-    activeCollectionId,
+    channelListItems: await channelListItems,
+    collectionListItems: await collectionListItems,
     title: 'Your feed',
   };
 };

@@ -13,7 +13,7 @@ export function PageSearchInput(props: {
     <>
       <input
         form={props.formId}
-        name="q"
+        name={PageSearchInput.names.search}
         type="search"
         defaultValue={props.defaultValue}
         placeholder={props.placeholder}
@@ -35,3 +35,5 @@ export function PageSearchInput(props: {
     </>
   );
 }
+
+PageSearchInput.names = { search: 'q' };

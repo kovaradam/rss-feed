@@ -346,7 +346,8 @@ export async function getItemsByFilters(
       before: string | null;
       after: string | null;
       excludeRead: boolean | null;
-      q: string | null;
+      excludeHiddenFromFeed: boolean | null;
+      search: string | null;
     };
     userId: User['id'];
   },
@@ -357,6 +358,8 @@ export async function getItemsByFilters(
 
     where: {
       read: filters.excludeRead === true ? false : undefined,
+      hiddenFromFeed:
+        filters.excludeHiddenFromFeed === true ? false : undefined,
       channel: {
         userId,
         id:
@@ -376,7 +379,7 @@ export async function getItemsByFilters(
             }
           : undefined,
 
-      ...getItemQueryFilter(filters.q ?? ''),
+      ...getItemQueryFilter(filters.search ?? ''),
     },
   });
 

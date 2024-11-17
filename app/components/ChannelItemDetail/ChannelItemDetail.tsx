@@ -1,8 +1,10 @@
 import {
   BookmarkIcon as OutlineBookmarkIcon,
   CheckCircleIcon,
+  EyeIcon,
 } from '@heroicons/react/outline';
 import {
+  EyeOffIcon,
   BookmarkIcon as SolidBookmarkIcon,
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
@@ -32,18 +34,23 @@ export function ChannelItemDetail(props: Props): JSX.Element {
   const { channel, ...item } = props.item;
 
   const fetcher = useFetcher();
-  const [sentBookmarked, sentRead] = [
+  const [sentBookmarked, sentRead, sentHiddenFromFeed] = [
     fetcher.formData?.get(ChannelItemDetail.form.names.bookmarked) ?? null,
     fetcher.formData?.get(ChannelItemDetail.form.names.read) ?? null,
+    fetcher.formData?.get(ChannelItemDetail.form.names.hiddenFromFeed) ?? null,
   ];
 
-  const [bookmarked, read] = [
+  const [bookmarked, read, hiddenFromFeed] = [
     sentBookmarked === null ? item.bookmarked : sentBookmarked === String(true),
     sentRead === null ? item.read : sentRead === String(true),
+    sentHiddenFromFeed === null
+      ? item.hiddenFromFeed
+      : sentHiddenFromFeed === String(true),
   ];
 
   const ReadIcon = read ? SolidCheckIcon : CheckCircleIcon;
   const BookmarkIcon = bookmarked ? SolidBookmarkIcon : OutlineBookmarkIcon;
+  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : EyeIcon;
 
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
   const [playCancel] = useSound(cancelSound, { volume: 0.1 });
@@ -73,6 +80,16 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
         <fieldset className="flex gap-2">
           {[
+            {
+              name: ChannelItemDetail.form.names.hiddenFromFeed,
+              value: String(!hiddenFromFeed),
+              Icon: HiddenFromFeedIcon,
+              title: hiddenFromFeed ? 'Show in feed' : 'Hide in feed',
+              className: `${
+                hiddenFromFeed ? 'hover:bg-green-200' : 'hover:bg-red-200'
+              } dark:hover:bg-slate-900`,
+              playSubmit: hiddenFromFeed ? playConfirm : playCancel,
+            },
             {
               name: ChannelItemDetail.form.names.read,
               value: String(!read),
@@ -169,6 +186,7 @@ ChannelItemDetail.form = {
     itemId: 'itemId',
     bookmarked: 'bookmarked',
     read: 'read',
+    hiddenFromFeed: 'hiddenFromFeed',
   },
   getBooleanValue(formValue: FormDataEntryValue | null): boolean | undefined {
     if (formValue === 'true') {

@@ -11,7 +11,6 @@ import type {
   ActionFunction,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -52,14 +51,16 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(collectionId, 'Collection id was not provided');
   const searchParams = new URL(request.url).searchParams;
 
-  const [before, after, q] = ['before', 'after', 'q'].map((name) =>
-    searchParams.get(name)
-  );
+  const [before, after, search] = [
+    ChannelItemFilterForm.names.before,
+    ChannelItemFilterForm.names.after,
+    PageSearchInput.names.search,
+  ].map((name) => searchParams.get(name));
 
   const filters = {
     after,
     before,
-    q,
+    search,
   };
 
   const collection = await getCollection(collectionId, userId);
@@ -82,7 +83,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
                 lte: filters.before ? new Date(filters.before) : undefined,
               }
             : undefined,
-        ...getItemQueryFilter(filters.q ?? ''),
+        ...getItemQueryFilter(filters.search ?? ''),
       },
       orderBy: { pubDate: 'desc' },
       take: itemCount,
@@ -103,7 +104,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     select: { id: true },
   });
 
-  return json({
+  return {
     items: items,
     cursor:
       items.length >= itemCount
@@ -112,7 +113,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     filters,
     collection,
     channelCount: channels.length,
-  });
+  };
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -148,7 +149,7 @@ export default function ChannelIndexPage() {
           </Details>
           <PageSearchInput
             formId={'filter-form'}
-            defaultValue={filters.q ?? undefined}
+            defaultValue={filters.search ?? undefined}
             placeholder="Search in articles"
           />
           {transition.state === 'loading' &&
@@ -210,7 +211,7 @@ export default function ChannelIndexPage() {
                     },
                   }}
                   formMethod="post"
-                  query={filters.q ?? undefined}
+                  query={filters.search ?? undefined}
                 />
               </li>
             ))}

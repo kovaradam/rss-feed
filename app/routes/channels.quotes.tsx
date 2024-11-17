@@ -1,6 +1,5 @@
 import { Form, Link, useLoaderData, useNavigation } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { Highlight } from '~/components/Highlight';
@@ -15,34 +14,34 @@ export const meta = createMeta();
 const countParamName = 'count';
 export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
-  let [q, countParam] = ['q', countParamName].map((key) =>
-    new URL(request.url).searchParams.get(key)
+  let [search, countParam] = [PageSearchInput.names.search, countParamName].map(
+    (key) => new URL(request.url).searchParams.get(key)
   );
-  q = typeof q === 'string' ? q : null;
+  search = typeof search === 'string' ? search : null;
   const count =
     !countParam || isNaN(Number(countParam)) ? 30 : Number(countParam);
 
   const [quotes, totalCount] = await getQuotesByUser(userId, {
-    query: q,
+    query: search,
     count,
   });
 
-  return json({
+  return {
     title: 'Your quotes',
     quotes,
-    q,
+    search,
     cursor:
       totalCount > count
         ? { name: countParamName, value: String(count + 10) }
         : null,
-  });
+  };
 }
 
 export default function QuotesPage() {
   const data = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
-  if (!data.quotes.length && !data.q) {
+  if (!data.quotes.length && !data.search) {
     return (
       <div className="flex flex-col gap-2 text-center text-lg font-bold ">
         {data.quotes.length === 0 && (
@@ -76,7 +75,7 @@ export default function QuotesPage() {
         <PageSearchInput
           placeholder="Search in quotes"
           formId="search"
-          defaultValue={data.q ?? ''}
+          defaultValue={data.search ?? ''}
         />
       </Form>
       <ul className="relative">
@@ -97,7 +96,10 @@ export default function QuotesPage() {
             </Link>
 
             <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic [overflow-wrap:anywhere] before:text-slate-500 before:content-['„'] dark:text-white">
-              <Highlight input={quote.content.trim()} query={data.q ?? ''} />
+              <Highlight
+                input={quote.content.trim()}
+                query={data.search ?? ''}
+              />
               <span className="text-slate-500">“</span>
             </p>
 
@@ -118,7 +120,12 @@ export default function QuotesPage() {
       {data.cursor && (
         <ShowMoreLink
           cursor={data.cursor}
-          otherValues={[{ name: 'q', value: data.q ?? '' }]}
+          otherValues={[
+            {
+              name: PageSearchInput.names.search,
+              value: data.search ?? '',
+            },
+          ]}
         />
       )}
     </div>

@@ -48,7 +48,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             <WithFormLabel label="Published after" htmlFor="after">
               {({ htmlFor }) => (
                 <input
-                  name="after"
+                  name={ChannelItemFilterForm.names.after}
                   id={htmlFor}
                   type="date"
                   key={filters.after}
@@ -62,7 +62,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             <WithFormLabel htmlFor="before" label="Published before">
               {({ htmlFor }) => (
                 <input
-                  name="before"
+                  name={ChannelItemFilterForm.names.before}
                   id={htmlFor}
                   type="date"
                   key={filters.before}
@@ -129,20 +129,25 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
               <ul className={styles.input.concat('')}>
                 {[
                   {
-                    name: 'exclude-read',
+                    name: ChannelItemFilterForm.names.excludeRead,
                     label: 'Exclude read articles',
-                    value: filters.excludeRead ?? false,
+                    currentValue: filters.excludeRead ?? false,
+                  },
+                  {
+                    name: ChannelItemFilterForm.names.includeHiddenFromFeed,
+                    label: 'Include hidden from feed',
+                    currentValue: filters.excludeHiddenFromFeed === false,
                   },
                 ].map((field) => (
                   <li key={field.name}>
                     <label className="flex cursor-pointer items-baseline gap-1 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
                       <input
-                        key={String(field.value)}
+                        key={String(field.currentValue)}
                         name={field.name}
                         type="checkbox"
                         value={String(true)}
                         id={field.name}
-                        defaultChecked={field.value}
+                        defaultChecked={field.currentValue}
                         className="min-w-[1rem]"
                       />
                       {field.label}
@@ -191,3 +196,10 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
 }
 
 const inputClassName = styles.input;
+
+ChannelItemFilterForm.names = {
+  before: 'before',
+  after: 'after',
+  includeHiddenFromFeed: 'include-hidden-from-feed',
+  excludeRead: 'exclude-read',
+};

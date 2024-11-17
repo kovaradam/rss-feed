@@ -68,9 +68,10 @@ model Item {
   author   String
   comments String
 
-  bookmarked Boolean @default(false)
-  read       Boolean @default(false)
-  imageUrl   String
+  bookmarked     Boolean @default(false)
+  read           Boolean @default(false)
+  hiddenFromFeed Boolean @default(false)
+  imageUrl       String
 
   channelId String
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
