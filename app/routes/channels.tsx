@@ -36,7 +36,7 @@ export const meta = createMeta();
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
-  const channelListItems = getChannels({
+  const channels = getChannels({
     where: { userId: user.id },
     select: { id: true, title: true },
   });
@@ -47,7 +47,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   return {
-    channelListItems: await channelListItems,
+    channels: await channels,
     collectionListItems: await collectionListItems,
     title: 'Your feed',
   };
@@ -202,12 +202,11 @@ export default function ChannelsPage() {
                       </label>
                     </form>
                   </h2>
-                  {!data.channelListItems ||
-                  data.channelListItems.length === 0 ? (
+                  {!data.channels || data.channels.length === 0 ? (
                     <p className="p-4 dark:text-slate-500">No channels yet</p>
                   ) : (
                     <ol>
-                      {data.channelListItems
+                      {data.channels
                         ?.filter((channel) =>
                           channel.title
                             .toLowerCase()

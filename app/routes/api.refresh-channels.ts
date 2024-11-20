@@ -1,5 +1,4 @@
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import { getChannels, refreshChannel } from '~/models/channel.server';
 import { requireUser } from '~/session.server';
@@ -28,14 +27,15 @@ export async function action({ request }: LoaderFunctionArgs) {
         }
       })
     );
-    return json({
+    return {
       newItemCount: results.reduce(
         (prev, next) => prev + (next?.newItemCount ?? 0),
         0
       ),
-    });
+    };
   }
-  return json({
+
+  return {
     newItemCount: 0,
-  });
+  };
 }

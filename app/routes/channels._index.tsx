@@ -62,7 +62,7 @@ export const loader = async ({
     search,
   };
 
-  const items = await getItemsByFilters(
+  const items = getItemsByFilters(
     {
       userId,
       filters: {
@@ -85,20 +85,20 @@ export const loader = async ({
     }
   );
 
-  const channels = await getChannels({ where: { userId } });
+  const channels = getChannels({ where: { userId } });
 
-  const categories = channels
+  const categories = (await channels)
     .flatMap((channel) => channel.category.split('/'))
     .filter((category, index, array) => index === array.indexOf(category))
     .filter(Boolean);
 
   return {
-    items: (items as LoaderData['items']) ?? [],
-    channels,
+    items: ((await items) as LoaderData['items']) ?? [],
+    channels: await channels,
     categories,
     filters,
     cursor:
-      items.length >= itemCountRequest
+      (await items).length >= itemCountRequest
         ? { name: itemCountName, value: String(itemCountRequest + 10) }
         : null,
   };

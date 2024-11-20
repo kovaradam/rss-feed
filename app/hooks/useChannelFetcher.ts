@@ -5,6 +5,7 @@ export function useChannelRefreshFetcher() {
   const fetcher = useFetcher<{ newItemCount: number }>({
     key: useChannelRefreshFetcher.key,
   });
+
   const { submit } = fetcher;
   const refresh = React.useCallback(
     () =>
