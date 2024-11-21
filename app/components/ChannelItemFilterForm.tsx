@@ -5,6 +5,7 @@ import type { Channel, ChannelItemsFilter } from '~/models/channel.server';
 import { styles } from '~/styles/shared';
 import { Button } from './Button';
 import { WithFormLabel } from './WithFormLabel';
+import { isEmptyObject } from '~/utils/is-empty-object';
 
 type Props = {
   filters: Partial<ChannelItemsFilter>;
@@ -17,18 +18,7 @@ type Props = {
 
 export function ChannelItemFilterForm(props: Props): JSX.Element {
   const { filters, ...data } = props;
-  const hasFilters = Object.values(filters)
-    .map((filter) => {
-      switch (true) {
-        case typeof filter === 'boolean':
-          return true;
-        case Array.isArray(filter):
-          return (filter as string[]).length;
-        default:
-          return filter;
-      }
-    })
-    .some(Boolean);
+  const hasFilters = !isEmptyObject(filters);
 
   const { pathname } = useLocation();
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -130,8 +120,8 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
                 {[
                   {
                     name: ChannelItemFilterForm.names.excludeRead,
-                    label: 'Exclude read articles',
-                    currentValue: filters.excludeRead ?? false,
+                    label: 'Include read articles',
+                    currentValue: filters.excludeRead === false,
                   },
                   {
                     name: ChannelItemFilterForm.names.includeHiddenFromFeed,

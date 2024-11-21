@@ -4,8 +4,9 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev:serve": "binode -- @remix-run/serve:remix-serve ./build/index.js",
     "dev": "remix vite:dev --host",
+    "dev:serve": "binode -- @remix-run/serve:remix-serve ./build/index.js",
+    "dev:test": "vitest watch",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
     "format": "prettier --write .",
@@ -13,7 +14,8 @@
     "setup": "prisma migrate dev && prisma db seed",
     "typecheck": "tsc -b ",
     "validate": "run-p lint typecheck",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest run"
   },
   "prettier": {
     "singleQuote": true
@@ -77,7 +79,8 @@
     "tsconfig-paths": "^4.0.0",
     "typescript": "^5.1.6",
     "vite": "^5.4.8",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^2.1.5"
   },
   "engines": {
     "node": ">=18"

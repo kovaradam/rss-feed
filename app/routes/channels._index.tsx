@@ -17,24 +17,15 @@ import { PageSearchInput } from '~/components/PageSearchInput';
 import { NewItemsAlert } from '~/components/NewItemsAlert';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
-import type { Channel, ItemWithChannel } from '~/models/channel.server';
+import type { ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
-
-type LoaderData = {
-  items: ItemWithChannel[];
-  channels: Channel[];
-  categories: string[];
-  filters: Parameters<typeof getItemsByFilters>[0]['filters'];
-  cursor: React.ComponentProps<typeof ShowMoreLink>['cursor'] | null;
-};
+import { isEmptyObject } from '~/utils/is-empty-object';
 
 const itemCountName = 'item-count';
 
-export const loader = async ({
-  request,
-}: LoaderFunctionArgs): Promise<LoaderData> => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
   const itemCountParam = searchParams.get(itemCountName);
@@ -43,7 +34,7 @@ export const loader = async ({
   const [filterChannels, filterCategories] = ['channels', 'categories'].map(
     (name) => searchParams.getAll(name)
   );
-  const [before, after, search, excludeReadParam, includeHiddenFromFeed] = [
+  const [before, after, search, includeReadParam, includeHiddenFromFeed] = [
     ChannelItemFilterForm.names.before,
     ChannelItemFilterForm.names.after,
     PageSearchInput.names.search,
@@ -56,9 +47,10 @@ export const loader = async ({
     before,
     categories: filterCategories,
     channels: filterChannels,
-    excludeRead: excludeReadParam ? excludeReadParam === String(true) : null,
-    excludeHiddenFromFeed:
-      includeHiddenFromFeed === String(true) ? false : true,
+    includeRead: includeReadParam ? includeReadParam === String(true) : null,
+    includeHiddenFromFeed: includeHiddenFromFeed
+      ? includeHiddenFromFeed === String(true)
+      : null,
     search,
   };
 
@@ -67,7 +59,9 @@ export const loader = async ({
       userId,
       filters: {
         ...filters,
-        excludeHiddenFromFeed: !filters.search && filters.excludeHiddenFromFeed,
+        excludeRead: !filters.search && !filters.includeRead,
+        excludeHiddenFromFeed:
+          !filters.search && !filters.includeHiddenFromFeed,
       },
     },
     {
@@ -93,7 +87,7 @@ export const loader = async ({
     .filter(Boolean);
 
   return {
-    items: ((await items) as LoaderData['items']) ?? [],
+    items: ((await items) as ItemWithChannel[]) ?? [],
     channels: await channels,
     categories,
     filters,
@@ -117,13 +111,21 @@ export default function ChannelIndexPage() {
   const transition = useNavigation();
   const isLoading = transition.state === 'loading';
 
-  const isFilters = Object.values(filters).some(Boolean);
+  const isFilters = !isEmptyObject(filters);
 
   const FilterForm = React.useCallback(
     () => (
       <ChannelItemFilterForm
         formId={'filter-form'}
-        filters={filters}
+        filters={{
+          ...filters,
+          excludeRead:
+            filters.includeRead === null ? null : !filters.includeRead,
+          excludeHiddenFromFeed:
+            filters.includeHiddenFromFeed === null
+              ? null
+              : !filters.includeHiddenFromFeed,
+        }}
         channels={channels.map((channel) => ({
           ...channel,
           updatedAt: channel.updatedAt,
