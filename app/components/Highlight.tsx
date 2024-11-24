@@ -16,7 +16,7 @@ export function Highlight(props: { query: string; input: string }) {
       lastIdx = input.indexOf(query, lastIdx + 1);
     }
     let key = 0;
-    let elements: { element: React.ReactNode; key: number }[] = [
+    const elements: { element: React.ReactNode; key: number }[] = [
       { element: props.input.slice(0, startIndices[0]), key: key++ },
     ];
 

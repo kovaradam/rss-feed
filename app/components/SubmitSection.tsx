@@ -1,5 +1,5 @@
-import type { LinkProps } from '@remix-run/react';
-import { Link } from '@remix-run/react';
+import type { LinkProps } from 'react-router';
+import { Link } from 'react-router';
 import { SubmitButton, buttonStyle } from './Button';
 
 export function SubmitSection(props: {

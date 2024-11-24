@@ -1,4 +1,3 @@
-import React from 'react';
 import { SpinnerIcon } from './SpinnerIcon';
 
 export function ChannelItemsOverlay(): JSX.Element | null {

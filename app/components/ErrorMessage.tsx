@@ -8,7 +8,7 @@ export function ErrorMessage(props: Props): JSX.Element {
       <b className="">Oops!</b>
       <h4 className="mb-16 text-center">{props.children}</h4>
       <img
-        alt="Illustration doodle of a person sitting and reading"
+        alt=""
         src="/clumsy.svg"
         width={'70%'}
         data-from="https://www.opendoodles.com/"

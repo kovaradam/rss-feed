@@ -1,7 +1,6 @@
 import { XIcon } from '@heroicons/react/outline';
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router';
 import type { MouseEventHandler } from 'react';
-import React from 'react';
 import { Tooltip } from './Tooltip';
 
 type Props = {

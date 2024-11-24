@@ -1,10 +1,4 @@
-import type { MetaFunction } from '@remix-run/node';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { redirect, data } from '@remix-run/server-runtime';
-import React from 'react';
+import { redirect, data } from 'react-router';
 import { UseAppTitle } from '~/components/AppTitle';
 import { CollectionForm } from '~/components/CollectionForm';
 import { ErrorMessage } from '~/components/ErrorMessage';
@@ -12,8 +6,9 @@ import { getChannels } from '~/models/channel.server';
 import { createCollection, getBooleanValue } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, uniqueArrayFilter } from '~/utils';
+import type { Route } from './+types/channels.collections.new';
 
-const fieldNames = [
+const _fieldNames = [
   'title',
   'read',
   'bookmarked',
@@ -21,7 +16,7 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction = () => {
+export const meta = () => {
   return [
     {
       title: createTitle(`New collection`),
@@ -29,13 +24,13 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-type FieldName = (typeof fieldNames)[number];
+type FieldName = (typeof _fieldNames)[number];
 
 type ActionData = {
   errors: Partial<Record<FieldName, string | null>> | undefined;
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: Route.ActionArgs) => {
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const form = Object.fromEntries(formData.entries()) as Record<
@@ -63,7 +58,7 @@ export const action: ActionFunction = async ({ request }) => {
     },
   });
 
-  return redirect('/channels/collections/'.concat(collection.id));
+  throw redirect('/channels/collections/'.concat(collection.id));
 };
 
 type LoaderData = {
@@ -73,7 +68,7 @@ type LoaderData = {
 
 export const loader = async ({
   request,
-}: LoaderFunctionArgs): Promise<LoaderData> => {
+}: Route.LoaderArgs): Promise<LoaderData> => {
   const userId = await requireUserId(request);
 
   const channels = await getChannels({
@@ -106,6 +101,6 @@ export default function NewCollectionPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary() {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

@@ -1,5 +1,4 @@
-import { Form, Link, useLoaderData, useNavigation } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { Form, Link, useNavigation } from 'react-router';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { Highlight } from '~/components/Highlight';
@@ -8,16 +7,20 @@ import { ShowMoreLink } from '~/components/ShowMoreLink';
 import { getQuotesByUser } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
+import type { Route } from './+types/channels.quotes';
 
 export const meta = createMeta();
 
 const countParamName = 'count';
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
-  let [search, countParam] = [PageSearchInput.names.search, countParamName].map(
-    (key) => new URL(request.url).searchParams.get(key)
-  );
+  const url = new URL(request.url);
+
+  let search = url.searchParams.get(PageSearchInput.names.search);
   search = typeof search === 'string' ? search : null;
+
+  const countParam = url.searchParams.get(countParamName);
+
   const count =
     !countParam || isNaN(Number(countParam)) ? 30 : Number(countParam);
 
@@ -37,14 +40,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function QuotesPage() {
-  const data = useLoaderData<typeof loader>();
+export default function QuotesPage({ loaderData }: Route.ComponentProps) {
   const navigation = useNavigation();
 
-  if (!data.quotes.length && !data.search) {
+  if (!loaderData.quotes.length && !loaderData.search) {
     return (
       <div className="flex flex-col gap-2 text-center text-lg font-bold ">
-        {data.quotes.length === 0 && (
+        {loaderData.quotes.length === 0 && (
           <div className="mt-8 flex flex-col items-center gap-16">
             <div>
               <p className="dark:text-white">
@@ -58,7 +60,7 @@ export default function QuotesPage() {
               </p>
             </div>
             <img
-              alt="Illustration doodle of a person sitting and reading"
+              alt=""
               src="/reading-side.svg"
               width={'50%'}
               data-from="https://www.opendoodles.com/"
@@ -75,14 +77,14 @@ export default function QuotesPage() {
         <PageSearchInput
           placeholder="Search in quotes"
           formId="search"
-          defaultValue={data.search ?? ''}
+          defaultValue={loaderData.search ?? ''}
         />
       </Form>
       <ul className="relative">
         {navigation.formData && navigation.state === 'loading' && (
           <ChannelItemsOverlay />
         )}
-        {data.quotes.map((quote) => (
+        {loaderData.quotes.map((quote) => (
           <li
             id={quote.id}
             key={quote.id}
@@ -98,7 +100,7 @@ export default function QuotesPage() {
             <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic [overflow-wrap:anywhere] before:text-slate-500 before:content-['„'] dark:text-white">
               <Highlight
                 input={quote.content.trim()}
-                query={data.search ?? ''}
+                query={loaderData.search ?? ''}
               />
               <span className="text-slate-500">“</span>
             </p>
@@ -117,13 +119,13 @@ export default function QuotesPage() {
           </li>
         ))}
       </ul>
-      {data.cursor && (
+      {loaderData.cursor && (
         <ShowMoreLink
-          cursor={data.cursor}
+          cursor={loaderData.cursor}
           otherValues={[
             {
               name: PageSearchInput.names.search,
-              value: data.search ?? '',
+              value: loaderData.search ?? '',
             },
           ]}
         />

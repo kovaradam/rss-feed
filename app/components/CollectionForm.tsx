@@ -4,8 +4,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
-} from '@remix-run/react';
-import React from 'react';
+} from 'react-router';
 import { styles } from '~/styles/shared';
 import { Button } from './Button';
 import { useCategoryInput } from './CategoryInput';
@@ -59,7 +58,6 @@ export function CollectionForm<
             type="submit"
             disabled={isDeleting}
             className="flex h-fit items-center gap-2 md:min-w-[20ch]"
-            secondary
           >
             <TrashIcon className="w-4" />
             <span className="pointer-events-none hidden md:block">
@@ -75,7 +73,6 @@ export function CollectionForm<
             {(field) => (
               <input
                 id={field.htmlFor}
-                autoFocus
                 name={'title'}
                 defaultValue={data.defaultValue?.title ?? ''}
                 required={field.required}

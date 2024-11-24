@@ -1,11 +1,5 @@
-import type { MetaFunction } from '@remix-run/react';
-import { useLoaderData } from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { redirect, data } from '@remix-run/server-runtime';
-import React from 'react';
+import type { ActionFunction } from 'react-router';
+import { useLoaderData, redirect, data } from 'react-router';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
 
@@ -21,8 +15,9 @@ import {
 } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle, uniqueArrayFilter } from '~/utils';
+import type { Route } from './+types/channels.collections.$collectionId.edit';
 
-const fieldNames = [
+const _fieldNames = [
   'title',
   'read',
   'bookmarked',
@@ -30,7 +25,7 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
       title: createTitle(`Edit ${data?.defaultValue?.title ?? 'Collection'}`),
@@ -38,7 +33,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ];
 };
 
-type FieldName = (typeof fieldNames)[number];
+type FieldName = (typeof _fieldNames)[number];
 
 type ActionData = {
   errors: Partial<Record<'title', string | null>> | undefined;
@@ -56,7 +51,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (request.method === 'DELETE') {
     await deleteCollection(collectionId, userId);
-    return redirect('/channels');
+    throw redirect('/channels');
   }
 
   const errors = {} as typeof form;
@@ -80,7 +75,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   });
 
-  return redirect('/channels/collections/'.concat(collection.id));
+  throw redirect('/channels/collections/'.concat(collection.id));
 };
 
 type LoaderData = {
@@ -92,7 +87,7 @@ type LoaderData = {
 export const loader = async ({
   request,
   params,
-}: LoaderFunctionArgs): Promise<LoaderData> => {
+}: Route.LoaderArgs): Promise<LoaderData> => {
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id is not defined');
 
@@ -137,6 +132,6 @@ export default function EditCollectionPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary() {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

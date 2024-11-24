@@ -1,5 +1,5 @@
-import type { MetaFunction, useNavigation } from '@remix-run/react';
-import { useMatches } from '@remix-run/react';
+import type { MetaFunction, useNavigation } from 'react-router';
+import { useMatches } from 'react-router';
 import React from 'react';
 
 import type { User } from '~/models/user.server';
@@ -46,6 +46,7 @@ export function useMatchesData(
   return route?.data as Record<string, unknown>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isUser(user: any): user is User {
   return user && typeof user === 'object' && typeof user.email === 'string';
 }

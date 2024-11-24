@@ -1,5 +1,4 @@
-import { useFetcher, useFetchers } from '@remix-run/react';
-import React from 'react';
+import { useFetcher, useFetchers } from 'react-router';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 
 export function NewItemsAlert() {

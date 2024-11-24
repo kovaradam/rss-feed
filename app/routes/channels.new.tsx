@@ -1,17 +1,5 @@
 import { ExclamationCircleIcon } from '@heroicons/react/outline';
-import type { MetaFunction } from '@remix-run/react';
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from '@remix-run/react';
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { redirect, data } from '@remix-run/server-runtime';
+import { Form, Link, useNavigation, redirect, data } from 'react-router';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { PageHeading } from '~/components/PageHeading';
@@ -28,8 +16,9 @@ import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createTitle, isSubmitting } from '~/utils';
 import { mapValue } from '~/utils/map-value';
+import type { Route } from './+types/channels.new';
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
       title: createTitle(data?.title ?? ''),
@@ -39,9 +28,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 const inputNames = ['channel-url'] as const;
 const [channelUrlName] = inputNames;
-const errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
+const _errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const channelUrlParam = new URL(request.url).searchParams.get(channelUrlName);
   return {
     title: 'Add new channel',
@@ -50,11 +39,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 type ActionData =
-  | Partial<Record<(typeof errors)[number], string | null>>
+  | Partial<Record<(typeof _errors)[number], string | null>>
   | undefined
   | { newItemCount: number };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const inputChannelHref = formData.get(channelUrlName);
   const userId = await requireUserId(request);
@@ -62,7 +51,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   let channelUrl;
   try {
     channelUrl = new URL(String(inputChannelHref));
-  } catch (error) {
+  } catch (_) {
     return data<ActionData>({
       [channelUrlName]: 'Please provide a valid url',
     });
@@ -71,7 +60,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   let channelRequest;
   try {
     channelRequest = await fetch(channelUrl);
-  } catch (error) {
+  } catch (_) {
     return data<ActionData>({
       fetch: `Could not load RSS feed from "${channelUrl.origin}"`,
     });
@@ -114,40 +103,37 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     storeFailedUpload(String(inputChannelHref), String(error));
 
-    return data<ActionData>(response);
+    return response;
   }
 
-  return redirect('/channels/'.concat(newChannel.id));
+  throw redirect('/channels/'.concat(newChannel.id));
 };
 
-export default function NewChannelPage() {
-  const errors = useActionData<typeof action>();
-  const { title, channelUrlParam } = useLoaderData<typeof loader>();
+export default function NewChannelPage({
+  actionData,
+  loaderData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
   const isSaving = isSubmitting(transition);
 
   return (
     <>
       <UseAppTitle default />
-      <PageHeading>{title}</PageHeading>
-      <Form
-        method={NewChannelPage.formMethod}
-        className={'flex max-w-xl flex-col gap-4'}
-      >
+      <PageHeading>{loaderData.title}</PageHeading>
+      <Form method={'PUT'} className={'flex max-w-xl flex-col gap-4'}>
         <WithFormLabel htmlFor="new-channel-input" label="RSS feed address">
           <input
             type="url"
             name={channelUrlName}
             id="new-channel-input"
-            autoFocus
             required
             placeholder="https://www.example-web.com/rss.xml"
             className={`${styles.input} `}
             aria-invalid="false"
-            defaultValue={channelUrlParam ?? ''}
+            defaultValue={loaderData.channelUrlParam ?? ''}
           />
-          {errors ? (
-            Object.entries(errors).map(([type, error]) => (
+          {actionData ? (
+            Object.entries(actionData).map(([type, error]) => (
               <span
                 key={type}
                 className="mt-1 flex w-fit items-center gap-1 rounded bg-red-100 p-1 px-2 pt-1 text-red-700"
@@ -174,8 +160,6 @@ export default function NewChannelPage() {
     </>
   );
 }
-
-NewChannelPage.formMethod = 'PUT' as const;
 
 function TextWithLink(props: { text: string }) {
   const links = props.text.match(linkRegExp);

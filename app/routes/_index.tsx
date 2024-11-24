@@ -1,20 +1,20 @@
-import { type MetaFunction } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
+import { type MetaFunction } from 'react-router';
+import { redirect } from 'react-router';
 import { getUserId, isKnownUser } from '~/session.server';
 import { createTitle } from '~/utils';
+import type { Route } from './+types/_index';
 
 export const meta: MetaFunction = () => {
   return [{ title: createTitle('Welcome') }];
 };
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
   if (userId) {
-    return redirect('/channels');
+    throw redirect('/channels');
   } else if (isKnownUser(request)) {
-    return redirect('/welcome/login');
+    throw redirect('/welcome/login');
   } else {
-    return redirect('/welcome');
+    throw redirect('/welcome');
   }
 };

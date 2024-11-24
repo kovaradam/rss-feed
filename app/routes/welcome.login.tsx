@@ -1,17 +1,14 @@
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from '@remix-run/node';
-import { data, redirect } from '@remix-run/node';
+import type { Route } from './+types/welcome.login';
+
+import type { MetaFunction } from 'react-router';
 import {
+  data,
+  redirect,
   Form,
   Link,
-  useActionData,
-  useLoaderData,
   useSearchParams,
   useNavigation,
-} from '@remix-run/react';
+} from 'react-router';
 import * as React from 'react';
 
 import { createUserSession, getUserId } from '~/session.server';
@@ -21,11 +18,11 @@ import { SubmitButton } from '~/components/Button';
 import { styles } from '~/styles/shared';
 import { WithFormLabel } from '~/components/WithFormLabel';
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
 
   if (userId) {
-    return redirect('/');
+    throw redirect('/');
   }
   return {
     isFirst: Boolean(new URL(request.url).searchParams.get('first')),
@@ -39,7 +36,7 @@ interface ActionData {
   };
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get('email');
   const password = formData.get('password');
@@ -93,11 +90,12 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function LoginPage() {
+export default function LoginPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/channels';
-  const actionData = useActionData() as ActionData;
-  const data = useLoaderData<typeof loader>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const transition = useNavigation();
@@ -114,10 +112,10 @@ export default function LoginPage() {
     <>
       <div>
         <h1 className="my-2 text-4xl font-bold dark:text-white">
-          {data.isFirst ? 'Welcome!' : 'Welcome back!'}
+          {loaderData.isFirst ? 'Welcome!' : 'Welcome back!'}
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link
             className="font-bold underline"
             to={{

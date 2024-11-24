@@ -1,22 +1,12 @@
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from '@remix-run/react';
-import type {
-  LoaderFunctionArgs,
-  ActionFunctionArgs,
-} from '@remix-run/server-runtime';
-import { redirect, json } from '@remix-run/server-runtime';
+import { Form, Link, redirect, useNavigation } from 'react-router';
 import { getUserById, sendConfirmEmail } from '~/models/user.server';
 import { requireUserId } from '~/session.server';
 import { createMeta } from '~/utils';
+import type { Route } from './+types/welcome.confirm-email';
 
 export const meta = createMeta(() => [{ title: 'Confirm email' }]);
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
   if (request.method !== 'PATCH') {
     throw new Response('Not supported', { status: 405 });
@@ -30,23 +20,24 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const mailResult = await sendConfirmEmail(user, request);
 
-  return json({ mail: mailResult });
+  return { mail: mailResult };
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const user = await getUserById(userId);
 
   if (!user?.requestedEmail) {
-    return redirect('/');
+    throw redirect('/');
   }
 
-  return json({ user, allowSkip: process.env.NODE_ENV !== 'production' });
+  return { user, allowSkip: process.env.NODE_ENV !== 'production' };
 }
 
-export default function ConfirmEmailPage() {
-  const data = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+export default function ConfirmEmailPage({
+  actionData,
+  loaderData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
 
   return (
@@ -57,10 +48,10 @@ export default function ConfirmEmailPage() {
       <p>
         An email with confirmation link has been sent to your address{' '}
         <a
-          href={`mailto:${data.user?.requestedEmail}`}
+          href={`mailto:${loaderData.user?.requestedEmail}`}
           className="text-rose-400"
         >
-          <b>{data.user?.requestedEmail}</b>
+          <b>{loaderData.user?.requestedEmail}</b>
         </a>
         .{' '}
       </p>
@@ -82,10 +73,10 @@ export default function ConfirmEmailPage() {
         <Form action="/logout" method="post">
           <button type="submit">Log out</button>
         </Form>
-        {data.allowSkip && (
+        {loaderData.allowSkip && (
           <>
             |
-            <Link className="" to={data.user.id}>
+            <Link className="" to={loaderData.user.id}>
               Skip confirmation
             </Link>
           </>

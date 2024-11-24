@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/outline';
-import { Form } from '@remix-run/react';
+import { Form } from 'react-router';
 import React from 'react';
 import { Button } from './Button';
 import { ChannelCategories } from './ChannelCategories';
@@ -42,6 +42,7 @@ function CategoryInput(props: Props): JSX.Element {
         <input
           placeholder="e.g. gardening"
           name={props.fakeInputName}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={props.autoFocus}
           className={props.inputClassName}
           id={showInputId}
@@ -59,7 +60,6 @@ function CategoryInput(props: Props): JSX.Element {
           className="relative rounded bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
           type="submit"
           form={props.formId}
-          secondary
           aria-label="Add category"
         >
           <PlusIcon className="w-4 " />

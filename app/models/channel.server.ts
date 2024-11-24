@@ -24,7 +24,7 @@ export async function createChannelFromXml(
       'Link has been parsed in wrong format'
     );
     invariant(channel.title, 'Title is missing in the RSS definition');
-  } catch (error) {
+  } catch (_) {
     throw new IncorrectDefinitionError();
   }
 
@@ -33,7 +33,7 @@ export async function createChannelFromXml(
     dbChannel = await getChannel({
       where: { link: channel.link, userId: request.userId },
     });
-  } catch (error) {
+  } catch (_) {
     throw new UnavailableDbError();
   }
 

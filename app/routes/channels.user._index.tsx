@@ -1,7 +1,5 @@
 import { requireUser } from '~/session.server';
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Form, useLoaderData, useNavigation } from '@remix-run/react';
+import { Form, useNavigation } from 'react-router';
 import {
   BookmarkIcon,
   ClockIcon,
@@ -21,32 +19,33 @@ import React from 'react';
 import { PageHeading } from '~/components/PageHeading';
 import { UseAppTitle } from '~/components/AppTitle';
 import confirmSound from '/sounds/state-change_confirm-up.wav?url';
-import useSound from '~/utils/use-sound';
+import { useSound } from '~/utils/use-sound';
+import type { Route } from './+types/channels.user._index';
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
 
   if (request.method === 'POST') {
     const updatedUser = updateUser(user.id, {
       soundsAllowed: !user.soundsAllowed,
     });
-    return json({ user: updatedUser });
+    return { user: updatedUser };
   }
   throw new Response('Not allowed', { status: 405 });
 }
 
-export async function loader(args: LoaderFunctionArgs) {
+export async function loader(args: Route.LoaderArgs) {
   const user = await requireUser(args.request);
   const channels = await getChannels({ where: { userId: user.id } });
   const categories = channels
     .flatMap((channel) => channel.category.split('/').filter(Boolean))
     .filter((category, idx, array) => array.indexOf(category) === idx)
     .join('/');
-  return json({ user: user, categories });
+  return { user: user, categories };
 }
 
-export default function UserPage() {
-  const { user, categories } = useLoaderData<typeof loader>();
+export default function UserPage({ loaderData }: Route.ComponentProps) {
+  const { user, categories } = loaderData;
   const transition = useNavigation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
@@ -92,7 +91,6 @@ export default function UserPage() {
           <Form method="post">
             <Button
               type="submit"
-              secondary
               className="flex h-full  gap-2 sm:w-full"
               disabled={transition.formMethod === 'PATCH'}
               onClick={() => {
@@ -119,11 +117,7 @@ export default function UserPage() {
             </Button>
           </Form>
           <Form action="edit-email">
-            <Button
-              type="submit"
-              secondary
-              className="flex h-full gap-2 sm:w-full"
-            >
+            <Button type="submit" className="flex h-full gap-2 sm:w-full">
               <MailIcon className="h-6 w-4" />{' '}
               <span className="pointer-events-none hidden sm:block sm:w-full">
                 Update email
@@ -132,7 +126,7 @@ export default function UserPage() {
           </Form>
           <br />
           <Form action="/logout" method="post">
-            <Button type="submit" secondary className="flex gap-2 sm:w-full">
+            <Button type="submit" className="flex gap-2 sm:w-full">
               <LogoutIcon className="h-6 w-4" />{' '}
               <span className="hidden sm:block sm:w-full">Log out</span>
             </Button>
@@ -159,7 +153,6 @@ export default function UserPage() {
             <fieldset className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row">
               <Button
                 type="button"
-                secondary
                 className=" flex w-full justify-center"
                 onClick={() => setIsDeleteDialogOpen(false)}
                 data-silent

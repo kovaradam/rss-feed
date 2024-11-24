@@ -1,12 +1,11 @@
-import { Link } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { redirect } from '@remix-run/server-runtime';
+import { Link, redirect } from 'react-router';
 import { getUserId } from '~/session.server';
 import { createMeta } from '~/utils';
+import type { Route } from './+types/welcome.email-confirmed';
 
 export const meta = createMeta(() => [{ title: 'Confirm email' }]);
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const userId = await getUserId(request);
   if (userId) {
     throw redirect('/');

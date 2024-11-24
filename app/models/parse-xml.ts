@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Channel, Item } from '@prisma/client';
 import { parseStringPromise } from 'xml2js';
 

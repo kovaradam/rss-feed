@@ -4,11 +4,7 @@ import {
   TrashIcon,
   UserIcon,
 } from '@heroicons/react/outline';
-import { Link, useFetcher, useLoaderData } from '@remix-run/react';
-import {
-  type ActionFunctionArgs,
-  type LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
+import { Link, useFetcher } from 'react-router';
 import { convert } from 'html-to-text';
 import React from 'react';
 import invariant from 'tiny-invariant';
@@ -30,10 +26,11 @@ import {
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createMeta } from '~/utils';
+import type { Route } from './+types/channels.$channelId.articles.$itemId';
 
 export const meta = createMeta();
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   if (request.method !== 'POST') {
     throw new Response('Invalid method', { status: 400 });
   }
@@ -61,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   return { quote: result.content };
 }
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const item = await getChannelItem(params.itemId as string, userId);
   const countParam = new URL(request.url).searchParams.get('count');
@@ -91,9 +88,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export default function ItemDetailPage() {
-  const data = useLoaderData<typeof loader>();
-  const { item } = data;
+export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
+  const { item } = loaderData;
 
   const fetcher = useFetcher<typeof action>();
   const submittedQuote = fetcher.formData?.get('quote');
@@ -105,8 +101,8 @@ export default function ItemDetailPage() {
             id: 'new',
             createdAt: new Date(),
           },
-        ].concat(data.quotes)
-      : data.quotes;
+        ].concat(loaderData.quotes)
+      : loaderData.quotes;
 
   const description = React.useMemo(() => {
     return convert(item.description);
@@ -199,7 +195,7 @@ export default function ItemDetailPage() {
             </div>
           )}
         </WithFormLabel>
-        {fetcher.data?.error && (
+        {fetcher.data && 'error' in fetcher.data && (
           <p className="text-red-700">{fetcher.data?.error}</p>
         )}
       </fetcher.Form>
@@ -215,7 +211,7 @@ export default function ItemDetailPage() {
           />
         ))}
       </ul>
-      {data.cursor && <ShowMoreLink cursor={data.cursor} />}
+      {loaderData.cursor && <ShowMoreLink cursor={loaderData.cursor} />}
     </>
   );
 }

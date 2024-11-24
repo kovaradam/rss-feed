@@ -1,10 +1,6 @@
 import { FilterIcon } from '@heroicons/react/outline';
-import type { ShouldRevalidateFunction } from '@remix-run/react';
-import { Link, useLoaderData, useNavigation } from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
+import type { ShouldRevalidateFunction } from 'react-router';
+import { Link, useNavigation } from 'react-router';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
 import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
@@ -22,10 +18,11 @@ import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
 import { isEmptyObject } from '~/utils/is-empty-object';
+import type { Route } from './+types/channels._index';
 
 const itemCountName = 'item-count';
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
   const itemCountParam = searchParams.get(itemCountName);
@@ -98,15 +95,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   };
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: Route.ActionArgs) => {
   if (request.method === 'POST') {
     return ChannelItemDetailService.handleAction(request);
   }
 };
 
-export default function ChannelIndexPage() {
-  const { items, channels, categories, filters, cursor } =
-    useLoaderData<typeof loader>();
+export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
+  const { items, channels, categories, filters, cursor } = loaderData;
 
   const transition = useNavigation();
   const isLoading = transition.state === 'loading';
@@ -170,7 +166,7 @@ export default function ChannelIndexPage() {
                   </p>
                   <img
                     src="/laying.svg"
-                    alt="Doodle of a person laying looking at phone"
+                    alt=""
                     className="scale-50 dark:invert-[.8]"
                     data-from="https://www.opendoodles.com/"
                   ></img>
@@ -192,7 +188,7 @@ export default function ChannelIndexPage() {
                     </p>
                   </div>
                   <img
-                    alt="Illustration doodle of a person sitting and reading"
+                    alt=""
                     src="/sitting-reading.svg"
                     width={'50%'}
                     data-from="https://www.opendoodles.com/"
@@ -241,7 +237,7 @@ export default function ChannelIndexPage() {
   );
 }
 
-export function ErrorBoundary(props: { error: Error }) {
+export function ErrorBoundary() {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }
 

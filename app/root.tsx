@@ -1,8 +1,4 @@
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from '@remix-run/node';
+import type { LinksFunction, MetaFunction } from 'react-router';
 import {
   Links,
   Meta,
@@ -11,14 +7,14 @@ import {
   ScrollRestoration,
   useLoaderData,
   useNavigation,
-} from '@remix-run/react';
+} from 'react-router';
 
 import stylesheet from './tailwind.css?url';
 
 import { getUser } from './session.server';
-import React from 'react';
 import { UseSounds } from './components/UseSounds';
 import { ClientOnly } from './components/ClientOnly';
+import type { Route } from './+types/root';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -32,7 +28,7 @@ type LoaderData = {
 
 export const loader = async ({
   request,
-}: LoaderFunctionArgs): Promise<LoaderData> => {
+}: Route.LoaderArgs): Promise<LoaderData> => {
   const user = await getUser(request);
 
   return {

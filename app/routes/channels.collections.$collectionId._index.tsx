@@ -1,16 +1,10 @@
 import { FilterIcon, PencilIcon } from '@heroicons/react/outline';
-import type { MetaFunction } from '@remix-run/react';
 import {
   Link,
-  useLoaderData,
   useNavigation,
   isRouteErrorResponse,
   useRouteError,
-} from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
+} from 'react-router';
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
@@ -34,8 +28,9 @@ import {
 import { getCollection } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
 import { createTitle } from '~/utils';
+import type { Route } from './+types/channels.collections.$collectionId._index';
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
       title: createTitle(data?.collection?.title ?? 'Collection feed'),
@@ -45,7 +40,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 const itemCountName = 'item-count';
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const collectionId = params.collectionId;
   invariant(collectionId, 'Collection id was not provided');
@@ -116,15 +111,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: Route.ActionArgs) => {
   if (request.method === 'POST') {
     return ChannelItemDetailService.handleAction(request);
   }
 };
 
-export default function ChannelIndexPage() {
-  const { items, cursor, filters, collection, channelCount } =
-    useLoaderData<typeof loader>();
+export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
+  const { items, cursor, filters, collection, channelCount } = loaderData;
   const transition = useNavigation();
   const isSubmitting = transition.state === 'submitting';
 
@@ -240,7 +234,7 @@ export default function ChannelIndexPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary() {
   const caught = useRouteError();
 
   if (isRouteErrorResponse(caught)) {

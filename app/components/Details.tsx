@@ -8,9 +8,6 @@ type Props = React.DetailedHTMLProps<
 export function Details(props: Props): JSX.Element {
   return (
     <details
-      onClick={(event) => {
-        props.onClick?.(event);
-      }}
       {...props}
       className={` cursor-pointer rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
     >
