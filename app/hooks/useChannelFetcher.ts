@@ -1,8 +1,10 @@
 import { useFetcher } from 'react-router';
 import React from 'react';
 
+export type RefreshResult = { newItemCount: number };
+
 export function useChannelRefreshFetcher() {
-  const fetcher = useFetcher<{ newItemCount: number }>({
+  const fetcher = useFetcher<RefreshResult>({
     key: useChannelRefreshFetcher.key,
   });
 

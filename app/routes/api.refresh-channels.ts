@@ -1,38 +1,49 @@
-import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
+import {
+  useChannelRefreshFetcher,
+  type RefreshResult,
+} from '~/hooks/useChannelFetcher';
 import { getChannels, refreshChannel } from '~/models/channel.server';
 import { requireUser } from '~/session.server';
 import type { Route } from './+types/api.refresh-channels';
 
-export async function action({ request }: Route.LoaderArgs) {
+export async function action({
+  request,
+}: Route.LoaderArgs): Promise<RefreshResult> {
   const user = await requireUser(request);
+
   if (request.method === useChannelRefreshFetcher.method) {
-    const channels = await getChannels({
-      where: { userId: user.id },
-      select: { id: true, feedUrl: true },
-    });
-    const results = await Promise.all(
-      channels.map(async (dbChannel) => {
-        try {
-          return await refreshChannel({
-            feedUrl: dbChannel.feedUrl,
-            userId: user.id,
-            signal: request.signal,
-          });
-        } catch (error) {
-          if ((error as Error).name === 'AbortError') {
-            return;
+    try {
+      const channels = await getChannels({
+        where: { userId: user.id },
+        select: { id: true, feedUrl: true },
+      });
+      const results = await Promise.allSettled(
+        channels.map(async (dbChannel) => {
+          try {
+            return await refreshChannel({
+              feedUrl: dbChannel.feedUrl,
+              userId: user.id,
+              signal: request.signal,
+            });
+          } catch (error) {
+            if ((error as Error).name === 'AbortError') {
+              return;
+            }
+            console.error('update failed', error);
+            return null;
           }
-          console.error('update failed', error);
-          return null;
-        }
-      })
-    );
-    return {
-      newItemCount: results.reduce(
-        (prev, next) => prev + (next?.newItemCount ?? 0),
-        0
-      ),
-    };
+        })
+      );
+      return {
+        newItemCount: results
+          .map((result) =>
+            result.status === 'fulfilled' ? result.value?.newItemCount ?? 0 : 0
+          )
+          .reduce((prev, next) => prev + (next ?? 0), 0),
+      };
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return {
