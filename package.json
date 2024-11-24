@@ -97,12 +97,5 @@
     "app/**/*.{ts,css,tsx}": [
       "prettier --write"
     ]
-  },
-  "eslintConfig": {
-    "extends": [
-      "@remix-run/eslint-config",
-      "@remix-run/eslint-config/node",
-      "prettier"
-    ]
   }
 }
