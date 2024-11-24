@@ -1,4 +1,4 @@
-import { useLocation } from '@remix-run/react';
+import { useLocation } from 'react-router';
 import React from 'react';
 import { useEvent } from '~/hooks/useEvent';
 
@@ -42,7 +42,7 @@ export function NavWrapper(props: Props): JSX.Element {
         className={`absolute right-0 top-0 z-10 h-full  w-full bg-black opacity-10 ${
           props.isExpanded ? 'visible touch-none' : 'hidden'
         } sm:hidden`}
-        onClick={props.hide}
+        onClickCapture={props.hide}
       />
     </>
   );

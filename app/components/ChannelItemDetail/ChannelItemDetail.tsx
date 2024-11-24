@@ -8,8 +8,8 @@ import {
   BookmarkIcon as SolidBookmarkIcon,
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
-import type { FormProps } from '@remix-run/react';
-import { Link, useFetcher } from '@remix-run/react';
+import type { FormProps } from 'react-router';
+import { Link, useFetcher } from 'react-router';
 import useSound from '~/utils/use-sound';
 import type { ItemWithChannel } from '~/models/channel.server';
 import { ChannelCategoryLinks } from '../ChannelCategories';

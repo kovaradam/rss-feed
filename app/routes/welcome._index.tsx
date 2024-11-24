@@ -1,16 +1,12 @@
-import type { MetaFunction } from '@remix-run/react';
 import {
   Form,
   Link,
   useActionData,
   useSearchParams,
   useNavigation,
-} from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { data, redirect } from '@remix-run/server-runtime';
+  data,
+  redirect,
+} from 'react-router';
 import React from 'react';
 import { SubmitButton, buttonStyle } from '~/components/Button';
 import { WithFormLabel } from '~/components/WithFormLabel';
@@ -22,15 +18,16 @@ import {
 import { createUserSession, getUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createTitle, safeRedirect, validateEmail } from '~/utils';
+import type { Route } from './+types/welcome._index';
 
-export const meta: MetaFunction = () => {
+export const meta = () => {
   return [{ title: createTitle('Welcome') }];
 };
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
   if (userId) {
-    return redirect('/channels');
+    throw redirect('/channels');
   }
   return {};
 };
@@ -42,7 +39,7 @@ interface ActionData {
   };
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get('email');
   const password = formData.get('password');

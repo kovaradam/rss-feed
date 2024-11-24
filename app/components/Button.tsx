@@ -2,18 +2,13 @@ import React from 'react';
 import { SpinnerIcon } from './SpinnerIcon';
 
 type Props = {
-  secondary?: boolean;
   isLoading?: boolean;
 } & React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 >;
 
-export function Button({
-  isLoading,
-  secondary,
-  ...buttonProps
-}: Props): JSX.Element {
+export function Button({ isLoading, ...buttonProps }: Props): JSX.Element {
   return (
     <button
       {...buttonProps}

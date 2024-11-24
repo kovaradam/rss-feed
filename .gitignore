@@ -10,3 +10,7 @@ node_modules
 /app/styles/tailwind.css
 
 .cache
+
+.react-router/
+
+tsconfig.tsbuildinfo

@@ -1,5 +1,5 @@
-import type { ActionFunction } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import type { ActionFunction } from 'react-router';
+import { redirect } from 'react-router';
 import { deleteUserById } from '~/models/user.server';
 
 import { getUserId, logout } from '~/session.server';
@@ -15,5 +15,5 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export const loader = async () => {
-  return redirect('/');
+  throw redirect('/');
 };

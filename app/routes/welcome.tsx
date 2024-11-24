@@ -1,5 +1,5 @@
-import type { MetaFunction } from '@remix-run/react';
-import { Outlet } from '@remix-run/react';
+import type { MetaFunction } from 'react-router';
+import { Outlet } from 'react-router';
 import { ErrorMessage } from '~/components/ErrorMessage';
 import { createTitle } from '~/utils';
 
@@ -22,7 +22,7 @@ export default function Welcome() {
         </div>
         <img
           src="/reading.svg"
-          alt="Doodle of a person reading"
+          alt=""
           data-from="https://www.opendoodles.com/"
           className="max-w-[80%] dark:invert-[0.7]"
         />

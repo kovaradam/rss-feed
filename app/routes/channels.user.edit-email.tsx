@@ -1,14 +1,4 @@
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from '@remix-run/react';
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { redirect, json } from '@remix-run/server-runtime';
+import { Form, useNavigation, redirect } from 'react-router';
 import { PageHeading } from '~/components/PageHeading';
 import { SubmitSection } from '~/components/SubmitSection';
 import {
@@ -19,10 +9,11 @@ import {
 import { requireUser, requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createMeta } from '~/utils';
+import type { Route } from './+types/channels.user.edit-email';
 
 export const meta = createMeta();
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
@@ -30,66 +21,67 @@ export async function action({ request }: ActionFunctionArgs) {
   const newEmail = formData.get('new-email');
 
   if (!newEmail) {
-    return json({
+    return {
       errors: {
         'new-email': 'This field is required',
       },
-    });
+    };
   }
 
   if (typeof newEmail !== 'string') {
-    return json({
+    return {
       errors: {
         'new-email': 'New email is in invalid format',
       },
-    });
+    };
   }
 
   const currentEmail = (await getUserById(userId))?.email;
 
   if (newEmail === currentEmail) {
-    return json({
+    return {
       errors: {
         'new-email': 'New and current email cannot be the same',
       },
-    });
+    };
   }
 
   const userByEmail = await getUserByEmail(newEmail);
 
   if (userByEmail) {
-    return json({
+    return {
       errors: {
         'new-email': 'User with this email already exists',
       },
-    });
+    };
   }
 
   await requestUpdateUserEmail(userId, newEmail, request);
 
-  return redirect('/');
+  throw redirect('/');
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return json({ user, title: 'Edit email' });
+  return { user, title: 'Edit email' };
 }
 
-export default function UserEditPage() {
-  const data = useLoaderData<typeof loader>();
-  const actionResponse = useActionData<typeof action>();
+export default function UserEditPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
   const isSubmitting = transition.formMethod === 'PATCH';
 
   return (
     <>
-      <PageHeading>{data.title}</PageHeading>
+      <PageHeading>{loaderData.title}</PageHeading>
       <Form className="flex max-w-xl flex-col gap-4" method="patch">
         {[
           {
             name: 'current-email',
             label: 'Current email',
-            value: data.user.email,
+            value: loaderData.user.email,
             disabled: true,
           },
           {
@@ -101,7 +93,7 @@ export default function UserEditPage() {
             ),
             required: true,
             value: '',
-            error: actionResponse?.errors?.['new-email'],
+            error: actionData?.errors?.['new-email'],
           },
         ].map((item) => (
           <fieldset

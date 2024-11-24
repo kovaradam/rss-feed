@@ -144,7 +144,8 @@ export async function verifyLogin(
     return null;
   }
 
-  const { password: _password, ...userWithoutPassword } = userWithPassword;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: _, ...userWithoutPassword } = userWithPassword;
 
   return userWithoutPassword;
 }

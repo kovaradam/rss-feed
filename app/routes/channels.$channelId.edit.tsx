@@ -1,16 +1,4 @@
-import type { MetaFunction } from '@remix-run/react';
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from '@remix-run/react';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { redirect, data } from '@remix-run/server-runtime';
-import React from 'react';
+import { Form, useNavigation, redirect, data } from 'react-router';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
 import { useCategoryInput } from '~/components/CategoryInput';
@@ -26,6 +14,7 @@ import {
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createTitle, isSubmitting } from '~/utils';
+import type { Route } from './+types/channels.$channelId.edit';
 
 const fieldNames = [
   'title',
@@ -35,7 +24,7 @@ const fieldNames = [
   'language',
 ] as const;
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
       title: createTitle(`Edit ${data?.channel?.title ?? 'channel'}`),
@@ -49,7 +38,7 @@ type ActionData = {
   errors: Partial<Record<FieldName, string | null>> | undefined;
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: Route.ActionArgs) => {
   const channelId = params.channelId;
   invariant(channelId, 'ChannelId was not provided');
   const userId = await requireUserId(request);
@@ -80,7 +69,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   });
 
-  return redirect('/channels/'.concat(channel.id));
+  throw redirect('/channels/'.concat(channel.id));
 };
 
 type LoaderData = {
@@ -92,7 +81,7 @@ type LoaderData = {
 export const loader = async ({
   request,
   params,
-}: LoaderFunctionArgs): Promise<LoaderData> => {
+}: Route.LoaderArgs): Promise<LoaderData> => {
   const channelId = params.channelId;
   invariant(channelId, 'ChannelId was not provided');
   const userId = await requireUserId(request);
@@ -125,10 +114,13 @@ export const loader = async ({
   return { channel, categories, focusName };
 };
 
-export default function Channels() {
-  const errors = useActionData<ActionData>()?.errors;
+export default function Channels({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
+  const { channel, categories, focusName } = loaderData;
   const transition = useNavigation();
-  const { channel, categories, focusName } = useLoaderData<typeof loader>();
+
   const isSaving = isSubmitting(transition);
 
   const { renderCategoryInput, renderCategoryForm } = useCategoryInput({
@@ -155,9 +147,9 @@ export default function Channels() {
               {...inputProps(focusName === 'title')}
             />
           </WithFormLabel>
-          {errors?.title && (
+          {actionData?.errors?.title && (
             <div className="pt-1 text-red-700" id="title-error">
-              {errors.title}
+              {actionData.errors.title}
             </div>
           )}
         </div>

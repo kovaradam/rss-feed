@@ -11,15 +11,14 @@ import {
   SearchIcon,
   UserIcon,
 } from '@heroicons/react/outline';
-import { type LoaderFunctionArgs } from '@remix-run/node';
-import type { NavLinkProps } from '@remix-run/react';
+import type { NavLinkProps } from 'react-router';
 import {
   Form,
   NavLink,
   Outlet,
   useLoaderData,
   useNavigation,
-} from '@remix-run/react';
+} from 'react-router';
 import React from 'react';
 import { AppTitle, UseAppTitle } from '~/components/AppTitle';
 import { ErrorMessage } from '~/components/ErrorMessage';
@@ -31,10 +30,11 @@ import { createMeta, useUser } from '~/utils';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import { getChannels } from '~/models/channel.server';
 import { Tooltip } from '~/components/Tooltip';
+import type { Route } from './+types/channels';
 
 export const meta = createMeta();
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const user = await requireUser(request);
   const channels = getChannels({
     where: { userId: user.id },
@@ -320,6 +320,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
         </summary>
         <ul
           className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col dark:bg-slate-800 "
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
         >
           <li>

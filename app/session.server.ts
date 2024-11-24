@@ -1,4 +1,4 @@
-import { createCookieSessionStorage, redirect } from '@remix-run/node';
+import { createCookieSessionStorage, redirect } from 'react-router';
 import invariant from 'tiny-invariant';
 
 import type { User } from '~/models/user.server';
@@ -86,7 +86,7 @@ export async function createUserSession({
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
 
-  return redirect(redirectTo, {
+  throw redirect(redirectTo, {
     headers: new Headers([
       [
         'Set-Cookie',
@@ -103,7 +103,7 @@ export async function createUserSession({
 
 export async function logout(request: Request, target = '/') {
   const session = await getSession(request);
-  return redirect(target, {
+  throw redirect(target, {
     headers: new Headers([
       ['Set-Cookie', await sessionStorage.destroySession(session)],
       ['Set-Cookie', KNOWN_USER_COOKIE],

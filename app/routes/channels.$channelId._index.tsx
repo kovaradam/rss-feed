@@ -1,18 +1,13 @@
 import type { Channel, Item } from '@prisma/client';
-import type {
-  ActionFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from '@remix-run/node';
-import { redirect } from '@remix-run/node';
 import {
+  redirect,
   Form,
   Link,
   isRouteErrorResponse,
   useLoaderData,
   useNavigation,
   useRouteError,
-} from '@remix-run/react';
+} from 'react-router';
 import invariant from 'tiny-invariant';
 import { Href } from '~/components/Href';
 import { TimeFromNow } from '~/components/TimeFromNow';
@@ -49,9 +44,10 @@ import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDet
 import { Tooltip } from '~/components/Tooltip';
 import { DescriptionList } from '~/components/DescriptionList';
 import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
-import useSound from '~/utils/use-sound';
+import { useSound } from '~/utils/use-sound';
+import type { Route } from './+types/channels.$channelId._index';
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
       title: createTitle(data?.channel?.title ?? 'Channel detail'),
@@ -70,7 +66,7 @@ const itemCountName = 'itemCount';
 export const loader = async ({
   request,
   params,
-}: LoaderFunctionArgs): Promise<LoaderData> => {
+}: Route.LoaderArgs): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const requestUrl = new URL(request.url);
   const itemCount = requestUrl.searchParams.get(itemCountName);
@@ -102,14 +98,14 @@ export const loader = async ({
   };
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: Route.ActionArgs) => {
   invariant(params.channelId, 'channelId not found');
   const userId = await requireUserId(request);
 
   if (request.method === 'DELETE') {
     await deleteChannel({ userId, id: params.channelId });
 
-    return redirect('/channels');
+    throw redirect('/channels');
   }
 
   if (request.method === 'PUT') {
@@ -149,7 +145,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     console.error(error);
   }
 
-  return redirect('/channels/'.concat(params.channelId));
+  throw redirect('/channels/'.concat(params.channelId));
 };
 
 export default function ChannelDetailsPage() {
@@ -318,7 +314,6 @@ export default function ChannelDetailsPage() {
             type="submit"
             className="flex w-[13ch] items-center gap-2"
             isLoading={isRefreshing}
-            secondary
           >
             <RefreshIcon
               className={`w-4  ${

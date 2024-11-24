@@ -1,4 +1,4 @@
-import { Form } from '@remix-run/react';
+import { Form } from 'react-router';
 import React from 'react';
 
 type Props = React.ComponentProps<typeof Form> & {

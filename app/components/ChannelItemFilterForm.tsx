@@ -1,5 +1,5 @@
 import { BanIcon } from '@heroicons/react/outline';
-import { Form, useLocation } from '@remix-run/react';
+import { Form, useLocation } from 'react-router';
 import React from 'react';
 import type { Channel, ChannelItemsFilter } from '~/models/channel.server';
 import { styles } from '~/styles/shared';
@@ -150,12 +150,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
         </div>
         {hasFilters && (
           <fieldset className="flex flex-col gap-1 ">
-            <Button
-              secondary
-              form="reset-filters"
-              type="submit"
-              className="w-full "
-            >
+            <Button form="reset-filters" type="submit" className="w-full ">
               <BanIcon className="w-4" />
               <span className="flex-1 items-center">Disable filters</span>
             </Button>

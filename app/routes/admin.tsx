@@ -1,14 +1,4 @@
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from '@remix-run/react';
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime';
+import { Form, useNavigation } from 'react-router';
 import {
   deleteFailedUpload,
   getFailedUploads,
@@ -16,6 +6,7 @@ import {
 import type { User } from '~/models/user.server';
 import { deleteUserById, getUsers, makeUserAdmin } from '~/models/user.server';
 import { requireUser } from '~/session.server';
+import type { Route } from './+types/admin';
 
 function requireAdmin(user: User) {
   if (!user.isAdmin) {
@@ -26,7 +17,7 @@ function requireAdmin(user: User) {
   }
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   requireAdmin(user);
 
@@ -37,14 +28,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (typeof channelLink === 'string') {
       const deletedUpload = await deleteFailedUpload(channelLink);
-      return json({ deletedUpload, action: 'deleted' });
+      return { deletedUpload, action: 'deleted' };
     }
 
     const userId = String(formData.get('user-id'));
 
     const deletedUser = await deleteUserById(userId);
 
-    return json({ user: deletedUser, action: 'deleted' });
+    return { user: deletedUser, action: 'deleted' };
   }
 
   if (request.method === 'PATCH') {
@@ -53,27 +44,27 @@ export async function action({ request }: ActionFunctionArgs) {
     const isAdmin = formData.get('is-admin') === 'true';
 
     const updatedUser = await makeUserAdmin(userId, !isAdmin);
-    console.log(updatedUser);
 
-    return json({ user: updatedUser, action: 'updated' });
+    return { user: updatedUser, action: 'updated' };
   }
 
   throw new Response('Unsupported', { status: 405 });
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
   requireAdmin(user);
 
   const users = await getUsers();
   const failedChannelUploads = await getFailedUploads();
 
-  return json({ users, failedChannelUploads });
+  return { users, failedChannelUploads };
 }
 
-export default function AdminIndexPage() {
-  const data = useLoaderData<typeof loader>();
-  const actionResponse = useActionData<typeof action>();
+export default function AdminIndexPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
 
   return (
@@ -91,7 +82,7 @@ export default function AdminIndexPage() {
             </tr>
           </thead>
           <tbody>
-            {data.users.map((user) => (
+            {loaderData.users.map((user) => (
               <tr key={user.id}>
                 <td>{user.email}</td>
                 <td>{user.requestedEmail}</td>
@@ -126,17 +117,17 @@ export default function AdminIndexPage() {
         {transition.formMethod === 'DELETE' && <div>Deleting user</div>}
         {transition.formMethod === 'PATCH' && <div>Updating user</div>}
 
-        {actionResponse && 'user' in actionResponse && (
+        {actionData && 'user' in actionData && (
           <p className="text-green-600">
-            {actionResponse.action === 'deleted' ? 'Deleted' : 'Updated'} user{' '}
-            <b>{actionResponse.user.email}</b>
+            {actionData.action === 'deleted' ? 'Deleted' : 'Updated'} user{' '}
+            <b>{actionData.user?.email}</b>
           </p>
         )}
       </section>
       <hr className="my-4" />
       <section>
         <h2>Failed RSS uploads</h2>
-        {data.failedChannelUploads.length ? (
+        {loaderData.failedChannelUploads.length ? (
           <table>
             <thead>
               <tr>
@@ -146,7 +137,7 @@ export default function AdminIndexPage() {
               </tr>
             </thead>
             <tbody>
-              {data.failedChannelUploads.map((channel) => (
+              {loaderData.failedChannelUploads.map((channel) => (
                 <tr key={channel.link}>
                   <td className="pr-5">{channel.link}</td>
                   <td className="pr-5">{channel.error}</td>

@@ -1,9 +1,9 @@
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
 import { getChannels, refreshChannel } from '~/models/channel.server';
 import { requireUser } from '~/session.server';
+import type { Route } from './+types/api.refresh-channels';
 
-export async function action({ request }: LoaderFunctionArgs) {
+export async function action({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
   if (request.method === useChannelRefreshFetcher.method) {
     const channels = await getChannels({
