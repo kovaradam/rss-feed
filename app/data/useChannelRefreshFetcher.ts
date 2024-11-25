@@ -1,10 +1,9 @@
 import { useFetcher } from 'react-router';
 import React from 'react';
-
-export type RefreshResult = { newItemCount: number };
+import type { Route } from '../routes/+types/api.refresh-channels';
 
 export function useChannelRefreshFetcher() {
-  const fetcher = useFetcher<RefreshResult>({
+  const fetcher = useFetcher<Route.ComponentProps['actionData']>({
     key: useChannelRefreshFetcher.key,
   });
 

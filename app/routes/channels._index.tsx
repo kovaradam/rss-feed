@@ -12,7 +12,7 @@ import { ErrorMessage } from '~/components/ErrorMessage';
 import { PageSearchInput } from '~/components/PageSearchInput';
 import { NewItemsAlert } from '~/components/NewItemsAlert';
 import { ShowMoreLink } from '~/components/ShowMoreLink';
-import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
+import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
 import type { ItemWithChannel } from '~/models/channel.server';
 import { getItemsByFilters, getChannels } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';

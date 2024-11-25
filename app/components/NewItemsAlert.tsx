@@ -1,5 +1,5 @@
 import { useFetcher } from 'react-router';
-import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
+import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
 
 export function NewItemsAlert() {
   /** submits mutation that triggers query revalidation */

@@ -27,7 +27,7 @@ import { Highlight } from '~/components/Highlight';
 import { getCollections } from '~/models/collection.server';
 import { requireUser } from '~/session.server';
 import { createMeta, useUser } from '~/utils';
-import { useChannelRefreshFetcher } from '~/hooks/useChannelFetcher';
+import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
 import { getChannels } from '~/models/channel.server';
 import { Tooltip } from '~/components/Tooltip';
 import type { Route } from './+types/channels';

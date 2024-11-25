@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router';
 import React from 'react';
-import { useEvent } from '~/hooks/useEvent';
+import { useEvent } from '~/utils/useEvent';
 
 type Props = {
   isExpanded: boolean;

@@ -1,14 +1,9 @@
-import {
-  useChannelRefreshFetcher,
-  type RefreshResult,
-} from '~/hooks/useChannelFetcher';
 import { getChannels, refreshChannel } from '~/models/channel.server';
 import { requireUser } from '~/session.server';
 import type { Route } from './+types/api.refresh-channels';
+import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
 
-export async function action({
-  request,
-}: Route.LoaderArgs): Promise<RefreshResult> {
+export async function action({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
 
   if (request.method === useChannelRefreshFetcher.method) {
