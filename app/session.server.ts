@@ -92,7 +92,7 @@ export async function createUserSession({
         'Set-Cookie',
         await sessionStorage.commitSession(session, {
           maxAge: remember
-            ? 60 * 60 * 24 * 7 // 7 days
+            ? 60 * 60 * 24 * 400 // 400 days
             : undefined,
         }),
       ],
