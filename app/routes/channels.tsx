@@ -385,12 +385,14 @@ function registerNavSwipeCallbacks(
       );
     },
     onTouchMove: (event) => {
+      const changedTouch = event.changedTouches[0];
+      if (!changedTouch) {
+        return;
+      }
       const diffX =
-        Number(event.currentTarget.dataset.touchStartX) -
-        event.changedTouches[0]?.clientX;
+        Number(event.currentTarget.dataset.touchStartX) - changedTouch.clientX;
       const diffY =
-        Number(event.currentTarget.dataset.touchStartY) -
-        event.changedTouches[0]?.clientY;
+        Number(event.currentTarget.dataset.touchStartY) - changedTouch.clientY;
 
       event.currentTarget?.setAttribute('data-slide-diff', String(diffX));
 

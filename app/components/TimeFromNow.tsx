@@ -28,8 +28,8 @@ export function TimeFromNow(props: Props): JSX.Element {
     [difference.minutes, 'minute'],
   ] as const;
 
-  for (let i = 0; i < entries.length; i++) {
-    const [value, label] = entries[i];
+  for (const entry of entries) {
+    const [value, label] = entry;
     if (value >= 1) {
       return (
         <span className={'relative'}>

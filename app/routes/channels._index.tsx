@@ -40,15 +40,15 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   ].map((name) => searchParams.get(name));
 
   const filters = {
-    after,
-    before,
-    categories: filterCategories,
-    channels: filterChannels,
+    after: after ?? null,
+    before: before ?? null,
+    categories: filterCategories ?? [],
+    channels: filterChannels ?? [],
     includeRead: includeReadParam ? includeReadParam === String(true) : null,
     includeHiddenFromFeed: includeHiddenFromFeed
       ? includeHiddenFromFeed === String(true)
       : null,
-    search,
+    search: search ?? null,
   };
 
   const items = getItemsByFilters(

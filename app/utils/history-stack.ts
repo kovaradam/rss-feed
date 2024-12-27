@@ -52,7 +52,7 @@ if (import.meta.vitest) {
     HistoryStack.add(firstEntry);
 
     expect(HistoryStack.getStack().length).toBe(1);
-    expect(HistoryStack.peek().title).toBe(firstEntry.title);
+    expect(HistoryStack.peek()?.title).toBe(firstEntry.title);
 
     const secondEntry = {
       title: 'title2',
@@ -62,7 +62,7 @@ if (import.meta.vitest) {
     HistoryStack.add(secondEntry);
 
     expect(HistoryStack.getStack().length).toBe(2);
-    expect(HistoryStack.peek().title).toBe(secondEntry.title);
+    expect(HistoryStack.peek()?.title).toBe(secondEntry.title);
   });
 
   it('does not add duplicate location object', () => {
