@@ -79,7 +79,6 @@ export default function ChannelsPage() {
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <div className="flex flex-col sm:overflow-x-visible ">
         <UseAppTitle>{data.title}</UseAppTitle>
-
         <div
           className="background flex justify-center"
           {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}

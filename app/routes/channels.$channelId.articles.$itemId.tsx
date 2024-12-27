@@ -1,5 +1,5 @@
 import {
-  ChevronDoubleLeftIcon,
+  ChevronLeftIcon,
   ClockIcon,
   TrashIcon,
   UserIcon,
@@ -27,6 +27,7 @@ import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
 import { createMeta } from '~/utils';
 import type { Route } from './+types/channels.$channelId.articles.$itemId';
+import { HistoryStack } from '~/utils/history-stack';
 
 export const meta = createMeta();
 
@@ -110,15 +111,17 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
 
   const formRef = React.useRef<React.ElementRef<'form'>>(null);
 
+  const backEntry = HistoryStack.peek(1);
+
   return (
     <>
       <UseAppTitle>Article detail</UseAppTitle>
       <Link
-        to={`/channels/${item.channelId}`}
+        to={backEntry?.href ?? `/channels/${item.channelId}`}
         className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
       >
-        <ChevronDoubleLeftIcon className="h-[2.9ex] w-4 min-w-4 " />{' '}
-        {item.channel.title}
+        <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4 " />{' '}
+        {backEntry?.title ?? item.channel.title}
       </Link>
       <PageHeading>
         <ChannelItemDetail.Title
@@ -129,7 +132,8 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       <DescriptionList className=" py-2">
         {[
           {
-            label: <></>,
+            label: 'Link',
+            visuallyHidden: true,
             content: <Href href={item.link} className="break-all" />,
             id: 'link',
           },
@@ -153,23 +157,26 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           },
         ].map((entry) => (
           <span className="flex gap-1" key={entry.id}>
-            <DescriptionList.Term className="flex items-center gap-1">
+            <DescriptionList.Term
+              className="flex items-center gap-1"
+              visuallyHidden={entry.visuallyHidden === true ? true : undefined}
+            >
               {entry.label}
             </DescriptionList.Term>
-            <DescriptionList.Detail>
+            <DescriptionList.Definition>
               {entry.content || 'missing'}
-            </DescriptionList.Detail>
+            </DescriptionList.Definition>
           </span>
         ))}
         <span>
           <DescriptionList.Term className="flex items-center gap-1 pb-1 pt-2">
             Description:
           </DescriptionList.Term>
-          <DescriptionList.Detail>
+          <DescriptionList.Definition>
             <p className="[overflow-wrap:anywhere] dark:text-white">
               {description || 'missing'}
             </p>
-          </DescriptionList.Detail>
+          </DescriptionList.Definition>
         </span>
       </DescriptionList>
       <hr className="my-2" />

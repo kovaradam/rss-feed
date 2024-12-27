@@ -8,17 +8,15 @@ export function useChannelRefreshFetcher() {
   });
 
   const { submit } = fetcher;
-  const refresh = React.useCallback(
-    () =>
-      submit(
-        {},
-        {
-          action: useChannelRefreshFetcher.path,
-          method: useChannelRefreshFetcher.method,
-        }
-      ),
-    [submit]
-  );
+  const refresh = React.useCallback(() => {
+    submit(
+      {},
+      {
+        action: useChannelRefreshFetcher.path,
+        method: useChannelRefreshFetcher.method,
+      }
+    );
+  }, [submit]);
   return [refresh, fetcher] as const;
 }
 

@@ -5,7 +5,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useHref,
   useLoaderData,
+  useLocation,
   useNavigation,
 } from 'react-router';
 
@@ -15,6 +17,9 @@ import { getUser } from './session.server';
 import { UseSounds } from './components/UseSounds';
 import { ClientOnly } from './components/ClientOnly';
 import type { Route } from './+types/root';
+import React from 'react';
+import { HistoryStack } from './utils/history-stack';
+import { lastTitle } from './utils';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -39,6 +44,12 @@ export const loader = async ({
 export default function App() {
   const data = useLoaderData<typeof loader>();
   const navigation = useNavigation();
+
+  const href = useHref(useLocation());
+
+  React.useEffect(() => {
+    HistoryStack.add({ href, title: lastTitle });
+  }, [href]);
 
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
@@ -65,9 +76,9 @@ export default function App() {
             <div className="" />
           </div>
         )}
-
         <Outlet />
         <ScrollRestoration />
+
         <Scripts />
       </body>
       {data.user?.soundsAllowed && (

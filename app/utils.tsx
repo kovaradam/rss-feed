@@ -74,7 +74,10 @@ export function validateEmail(email: unknown): email is string {
   return typeof email === 'string' && email.length > 3 && email.includes('@');
 }
 
+export let lastTitle = '';
+
 export function createTitle(input: string): string {
+  lastTitle = input;
   return `Journal | ${input}`;
 }
 
@@ -92,7 +95,7 @@ export function createMeta(metaFunction?: MetaFunction): MetaFunction {
 
     return (meta ?? []).concat([
       {
-        title: `Journal | ${title}`,
+        title: createTitle(title),
       },
     ]);
   };

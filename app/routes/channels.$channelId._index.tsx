@@ -178,18 +178,18 @@ export default function ChannelDetailsPage() {
 
         <DescriptionList className="pt-2 ">
           <span className="flex items-center gap-1 ">
-            <DescriptionList.Detail>
+            <DescriptionList.Definition>
               <Href href={channel.link} className="">
                 {channel.link}
               </Href>
-            </DescriptionList.Detail>
+            </DescriptionList.Definition>
           </span>
 
           <span className="flex flex-wrap items-center gap-1 ">
             <DescriptionList.Term className="flex items-center gap-1">
               <ClockIcon className="h-4" /> Last build date:
             </DescriptionList.Term>
-            <DescriptionList.Detail className="flex flex-wrap gap-1">
+            <DescriptionList.Definition className="flex flex-wrap gap-1">
               {data.channel.lastBuildDate ? (
                 <TimeFromNow date={data.channel.lastBuildDate} />
               ) : (
@@ -200,20 +200,20 @@ export default function ChannelDetailsPage() {
                   (refreshed <TimeFromNow date={data.channel.refreshDate} />)
                 </span>
               )}
-            </DescriptionList.Detail>
+            </DescriptionList.Definition>
           </span>
           <WithEditLink name={'new-category'}>
             <span className="flex flex-wrap items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
                 <BookmarkIcon className="h-4" /> Categories:
               </DescriptionList.Term>
-              <DescriptionList.Detail className="flex flex-wrap gap-1">
+              <DescriptionList.Definition className="flex flex-wrap gap-1">
                 {category ? (
                   <ChannelCategoryLinks category={category} />
                 ) : (
                   'None'
                 )}
-              </DescriptionList.Detail>
+              </DescriptionList.Definition>
             </span>
           </WithEditLink>
           <WithEditLink name={'language'}>
@@ -221,20 +221,20 @@ export default function ChannelDetailsPage() {
               <DescriptionList.Term className="flex items-center gap-1">
                 <TranslateIcon className="h-4" /> Language:
               </DescriptionList.Term>
-              <DescriptionList.Detail>
+              <DescriptionList.Definition>
                 {channel.language || 'None'}
-              </DescriptionList.Detail>
+              </DescriptionList.Definition>
             </span>
           </WithEditLink>
           <div className="py-6">
             <WithEditLink name={'description'}>
               <DescriptionList.Term>Description:</DescriptionList.Term>
             </WithEditLink>
-            <DescriptionList.Detail>
+            <DescriptionList.Definition>
               <p className="text-slate-900 [overflow-wrap:anywhere] dark:text-slate-300">
                 {data.channel.description || 'Description is missing'}
               </p>
-            </DescriptionList.Detail>
+            </DescriptionList.Definition>
           </div>
         </DescriptionList>
 

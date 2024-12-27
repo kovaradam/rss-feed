@@ -10,21 +10,31 @@ export function DescriptionList(props: React.HTMLAttributes<HTMLDListElement>) {
 }
 
 DescriptionList.Term = function DescriptionTerm(
-  props: React.HTMLAttributes<HTMLElement>
+  props: React.HTMLAttributes<HTMLElement> &
+    (
+      | {
+          children: React.ReactNode;
+        }
+      | { visuallyHidden: true; children: string }
+    )
 ) {
   return (
     <dt
       {...props}
-      className={'text-slate-500 dark:text-slate-400 '.concat(
-        props.className ?? ''
-      )}
+      className={'text-slate-500 dark:text-slate-400 '
+        .concat(
+          'visuallyHidden' in props && props.visuallyHidden === true
+            ? 'visually-hidden '
+            : ''
+        )
+        .concat(props.className ?? '')}
     >
       {props.children}
     </dt>
   );
 };
 
-DescriptionList.Detail = function DescriptionDetail(
+DescriptionList.Definition = function DescriptionDefinition(
   props: React.HTMLAttributes<HTMLElement>
 ) {
   return (
