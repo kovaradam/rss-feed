@@ -5,12 +5,12 @@ export function NewItemsAlert() {
   /** submits mutation that triggers query revalidation */
   const newItemsFetcher = useFetcher({ key: 'refresh-revalidate' });
   /** refreshFetcher does not trigger revalidation */
-  const [, refreshFetcher] = useChannelRefreshFetcher();
+  const refresh = useChannelRefreshFetcher();
 
   const isFetchingNewItems = newItemsFetcher?.state !== 'idle';
 
   if (
-    ((refreshFetcher?.data?.newItemCount ?? 0) === 0 || newItemsFetcher.data) &&
+    ((refresh.newItemCount ?? 0) === 0 || newItemsFetcher.data) &&
     !isFetchingNewItems
   ) {
     return null;

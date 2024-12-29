@@ -61,8 +61,9 @@ export default function ChannelsPage() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(false);
   const [title, setTitle] = React.useState(data.title as string | undefined);
 
-  const [refreshChannels, refreshFetcher] = useChannelRefreshFetcher();
-  const isRefreshing = refreshFetcher.state !== 'idle';
+  const refreshFetcher = useChannelRefreshFetcher();
+  const isRefreshing = refreshFetcher.status === 'pending';
+  const { refresh: refreshChannels } = refreshFetcher;
 
   React.useEffect(() => {
     refreshChannels();
