@@ -1,5 +1,4 @@
-import { Form, Link, useNavigation } from 'react-router';
-import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
+import { Form, Link } from 'react-router';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { Highlight } from '~/components/Highlight';
 import { PageSearchInput } from '~/components/PageSearchInput';
@@ -41,8 +40,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function QuotesPage({ loaderData }: Route.ComponentProps) {
-  const navigation = useNavigation();
-
   if (!loaderData.quotes.length && !loaderData.search) {
     return (
       <div className="flex flex-col gap-2 text-center text-lg font-bold ">
@@ -81,9 +78,6 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
         />
       </Form>
       <ul className="relative">
-        {navigation.formData && navigation.state === 'loading' && (
-          <ChannelItemsOverlay />
-        )}
         {loaderData.quotes.map((quote) => (
           <li
             id={quote.id}

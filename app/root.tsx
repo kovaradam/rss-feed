@@ -68,7 +68,7 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
-        {!navigation.formAction && (
+        {(!navigation.formAction || navigation.formMethod === 'GET') && (
           <div
             data-loading={navigation.state === 'loading'}
             className="progress"

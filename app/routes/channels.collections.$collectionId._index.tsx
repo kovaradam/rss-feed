@@ -8,7 +8,6 @@ import {
 import React from 'react';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
-import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { AsideWrapper } from '~/components/AsideWrapper';
 import { buttonStyle } from '~/components/Button';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
@@ -146,8 +145,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             defaultValue={filters.search ?? undefined}
             placeholder="Search in articles"
           />
-          {transition.state === 'loading' &&
-            transition.formMethod === 'GET' && <ChannelItemsOverlay />}
+
           {items.length === 0 && (
             <div className="flex flex-col items-center gap-24 p-8">
               <div>

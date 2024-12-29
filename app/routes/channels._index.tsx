@@ -3,7 +3,6 @@ import type { ShouldRevalidateFunction } from 'react-router';
 import { Link, useNavigation } from 'react-router';
 import React from 'react';
 import { UseAppTitle } from '~/components/AppTitle';
-import { ChannelItemsOverlay } from '~/components/ArticleOverlay';
 import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
 import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
 import { ChannelItemList } from '~/components/ChannelItemList';
@@ -141,8 +140,6 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
         <section className="min-w-2/3 relative flex-1" id="feed-container">
-          {transition.state === 'loading' &&
-            transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details
             className="mb-4 w-full sm:hidden"
             title="Filter articles"
