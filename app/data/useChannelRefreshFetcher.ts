@@ -50,7 +50,6 @@ class RefreshFetcherStore {
     try {
       const response = await fetch(`${useChannelRefreshFetcher.path}.data`, {
         method: useChannelRefreshFetcher.method,
-        credentials: 'include',
         signal: this.abortController.signal,
       });
 
