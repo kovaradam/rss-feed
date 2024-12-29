@@ -4,7 +4,7 @@ export function useChannelRefreshFetcher() {
   const status = React.useSyncExternalStore(
     RefreshFetcherStore.subscribe,
     RefreshFetcherStore.getStatus,
-    RefreshFetcherStore.getStatus
+    () => 'idle' as const
   );
 
   if (typeof status === 'number') {
@@ -26,10 +26,10 @@ useChannelRefreshFetcher.invalidateMethod = 'PUT' as const;
 class RefreshFetcherStore {
   private static abortController = new AbortController();
   private static listeners: Array<() => void> = [];
-  private static status: 'pending' | number = 'pending';
+  private static status: 'pending' | 'idle' | number = 'idle';
 
   static refresh = async () => {
-    // Prevent refreshing during active fetch to avoid losing refreshed item count
+    // Prevent refresh while fetching to avoid losing results
     if (this.status === 'pending') {
       return;
     }
@@ -89,8 +89,4 @@ class RefreshFetcherStore {
   static getStatus = () => {
     return this.status;
   };
-}
-
-if (globalThis.document) {
-  RefreshFetcherStore.refresh().then(console.log).catch(console.error);
 }
