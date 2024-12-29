@@ -22,6 +22,10 @@ export class HistoryStack {
     return this.historyStackArray[index];
   };
 
+  static pop = () => {
+    this.historyStackArray = this.historyStackArray.slice(1);
+  };
+
   static getStack = () => {
     return Object.freeze([...this.historyStackArray]);
   };
@@ -37,6 +41,12 @@ export class HistoryStack {
   static clear = () => {
     this.historyStackArray = [];
   };
+}
+
+if (globalThis.document) {
+  globalThis.addEventListener('popstate', () => {
+    HistoryStack.pop();
+  });
 }
 
 if (import.meta.vitest) {
