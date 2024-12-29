@@ -63,7 +63,7 @@ export default function ChannelsPage() {
 
   const refreshFetcher = useChannelRefreshFetcher();
   const isRefreshing = refreshFetcher.status === 'pending';
-  const { refresh: refreshChannels } = refreshFetcher;
+  const { refresh: refreshChannels, newItemCount } = refreshFetcher;
 
   React.useEffect(() => {
     refreshChannels();
@@ -73,6 +73,25 @@ export default function ChannelsPage() {
     window.addEventListener('focus', refreshChannels);
     return () => window.removeEventListener('focus', refreshChannels);
   }, [refreshChannels]);
+
+  const itemsContainer = globalThis.document?.getElementById('feed-container');
+  const itemsContainerHeight = itemsContainer?.clientHeight;
+
+  React.useLayoutEffect(() => {
+    if ((newItemCount ?? 0) === 0 || !itemsContainerHeight) {
+      return;
+    }
+    const newItemsContainerHeight = itemsContainer.clientHeight;
+
+    const scrollingElement = document.body;
+    const scrollDiff = newItemsContainerHeight - itemsContainerHeight;
+
+    if (scrollingElement.scrollTop && scrollDiff) {
+      scrollingElement.scrollTo({
+        top: scrollingElement.scrollTop + scrollDiff,
+      });
+    }
+  }, [newItemCount, itemsContainer, itemsContainerHeight]);
 
   const [channelFilter, setChannelFilter] = React.useState('');
 

@@ -140,7 +140,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     <>
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
-        <section className="min-w-2/3 relative flex-1">
+        <section className="min-w-2/3 relative flex-1" id="feed-container">
           {transition.state === 'loading' &&
             transition.formMethod === 'GET' && <ChannelItemsOverlay />}
           <Details

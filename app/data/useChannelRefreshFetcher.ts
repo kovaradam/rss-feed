@@ -57,12 +57,16 @@ class RefreshFetcherStore {
 
       // Handle router data weirdness
       if (!Array.isArray(data)) {
-        return 0;
+        throw new Error();
       }
 
       const newItemCount = data.at(-1);
 
-      return typeof newItemCount === 'number' ? newItemCount : 0;
+      if (typeof newItemCount !== 'number') {
+        throw new Error();
+      }
+
+      return newItemCount;
     } catch (_: unknown) {
       return 0;
     }
