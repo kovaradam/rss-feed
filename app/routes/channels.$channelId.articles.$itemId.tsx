@@ -1,6 +1,7 @@
 import {
   ChevronLeftIcon,
   ClockIcon,
+  RssIcon,
   TrashIcon,
   UserIcon,
 } from '@heroicons/react/outline';
@@ -140,6 +141,19 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           {
             label: (
               <>
+                <RssIcon className="w-4" /> Channel:
+              </>
+            ),
+            content: (
+              <Link to={`/channels/${item.channel.id}`} className="underline">
+                {item.channel.title}
+              </Link>
+            ),
+            id: 'channel',
+          },
+          {
+            label: (
+              <>
                 <UserIcon className="w-4" /> Author:
               </>
             ),
@@ -156,7 +170,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
             id: 'published',
           },
         ].map((entry) => (
-          <span className="flex gap-1" key={entry.id}>
+          <span className="flex items-start gap-1" key={entry.id}>
             <DescriptionList.Term
               className="flex items-center gap-1"
               visuallyHidden={entry.visuallyHidden === true ? true : undefined}

@@ -78,7 +78,8 @@ export let lastTitle = '';
 
 export function createTitle(input: string): string {
   lastTitle = input;
-  return `Journal | ${input}`;
+
+  return import.meta.env.PROD ? '' : '[dev] '.concat(`Journal | ${input}`);
 }
 
 export function createMeta(metaFunction?: MetaFunction): MetaFunction {
