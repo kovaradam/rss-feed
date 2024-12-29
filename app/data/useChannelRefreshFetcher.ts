@@ -29,7 +29,13 @@ class RefreshFetcherStore {
   private static status: 'pending' | number = 'pending';
 
   static refresh = async () => {
+    // Prevent refreshing during active fetch to avoid losing refreshed item count
+    if (this.status === 'pending') {
+      return;
+    }
+
     this.setStatus('pending');
+
     try {
       const newChannelCount = await this.fetchRefresh();
       this.setStatus(newChannelCount);
@@ -55,7 +61,9 @@ class RefreshFetcherStore {
         return 0;
       }
 
-      return Number(data.at(-1));
+      const newItemCount = data.at(-1);
+
+      return typeof newItemCount === 'number' ? newItemCount : 0;
     } catch (_: unknown) {
       return 0;
     }
