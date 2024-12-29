@@ -114,8 +114,10 @@ export default function ChannelsPage() {
               hide={() => setIsNavExpanded(false)}
             >
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4  font-bold sm:flex sm:text-4xl dark:text-slate-300">
-                  <AppTitle defaultTitle={data.title} />
+                <h1 className="sticky top-0 z-10 hidden items-end truncate  p-4 font-bold sm:flex sm:text-4xl dark:text-slate-300">
+                  <span className="overflow-hidden text-ellipsis">
+                    <AppTitle defaultTitle={data.title} />
+                  </span>
                 </h1>
                 <div className="overscroll-contain sm:overflow-y-auto ">
                   <StyledNavLink

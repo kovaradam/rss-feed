@@ -15,10 +15,15 @@ export function Tooltip(
   const elementRef = React.useRef<HTMLDivElement>(null);
   const positionTimeoutRef = React.useRef(-1);
   const [position, setPosition] = React.useState<Position | null>(null);
-  const target = props.target ?? elementRef.current?.parentElement;
+  const getTarget = React.useCallback(
+    () => props.target ?? elementRef.current?.parentElement,
+    [props.target]
+  );
 
   const show = React.useCallback(() => {
     clearTimeout(positionTimeoutRef.current);
+    const target = getTarget();
+
     if (!target) {
       return null;
     }
@@ -40,7 +45,7 @@ export function Tooltip(
         }),
       500
     );
-  }, [target, props.position]);
+  }, [getTarget, props.position]);
 
   const hide = React.useCallback(() => {
     clearTimeout(positionTimeoutRef.current);
@@ -48,6 +53,8 @@ export function Tooltip(
   }, []);
 
   React.useEffect(() => {
+    const target = getTarget();
+
     if (!target) {
       return;
     }
@@ -66,7 +73,7 @@ export function Tooltip(
       target.removeEventListener('mouseleave', hide);
       target.removeEventListener('click', hide);
     };
-  }, [id, target, show, hide]);
+  }, [id, getTarget, show, hide]);
 
   useEffect(() => {
     if (!position) {
@@ -103,7 +110,7 @@ export function Tooltip(
       id={id}
       ref={elementRef}
     >
-      {target?.getAttribute('aria-label') ?? props.children}
+      {getTarget()?.getAttribute('aria-label') ?? props.children}
     </div>
   );
 }

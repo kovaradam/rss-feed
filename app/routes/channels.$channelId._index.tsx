@@ -172,7 +172,7 @@ export default function ChannelDetailsPage() {
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="relative z-0 max-w-[90vw] flex-1">
         {channel.imageUrl && <ChannelImage src={channel.imageUrl} />}
-        <WithEditLink name={'title'}>
+        <WithEditLink name={'title'} label="Edit channel title">
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
 
@@ -202,7 +202,7 @@ export default function ChannelDetailsPage() {
               )}
             </DescriptionList.Definition>
           </span>
-          <WithEditLink name={'new-category'}>
+          <WithEditLink name={'new-category'} label="Edit channel categories">
             <span className="flex flex-wrap items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
                 <BookmarkIcon className="h-4" /> Categories:
@@ -216,7 +216,7 @@ export default function ChannelDetailsPage() {
               </DescriptionList.Definition>
             </span>
           </WithEditLink>
-          <WithEditLink name={'language'}>
+          <WithEditLink name={'language'} label="Edit language">
             <span className="flex items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
                 <TranslateIcon className="h-4" /> Language:
@@ -227,7 +227,7 @@ export default function ChannelDetailsPage() {
             </span>
           </WithEditLink>
           <div className="py-6">
-            <WithEditLink name={'description'}>
+            <WithEditLink name={'description'} label="Edit channel description">
               <DescriptionList.Term>Description:</DescriptionList.Term>
             </WithEditLink>
             <DescriptionList.Definition>
@@ -353,7 +353,7 @@ export default function ChannelDetailsPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary({ error: _ }: { error: Error }) {
   const caught = useRouteError();
 
   if (isRouteErrorResponse(caught)) {
@@ -366,16 +366,17 @@ export function ErrorBoundary({ error }: { error: Error }) {
     }
   }
 
-  return (
-    <ErrorMessage>An unexpected error occurred: {error.message}</ErrorMessage>
-  );
+  return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }
 
 function WithEditLink(props: {
   name: string;
   children: React.ReactNode;
+  label: string;
 }): JSX.Element {
   const [isHover, setIsHover] = React.useState(false);
+  const ref = React.useRef(null);
+
   return (
     <div
       className="flex items-center gap-2 dark:text-white"
@@ -384,8 +385,14 @@ function WithEditLink(props: {
     >
       {props.children}
       {isHover && (
-        <Link to={`edit?focus=${props.name}`}>
-          <PencilIcon className="w-4" />
+        <Link
+          to={`edit?focus=${props.name}`}
+          aria-label={props.label}
+          ref={ref}
+          className="relative"
+        >
+          <Tooltip />
+          <PencilIcon className="pointer-events-none w-4" />
         </Link>
       )}
     </div>
