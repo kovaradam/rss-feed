@@ -2,12 +2,18 @@ export class HistoryStack {
   private static historyStackArray: Array<{
     href: string;
     title: string;
+    historyLength: number;
   }> = [];
 
-  static add = (newEntry: (typeof HistoryStack.historyStackArray)[number]) => {
+  static add = (
+    newEntry: Omit<
+      (typeof HistoryStack.historyStackArray)[number],
+      'historyLength'
+    >
+  ) => {
     const lastEntry = this.peek();
     if (!lastEntry) {
-      this.push(newEntry);
+      this.push({ ...newEntry });
       return;
     }
 
@@ -31,11 +37,20 @@ export class HistoryStack {
   };
 
   private static push = (
-    newEntry: (typeof HistoryStack.historyStackArray)[number]
+    input: Omit<
+      (typeof HistoryStack.historyStackArray)[number],
+      'historyLength'
+    >
   ) => {
-    this.historyStackArray = [newEntry]
-      .concat(this.historyStackArray)
-      .slice(0, 10);
+    const newEntry = { ...input, historyLength: globalThis.history?.length };
+
+    if (this.historyStackArray[0]?.historyLength === newEntry.historyLength) {
+      this.historyStackArray[0] = newEntry;
+    } else {
+      this.historyStackArray = [newEntry]
+        .concat(this.historyStackArray)
+        .slice(0, 10);
+    }
   };
 
   static clear = () => {
@@ -52,22 +67,28 @@ if (globalThis.document) {
 if (import.meta.vitest) {
   const { it, expect, beforeEach } = import.meta.vitest;
 
-  beforeEach(HistoryStack.clear);
+  beforeEach(() => {
+    globalThis.history = { length: 0 } as never;
+    HistoryStack.clear();
+  });
+
+  const createEntry = (href: string) => {
+    globalThis.history = { length: globalThis.history.length + 1 } as never;
+    return {
+      title: `title_${href}`,
+      href: href,
+    };
+  };
 
   it('adds location objects', () => {
-    const firstEntry = {
-      title: 'title1',
-      href: 'href1',
-    };
+    const firstEntry = createEntry('href1');
+
     HistoryStack.add(firstEntry);
 
     expect(HistoryStack.getStack().length).toBe(1);
     expect(HistoryStack.peek()?.title).toBe(firstEntry.title);
 
-    const secondEntry = {
-      title: 'title2',
-      href: 'href2',
-    };
+    const secondEntry = createEntry('href2');
 
     HistoryStack.add(secondEntry);
 
@@ -76,13 +97,23 @@ if (import.meta.vitest) {
   });
 
   it('does not add duplicate location object', () => {
-    const entry = {
-      title: 'title',
-      href: 'href',
-    };
+    let entry = createEntry('href');
     HistoryStack.add(entry);
     expect(HistoryStack.getStack().length).toBe(1);
+    entry = createEntry('href');
     HistoryStack.add(entry);
     expect(HistoryStack.getStack().length).toBe(1);
+  });
+
+  it('replaces stack top on istory replace', () => {
+    const entry = { href: 'href1', title: 'title1' };
+    HistoryStack.add(entry);
+    expect(HistoryStack.getStack().length).toBe(1);
+    expect(HistoryStack.peek()?.href).toBe(entry.href);
+
+    const nextEntry = { href: 'href2', title: 'title2' };
+    HistoryStack.add(nextEntry);
+    expect(HistoryStack.getStack().length).toBe(1);
+    expect(HistoryStack.peek()?.href).toBe(nextEntry.href);
   });
 }
