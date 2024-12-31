@@ -6,11 +6,13 @@ import { ChannelCategories } from './ChannelCategories';
 import { Tooltip } from './Tooltip';
 import { WithFormLabel } from './WithFormLabel';
 
-type Props = {
+type CategoryInputProps = {
   fakeInputName: string;
   name: string;
   value: string;
   setValue: (value: React.SetStateAction<string>) => void;
+  inputValue: string;
+  setInputValue: (value: React.SetStateAction<string>) => void;
   autoFocus?: boolean;
   inputClassName?: string;
   categorySuggestions: string[];
@@ -19,7 +21,7 @@ type Props = {
 
 const showInputId = 'fake-category-input';
 
-function CategoryInput(props: Props): JSX.Element {
+function CategoryInput(props: CategoryInputProps): JSX.Element {
   const deleteCategory: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
@@ -48,6 +50,8 @@ function CategoryInput(props: Props): JSX.Element {
           id={showInputId}
           form={props.formId}
           list="category-suggestions"
+          value={props.inputValue}
+          onChange={(e) => props.setInputValue(e.currentTarget.value)}
         />
         <datalist id="category-suggestions">
           {props.categorySuggestions.map((category) => (
@@ -67,7 +71,17 @@ function CategoryInput(props: Props): JSX.Element {
         </Button>
       </div>
 
-      <input value={props.value} type="hidden" name={props.name} />
+      <input
+        value={
+          props.inputValue
+            ? `${props.value}${props.value.endsWith('/') ? '' : '/'}${
+                props.inputValue
+              }`
+            : props.value
+        }
+        type="hidden"
+        name={props.name}
+      />
     </WithFormLabel>
   );
 }
@@ -75,7 +89,9 @@ function CategoryInput(props: Props): JSX.Element {
 CategoryInput.Form = CategoryInputForm;
 
 function CategoryInputForm(
-  props: Pick<Props, 'formId' | 'setValue' | 'fakeInputName'>
+  props: Pick<CategoryInputProps, 'formId' | 'setValue' | 'fakeInputName'> & {
+    clearInputValue(): void;
+  }
 ): JSX.Element {
   return (
     <Form
@@ -96,7 +112,7 @@ function CategoryInputForm(
           ) {
             return prev;
           }
-          (event.target as HTMLFormElement)[props.fakeInputName].value = '';
+          props.clearInputValue();
           return prev.concat('/').concat(category).concat('/');
         });
       }}
@@ -107,15 +123,25 @@ function CategoryInputForm(
 export function useCategoryInput({
   defaultValue,
   ...props
-}: Omit<Props, 'value' | 'setValue'> & { defaultValue: string }) {
+}: Omit<
+  CategoryInputProps,
+  'value' | 'setValue' | 'inputValue' | 'setInputValue'
+> & {
+  defaultValue: string;
+}) {
   const [category, setCategory] = React.useState(defaultValue);
+  const [inputValue, setInputValue] = React.useState('');
+
+  const state = {
+    value: category,
+    setValue: setCategory,
+    inputValue,
+    setInputValue,
+    clearInputValue: () => setInputValue(''),
+  };
 
   return {
-    renderCategoryInput: () => (
-      <CategoryInput {...props} value={category} setValue={setCategory} />
-    ),
-    renderCategoryForm: () => (
-      <CategoryInputForm {...props} setValue={setCategory} />
-    ),
+    renderCategoryInput: () => <CategoryInput {...props} {...state} />,
+    renderCategoryForm: () => <CategoryInputForm {...props} {...state} />,
   };
 }
