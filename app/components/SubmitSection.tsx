@@ -1,7 +1,7 @@
 import type { LinkProps } from "react-router";
 import { Link } from "react-router";
 import { SubmitButton, buttonStyle } from "./Button";
-import { classToggle } from "~/utils";
+import { c } from "~/utils";
 
 export function SubmitSection(props: {
   cancelProps: LinkProps & { scriptOnly?: boolean };
@@ -21,7 +21,7 @@ export function SubmitSection(props: {
       </SubmitButton>
       <Link
         {...props.cancelProps}
-        className={`${classToggle(
+        className={`${c(
           props.cancelProps?.scriptOnly,
           "script-only"
         )} ${buttonStyle} w-full justify-center rounded bg-slate-200 p-2 sm:w-min ${

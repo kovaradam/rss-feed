@@ -15,12 +15,7 @@ import {
   deleteCollectionCategory,
 } from "~/models/collection.server";
 import { requireUserId } from "~/session.server";
-import {
-  createTitle,
-  enumerate,
-  uniqueArrayFilter,
-  type ValueOf,
-} from "~/utils";
+import { createTitle, enumerate, uniqueArrayFilter } from "~/utils";
 import type { Route } from "./+types/channels.collections.$collectionId.edit";
 import { getCategoryFormValue } from "~/components/CategoryInput";
 
@@ -33,6 +28,8 @@ const fieldNames = enumerate([
   "delete-category",
 ]);
 
+type FieldName = keyof typeof fieldNames;
+
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
@@ -40,8 +37,6 @@ export const meta = ({ data }: Route.MetaArgs) => {
     },
   ];
 };
-
-type FieldName = ValueOf<typeof fieldNames>;
 
 type ActionData = {
   errors: Partial<Record<"title", string | null>> | undefined;

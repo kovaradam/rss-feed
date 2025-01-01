@@ -132,11 +132,9 @@ export function enumerate<T extends readonly string[]>(
   >;
 }
 
-export type ValueOf<T extends object> = T[keyof T];
-
-export function classToggle(
-  isApply: boolean | undefined | null,
-  className: string
-) {
+/**
+ * className toggle
+ */
+export function c(isApply: boolean | undefined | null, className: string) {
   return isApply ? className : "";
 }

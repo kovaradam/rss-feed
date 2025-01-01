@@ -17,7 +17,7 @@ import {
 } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
-import { createTitle, enumerate, isSubmitting, type ValueOf } from "~/utils";
+import { createTitle, enumerate, isSubmitting } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.edit";
 
 const fieldNames = enumerate([
@@ -37,7 +37,7 @@ export const meta = ({ data }: Route.MetaArgs) => {
   ];
 };
 
-type FieldName = ValueOf<typeof fieldNames>;
+type FieldName = keyof typeof fieldNames;
 
 type ActionData = {
   errors: Partial<Record<FieldName, string | null>> | undefined;
