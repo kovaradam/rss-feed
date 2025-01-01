@@ -28,7 +28,7 @@ type Props = {
   wrapperClassName?: string;
 };
 
-export function ChannelItemDetail(props: Props): JSX.Element {
+export function ChannelItemDetail(props: Props) {
   const { channel, ...item } = props.item;
 
   const fetcher = useFetcher();

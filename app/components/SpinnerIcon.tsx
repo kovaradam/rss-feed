@@ -1,6 +1,6 @@
 type Props = { className?: string };
 
-export function SpinnerIcon({ className }: Props): JSX.Element {
+export function SpinnerIcon({ className }: Props) {
   return (
     <svg
       className={`h-5 w-5 animate-spin text-white ${className}`}

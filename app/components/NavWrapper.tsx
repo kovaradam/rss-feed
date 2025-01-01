@@ -8,7 +8,7 @@ type Props = {
   hide: () => void;
 };
 
-export function NavWrapper(props: Props): JSX.Element {
+export function NavWrapper(props: Props) {
   const { pathname } = useLocation();
   const hide = useEvent(() => {
     props.hide();

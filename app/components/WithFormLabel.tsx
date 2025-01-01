@@ -4,10 +4,10 @@ type Props = {
   label: React.ReactNode;
   required?: boolean;
   htmlFor?: string;
-  children?: React.ReactNode | ((props: Props) => JSX.Element);
+  children?: React.ReactNode | ((props: Props) => React.JSX.Element);
 };
 
-export function WithFormLabel(props: Props): JSX.Element {
+export function WithFormLabel(props: Props) {
   const { label, required, children, ...legendProps } = props;
   const id = React.useId();
   const htmlFor = props.htmlFor ?? id;

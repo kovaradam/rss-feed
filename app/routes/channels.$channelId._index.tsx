@@ -373,7 +373,7 @@ function WithEditLink(props: {
   name: string;
   children: React.ReactNode;
   label: string;
-}): JSX.Element {
+}) {
   const [isHover, setIsHover] = React.useState(false);
   const ref = React.useRef(null);
 

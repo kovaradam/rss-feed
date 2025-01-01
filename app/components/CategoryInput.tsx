@@ -14,7 +14,7 @@ type CategoryInputProps = {
   categorySuggestions: string[];
 };
 
-export function CategoryInput(props: CategoryInputProps): JSX.Element {
+export function CategoryInput(props: CategoryInputProps) {
   const [category, setCategory] = React.useState(props.defaultValue);
   const [inputValue, setInputValue] = React.useState("");
 

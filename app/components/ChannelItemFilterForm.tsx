@@ -16,7 +16,7 @@ type Props = {
   formId: string;
 };
 
-export function ChannelItemFilterForm(props: Props): JSX.Element {
+export function ChannelItemFilterForm(props: Props) {
   const { filters, ...data } = props;
   const hasFilters = !isEmptyObject(filters);
 

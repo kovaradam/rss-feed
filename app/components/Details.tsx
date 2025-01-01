@@ -5,7 +5,7 @@ type Props = React.DetailedHTMLProps<
   HTMLDetailsElement
 > & { title: string; icon?: React.ReactNode };
 
-export function Details(props: Props): JSX.Element {
+export function Details(props: Props) {
   return (
     <details
       {...props}

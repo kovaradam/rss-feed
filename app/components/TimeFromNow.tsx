@@ -16,7 +16,7 @@ function getTimeDifference(firstDate: Date, secondDate: Date) {
 
 type Props = { date: Date };
 
-export function TimeFromNow(props: Props): JSX.Element {
+export function TimeFromNow(props: Props) {
   const difference = getTimeDifference(new Date(), props.date);
 
   const entries = [

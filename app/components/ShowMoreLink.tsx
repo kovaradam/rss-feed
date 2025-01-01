@@ -10,7 +10,7 @@ type Props = React.ComponentProps<typeof Form> & {
 /**
  * Form that acts as a link to maintain scroll position after navigation
  */
-export function ShowMoreLink(props: Props): JSX.Element {
+export function ShowMoreLink(props: Props) {
   const isLoading = props.isLoading;
   return (
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
