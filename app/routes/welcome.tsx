@@ -1,10 +1,10 @@
-import type { MetaFunction } from 'react-router';
-import { Outlet } from 'react-router';
-import { ErrorMessage } from '~/components/ErrorMessage';
-import { createTitle } from '~/utils';
+import type { MetaFunction } from "react-router";
+import { Outlet } from "react-router";
+import { ErrorMessage } from "~/components/ErrorMessage";
+import { createTitle } from "~/utils";
 
 export const meta: MetaFunction = () => {
-  return [{ title: createTitle('Welcome') }];
+  return [{ title: createTitle("Welcome") }];
 };
 
 export default function Welcome() {

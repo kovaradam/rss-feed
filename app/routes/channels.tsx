@@ -10,27 +10,27 @@ import {
   RefreshIcon,
   SearchIcon,
   UserIcon,
-} from '@heroicons/react/outline';
-import type { NavLinkProps } from 'react-router';
+} from "@heroicons/react/outline";
+import type { NavLinkProps } from "react-router";
 import {
   Form,
   NavLink,
   Outlet,
   useLoaderData,
   useNavigation,
-} from 'react-router';
-import React from 'react';
-import { AppTitle, UseAppTitle } from '~/components/AppTitle';
-import { ErrorMessage } from '~/components/ErrorMessage';
-import { NavWrapper } from '~/components/NavWrapper';
-import { Highlight } from '~/components/Highlight';
-import { getCollections } from '~/models/collection.server';
-import { requireUser } from '~/session.server';
-import { createMeta, useUser } from '~/utils';
-import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
-import { getChannels } from '~/models/channel.server';
-import { Tooltip } from '~/components/Tooltip';
-import type { Route } from './+types/channels';
+} from "react-router";
+import React from "react";
+import { AppTitle, UseAppTitle } from "~/components/AppTitle";
+import { ErrorMessage } from "~/components/ErrorMessage";
+import { NavWrapper } from "~/components/NavWrapper";
+import { Highlight } from "~/components/Highlight";
+import { getCollections } from "~/models/collection.server";
+import { requireUser } from "~/session.server";
+import { createMeta, useUser } from "~/utils";
+import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
+import { getChannels } from "~/models/channel.server";
+import { Tooltip } from "~/components/Tooltip";
+import type { Route } from "./+types/channels";
 
 export const meta = createMeta();
 
@@ -43,13 +43,13 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   const collectionListItems = getCollections({
     where: { userId: user.id },
-    orderBy: { title: 'asc' },
+    orderBy: { title: "asc" },
   });
 
   return {
     channels: await channels,
     collectionListItems: await collectionListItems,
-    title: 'Your feed',
+    title: "Your feed",
   };
 };
 
@@ -62,7 +62,7 @@ export default function ChannelsPage() {
   const [title, setTitle] = React.useState(data.title as string | undefined);
 
   const refreshFetcher = useChannelRefreshFetcher();
-  const isRefreshing = refreshFetcher.status === 'pending';
+  const isRefreshing = refreshFetcher.status === "pending";
   const { refresh: refreshChannels, newItemCount } = refreshFetcher;
 
   React.useEffect(() => {
@@ -70,11 +70,11 @@ export default function ChannelsPage() {
   }, [refreshChannels]);
 
   React.useEffect(() => {
-    window.addEventListener('focus', refreshChannels);
-    return () => window.removeEventListener('focus', refreshChannels);
+    window.addEventListener("focus", refreshChannels);
+    return () => window.removeEventListener("focus", refreshChannels);
   }, [refreshChannels]);
 
-  const itemsContainer = globalThis.document?.getElementById('feed-container');
+  const itemsContainer = globalThis.document?.getElementById("feed-container");
   const itemsContainerHeight = itemsContainer?.clientHeight;
 
   React.useLayoutEffect(() => {
@@ -93,7 +93,7 @@ export default function ChannelsPage() {
     }
   }, [newItemCount, itemsContainer, itemsContainerHeight]);
 
-  const [channelFilter, setChannelFilter] = React.useState('');
+  const [channelFilter, setChannelFilter] = React.useState("");
 
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
@@ -105,7 +105,7 @@ export default function ChannelsPage() {
         >
           <div
             className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
-              isNavExpanded ? 'translate-x-3/4' : ''
+              isNavExpanded ? "translate-x-3/4" : ""
             } duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
             data-nav-sliding-element
           >
@@ -123,12 +123,12 @@ export default function ChannelsPage() {
                   <StyledNavLink
                     className={({ isActive }) =>
                       `${
-                        !isActive ? 'text-yellow-900' : ''
+                        !isActive ? "text-yellow-900" : ""
                       }  hover:bg-slate-200 active:bg-slate-300 sm:h-auto sm:py-2 sm:font-bold sm:shadow`
                     }
-                    to={'/channels/new'}
+                    to={"/channels/new"}
                   >
-                    <PlusIcon className="w-4 " style={{ strokeWidth: '3px' }} />{' '}
+                    <PlusIcon className="w-4 " style={{ strokeWidth: "3px" }} />{" "}
                     Add RSS Channel
                   </StyledNavLink>
                   {[
@@ -137,7 +137,7 @@ export default function ChannelsPage() {
                       content: (
                         <>
                           {isRefreshing ? (
-                            <div className={'relative flex items-center'}>
+                            <div className={"relative flex items-center"}>
                               <RefreshIcon
                                 className={`w-4 rotate-180 animate-spin`}
                               />
@@ -152,7 +152,7 @@ export default function ChannelsPage() {
                       ),
                     },
                     {
-                      to: '/channels/quotes',
+                      to: "/channels/quotes",
                       content: (
                         <>
                           <ChatAltIcon className="w-4" />
@@ -203,7 +203,7 @@ export default function ChannelsPage() {
                       <input
                         value={channelFilter}
                         className={
-                          'absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400'
+                          "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400"
                         }
                         type="search"
                         onChange={(e) =>
@@ -271,9 +271,9 @@ export default function ChannelsPage() {
               </header>
               <main
                 className={`p-6 ${
-                  navigation.formAction?.includes('logout')
-                    ? 'animate-pulse opacity-60'
-                    : ''
+                  navigation.formAction?.includes("logout")
+                    ? "animate-pulse opacity-60"
+                    : ""
                 } `}
               >
                 <Outlet />
@@ -299,9 +299,9 @@ function StyledNavLink(props: NavLinkProps) {
       {...props}
       className={(state) =>
         `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 sm:text-lg dark:text-slate-300 dark:hover:bg-slate-900 ${
-          state.isActive ? ' bg-slate-200 text-slate-600 dark:bg-slate-800' : ''
+          state.isActive ? " bg-slate-200 text-slate-600 dark:bg-slate-800" : ""
         } ${
-          typeof props.className === 'function'
+          typeof props.className === "function"
             ? props.className(state)
             : props.className
         }`
@@ -363,7 +363,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
             >
               <CogIcon className="w-4" />
               <span className="gap-4 whitespace-nowrap">Profile</span>
-              <Tooltip position={{ x: 'left-box' }}>
+              <Tooltip position={{ x: "left-box" }}>
                 Update your profile
               </Tooltip>
             </a>
@@ -395,7 +395,7 @@ function registerNavSwipeCallbacks(
   setIsExpanded: (value: boolean) => void
 ): Pick<
   React.HTMLAttributes<HTMLDivElement>,
-  'onTouchStart' | 'onTouchMove' | 'onTouchEnd'
+  "onTouchStart" | "onTouchMove" | "onTouchEnd"
 > {
   return {
     onTouchStart: (event) => {
@@ -416,29 +416,29 @@ function registerNavSwipeCallbacks(
       const diffY =
         Number(event.currentTarget.dataset.touchStartY) - changedTouch.clientY;
 
-      event.currentTarget?.setAttribute('data-slide-diff', String(diffX));
+      event.currentTarget?.setAttribute("data-slide-diff", String(diffX));
 
       if (
         Math.abs(diffX) > Math.abs(diffY) &&
         (isExpanded ? diffX > 0 : diffX < 0)
       ) {
         const slidingElement = event.currentTarget.querySelector(
-          '[data-nav-sliding-element]'
+          "[data-nav-sliding-element]"
         );
         slidingElement?.setAttribute(
-          'style',
+          "style",
           `translate:${-1 * diffX}px;transition:none;`
         );
       }
     },
     onTouchEnd: (event) => {
       const slidingElement = event.currentTarget.querySelector(
-        '[data-nav-sliding-element]'
+        "[data-nav-sliding-element]"
       );
 
-      slidingElement?.setAttribute('style', '');
+      slidingElement?.setAttribute("style", "");
 
-      const diff = Number(event.currentTarget.getAttribute('data-slide-diff'));
+      const diff = Number(event.currentTarget.getAttribute("data-slide-diff"));
 
       if (Math.abs(diff) < event.currentTarget.clientWidth / 4) {
         return;

@@ -1,9 +1,9 @@
-import React from 'react';
-import useSound from '~/utils/use-sound';
+import React from "react";
+import useSound from "~/utils/use-sound";
 
-import tapSound from '/sounds/ui_tap-variant-01.wav?url';
-import closeSound from '/sounds/navigation_backward-selection-minimal.wav?url';
-import openSound from '/sounds/navigation_forward-selection-minimal.wav?url';
+import tapSound from "/sounds/ui_tap-variant-01.wav?url";
+import closeSound from "/sounds/navigation_backward-selection-minimal.wav?url";
+import openSound from "/sounds/navigation_forward-selection-minimal.wav?url";
 
 export function UseSounds() {
   const [playTap] = useSound(tapSound);
@@ -26,7 +26,7 @@ export function UseSounds() {
     const abortController = new AbortController();
 
     document.addEventListener(
-      'click',
+      "click",
       (event) => {
         if (!(event.target instanceof HTMLElement)) {
           return;

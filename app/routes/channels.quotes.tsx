@@ -1,22 +1,22 @@
-import { Form, Link } from 'react-router';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
-import { Highlight } from '~/components/Highlight';
-import { PageSearchInput } from '~/components/PageSearchInput';
-import { ShowMoreLink } from '~/components/ShowMoreLink';
-import { getQuotesByUser } from '~/models/channel.server';
-import { requireUserId } from '~/session.server';
-import { createMeta } from '~/utils';
-import type { Route } from './+types/channels.quotes';
+import { Form, Link } from "react-router";
+import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
+import { Highlight } from "~/components/Highlight";
+import { PageSearchInput } from "~/components/PageSearchInput";
+import { ShowMoreLink } from "~/components/ShowMoreLink";
+import { getQuotesByUser } from "~/models/channel.server";
+import { requireUserId } from "~/session.server";
+import { createMeta } from "~/utils";
+import type { Route } from "./+types/channels.quotes";
 
 export const meta = createMeta();
 
-const countParamName = 'count';
+const countParamName = "count";
 export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const url = new URL(request.url);
 
   let search = url.searchParams.get(PageSearchInput.names.search);
-  search = typeof search === 'string' ? search : null;
+  search = typeof search === "string" ? search : null;
 
   const countParam = url.searchParams.get(countParamName);
 
@@ -29,7 +29,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   });
 
   return {
-    title: 'Your quotes',
+    title: "Your quotes",
     quotes,
     search,
     cursor:
@@ -50,7 +50,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
                 Store memorable quotes from articles
               </p>
               <p className="mb-4 font-normal text-slate-500 [overflow-wrap:anywhere] dark:text-slate-300">
-                Add a quote to any article from your{' '}
+                Add a quote to any article from your{" "}
                 <Link to="/channels" className="underline">
                   feed
                 </Link>
@@ -59,7 +59,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
             <img
               alt=""
               src="/reading-side.svg"
-              width={'50%'}
+              width={"50%"}
               data-from="https://www.opendoodles.com/"
               className="dark:invert-[.7]"
             />
@@ -74,7 +74,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
         <PageSearchInput
           placeholder="Search in quotes"
           formId="search"
-          defaultValue={loaderData.search ?? ''}
+          defaultValue={loaderData.search ?? ""}
         />
       </Form>
       <ul className="relative">
@@ -94,7 +94,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
             <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic [overflow-wrap:anywhere] before:text-slate-500 before:content-['„'] dark:text-white">
               <Highlight
                 input={quote.content.trim()}
-                query={loaderData.search ?? ''}
+                query={loaderData.search ?? ""}
               />
               <span className="text-slate-500">“</span>
             </p>
@@ -103,7 +103,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
               <Link
                 to={`/channels/${quote.item.channel.id}/articles/${quote.itemId}`}
               >
-                ~{' '}
+                ~{" "}
                 <ChannelItemDetail.Title
                   title={quote.item.title}
                   description={quote.item.title}
@@ -119,7 +119,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
           otherValues={[
             {
               name: PageSearchInput.names.search,
-              value: loaderData.search ?? '',
+              value: loaderData.search ?? "",
             },
           ]}
         />

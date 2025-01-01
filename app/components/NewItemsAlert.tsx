@@ -1,13 +1,13 @@
-import { useFetcher } from 'react-router';
-import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
+import { useFetcher } from "react-router";
+import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 
 export function NewItemsAlert() {
   /** submits mutation that triggers query revalidation */
-  const newItemsFetcher = useFetcher({ key: 'refresh-revalidate' });
+  const newItemsFetcher = useFetcher({ key: "refresh-revalidate" });
   /** refreshFetcher does not trigger revalidation */
   const refresh = useChannelRefreshFetcher();
 
-  const isFetchingNewItems = newItemsFetcher?.state !== 'idle';
+  const isFetchingNewItems = newItemsFetcher?.state !== "idle";
 
   if (
     ((refresh.newItemCount ?? 0) === 0 || newItemsFetcher.data) &&

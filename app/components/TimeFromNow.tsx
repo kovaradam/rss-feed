@@ -1,4 +1,4 @@
-import { Tooltip } from './Tooltip';
+import { Tooltip } from "./Tooltip";
 
 function getTimeDifference(firstDate: Date, secondDate: Date) {
   const differenceInMillis = firstDate.getTime() - secondDate.getTime();
@@ -20,20 +20,20 @@ export function TimeFromNow(props: Props): JSX.Element {
   const difference = getTimeDifference(new Date(), props.date);
 
   const entries = [
-    [difference.years, 'year'],
-    [difference.months, 'month'],
-    [difference.weeks, 'week'],
-    [difference.days, 'day'],
-    [difference.hours, 'hour'],
-    [difference.minutes, 'minute'],
+    [difference.years, "year"],
+    [difference.months, "month"],
+    [difference.weeks, "week"],
+    [difference.days, "day"],
+    [difference.hours, "hour"],
+    [difference.minutes, "minute"],
   ] as const;
 
   for (const entry of entries) {
     const [value, label] = entry;
     if (value >= 1) {
       return (
-        <span className={'relative'}>
-          {`${value.toFixed()} ${label}${value > 1 ? 's' : ''} ago`}
+        <span className={"relative"}>
+          {`${value.toFixed()} ${label}${value > 1 ? "s" : ""} ago`}
           <Tooltip>{props.date.toLocaleDateString()}</Tooltip>
         </span>
       );
@@ -41,9 +41,9 @@ export function TimeFromNow(props: Props): JSX.Element {
   }
 
   return (
-    <span className={'relative'}>
+    <span className={"relative"}>
       {`${Math.max(Math.ceil(difference.seconds), 0)} second${
-        difference.seconds > 1 ? 's' : ''
+        difference.seconds > 1 ? "s" : ""
       } ago`}
       <Tooltip>{props.date.toLocaleDateString()}</Tooltip>
     </span>

@@ -1,19 +1,19 @@
-import { redirect, data } from 'react-router';
-import { UseAppTitle } from '~/components/AppTitle';
-import { CollectionForm } from '~/components/CollectionForm';
-import { ErrorMessage } from '~/components/ErrorMessage';
-import { getChannels } from '~/models/channel.server';
-import { createCollection, getBooleanValue } from '~/models/collection.server';
-import { requireUserId } from '~/session.server';
-import { createTitle, uniqueArrayFilter } from '~/utils';
-import type { Route } from './+types/channels.collections.new';
+import { redirect, data } from "react-router";
+import { UseAppTitle } from "~/components/AppTitle";
+import { CollectionForm } from "~/components/CollectionForm";
+import { ErrorMessage } from "~/components/ErrorMessage";
+import { getChannels } from "~/models/channel.server";
+import { createCollection, getBooleanValue } from "~/models/collection.server";
+import { requireUserId } from "~/session.server";
+import { createTitle, uniqueArrayFilter } from "~/utils";
+import type { Route } from "./+types/channels.collections.new";
 
 const _fieldNames = [
-  'title',
-  'read',
-  'bookmarked',
-  'category',
-  'language',
+  "title",
+  "read",
+  "bookmarked",
+  "category",
+  "language",
 ] as const;
 
 export const meta = () => {
@@ -40,7 +40,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   const errors = {} as typeof form;
   if (!form.title) {
-    errors.title = 'Title cannot be undefined';
+    errors.title = "Title cannot be undefined";
   }
 
   if (Object.keys(errors).length !== 0) {
@@ -58,7 +58,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     },
   });
 
-  throw redirect('/channels/collections/'.concat(collection.id));
+  throw redirect("/channels/collections/".concat(collection.id));
 };
 
 type LoaderData = {
@@ -78,7 +78,7 @@ export const loader = async ({
 
   const categories =
     channels
-      .map((channel) => channel.category.split('/'))
+      .map((channel) => channel.category.split("/"))
       .filter(Boolean)
       .flat()
       .filter(uniqueArrayFilter) ?? [];

@@ -1,11 +1,11 @@
-import { BanIcon } from '@heroicons/react/outline';
-import { Form, useLocation } from 'react-router';
-import React from 'react';
-import type { Channel, ChannelItemsFilter } from '~/models/channel.server';
-import { styles } from '~/styles/shared';
-import { Button } from './Button';
-import { WithFormLabel } from './WithFormLabel';
-import { isEmptyObject } from '~/utils/is-empty-object';
+import { BanIcon } from "@heroicons/react/outline";
+import { Form, useLocation } from "react-router";
+import React from "react";
+import type { Channel, ChannelItemsFilter } from "~/models/channel.server";
+import { styles } from "~/styles/shared";
+import { Button } from "./Button";
+import { WithFormLabel } from "./WithFormLabel";
+import { isEmptyObject } from "~/utils/is-empty-object";
 
 type Props = {
   filters: Partial<ChannelItemsFilter>;
@@ -66,7 +66,7 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
         <div className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
             <WithFormLabel label="Filter by channels">
-              <ul className={styles.input.concat('')}>
+              <ul className={styles.input.concat("")}>
                 {data.channels?.map((channel) => (
                   <li key={channel.id}>
                     <label className="flex cursor-pointer items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
@@ -90,8 +90,8 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </WithFormLabel>
           )}
           {props.filters.channels !== undefined && (
-            <WithFormLabel label={'Filter by categories'}>
-              <ul className={styles.input.concat('')}>
+            <WithFormLabel label={"Filter by categories"}>
+              <ul className={styles.input.concat("")}>
                 {data.categories?.map((category) => (
                   <li key={category}>
                     <label className="flex cursor-pointer items-baseline gap-1 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
@@ -115,17 +115,17 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             </WithFormLabel>
           )}
           {props.canExcludeRead && (
-            <WithFormLabel label={'Filter by state'}>
-              <ul className={styles.input.concat('')}>
+            <WithFormLabel label={"Filter by state"}>
+              <ul className={styles.input.concat("")}>
                 {[
                   {
                     name: ChannelItemFilterForm.names.excludeRead,
-                    label: 'Include read articles',
+                    label: "Include read articles",
                     currentValue: filters.excludeRead === false,
                   },
                   {
                     name: ChannelItemFilterForm.names.includeHiddenFromFeed,
-                    label: 'Include hidden from feed',
+                    label: "Include hidden from feed",
                     currentValue: filters.excludeHiddenFromFeed === false,
                   },
                 ].map((field) => (
@@ -166,12 +166,12 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
             formRef.current
               ?.querySelectorAll(`input, select`)
               .forEach((element) => {
-                (element as HTMLInputElement).value = '';
+                (element as HTMLInputElement).value = "";
               });
             document
               .querySelectorAll(`[form='${props.formId}']`)
               .forEach((element) => {
-                (element as HTMLInputElement).value = '';
+                (element as HTMLInputElement).value = "";
               });
           }}
         />
@@ -183,8 +183,8 @@ export function ChannelItemFilterForm(props: Props): JSX.Element {
 const inputClassName = styles.input;
 
 ChannelItemFilterForm.names = {
-  before: 'before',
-  after: 'after',
-  includeHiddenFromFeed: 'include-hidden-from-feed',
-  excludeRead: 'exclude-read',
+  before: "before",
+  after: "after",
+  includeHiddenFromFeed: "include-hidden-from-feed",
+  excludeRead: "exclude-read",
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export function Highlight(props: { query: string; input: string }) {
   const elements = React.useMemo(() => {

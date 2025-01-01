@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export function UseAppTitle(
   props: { children: string } | { default: true; children?: undefined }

@@ -1,25 +1,25 @@
-import { FilterIcon } from '@heroicons/react/outline';
-import type { ShouldRevalidateFunction } from 'react-router';
-import { Link, useNavigation } from 'react-router';
-import React from 'react';
-import { UseAppTitle } from '~/components/AppTitle';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
-import { ChannelItemFilterForm } from '~/components/ChannelItemFilterForm';
-import { ChannelItemList } from '~/components/ChannelItemList';
-import { Details } from '~/components/Details';
-import { ErrorMessage } from '~/components/ErrorMessage';
-import { PageSearchInput } from '~/components/PageSearchInput';
-import { NewItemsAlert } from '~/components/NewItemsAlert';
-import { ShowMoreLink } from '~/components/ShowMoreLink';
-import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
-import type { ItemWithChannel } from '~/models/channel.server';
-import { getItemsByFilters, getChannels } from '~/models/channel.server';
-import { requireUserId } from '~/session.server';
-import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
-import { isEmptyObject } from '~/utils/is-empty-object';
-import type { Route } from './+types/channels._index';
+import { FilterIcon } from "@heroicons/react/outline";
+import type { ShouldRevalidateFunction } from "react-router";
+import { Link, useNavigation } from "react-router";
+import React from "react";
+import { UseAppTitle } from "~/components/AppTitle";
+import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
+import { ChannelItemFilterForm } from "~/components/ChannelItemFilterForm";
+import { ChannelItemList } from "~/components/ChannelItemList";
+import { Details } from "~/components/Details";
+import { ErrorMessage } from "~/components/ErrorMessage";
+import { PageSearchInput } from "~/components/PageSearchInput";
+import { NewItemsAlert } from "~/components/NewItemsAlert";
+import { ShowMoreLink } from "~/components/ShowMoreLink";
+import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
+import type { ItemWithChannel } from "~/models/channel.server";
+import { getItemsByFilters, getChannels } from "~/models/channel.server";
+import { requireUserId } from "~/session.server";
+import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
+import { isEmptyObject } from "~/utils/is-empty-object";
+import type { Route } from "./+types/channels._index";
 
-const itemCountName = 'item-count';
+const itemCountName = "item-count";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await requireUserId(request);
@@ -27,7 +27,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const itemCountParam = searchParams.get(itemCountName);
   const itemCountRequest = itemCountParam ? Number(itemCountParam) : 30;
 
-  const [filterChannels, filterCategories] = ['channels', 'categories'].map(
+  const [filterChannels, filterCategories] = ["channels", "categories"].map(
     (name) => searchParams.getAll(name)
   );
   const [before, after, search, includeReadParam, includeHiddenFromFeed] = [
@@ -61,7 +61,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       },
     },
     {
-      orderBy: { pubDate: 'desc' },
+      orderBy: { pubDate: "desc" },
       take: itemCountRequest,
       include: {
         channel: {
@@ -78,7 +78,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const channels = getChannels({ where: { userId } });
 
   const categories = (await channels)
-    .flatMap((channel) => channel.category.split('/'))
+    .flatMap((channel) => channel.category.split("/"))
     .filter((category, index, array) => index === array.indexOf(category))
     .filter(Boolean);
 
@@ -107,14 +107,14 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
   const { items, channels, categories, filters, cursor } = loaderData;
 
   const transition = useNavigation();
-  const isLoading = transition.state === 'loading';
+  const isLoading = transition.state === "loading";
 
   const isFilters = !isEmptyObject(filters);
 
   const FilterForm = React.useCallback(
     () => (
       <ChannelItemFilterForm
-        formId={'filter-form'}
+        formId={"filter-form"}
         filters={{
           ...filters,
           excludeRead:
@@ -152,7 +152,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           </Details>
           <PageSearchInput
             defaultValue={filters.search ?? undefined}
-            formId={'filter-form'}
+            formId={"filter-form"}
             placeholder="Search in articles"
           />
           <NewItemsAlert />
@@ -162,7 +162,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
               {channels.length !== 0 ? (
                 <>
                   <p className="mt-6 dark:text-white">
-                    No articles found {isFilters && 'matching your criteria'}
+                    No articles found {isFilters && "matching your criteria"}
                   </p>
                   <img
                     src="/laying.svg"
@@ -179,18 +179,18 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                     </p>
                     <p className="mb-4 font-normal text-slate-500 dark:text-slate-300">
                       <Link
-                        to={'/channels/new'}
+                        to={"/channels/new"}
                         className="font-bold text-yellow-900 underline dark:text-white"
                       >
                         Add a new channel
-                      </Link>{' '}
+                      </Link>{" "}
                       to get started!
                     </p>
                   </div>
                   <img
                     alt=""
                     src="/sitting-reading.svg"
-                    width={'50%'}
+                    width={"50%"}
                     data-from="https://www.opendoodles.com/"
                     className="dark:invert-[.7]"
                   />

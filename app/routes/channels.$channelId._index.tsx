@@ -1,4 +1,4 @@
-import type { Channel, Item } from '@prisma/client';
+import type { Channel, Item } from "@prisma/client";
 import {
   redirect,
   Form,
@@ -7,17 +7,17 @@ import {
   useLoaderData,
   useNavigation,
   useRouteError,
-} from 'react-router';
-import invariant from 'tiny-invariant';
-import { Href } from '~/components/Href';
-import { TimeFromNow } from '~/components/TimeFromNow';
+} from "react-router";
+import invariant from "tiny-invariant";
+import { Href } from "~/components/Href";
+import { TimeFromNow } from "~/components/TimeFromNow";
 import {
   updateChannel,
   deleteChannel,
   getChannel,
   getChannelItems,
   refreshChannel,
-} from '~/models/channel.server';
+} from "~/models/channel.server";
 import {
   ClockIcon,
   BookmarkIcon,
@@ -26,31 +26,31 @@ import {
   PencilIcon,
   RefreshIcon,
   ExclamationCircleIcon,
-} from '@heroicons/react/outline';
+} from "@heroicons/react/outline";
 
-import { requireUserId } from '~/session.server';
-import React from 'react';
-import { ChannelCategoryLinks } from '~/components/ChannelCategories';
-import { Button, buttonStyle } from '~/components/Button';
-import { ErrorMessage } from '~/components/ErrorMessage';
-import { createTitle } from '~/utils';
-import { AsideWrapper } from '~/components/AsideWrapper';
-import { UseAppTitle } from '~/components/AppTitle';
-import { ShowMoreLink } from '~/components/ShowMoreLink';
+import { requireUserId } from "~/session.server";
+import React from "react";
+import { ChannelCategoryLinks } from "~/components/ChannelCategories";
+import { Button, buttonStyle } from "~/components/Button";
+import { ErrorMessage } from "~/components/ErrorMessage";
+import { createTitle } from "~/utils";
+import { AsideWrapper } from "~/components/AsideWrapper";
+import { UseAppTitle } from "~/components/AppTitle";
+import { ShowMoreLink } from "~/components/ShowMoreLink";
 
-import refreshSound from '/sounds/ui_refresh-feed.wav?url';
-import { PageHeading } from '~/components/PageHeading';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
-import { Tooltip } from '~/components/Tooltip';
-import { DescriptionList } from '~/components/DescriptionList';
-import { ChannelItemDetailService } from '~/components/ChannelItemDetail/ChannelItemDetail.server';
-import { useSound } from '~/utils/use-sound';
-import type { Route } from './+types/channels.$channelId._index';
+import refreshSound from "/sounds/ui_refresh-feed.wav?url";
+import { PageHeading } from "~/components/PageHeading";
+import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
+import { Tooltip } from "~/components/Tooltip";
+import { DescriptionList } from "~/components/DescriptionList";
+import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
+import { useSound } from "~/utils/use-sound";
+import type { Route } from "./+types/channels.$channelId._index";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
-      title: createTitle(data?.channel?.title ?? 'Channel detail'),
+      title: createTitle(data?.channel?.title ?? "Channel detail"),
     },
   ];
 };
@@ -58,10 +58,10 @@ export const meta = ({ data }: Route.MetaArgs) => {
 type LoaderData = {
   channel: Channel;
   items: Item[];
-  cursor: React.ComponentProps<typeof ShowMoreLink>['cursor'] | null;
+  cursor: React.ComponentProps<typeof ShowMoreLink>["cursor"] | null;
 };
 
-const itemCountName = 'itemCount';
+const itemCountName = "itemCount";
 
 export const loader = async ({
   request,
@@ -71,20 +71,20 @@ export const loader = async ({
   const requestUrl = new URL(request.url);
   const itemCount = requestUrl.searchParams.get(itemCountName);
 
-  invariant(params.channelId, 'channelId not found');
+  invariant(params.channelId, "channelId not found");
 
   const channel = await getChannel({
     where: { userId, id: params.channelId },
   });
   if (!channel) {
-    throw new Response('Not Found', { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   const take = itemCount ? Number(itemCount) : 10;
 
   const items = await getChannelItems({
     where: { channelId: channel.id },
-    orderBy: { pubDate: 'desc' },
+    orderBy: { pubDate: "desc" },
     take: take,
   });
 
@@ -99,23 +99,23 @@ export const loader = async ({
 };
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
-  invariant(params.channelId, 'channelId not found');
+  invariant(params.channelId, "channelId not found");
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const action = formData.get('action');
+  const action = formData.get("action");
 
-  if (action === 'delete') {
+  if (action === "delete") {
     await deleteChannel({ userId, id: params.channelId });
-    throw redirect('/channels');
+    throw redirect("/channels");
   }
 
   if (ChannelItemDetailService.isChannelItemUpdate(formData)) {
     return ChannelItemDetailService.handleAction(userId, formData);
   }
 
-  if (request.method === 'POST') {
+  if (request.method === "POST") {
     const updatedParseErrors = {
-      itemPubDateParseError: formData.get('itemPubDateParseError')
+      itemPubDateParseError: formData.get("itemPubDateParseError")
         ? false
         : undefined,
     };
@@ -133,7 +133,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     select: { feedUrl: true, items: true },
   });
 
-  invariant(channel, 'Channel could not be loaded');
+  invariant(channel, "Channel could not be loaded");
   try {
     await refreshChannel({
       feedUrl: channel.feedUrl,
@@ -144,7 +144,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     console.error(error);
   }
 
-  throw redirect('/channels/'.concat(params.channelId));
+  throw redirect("/channels/".concat(params.channelId));
 };
 
 export default function ChannelDetailsPage() {
@@ -152,13 +152,13 @@ export default function ChannelDetailsPage() {
   const transition = useNavigation();
 
   const isRefreshing =
-    transition.state !== 'idle' && transition.formMethod === 'PATCH';
+    transition.state !== "idle" && transition.formMethod === "PATCH";
 
   const { channel, items } = data;
 
   const category = channel.category.slice(
-    channel.category.startsWith('/') ? 1 : 0,
-    channel.category.endsWith('/') ? -1 : undefined
+    channel.category.startsWith("/") ? 1 : 0,
+    channel.category.endsWith("/") ? -1 : undefined
   );
 
   const isParseErrors = data.channel.itemPubDateParseError;
@@ -171,7 +171,7 @@ export default function ChannelDetailsPage() {
       <UseAppTitle>Channel detail</UseAppTitle>
       <section className="relative z-0 max-w-[90vw] flex-1">
         {channel.imageUrl && <ChannelImage src={channel.imageUrl} />}
-        <WithEditLink name={'title'} label="Edit channel title">
+        <WithEditLink name={"title"} label="Edit channel title">
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
 
@@ -192,7 +192,7 @@ export default function ChannelDetailsPage() {
               {data.channel.lastBuildDate ? (
                 <TimeFromNow date={data.channel.lastBuildDate} />
               ) : (
-                'unknown'
+                "unknown"
               )}
               {data.channel.refreshDate && (
                 <span>
@@ -201,7 +201,7 @@ export default function ChannelDetailsPage() {
               )}
             </DescriptionList.Definition>
           </span>
-          <WithEditLink name={'new-category'} label="Edit channel categories">
+          <WithEditLink name={"new-category"} label="Edit channel categories">
             <span className="flex flex-wrap items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
                 <BookmarkIcon className="h-4" /> Categories:
@@ -210,28 +210,28 @@ export default function ChannelDetailsPage() {
                 {category ? (
                   <ChannelCategoryLinks category={category} />
                 ) : (
-                  'None'
+                  "None"
                 )}
               </DescriptionList.Definition>
             </span>
           </WithEditLink>
-          <WithEditLink name={'language'} label="Edit language">
+          <WithEditLink name={"language"} label="Edit language">
             <span className="flex items-center gap-1 ">
               <DescriptionList.Term className="flex items-center gap-1">
                 <TranslateIcon className="h-4" /> Language:
               </DescriptionList.Term>
               <DescriptionList.Definition>
-                {channel.language || 'None'}
+                {channel.language || "None"}
               </DescriptionList.Definition>
             </span>
           </WithEditLink>
           <div className="py-6">
-            <WithEditLink name={'description'} label="Edit channel description">
+            <WithEditLink name={"description"} label="Edit channel description">
               <DescriptionList.Term>Description:</DescriptionList.Term>
             </WithEditLink>
             <DescriptionList.Definition>
               <p className="text-slate-900 [overflow-wrap:anywhere] dark:text-slate-300">
-                {data.channel.description || 'Description is missing'}
+                {data.channel.description || "Description is missing"}
               </p>
             </DescriptionList.Definition>
           </div>
@@ -245,8 +245,8 @@ export default function ChannelDetailsPage() {
             {[
               {
                 isError: data.channel.itemPubDateParseError,
-                name: 'itemPubDateParseError',
-                message: 'Some article publish dates may be incorrect',
+                name: "itemPubDateParseError",
+                message: "Some article publish dates may be incorrect",
               },
             ]
               .filter((error) => !parseErrorSubmission?.get(error.name))
@@ -257,11 +257,11 @@ export default function ChannelDetailsPage() {
                       <Form method="post">
                         <input type="hidden" name={error.name} value="false" />
                         <button
-                          aria-label={'Hide this error message'}
+                          aria-label={"Hide this error message"}
                           type="submit"
                           className="relative flex items-center gap-1 text-left text-red-800 hover:underline"
                         >
-                          <ExclamationCircleIcon className="w-3" />{' '}
+                          <ExclamationCircleIcon className="w-3" />{" "}
                           {error.message}
                           <Tooltip />
                         </button>
@@ -300,7 +300,7 @@ export default function ChannelDetailsPage() {
           <ShowMoreLink
             cursor={data.cursor}
             isLoading={
-              transition.state === 'loading' && transition.formMethod === 'GET'
+              transition.state === "loading" && transition.formMethod === "GET"
             }
           />
         )}
@@ -315,13 +315,13 @@ export default function ChannelDetailsPage() {
           >
             <RefreshIcon
               className={`w-4  ${
-                isRefreshing ? 'animate-spin' : 'animate-none'
+                isRefreshing ? "animate-spin" : "animate-none"
               }`}
             />
             <div className="flex-1 text-center">Refresh</div>
           </Button>
         </Form>
-        <Link to="edit" className={buttonStyle.concat(' sm:w-full')}>
+        <Link to="edit" className={buttonStyle.concat(" sm:w-full")}>
           <PencilIcon className="w-4" />
           <div className=" flex-1 text-center">Edit</div>
         </Link>
@@ -329,7 +329,7 @@ export default function ChannelDetailsPage() {
         <Form
           method="post"
           onSubmit={(event) => {
-            if (!confirm('Are you sure?')) {
+            if (!confirm("Are you sure?")) {
               event.preventDefault();
             }
           }}
@@ -338,11 +338,11 @@ export default function ChannelDetailsPage() {
             type="submit"
             title="Delete this channel"
             className="flex h-full w-fit items-center gap-2 sm:w-full"
-            isLoading={transition.formData?.get('action') === 'delete'}
+            isLoading={transition.formData?.get("action") === "delete"}
             name="action"
             value="delete"
           >
-            <TrashIcon className="w-4" />{' '}
+            <TrashIcon className="w-4" />{" "}
             <span className="pointer-events-none hidden flex-1 text-center sm:block">
               Delete
             </span>
@@ -410,7 +410,7 @@ function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
           alt=""
           className={`w-full border-none text-transparent`}
         />
-      </div>{' '}
+      </div>{" "}
     </div>
   );
 }

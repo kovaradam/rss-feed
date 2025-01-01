@@ -6,28 +6,28 @@ import {
   useNavigation,
   data,
   redirect,
-} from 'react-router';
-import React from 'react';
-import { SubmitButton, buttonStyle } from '~/components/Button';
-import { WithFormLabel } from '~/components/WithFormLabel';
+} from "react-router";
+import React from "react";
+import { SubmitButton, buttonStyle } from "~/components/Button";
+import { WithFormLabel } from "~/components/WithFormLabel";
 import {
   createUser,
   getUserByEmail,
   sendConfirmEmail,
-} from '~/models/user.server';
-import { createUserSession, getUserId } from '~/session.server';
-import { styles } from '~/styles/shared';
-import { createTitle, safeRedirect, validateEmail } from '~/utils';
-import type { Route } from './+types/welcome._index';
+} from "~/models/user.server";
+import { createUserSession, getUserId } from "~/session.server";
+import { styles } from "~/styles/shared";
+import { createTitle, safeRedirect, validateEmail } from "~/utils";
+import type { Route } from "./+types/welcome._index";
 
 export const meta = () => {
-  return [{ title: createTitle('Welcome') }];
+  return [{ title: createTitle("Welcome") }];
 };
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
   if (userId) {
-    throw redirect('/channels');
+    throw redirect("/channels");
   }
   return {};
 };
@@ -41,27 +41,27 @@ interface ActionData {
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
-  const email = formData.get('email');
-  const password = formData.get('password');
-  const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateEmail(email)) {
     return data<ActionData>(
-      { errors: { email: 'Email is invalid' } },
+      { errors: { email: "Email is invalid" } },
       { status: 400 }
     );
   }
 
-  if (typeof password !== 'string' || password.length === 0) {
+  if (typeof password !== "string" || password.length === 0) {
     return data<ActionData>(
-      { errors: { password: 'Password is required' } },
+      { errors: { password: "Password is required" } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return data<ActionData>(
-      { errors: { password: 'Password is too short' } },
+      { errors: { password: "Password is too short" } },
       { status: 400 }
     );
   }
@@ -69,7 +69,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return data<ActionData>(
-      { errors: { email: 'User with this email already exists.' } },
+      { errors: { email: "User with this email already exists." } },
       { status: 400 }
     );
   }
@@ -87,7 +87,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
 export default function Welcome() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') ?? '/channels';
+  const redirectTo = searchParams.get("redirectTo") ?? "/channels";
   const actionData = useActionData() as ActionData;
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
@@ -103,8 +103,8 @@ export default function Welcome() {
   }, [actionData]);
 
   const isSubmitting =
-    transition.state === 'submitting' ||
-    (transition.state === 'loading' && Boolean(transition.formMethod));
+    transition.state === "submitting" ||
+    (transition.state === "loading" && Boolean(transition.formMethod));
 
   return (
     <>
@@ -113,16 +113,16 @@ export default function Welcome() {
           Create your journal
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          Get started with a new account or{' '}
+          Get started with a new account or{" "}
           <Link
             to={{
-              pathname: 'login',
+              pathname: "login",
               search: searchParams.toString(),
             }}
             className={`font-bold underline`}
           >
             log In
-          </Link>{' '}
+          </Link>{" "}
           if you already have one.
         </p>
       </div>
@@ -130,25 +130,25 @@ export default function Welcome() {
         <Form method="post" className="space-y-6">
           {[
             {
-              label: 'Email address',
-              placeholder: 'name@example.com',
+              label: "Email address",
+              placeholder: "name@example.com",
               ref: emailRef,
-              id: 'email',
-              name: 'email',
-              type: 'email',
+              id: "email",
+              name: "email",
+              type: "email",
               ariaInvalid: actionData?.errors?.email ? true : undefined,
-              ariaDescribedBy: 'email-error',
+              ariaDescribedBy: "email-error",
               error: actionData?.errors?.email,
             },
             {
-              label: 'Password',
+              label: "Password",
               placeholder: undefined,
               ref: passwordRef,
-              id: 'password',
-              name: 'password',
-              type: 'password',
+              id: "password",
+              name: "password",
+              type: "password",
               ariaInvalid: actionData?.errors?.password ? true : undefined,
-              ariaDescribedBy: 'password-error',
+              ariaDescribedBy: "password-error",
               error: actionData?.errors?.password,
             },
           ].map((formField) => (
@@ -194,13 +194,13 @@ export default function Welcome() {
             <span className="text-slate-500">or</span>
             <Link
               to={{
-                pathname: 'login',
+                pathname: "login",
                 search: searchParams.toString(),
               }}
               className={`${buttonStyle} w-full justify-center sm:w-48 `}
             >
               log In
-            </Link>{' '}
+            </Link>{" "}
           </div>
         </Form>
       </div>

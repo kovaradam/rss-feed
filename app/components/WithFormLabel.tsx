@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type Props = {
   label: React.ReactNode;
@@ -17,12 +17,12 @@ export function WithFormLabel(props: Props): JSX.Element {
       <legend className="mb-1 flex items-center gap-2 " {...legendProps}>
         <label htmlFor={htmlFor} className="dark:text-slate-100">
           {label}
-        </label>{' '}
+        </label>{" "}
         {required && (
           <span className="text-slate-500 dark:text-slate-100">(required)</span>
         )}
       </legend>
-      {typeof children === 'function' ? children(props) : children}
+      {typeof children === "function" ? children(props) : children}
     </fieldset>
   );
 }

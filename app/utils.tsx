@@ -1,10 +1,10 @@
-import type { MetaFunction, useNavigation } from 'react-router';
-import { useMatches } from 'react-router';
-import React from 'react';
+import type { MetaFunction, useNavigation } from "react-router";
+import { useMatches } from "react-router";
+import React from "react";
 
-import type { User } from '~/models/user.server';
+import type { User } from "~/models/user.server";
 
-const DEFAULT_REDIRECT = '/';
+const DEFAULT_REDIRECT = "/";
 
 /**
  * This should be used any time the redirect path is user-provided
@@ -17,11 +17,11 @@ export function safeRedirect(
   to: FormDataEntryValue | string | null | undefined,
   defaultRedirect: string = DEFAULT_REDIRECT
 ) {
-  if (!to || typeof to !== 'string') {
+  if (!to || typeof to !== "string") {
     return defaultRedirect;
   }
 
-  if (!to.startsWith('/') || to.startsWith('//')) {
+  if (!to.startsWith("/") || to.startsWith("//")) {
     return defaultRedirect;
   }
 
@@ -48,11 +48,11 @@ export function useMatchesData(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isUser(user: any): user is User {
-  return user && typeof user === 'object' && typeof user.email === 'string';
+  return user && typeof user === "object" && typeof user.email === "string";
 }
 
 export function useOptionalUser(): User | undefined {
-  const data = useMatchesData('root');
+  const data = useMatchesData("root");
 
   if (!data || !isUser(data.user)) {
     return undefined;
@@ -64,32 +64,32 @@ export function useUser(): User {
   const maybeUser = useOptionalUser();
   if (!maybeUser) {
     throw new Error(
-      'No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead.'
+      "No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead."
     );
   }
   return maybeUser;
 }
 
 export function validateEmail(email: unknown): email is string {
-  return typeof email === 'string' && email.length > 3 && email.includes('@');
+  return typeof email === "string" && email.length > 3 && email.includes("@");
 }
 
-export let lastTitle = '';
+export let lastTitle = "";
 
 export function createTitle(input: string): string {
   lastTitle = input;
 
-  return import.meta.env.PROD ? '' : '[dev] '.concat(`Journal | ${input}`);
+  return import.meta.env.PROD ? "" : "[dev] ".concat(`Journal | ${input}`);
 }
 
 export function createMeta(metaFunction?: MetaFunction): MetaFunction {
   return (metaArgs) => {
     const meta = metaFunction?.(metaArgs);
     const title =
-      (metaArgs.data as Record<'title', string>)?.title ??
+      (metaArgs.data as Record<"title", string>)?.title ??
       (
-        meta?.find((entry) => Object.keys(entry).includes('title')) as Record<
-          'title',
+        meta?.find((entry) => Object.keys(entry).includes("title")) as Record<
+          "title",
           string
         >
       )?.title;
@@ -111,7 +111,7 @@ export function uniqueArrayFilter<T>(
 }
 
 export function browserApiSwitch<T>(input: T, fallback: T) {
-  if (typeof document === 'undefined') {
+  if (typeof document === "undefined") {
     return fallback;
   }
   return input;
@@ -121,7 +121,7 @@ export function isSubmitting({
   state,
   formMethod,
 }: ReturnType<typeof useNavigation>) {
-  return (state === 'loading' || state === 'submitting') && Boolean(formMethod);
+  return (state === "loading" || state === "submitting") && Boolean(formMethod);
 }
 
 export function enumerate<T extends readonly string[]>(
@@ -138,5 +138,5 @@ export function classToggle(
   isApply: boolean | undefined | null,
   className: string
 ) {
-  return isApply ? className : '';
+  return isApply ? className : "";
 }

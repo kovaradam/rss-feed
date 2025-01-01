@@ -1,18 +1,18 @@
-import type { Password, Prisma, User } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import invariant from 'tiny-invariant';
+import type { Password, Prisma, User } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import invariant from "tiny-invariant";
 
-import { prisma } from '~/db.server';
-import { createDefaultCollections } from './collection.server';
-import { Mail } from './mail.server';
+import { prisma } from "~/db.server";
+import { createDefaultCollections } from "./collection.server";
+import { Mail } from "./mail.server";
 
-export type { User } from '@prisma/client';
+export type { User } from "@prisma/client";
 
-export async function getUserById(id: User['id']) {
+export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
 }
 
-export async function getUserByEmail(email: User['email']) {
+export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
@@ -21,7 +21,7 @@ export async function getUsers() {
 }
 
 export async function createUser(
-  email: User['email'],
+  email: User["email"],
   password: string,
   params?: { isAdmin: boolean }
 ) {
@@ -45,7 +45,7 @@ export async function createUser(
   return user;
 }
 
-export async function validateUserEmail(id: User['id']) {
+export async function validateUserEmail(id: User["id"]) {
   const user = await getUserById(id);
 
   if (!user || !user.requestedEmail) {
@@ -62,24 +62,24 @@ export async function validateUserEmail(id: User['id']) {
 }
 
 export async function sendConfirmEmail(
-  user: Pick<User, 'id' | 'requestedEmail'>,
+  user: Pick<User, "id" | "requestedEmail">,
   request: Request
 ) {
-  invariant(user.requestedEmail, 'Requested email missing');
+  invariant(user.requestedEmail, "Requested email missing");
 
   const requestUrl = new URL(request.url);
-  requestUrl.protocol = 'https://';
+  requestUrl.protocol = "https://";
 
   const link = `${requestUrl.origin}/welcome/confirm-email/${user.id}`;
   return Mail.send(user.requestedEmail, {
-    subject: 'Please confirm your e-mail address ✔',
+    subject: "Please confirm your e-mail address ✔",
     html: `Thank you for joining us!<br/><br/> Please verify your address by visiting <a href=${link}>${link}</a>`,
     text: `Thank you for joining us!\n\n Please verify your address by visiting ${link}`,
   }).catch(console.error);
 }
 
 export async function requestUpdateUserEmail(
-  id: User['id'],
+  id: User["id"],
   newEmail: string,
   request: Request
 ) {
@@ -94,8 +94,8 @@ export async function requestUpdateUserEmail(
 }
 
 export async function updateUser(
-  id: User['id'],
-  data: Prisma.UserUpdateArgs['data']
+  id: User["id"],
+  data: Prisma.UserUpdateArgs["data"]
 ) {
   return await prisma.user.update({
     where: { id: id },
@@ -103,26 +103,26 @@ export async function updateUser(
   });
 }
 
-export async function deleteUserById(id: User['id']) {
+export async function deleteUserById(id: User["id"]) {
   const user = await getUserById(id);
   if (user?.isAdmin) {
     const adminCount = await prisma.user.count({ where: { isAdmin: true } });
-    invariant(adminCount > 1, 'Cannot delete the only admin user');
+    invariant(adminCount > 1, "Cannot delete the only admin user");
   }
   return prisma.user.delete({ where: { id: id } });
 }
 
-export async function makeUserAdmin(id: User['id'], isAdmin: boolean) {
+export async function makeUserAdmin(id: User["id"], isAdmin: boolean) {
   if (!isAdmin) {
     const adminCount = await prisma.user.count({ where: { isAdmin: true } });
-    invariant(adminCount > 1, 'Cannot disable the only admin user');
+    invariant(adminCount > 1, "Cannot disable the only admin user");
   }
   return prisma.user.update({ where: { id: id }, data: { isAdmin: isAdmin } });
 }
 
 export async function verifyLogin(
-  email: User['email'],
-  password: Password['hash']
+  email: User["email"],
+  password: Password["hash"]
 ) {
   const userWithPassword = await prisma.user.findUnique({
     where: { email },

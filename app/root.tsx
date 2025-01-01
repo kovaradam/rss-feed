@@ -1,4 +1,4 @@
-import type { LinksFunction, MetaFunction } from 'react-router';
+import type { LinksFunction, MetaFunction } from "react-router";
 import {
   Links,
   Meta,
@@ -9,23 +9,23 @@ import {
   useLoaderData,
   useLocation,
   useNavigation,
-} from 'react-router';
+} from "react-router";
 
-import stylesheet from './tailwind.css?url';
+import stylesheet from "./tailwind.css?url";
 
-import { getUser } from './session.server';
-import { UseSounds } from './components/UseSounds';
-import { ClientOnly } from './components/ClientOnly';
-import type { Route } from './+types/root';
-import React from 'react';
-import { HistoryStack } from './utils/history-stack';
-import { lastTitle } from './utils';
+import { getUser } from "./session.server";
+import { UseSounds } from "./components/UseSounds";
+import { ClientOnly } from "./components/ClientOnly";
+import type { Route } from "./+types/root";
+import React from "react";
+import { HistoryStack } from "./utils/history-stack";
+import { lastTitle } from "./utils";
 
 export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: stylesheet },
+  { rel: "stylesheet", href: stylesheet },
 ];
 
-export const meta: MetaFunction = () => [{ title: 'RSS Journal' }];
+export const meta: MetaFunction = () => [{ title: "RSS Journal" }];
 
 type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>;
@@ -68,9 +68,9 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
-        {(!navigation.formAction || navigation.formMethod === 'GET') && (
+        {(!navigation.formAction || navigation.formMethod === "GET") && (
           <div
-            data-loading={navigation.state === 'loading'}
+            data-loading={navigation.state === "loading"}
             className="progress"
           >
             <div className="" />

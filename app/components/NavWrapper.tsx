@@ -1,6 +1,6 @@
-import { useLocation } from 'react-router';
-import React from 'react';
-import { useEvent } from '~/utils/useEvent';
+import { useLocation } from "react-router";
+import React from "react";
+import { useEvent } from "~/utils/useEvent";
 
 type Props = {
   isExpanded: boolean;
@@ -40,7 +40,7 @@ export function NavWrapper(props: Props): JSX.Element {
       </nav>
       <div
         className={`absolute right-0 top-0 z-10 h-full  w-full bg-black opacity-10 ${
-          props.isExpanded ? 'visible touch-none' : 'hidden'
+          props.isExpanded ? "visible touch-none" : "hidden"
         } sm:hidden`}
         onClickCapture={props.hide}
       />

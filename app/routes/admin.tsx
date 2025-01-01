@@ -1,18 +1,18 @@
-import { Form, useNavigation } from 'react-router';
+import { Form, useNavigation } from "react-router";
 import {
   deleteFailedUpload,
   getFailedUploads,
-} from '~/models/failed-upload.server';
-import type { User } from '~/models/user.server';
-import { deleteUserById, getUsers, makeUserAdmin } from '~/models/user.server';
-import { requireUser } from '~/session.server';
-import type { Route } from './+types/admin';
+} from "~/models/failed-upload.server";
+import type { User } from "~/models/user.server";
+import { deleteUserById, getUsers, makeUserAdmin } from "~/models/user.server";
+import { requireUser } from "~/session.server";
+import type { Route } from "./+types/admin";
 
 function requireAdmin(user: User) {
   if (!user.isAdmin) {
-    throw new Response('Not found', {
+    throw new Response("Not found", {
       status: 404,
-      statusText: 'Not Found',
+      statusText: "Not Found",
     });
   }
 }
@@ -21,34 +21,34 @@ export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   requireAdmin(user);
 
-  if (request.method === 'DELETE') {
+  if (request.method === "DELETE") {
     const formData = await request.formData();
 
-    const channelLink = formData.get('channel-link');
+    const channelLink = formData.get("channel-link");
 
-    if (typeof channelLink === 'string') {
+    if (typeof channelLink === "string") {
       const deletedUpload = await deleteFailedUpload(channelLink);
-      return { deletedUpload, action: 'deleted' };
+      return { deletedUpload, action: "deleted" };
     }
 
-    const userId = String(formData.get('user-id'));
+    const userId = String(formData.get("user-id"));
 
     const deletedUser = await deleteUserById(userId);
 
-    return { user: deletedUser, action: 'deleted' };
+    return { user: deletedUser, action: "deleted" };
   }
 
-  if (request.method === 'PATCH') {
+  if (request.method === "PATCH") {
     const formData = await request.formData();
-    const userId = String(formData.get('user-id'));
-    const isAdmin = formData.get('is-admin') === 'true';
+    const userId = String(formData.get("user-id"));
+    const isAdmin = formData.get("is-admin") === "true";
 
     const updatedUser = await makeUserAdmin(userId, !isAdmin);
 
-    return { user: updatedUser, action: 'updated' };
+    return { user: updatedUser, action: "updated" };
   }
 
-  throw new Response('Unsupported', { status: 405 });
+  throw new Response("Unsupported", { status: 405 });
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -106,7 +106,7 @@ export default function AdminIndexPage({
                       name="is-admin"
                     />
                     <button type="submit" className="whitespace-nowrap">
-                      {user.isAdmin ? 'Make not admin' : 'Make admin'}
+                      {user.isAdmin ? "Make not admin" : "Make admin"}
                     </button>
                   </Form>
                 </td>
@@ -114,12 +114,12 @@ export default function AdminIndexPage({
             ))}
           </tbody>
         </table>
-        {transition.formMethod === 'DELETE' && <div>Deleting user</div>}
-        {transition.formMethod === 'PATCH' && <div>Updating user</div>}
+        {transition.formMethod === "DELETE" && <div>Deleting user</div>}
+        {transition.formMethod === "PATCH" && <div>Updating user</div>}
 
-        {actionData && 'user' in actionData && (
+        {actionData && "user" in actionData && (
           <p className="text-green-600">
-            {actionData.action === 'deleted' ? 'Deleted' : 'Updated'} user{' '}
+            {actionData.action === "deleted" ? "Deleted" : "Updated"} user{" "}
             <b>{actionData.user?.email}</b>
           </p>
         )}

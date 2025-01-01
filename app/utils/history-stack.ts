@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export class HistoryStack {
   private static historyStackArray: Array<{
@@ -12,7 +12,7 @@ export class HistoryStack {
   static add = (
     newEntry: Omit<
       (typeof HistoryStack.historyStackArray)[number],
-      'historyLength'
+      "historyLength"
     >
   ) => {
     const lastEntry = this.peek();
@@ -43,7 +43,7 @@ export class HistoryStack {
   private static push = (
     input: Omit<
       (typeof HistoryStack.historyStackArray)[number],
-      'historyLength'
+      "historyLength"
     >
   ) => {
     const newEntry = { ...input, historyLength: globalThis.history?.length };
@@ -65,7 +65,7 @@ export class HistoryStack {
     React.useSyncExternalStore(
       this.subscribe,
       () => this.peek()?.href,
-      () => ''
+      () => ""
     );
     return this.getStack();
   };
@@ -79,7 +79,7 @@ export class HistoryStack {
 }
 
 if (globalThis.document) {
-  globalThis.addEventListener('popstate', () => {
+  globalThis.addEventListener("popstate", () => {
     HistoryStack.pop();
   });
 }
@@ -100,15 +100,15 @@ if (import.meta.vitest) {
     };
   };
 
-  it('adds location objects', () => {
-    const firstEntry = createEntry('href1');
+  it("adds location objects", () => {
+    const firstEntry = createEntry("href1");
 
     HistoryStack.add(firstEntry);
 
     expect(HistoryStack.getStack().length).toBe(1);
     expect(HistoryStack.peek()?.title).toBe(firstEntry.title);
 
-    const secondEntry = createEntry('href2');
+    const secondEntry = createEntry("href2");
 
     HistoryStack.add(secondEntry);
 
@@ -116,22 +116,22 @@ if (import.meta.vitest) {
     expect(HistoryStack.peek()?.title).toBe(secondEntry.title);
   });
 
-  it('does not add duplicate location object', () => {
-    let entry = createEntry('href');
+  it("does not add duplicate location object", () => {
+    let entry = createEntry("href");
     HistoryStack.add(entry);
     expect(HistoryStack.getStack().length).toBe(1);
-    entry = createEntry('href');
+    entry = createEntry("href");
     HistoryStack.add(entry);
     expect(HistoryStack.getStack().length).toBe(1);
   });
 
-  it('replaces stack top on istory replace', () => {
-    const entry = { href: 'href1', title: 'title1' };
+  it("replaces stack top on istory replace", () => {
+    const entry = { href: "href1", title: "title1" };
     HistoryStack.add(entry);
     expect(HistoryStack.getStack().length).toBe(1);
     expect(HistoryStack.peek()?.href).toBe(entry.href);
 
-    const nextEntry = { href: 'href2', title: 'title2' };
+    const nextEntry = { href: "href2", title: "title2" };
     HistoryStack.add(nextEntry);
     expect(HistoryStack.getStack().length).toBe(1);
     expect(HistoryStack.peek()?.href).toBe(nextEntry.href);

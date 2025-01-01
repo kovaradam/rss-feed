@@ -1,5 +1,5 @@
-import React from 'react';
-import { styles } from '~/styles/shared';
+import React from "react";
+import { styles } from "~/styles/shared";
 
 export function PageSearchInput(props: {
   defaultValue?: string;
@@ -24,7 +24,7 @@ export function PageSearchInput(props: {
             500
           );
         }}
-        className={styles.input.concat(' mb-4 py-2 text-center sm:text-left')}
+        className={styles.input.concat(" mb-4 py-2 text-center sm:text-left")}
       />
       <button
         type="submit"
@@ -36,4 +36,4 @@ export function PageSearchInput(props: {
   );
 }
 
-PageSearchInput.names = { search: 'q' };
+PageSearchInput.names = { search: "q" };

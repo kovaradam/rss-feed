@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Channel, Item } from '@prisma/client';
-import { parseStringPromise } from 'xml2js';
+import type { Channel, Item } from "@prisma/client";
+import { parseStringPromise } from "xml2js";
 
 export type ChannelResult = Partial<
-  Omit<Channel, 'userId' | 'feedUrl' | 'id' | 'updatedAt' | 'createdAt'>
+  Omit<Channel, "userId" | "feedUrl" | "id" | "updatedAt" | "createdAt">
 >;
-export type ItemParseResult = Omit<Item, 'channelId' | 'id'>[];
+export type ItemParseResult = Omit<Item, "channelId" | "id">[];
 
 export async function parseChannelXml(
   channelXml: string
@@ -37,7 +37,7 @@ class ChannelDataTransformer {
   constructor(
     private channelData: Record<string, any>,
     public transformedItems: ReturnType<
-      ItemDataTransformer['getResult']
+      ItemDataTransformer["getResult"]
     >[] = [],
     private hasItemPubDateErrors = false
   ) {
@@ -54,7 +54,7 @@ class ChannelDataTransformer {
 
   get link() {
     const link = this.channelData?.link?.[0];
-    if (typeof link !== 'string') {
+    if (typeof link !== "string") {
       return link?.$?.href;
     }
     return link;
@@ -62,7 +62,7 @@ class ChannelDataTransformer {
 
   get title() {
     const title = this.channelData?.title?.[0];
-    if (typeof title !== 'string') {
+    if (typeof title !== "string") {
       return title?._;
     }
     return title;
@@ -84,23 +84,23 @@ class ChannelDataTransformer {
   }
 
   get imageUrl() {
-    const imageUrl = this.channelData?.imageUrl?.[0] ?? '';
+    const imageUrl = this.channelData?.imageUrl?.[0] ?? "";
     return imageUrl;
   }
 
   getResult(): ChannelResult {
     return {
       link: this.link,
-      title: (this.title || new URL(this.link).hostname) ?? 'Title is missing',
+      title: (this.title || new URL(this.link).hostname) ?? "Title is missing",
       description:
         this.channelData?.description?.[0]?.substring?.(0, 500) ||
-        'Description is missing',
-      category: this.channelData?.category?.[0] || '',
+        "Description is missing",
+      category: this.channelData?.category?.[0] || "",
       imageUrl: this.imageUrl,
-      language: this.channelData?.language?.[0] || '',
-      copyright: this.channelData?.copyright?.[0] ?? '',
+      language: this.channelData?.language?.[0] || "",
+      copyright: this.channelData?.copyright?.[0] ?? "",
       lastBuildDate: this.lastBuildDate,
-      rssVersion: this.channelData.rssVersion ?? '',
+      rssVersion: this.channelData.rssVersion ?? "",
       itemPubDateParseError: this.hasItemPubDateErrors,
     };
   }
@@ -108,7 +108,7 @@ class ChannelDataTransformer {
 
 class ItemDataTransformer {
   errors: Partial<
-    Record<keyof ReturnType<ItemDataTransformer['getResult']>, boolean>
+    Record<keyof ReturnType<ItemDataTransformer["getResult"]>, boolean>
   > = {};
   private itemData: Record<string, any> | null = null;
 
@@ -119,26 +119,26 @@ class ItemDataTransformer {
 
   get link() {
     const link = this.itemData?.link?.[0];
-    if (typeof link !== 'string') {
-      return link?.$?.href ?? '';
+    if (typeof link !== "string") {
+      return link?.$?.href ?? "";
     }
     return link;
   }
   get title() {
     const title = this.itemData?.title?.[0];
-    if (typeof title !== 'string') {
-      return title?._ ?? '';
+    if (typeof title !== "string") {
+      return title?._ ?? "";
     }
     return title;
   }
   get description() {
     const description = this.itemData?.description?.[0];
-    return typeof description === 'string' ? description?.slice(0, 1000) : '';
+    return typeof description === "string" ? description?.slice(0, 1000) : "";
   }
   get author() {
     const author = this.itemData?.author?.[0];
-    if (typeof author !== 'string') {
-      return author?.[0]?.name ?? '';
+    if (typeof author !== "string") {
+      return author?.[0]?.name ?? "";
     }
     return author;
   }
@@ -161,9 +161,9 @@ class ItemDataTransformer {
     return {
       link: this.link,
       title: this.title,
-      description: this.description ?? '',
+      description: this.description ?? "",
       author: this.author,
-      comments: this.itemData?.comments?.[0] ?? '',
+      comments: this.itemData?.comments?.[0] ?? "",
       pubDate: this.pubDate,
       imageUrl:
         (
@@ -171,9 +171,9 @@ class ItemDataTransformer {
             | { $: { type: string; url: string } }[]
             | undefined
         )
-          ?.map((payload) => payload?.['$'])
+          ?.map((payload) => payload?.["$"])
           .filter(Boolean)
-          .find((enclosure) => enclosure.type?.includes('image'))?.url ?? '',
+          .find((enclosure) => enclosure.type?.includes("image"))?.url ?? "",
       bookmarked: false,
       read: false,
       hiddenFromFeed: false,

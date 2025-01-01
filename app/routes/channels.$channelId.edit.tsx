@@ -1,38 +1,38 @@
-import { Form, useNavigation, redirect, data } from 'react-router';
-import invariant from 'tiny-invariant';
-import { UseAppTitle } from '~/components/AppTitle';
+import { Form, useNavigation, redirect, data } from "react-router";
+import invariant from "tiny-invariant";
+import { UseAppTitle } from "~/components/AppTitle";
 import {
   CategoryInput,
   getCategoryFormValue,
-} from '~/components/CategoryInput';
-import { PageHeading } from '~/components/PageHeading';
-import { SubmitSection } from '~/components/SubmitSection';
-import { WithFormLabel } from '~/components/WithFormLabel';
-import type { Channel } from '~/models/channel.server';
+} from "~/components/CategoryInput";
+import { PageHeading } from "~/components/PageHeading";
+import { SubmitSection } from "~/components/SubmitSection";
+import { WithFormLabel } from "~/components/WithFormLabel";
+import type { Channel } from "~/models/channel.server";
 import {
   getChannels,
   updateChannel,
   getChannel,
   deleteChannelCategory,
-} from '~/models/channel.server';
-import { requireUserId } from '~/session.server';
-import { styles } from '~/styles/shared';
-import { createTitle, enumerate, isSubmitting, type ValueOf } from '~/utils';
-import type { Route } from './+types/channels.$channelId.edit';
+} from "~/models/channel.server";
+import { requireUserId } from "~/session.server";
+import { styles } from "~/styles/shared";
+import { createTitle, enumerate, isSubmitting, type ValueOf } from "~/utils";
+import type { Route } from "./+types/channels.$channelId.edit";
 
 const fieldNames = enumerate([
-  'title',
-  'description',
-  'image-url',
-  'category',
-  'language',
-  'delete-category',
+  "title",
+  "description",
+  "image-url",
+  "category",
+  "language",
+  "delete-category",
 ]);
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
-      title: createTitle(`Edit ${data?.channel?.title ?? 'channel'}`),
+      title: createTitle(`Edit ${data?.channel?.title ?? "channel"}`),
     },
   ];
 };
@@ -45,7 +45,7 @@ type ActionData = {
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   const channelId = params.channelId;
-  invariant(channelId, 'ChannelId was not provided');
+  invariant(channelId, "ChannelId was not provided");
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
@@ -56,14 +56,14 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
 
   const errors = {} as typeof form;
   if (!form.title) {
-    errors.title = 'Title cannot be undefined';
+    errors.title = "Title cannot be undefined";
   }
 
   if (Object.keys(errors).length !== 0) {
     return data<ActionData>({ errors }, { status: 400 });
   }
 
-  const categoryToDelete = form[fieldNames['delete-category']];
+  const categoryToDelete = form[fieldNames["delete-category"]];
 
   const channel = await updateChannel(userId, {
     where: { id: channelId },
@@ -72,9 +72,9 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       category: categoryToDelete
         ? undefined
         : getCategoryFormValue(formData, fieldNames.category),
-      description: form.description ?? '',
-      imageUrl: form['image-url'] ?? '',
-      language: form.language ?? '',
+      description: form.description ?? "",
+      imageUrl: form["image-url"] ?? "",
+      language: form.language ?? "",
     },
   });
 
@@ -87,7 +87,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     return null;
   }
 
-  throw redirect('/channels/'.concat(channel.id));
+  throw redirect("/channels/".concat(channel.id));
 };
 
 type LoaderData = {
@@ -101,16 +101,16 @@ export const loader = async ({
   params,
 }: Route.LoaderArgs): Promise<LoaderData> => {
   const channelId = params.channelId;
-  invariant(channelId, 'ChannelId was not provided');
+  invariant(channelId, "ChannelId was not provided");
   const userId = await requireUserId(request);
   const searchParams = new URL(request.url).searchParams;
-  const focusName = searchParams.get('focus');
+  const focusName = searchParams.get("focus");
 
   const channel = await getChannel({
     where: { userId, id: params.channelId },
   });
   if (!channel) {
-    throw new Response('Not Found', { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   const channels = await getChannels({
@@ -120,13 +120,13 @@ export const loader = async ({
 
   const categories =
     channels
-      .map((channel) => channel.category.split('/'))
+      .map((channel) => channel.category.split("/"))
       .flat()
       .filter((category, index, array) => array.indexOf(category) === index) ??
     [];
 
   if (!channel) {
-    throw new Response('Not Found', { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   return { channel, categories, focusName };
@@ -152,9 +152,9 @@ export default function Channels({
           <WithFormLabel label="Title" required>
             <input
               defaultValue={channel.title}
-              name={'title'}
+              name={"title"}
               required
-              {...inputProps(focusName === 'title')}
+              {...inputProps(focusName === "title")}
             />
           </WithFormLabel>
           {actionData?.errors?.title && (
@@ -167,40 +167,40 @@ export default function Channels({
           <WithFormLabel label="Description">
             <textarea
               defaultValue={channel.description}
-              name={'description'}
-              {...inputProps(focusName === 'description')}
+              name={"description"}
+              {...inputProps(focusName === "description")}
             />
           </WithFormLabel>
         </div>
         <CategoryInput
           categorySuggestions={categories}
-          defaultValue={channel.category ?? ''}
-          name={'category'}
+          defaultValue={channel.category ?? ""}
+          name={"category"}
           // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus={inputProps(focusName === 'new-category').autoFocus}
+          autoFocus={inputProps(focusName === "new-category").autoFocus}
         />
         <div>
           <WithFormLabel label="Language">
             <input
               defaultValue={channel.language}
-              name={'language'}
-              {...inputProps(focusName === 'language')}
+              name={"language"}
+              {...inputProps(focusName === "language")}
             />
           </WithFormLabel>
         </div>
         <div>
           <WithFormLabel label="Image URL">
             <input
-              defaultValue={channel.imageUrl ?? ''}
-              name={'image-url'}
-              {...inputProps(focusName === 'image-url')}
+              defaultValue={channel.imageUrl ?? ""}
+              name={"image-url"}
+              {...inputProps(focusName === "image-url")}
             />
           </WithFormLabel>
         </div>
 
         <SubmitSection
-          cancelProps={{ to: '/channels/'.concat(channel.id) }}
-          submitProps={{ children: 'Save changes' }}
+          cancelProps={{ to: "/channels/".concat(channel.id) }}
+          submitProps={{ children: "Save changes" }}
           isSubmitting={isSaving}
         />
       </Form>

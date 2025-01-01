@@ -1,5 +1,5 @@
-import { Form } from 'react-router';
-import React from 'react';
+import { Form } from "react-router";
+import React from "react";
 
 type Props = React.ComponentProps<typeof Form> & {
   isLoading?: boolean;
@@ -14,7 +14,7 @@ export function ShowMoreLink(props: Props): JSX.Element {
   const isLoading = props.isLoading;
   return (
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
-      <button type={'submit'} className="hover:underline dark:text-white">
+      <button type={"submit"} className="hover:underline dark:text-white">
         <input
           type="hidden"
           name={props.cursor.name}
@@ -23,7 +23,7 @@ export function ShowMoreLink(props: Props): JSX.Element {
         {props.otherValues?.map(({ value, name }) => (
           <input type="hidden" name={name} value={value} key={name} />
         ))}
-        {isLoading ? 'Loading...' : 'Show more'}
+        {isLoading ? "Loading..." : "Show more"}
       </button>
     </Form>
   );

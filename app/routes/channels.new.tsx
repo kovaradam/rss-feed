@@ -1,40 +1,40 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline';
-import { Form, Link, useNavigation, redirect, data } from 'react-router';
-import React from 'react';
-import { UseAppTitle } from '~/components/AppTitle';
-import { PageHeading } from '~/components/PageHeading';
-import { SubmitSection } from '~/components/SubmitSection';
-import { WithFormLabel } from '~/components/WithFormLabel';
+import { ExclamationCircleIcon } from "@heroicons/react/outline";
+import { Form, Link, useNavigation, redirect, data } from "react-router";
+import React from "react";
+import { UseAppTitle } from "~/components/AppTitle";
+import { PageHeading } from "~/components/PageHeading";
+import { SubmitSection } from "~/components/SubmitSection";
+import { WithFormLabel } from "~/components/WithFormLabel";
 import {
   ChannelExistsError,
   IncorrectDefinitionError,
   UnavailableDbError,
   createChannelFromXml,
-} from '~/models/channel.server';
-import { storeFailedUpload } from '~/models/failed-upload.server';
-import { requireUserId } from '~/session.server';
-import { styles } from '~/styles/shared';
-import { createTitle, isSubmitting } from '~/utils';
-import { mapValue } from '~/utils/map-value';
-import type { Route } from './+types/channels.new';
-import { HistoryStack } from '~/utils/history-stack';
+} from "~/models/channel.server";
+import { storeFailedUpload } from "~/models/failed-upload.server";
+import { requireUserId } from "~/session.server";
+import { styles } from "~/styles/shared";
+import { createTitle, isSubmitting } from "~/utils";
+import { mapValue } from "~/utils/map-value";
+import type { Route } from "./+types/channels.new";
+import { HistoryStack } from "~/utils/history-stack";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
-      title: createTitle(data?.title ?? ''),
+      title: createTitle(data?.title ?? ""),
     },
   ];
 };
 
-const inputNames = ['channel-url'] as const;
+const inputNames = ["channel-url"] as const;
 const [channelUrlName] = inputNames;
-const _errors = [...inputNames, 'xml-parse', 'create', 'fetch'] as const;
+const _errors = [...inputNames, "xml-parse", "create", "fetch"] as const;
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const channelUrlParam = new URL(request.url).searchParams.get(channelUrlName);
   return {
-    title: 'Add new channel',
+    title: "Add new channel",
     channelUrlParam: channelUrlParam ? String(channelUrlParam) : null,
   };
 };
@@ -54,7 +54,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     channelUrl = new URL(String(inputChannelHref));
   } catch (_) {
     return data<ActionData>({
-      [channelUrlName]: 'Please provide a valid url',
+      [channelUrlName]: "Please provide a valid url",
     });
   }
 
@@ -89,17 +89,17 @@ export const action = async ({ request }: Route.ActionArgs) => {
         break;
       case error instanceof UnavailableDbError:
         response = {
-          create: 'Cannot save RSS feed at this moment, please try later',
+          create: "Cannot save RSS feed at this moment, please try later",
         };
         break;
       case error instanceof IncorrectDefinitionError:
         response = {
-          'xml-parse':
-            'Could not parse RSS definition, please make sure you provided a correct URL',
+          "xml-parse":
+            "Could not parse RSS definition, please make sure you provided a correct URL",
         };
         break;
       default:
-        response = { create: 'Could not save RSS feed, please try later' };
+        response = { create: "Could not save RSS feed, please try later" };
     }
 
     storeFailedUpload(String(inputChannelHref), String(error));
@@ -107,7 +107,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     return response;
   }
 
-  throw redirect('/channels/'.concat(newChannel.id));
+  throw redirect("/channels/".concat(newChannel.id));
 };
 
 export default function NewChannelPage({
@@ -123,7 +123,7 @@ export default function NewChannelPage({
     <>
       <UseAppTitle default />
       <PageHeading>{loaderData.title}</PageHeading>
-      <Form method={'PUT'} className={'flex max-w-xl flex-col gap-4'}>
+      <Form method={"PUT"} className={"flex max-w-xl flex-col gap-4"}>
         <WithFormLabel htmlFor="new-channel-input" label="RSS feed address">
           <input
             type="url"
@@ -133,7 +133,7 @@ export default function NewChannelPage({
             placeholder="https://www.example-web.com/rss.xml"
             className={`${styles.input} `}
             aria-invalid="false"
-            defaultValue={loaderData.channelUrlParam ?? ''}
+            defaultValue={loaderData.channelUrlParam ?? ""}
           />
           {actionData ? (
             Object.entries(actionData).map(([type, error]) => (
@@ -156,8 +156,8 @@ export default function NewChannelPage({
         </WithFormLabel>
         <SubmitSection
           isSubmitting={isSaving}
-          cancelProps={{ to: backEntry?.href ?? '/channels', scriptOnly: true }}
-          submitProps={{ children: 'Add channel' }}
+          cancelProps={{ to: backEntry?.href ?? "/channels", scriptOnly: true }}
+          submitProps={{ children: "Add channel" }}
         />
       </Form>
     </>
@@ -172,7 +172,7 @@ function TextWithLink(props: { text: string }) {
   }
 
   const linkElements = (
-    links.map((link) => link.slice(1, -1).split('](')) as Array<
+    links.map((link) => link.slice(1, -1).split("](")) as Array<
       [label: string, to: string]
     >
   ).map(([label, to]) => ({ label, to }));

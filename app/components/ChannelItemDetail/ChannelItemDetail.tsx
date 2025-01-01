@@ -2,24 +2,24 @@ import {
   BookmarkIcon as OutlineBookmarkIcon,
   CheckCircleIcon,
   EyeIcon,
-} from '@heroicons/react/outline';
+} from "@heroicons/react/outline";
 import {
   EyeOffIcon,
   BookmarkIcon as SolidBookmarkIcon,
   CheckCircleIcon as SolidCheckIcon,
-} from '@heroicons/react/solid';
-import { Link, useFetcher } from 'react-router';
-import useSound from '~/utils/use-sound';
-import type { ItemWithChannel } from '~/models/channel.server';
-import { ChannelCategoryLinks } from '../ChannelCategories';
-import { Href } from '../Href';
-import { TimeFromNow } from '../TimeFromNow';
-import confirmSound from '/sounds/state-change_confirm-up.wav?url';
-import cancelSound from '/sounds/state-change_confirm-down.wav?url';
-import { Highlight } from '../Highlight';
-import { convert } from 'html-to-text';
-import React from 'react';
-import { Tooltip } from '../Tooltip';
+} from "@heroicons/react/solid";
+import { Link, useFetcher } from "react-router";
+import useSound from "~/utils/use-sound";
+import type { ItemWithChannel } from "~/models/channel.server";
+import { ChannelCategoryLinks } from "../ChannelCategories";
+import { Href } from "../Href";
+import { TimeFromNow } from "../TimeFromNow";
+import confirmSound from "/sounds/state-change_confirm-up.wav?url";
+import cancelSound from "/sounds/state-change_confirm-down.wav?url";
+import { Highlight } from "../Highlight";
+import { convert } from "html-to-text";
+import React from "react";
+import { Tooltip } from "../Tooltip";
 
 type Props = {
   item: ItemWithChannel;
@@ -82,9 +82,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               name: ChannelItemDetail.form.names.hiddenFromFeed,
               value: String(!hiddenFromFeed),
               Icon: HiddenFromFeedIcon,
-              title: hiddenFromFeed ? 'Show in feed' : 'Hide in feed',
+              title: hiddenFromFeed ? "Show in feed" : "Hide in feed",
               className: `${
-                hiddenFromFeed ? 'hover:bg-green-200' : 'hover:bg-red-200'
+                hiddenFromFeed ? "hover:bg-green-200" : "hover:bg-red-200"
               } dark:hover:bg-slate-900`,
               playSubmit: hiddenFromFeed ? playConfirm : playCancel,
             },
@@ -92,8 +92,8 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               name: ChannelItemDetail.form.names.read,
               value: String(!read),
               Icon: ReadIcon,
-              title: !read ? 'Mark as read' : 'Mark as not read yet',
-              className: 'hover:bg-green-200 dark:hover:bg-slate-900',
+              title: !read ? "Mark as read" : "Mark as not read yet",
+              className: "hover:bg-green-200 dark:hover:bg-slate-900",
               playSubmit: read ? playCancel : playConfirm,
             },
             {
@@ -102,9 +102,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               Icon: BookmarkIcon,
 
               title: !bookmarked
-                ? 'Bookmark article'
-                : 'Remove from bookmarked articles',
-              className: 'hover:bg-yellow-100 dark:hover:bg-slate-900',
+                ? "Bookmark article"
+                : "Remove from bookmarked articles",
+              className: "hover:bg-yellow-100 dark:hover:bg-slate-900",
               playSubmit: bookmarked ? playCancel : playConfirm,
             },
           ].map((formItem) => (
@@ -118,7 +118,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
               <button
                 type="submit"
-                className={'relative rounded p-1 '.concat(formItem.className)}
+                className={"relative rounded p-1 ".concat(formItem.className)}
                 data-silent
                 aria-label={formItem.title}
                 onClick={() => formItem.playSubmit()}
@@ -127,9 +127,9 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               >
                 <formItem.Icon
                   className={`w-4  ${
-                    formItem.value === 'false'
-                      ? 'text-black dark:text-white'
-                      : ''
+                    formItem.value === "false"
+                      ? "text-black dark:text-white"
+                      : ""
                   } pointer-events-none ${formItem.className}`}
                 />
                 <Tooltip>{formItem.title}</Tooltip>
@@ -183,16 +183,16 @@ export function ChannelItemDetail(props: Props): JSX.Element {
 
 ChannelItemDetail.form = {
   names: {
-    itemId: 'itemId',
-    bookmarked: 'bookmarked',
-    read: 'read',
-    hiddenFromFeed: 'hiddenFromFeed',
+    itemId: "itemId",
+    bookmarked: "bookmarked",
+    read: "read",
+    hiddenFromFeed: "hiddenFromFeed",
   },
   getBooleanValue(formValue: FormDataEntryValue | null): boolean | undefined {
-    if (formValue === 'true') {
+    if (formValue === "true") {
       return true;
     }
-    if (formValue === 'false') {
+    if (formValue === "false") {
       return false;
     }
     return undefined;
@@ -223,6 +223,6 @@ ChannelItemDetail.Title = function ChannelItemDetailTitle({
       return title;
     }
     const result = convert(description.slice(0, 30));
-    return result.slice(0, result.lastIndexOf(' ')).concat(' ...');
+    return result.slice(0, result.lastIndexOf(" ")).concat(" ...");
   }, [description, title]);
 };

@@ -1,15 +1,15 @@
-import { Form, useNavigation, redirect } from 'react-router';
-import { PageHeading } from '~/components/PageHeading';
-import { SubmitSection } from '~/components/SubmitSection';
+import { Form, useNavigation, redirect } from "react-router";
+import { PageHeading } from "~/components/PageHeading";
+import { SubmitSection } from "~/components/SubmitSection";
 import {
   getUserByEmail,
   getUserById,
   requestUpdateUserEmail,
-} from '~/models/user.server';
-import { requireUser, requireUserId } from '~/session.server';
-import { styles } from '~/styles/shared';
-import { createMeta } from '~/utils';
-import type { Route } from './+types/channels.user.edit-email';
+} from "~/models/user.server";
+import { requireUser, requireUserId } from "~/session.server";
+import { styles } from "~/styles/shared";
+import { createMeta } from "~/utils";
+import type { Route } from "./+types/channels.user.edit-email";
 
 export const meta = createMeta();
 
@@ -18,20 +18,20 @@ export async function action({ request }: Route.ActionArgs) {
 
   const formData = await request.formData();
 
-  const newEmail = formData.get('new-email');
+  const newEmail = formData.get("new-email");
 
   if (!newEmail) {
     return {
       errors: {
-        'new-email': 'This field is required',
+        "new-email": "This field is required",
       },
     };
   }
 
-  if (typeof newEmail !== 'string') {
+  if (typeof newEmail !== "string") {
     return {
       errors: {
-        'new-email': 'New email is in invalid format',
+        "new-email": "New email is in invalid format",
       },
     };
   }
@@ -41,7 +41,7 @@ export async function action({ request }: Route.ActionArgs) {
   if (newEmail === currentEmail) {
     return {
       errors: {
-        'new-email': 'New and current email cannot be the same',
+        "new-email": "New and current email cannot be the same",
       },
     };
   }
@@ -51,19 +51,19 @@ export async function action({ request }: Route.ActionArgs) {
   if (userByEmail) {
     return {
       errors: {
-        'new-email': 'User with this email already exists',
+        "new-email": "User with this email already exists",
       },
     };
   }
 
   await requestUpdateUserEmail(userId, newEmail, request);
 
-  throw redirect('/');
+  throw redirect("/");
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return { user, title: 'Edit email' };
+  return { user, title: "Edit email" };
 }
 
 export default function UserEditPage({
@@ -71,7 +71,7 @@ export default function UserEditPage({
   actionData,
 }: Route.ComponentProps) {
   const transition = useNavigation();
-  const isSubmitting = transition.formMethod === 'PATCH';
+  const isSubmitting = transition.formMethod === "PATCH";
 
   return (
     <>
@@ -79,21 +79,21 @@ export default function UserEditPage({
       <Form className="flex max-w-xl flex-col gap-4" method="patch">
         {[
           {
-            name: 'current-email',
-            label: 'Current email',
+            name: "current-email",
+            label: "Current email",
             value: loaderData.user.email,
             disabled: true,
           },
           {
-            name: 'new-email',
+            name: "new-email",
             label: (
               <div>
                 New email <span className="text-slate-500">(required)</span>
               </div>
             ),
             required: true,
-            value: '',
-            error: actionData?.errors?.['new-email'],
+            value: "",
+            error: actionData?.errors?.["new-email"],
           },
         ].map((item) => (
           <fieldset
@@ -114,8 +114,8 @@ export default function UserEditPage({
           </fieldset>
         ))}
         <SubmitSection
-          cancelProps={{ to: '/channels/user' }}
-          submitProps={{ children: 'Update' }}
+          cancelProps={{ to: "/channels/user" }}
+          submitProps={{ children: "Update" }}
           isSubmitting={isSubmitting}
         />
       </Form>

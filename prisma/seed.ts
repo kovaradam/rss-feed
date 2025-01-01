@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import invariant from 'tiny-invariant';
-import { createUser } from '~/models/user.server';
+import { PrismaClient } from "@prisma/client";
+import invariant from "tiny-invariant";
+import { createUser } from "~/models/user.server";
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  const userEmail = 'rachel@remix.run';
+  const userEmail = "rachel@remix.run";
 
-  const adminEnvVariables = ['ADMIN_EMAIL', 'ADMIN_PASS'];
+  const adminEnvVariables = ["ADMIN_EMAIL", "ADMIN_PASS"];
   const [adminEmail, adminPassword] = adminEnvVariables.map(
     (key) => process.env[key]
   );
@@ -17,7 +17,7 @@ async function seed() {
     adminEmail && adminPassword,
     `Missing admin credentials (please define ${adminEnvVariables
       .map((key) => `"${key}"`)
-      .join(' and ')} in the ".env" file)`
+      .join(" and ")} in the ".env" file)`
   );
 
   // cleanup the existing database
@@ -28,7 +28,7 @@ async function seed() {
     // no worries if it doesn't exist yet
   });
 
-  await createUser(userEmail, 'racheliscool');
+  await createUser(userEmail, "racheliscool");
 
   await createUser(adminEmail, adminPassword, {
     isAdmin: true,

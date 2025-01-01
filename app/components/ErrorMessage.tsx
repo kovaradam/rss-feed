@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type Props = { children: React.ReactNode };
 
@@ -10,9 +10,9 @@ export function ErrorMessage(props: Props): JSX.Element {
       <img
         alt=""
         src="/clumsy.svg"
-        width={'70%'}
+        width={"70%"}
         data-from="https://www.opendoodles.com/"
-        style={{ maxWidth: '40vw' }}
+        style={{ maxWidth: "40vw" }}
       />
     </div>
   );

@@ -1,21 +1,21 @@
-import { prisma } from '~/db.server';
-import type { FirstParam } from './utils';
-import type { Collection } from 'prisma/prisma-client';
-import invariant from 'tiny-invariant';
+import { prisma } from "~/db.server";
+import type { FirstParam } from "./utils";
+import type { Collection } from "prisma/prisma-client";
+import invariant from "tiny-invariant";
 export type { Collection };
 
 export async function createDefaultCollections(userId: string) {
   return prisma.$transaction([
     prisma.collection.create({
       data: {
-        title: 'Bookmarked',
+        title: "Bookmarked",
         bookmarked: true,
         userId,
       },
     }),
     prisma.collection.create({
       data: {
-        title: 'Read',
+        title: "Read",
         read: true,
         userId,
       },
@@ -77,18 +77,18 @@ export async function deleteCollectionCategory({
   return prisma.collection.update({
     where: { id },
     data: {
-      category: collection.category?.replace(category, '')?.replace('//', '/'),
+      category: collection.category?.replace(category, "")?.replace("//", "/"),
     },
   });
 }
 
 export function getBooleanValue(input: string | null) {
   switch (input) {
-    case 'null':
+    case "null":
       return null;
-    case 'false':
+    case "false":
       return false;
-    case 'true':
+    case "true":
       return true;
     default:
       return null;

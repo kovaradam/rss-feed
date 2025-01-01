@@ -1,7 +1,7 @@
-import { getChannels, refreshChannel } from '~/models/channel.server';
-import { requireUser } from '~/session.server';
-import type { Route } from './+types/api.refresh-channels';
-import { useChannelRefreshFetcher } from '~/data/useChannelRefreshFetcher';
+import { getChannels, refreshChannel } from "~/models/channel.server";
+import { requireUser } from "~/session.server";
+import type { Route } from "./+types/api.refresh-channels";
+import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 
 export async function action({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -21,10 +21,10 @@ export async function action({ request }: Route.LoaderArgs) {
               signal: request.signal,
             });
           } catch (error) {
-            if ((error as Error).name === 'AbortError') {
+            if ((error as Error).name === "AbortError") {
               return;
             }
-            console.error('update failed', error);
+            console.error("update failed", error);
             return null;
           }
         })
@@ -32,7 +32,7 @@ export async function action({ request }: Route.LoaderArgs) {
       return {
         newItemCount: results
           .map((result) =>
-            result.status === 'fulfilled' ? result.value?.newItemCount ?? 0 : 0
+            result.status === "fulfilled" ? result.value?.newItemCount ?? 0 : 0
           )
           .reduce((prev, next) => prev + (next ?? 0), 0),
       };

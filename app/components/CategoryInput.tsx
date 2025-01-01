@@ -1,11 +1,11 @@
-import { PlusIcon } from '@heroicons/react/outline';
-import React, { useId } from 'react';
-import { Button } from './Button';
-import { ChannelCategories } from './ChannelCategories';
-import { Tooltip } from './Tooltip';
-import { WithFormLabel } from './WithFormLabel';
-import { ClientOnly } from './ClientOnly';
-import { styles } from '../styles/shared';
+import { PlusIcon } from "@heroicons/react/outline";
+import React, { useId } from "react";
+import { Button } from "./Button";
+import { ChannelCategories } from "./ChannelCategories";
+import { Tooltip } from "./Tooltip";
+import { WithFormLabel } from "./WithFormLabel";
+import { ClientOnly } from "./ClientOnly";
+import { styles } from "../styles/shared";
 
 type CategoryInputProps = {
   name: string;
@@ -16,7 +16,7 @@ type CategoryInputProps = {
 
 export function CategoryInput(props: CategoryInputProps): JSX.Element {
   const [category, setCategory] = React.useState(props.defaultValue);
-  const [inputValue, setInputValue] = React.useState('');
+  const [inputValue, setInputValue] = React.useState("");
 
   const deleteCategory: React.MouseEventHandler<HTMLButtonElement> = (
     event
@@ -25,19 +25,19 @@ export function CategoryInput(props: CategoryInputProps): JSX.Element {
 
     setCategory((prev) =>
       prev
-        .split('/')
+        .split("/")
         .filter((category) => category !== categoryToRemove)
-        .join('/')
+        .join("/")
     );
   };
 
   const addCategory = () => {
     setCategory((prev) => {
-      if (prev.split('/').find((prevCategory) => prevCategory === inputValue)) {
+      if (prev.split("/").find((prevCategory) => prevCategory === inputValue)) {
         return prev;
       }
-      setInputValue('');
-      return prev.concat('/').concat(inputValue).concat('/');
+      setInputValue("");
+      return prev.concat("/").concat(inputValue).concat("/");
     });
   };
 
@@ -64,7 +64,7 @@ export function CategoryInput(props: CategoryInputProps): JSX.Element {
           value={inputValue}
           onChange={(e) => setInputValue(e.currentTarget.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               e.preventDefault();
               addCategory();
             }
@@ -89,7 +89,7 @@ export function CategoryInput(props: CategoryInputProps): JSX.Element {
       </div>
       <noscript>
         <p className="text-sm text-slate-700">
-          To add multiple categories, join them with symbol &quot;/&quot;, e. g.{' '}
+          To add multiple categories, join them with symbol &quot;/&quot;, e. g.{" "}
           <span className="bg-gray-50">gardening/sports</span>.
         </p>
       </noscript>
@@ -98,7 +98,7 @@ export function CategoryInput(props: CategoryInputProps): JSX.Element {
         <input
           value={
             inputValue
-              ? `${category}${category.endsWith('/') ? '' : '/'}${inputValue}`
+              ? `${category}${category.endsWith("/") ? "" : "/"}${inputValue}`
               : category
           }
           type="hidden"
@@ -112,29 +112,29 @@ export function CategoryInput(props: CategoryInputProps): JSX.Element {
 export function getCategoryFormValue(formData: FormData, name: string) {
   const values = formData.getAll(name);
   const uniqueCategories = values
-    .flatMap((value) => (typeof value === 'string' ? value.split('/') : null))
+    .flatMap((value) => (typeof value === "string" ? value.split("/") : null))
     .filter(
       (value, index, array) => value !== null && array.indexOf(value) === index
     );
 
-  return uniqueCategories.join('/');
+  return uniqueCategories.join("/");
 }
 
 if (import.meta.vitest) {
   const { test, expect } = import.meta.vitest;
 
-  test('concatenates multiple values', () => {
+  test("concatenates multiple values", () => {
     const formData = new FormData();
-    formData.append('c', 'a');
-    formData.append('c', 'b');
-    formData.append('c', 'c/d');
-    expect(getCategoryFormValue(formData, 'c')).toBe('a/b/c/d');
+    formData.append("c", "a");
+    formData.append("c", "b");
+    formData.append("c", "c/d");
+    expect(getCategoryFormValue(formData, "c")).toBe("a/b/c/d");
   });
 
-  test('ignores duplicates', () => {
+  test("ignores duplicates", () => {
     const formData = new FormData();
-    formData.append('c', 'a');
-    formData.append('c', 'a');
-    expect(getCategoryFormValue(formData, 'c')).toBe('a');
+    formData.append("c", "a");
+    formData.append("c", "a");
+    expect(getCategoryFormValue(formData, "c")).toBe("a");
   });
 }

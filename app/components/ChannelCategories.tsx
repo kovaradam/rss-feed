@@ -1,7 +1,7 @@
-import { XIcon } from '@heroicons/react/outline';
-import { Link } from 'react-router';
-import type { MouseEventHandler } from 'react';
-import { Tooltip } from './Tooltip';
+import { XIcon } from "@heroicons/react/outline";
+import { Link } from "react-router";
+import type { MouseEventHandler } from "react";
+import { Tooltip } from "./Tooltip";
 
 type Props = {
   category: string;
@@ -10,13 +10,13 @@ type Props = {
 };
 
 const className =
-  'flex gap-1 rounded text-slate-600 p-1 px-2  bg-slate-100 dark:bg-slate-500 dark:text-white';
+  "flex gap-1 rounded text-slate-600 p-1 px-2  bg-slate-100 dark:bg-slate-500 dark:text-white";
 
 export function ChannelCategories(props: Props): JSX.Element {
   return (
     <>
       {props.category
-        .split('/')
+        .split("/")
         .filter(Boolean)
         .map((category) => (
           <span className={className} key={category}>
@@ -47,16 +47,16 @@ export function ChannelCategories(props: Props): JSX.Element {
 }
 
 export function ChannelCategoryLinks(
-  props: Omit<Props, 'delete'>
+  props: Omit<Props, "delete">
 ): JSX.Element {
   return (
     <>
       {props.category
-        .split('/')
+        .split("/")
         .filter(Boolean)
         .map((category) => (
           <Link
-            className={'relative '.concat(className)}
+            className={"relative ".concat(className)}
             key={category}
             to={`/channels?categories=${category}`}
           >

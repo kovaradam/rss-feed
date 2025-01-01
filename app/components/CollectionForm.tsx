@@ -1,18 +1,18 @@
-import type { Collection } from '@prisma/client';
+import type { Collection } from "@prisma/client";
 import {
   Form,
   useActionData,
   useLoaderData,
   useNavigation,
-} from 'react-router';
-import { styles } from '~/styles/shared';
-import { Button } from './Button';
-import { CategoryInput } from './CategoryInput';
-import { WithFormLabel } from './WithFormLabel';
-import { PageHeading } from './PageHeading';
-import { SubmitSection } from './SubmitSection';
-import { TrashIcon } from '@heroicons/react/outline';
-import { HistoryStack } from '~/utils/history-stack';
+} from "react-router";
+import { styles } from "~/styles/shared";
+import { Button } from "./Button";
+import { CategoryInput } from "./CategoryInput";
+import { WithFormLabel } from "./WithFormLabel";
+import { PageHeading } from "./PageHeading";
+import { SubmitSection } from "./SubmitSection";
+import { TrashIcon } from "@heroicons/react/outline";
+import { HistoryStack } from "~/utils/history-stack";
 
 const inputClassName = styles.input;
 
@@ -25,7 +25,7 @@ export function CollectionForm<
     defaultValue?: Collection;
   },
   ActionData extends {
-    errors: Partial<Record<'title', string | null>> | undefined;
+    errors: Partial<Record<"title", string | null>> | undefined;
   }
 >(props: Props): JSX.Element {
   const errors = useActionData<ActionData>()?.errors;
@@ -33,11 +33,11 @@ export function CollectionForm<
   const data = useLoaderData<LoaderData>();
 
   const isSaving =
-    transition.state !== 'idle' && transition.formMethod === 'POST';
+    transition.state !== "idle" && transition.formMethod === "POST";
 
   const isDeleting =
-    transition.state !== 'idle' &&
-    transition.formData?.get('action') === 'delete';
+    transition.state !== "idle" &&
+    transition.formData?.get("action") === "delete";
 
   const backEntry = HistoryStack.useStack()[1];
 
@@ -56,7 +56,7 @@ export function CollectionForm<
             >
               <TrashIcon className="w-4" />
               <span className="pointer-events-none hidden md:block">
-                {isDeleting ? 'Deleting...' : 'Delete collection'}
+                {isDeleting ? "Deleting..." : "Delete collection"}
               </span>
             </Button>
           </Form>
@@ -67,12 +67,12 @@ export function CollectionForm<
         {/* To prevent submitting with category-delete buttons */}
         <input type="submit" hidden />
         <div>
-          <WithFormLabel label={'Title'} required htmlFor="title">
+          <WithFormLabel label={"Title"} required htmlFor="title">
             {(field) => (
               <input
                 id={field.htmlFor}
-                name={'title'}
-                defaultValue={data.defaultValue?.title ?? ''}
+                name={"title"}
+                defaultValue={data.defaultValue?.title ?? ""}
                 required={field.required}
                 className={inputClassName}
               />
@@ -88,21 +88,21 @@ export function CollectionForm<
         {(
           [
             {
-              label: 'Read status',
-              name: 'read',
+              label: "Read status",
+              name: "read",
               values: [
-                { label: 'Ignore', value: null },
-                { label: 'Include only read articles', value: true },
-                { label: 'Exclude read articles', value: false },
+                { label: "Ignore", value: null },
+                { label: "Include only read articles", value: true },
+                { label: "Exclude read articles", value: false },
               ],
             },
             {
-              label: 'Bookmark status',
-              name: 'bookmarked',
+              label: "Bookmark status",
+              name: "bookmarked",
               values: [
-                { label: 'Ignore', value: null },
-                { label: 'Include only bookmarked articles', value: true },
-                { label: 'Exclude bookmarked articles', value: false },
+                { label: "Ignore", value: null },
+                { label: "Include only bookmarked articles", value: true },
+                { label: "Exclude bookmarked articles", value: false },
               ],
             },
           ] as const
@@ -136,8 +136,8 @@ export function CollectionForm<
 
         <CategoryInput
           categorySuggestions={data.categories}
-          defaultValue={data.defaultValue?.category ?? ''}
-          name={'category'}
+          defaultValue={data.defaultValue?.category ?? ""}
+          name={"category"}
         />
 
         <WithFormLabel label="Language">
@@ -145,10 +145,10 @@ export function CollectionForm<
             <>
               <input
                 id={htmlFor}
-                name={'language'}
+                name={"language"}
                 className={inputClassName}
                 list="language-suggestions"
-                defaultValue={data.defaultValue?.language ?? ''}
+                defaultValue={data.defaultValue?.language ?? ""}
               />
               <datalist id="language-suggestions">
                 {data.languages.map((language) => (
@@ -162,12 +162,12 @@ export function CollectionForm<
         <SubmitSection
           cancelProps={{
             to: data.defaultValue?.id
-              ? '/channels/collections/'.concat(data.defaultValue?.id ?? '')
-              : backEntry?.href ?? '/channels',
+              ? "/channels/collections/".concat(data.defaultValue?.id ?? "")
+              : backEntry?.href ?? "/channels",
             scriptOnly: true,
           }}
           submitProps={{
-            children: props.isEditForm ? 'Save changes' : 'Create collection',
+            children: props.isEditForm ? "Save changes" : "Create collection",
           }}
           isSubmitting={isSaving}
         />

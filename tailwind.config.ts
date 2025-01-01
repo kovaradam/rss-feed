@@ -1,27 +1,27 @@
-import type { Config } from 'tailwindcss';
-import plugin from 'tailwindcss/plugin';
+import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
-  content: ['./app/**/{**,.client,.server}/**/*.{ts,tsx}'],
+  content: ["./app/**/{**,.client,.server}/**/*.{ts,tsx}"],
   theme: {
     extend: {
       lineClamp: {
-        10: '10',
+        10: "10",
       },
       colors: {
-        accent: '#ff5678',
-        background: 'bg-yellow-50',
+        accent: "#ff5678",
+        background: "bg-yellow-50",
       },
     },
   },
   variants: {
     extend: {
-      lineClamp: ['hover'],
+      lineClamp: ["hover"],
     },
   },
   plugins: [
     plugin(({ addVariant }) => {
-      addVariant('active-select-item', '&[data-active-item]');
+      addVariant("active-select-item", "&[data-active-item]");
     }),
   ],
 } satisfies Config;

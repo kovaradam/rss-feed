@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import useOnMount from './use-on-mount';
+import useOnMount from "./use-on-mount";
 
 import type {
   HookOptions,
@@ -8,7 +8,7 @@ import type {
   PlayFunction,
   ReturnedValue,
   ExposedData,
-} from './types';
+} from "./types";
 
 export default function useSound<T = any>(
   src: string | string[],
@@ -30,7 +30,7 @@ export default function useSound<T = any>(
   const [sound, setSound] = React.useState<Howl | null>(null);
 
   const handleLoad = function () {
-    if (typeof onload === 'function') {
+    if (typeof onload === "function") {
       // @ts-ignore
       onload.call(this);
     }
@@ -46,7 +46,7 @@ export default function useSound<T = any>(
 
   // We want to lazy-load Howler, since sounds can't play on load anyway.
   useOnMount(() => {
-    import('howler').then((mod) => {
+    import("howler").then((mod) => {
       if (!isMounted.current) {
         // Depending on the module system used, `mod` might hold
         // the export directly, or it might be under `default`.
@@ -108,7 +108,7 @@ export default function useSound<T = any>(
 
   const play: PlayFunction = React.useCallback(
     (options?: PlayOptions) => {
-      if (typeof options === 'undefined') {
+      if (typeof options === "undefined") {
         options = {};
       }
 
@@ -129,7 +129,7 @@ export default function useSound<T = any>(
     [sound, soundEnabled, interrupt]
   );
 
-  const stop: ExposedData['stop'] = React.useCallback(
+  const stop: ExposedData["stop"] = React.useCallback(
     (id) => {
       if (!sound) {
         return;
@@ -139,7 +139,7 @@ export default function useSound<T = any>(
     [sound]
   );
 
-  const pause: ExposedData['pause'] = React.useCallback(
+  const pause: ExposedData["pause"] = React.useCallback(
     (id) => {
       if (!sound) {
         return;

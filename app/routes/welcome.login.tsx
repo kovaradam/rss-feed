@@ -1,6 +1,6 @@
-import type { Route } from './+types/welcome.login';
+import type { Route } from "./+types/welcome.login";
 
-import type { MetaFunction } from 'react-router';
+import type { MetaFunction } from "react-router";
 import {
   data,
   redirect,
@@ -8,24 +8,24 @@ import {
   Link,
   useSearchParams,
   useNavigation,
-} from 'react-router';
-import * as React from 'react';
+} from "react-router";
+import * as React from "react";
 
-import { createUserSession, getUserId } from '~/session.server';
-import { verifyLogin } from '~/models/user.server';
-import { isSubmitting, safeRedirect, validateEmail } from '~/utils';
-import { SubmitButton } from '~/components/Button';
-import { styles } from '~/styles/shared';
-import { WithFormLabel } from '~/components/WithFormLabel';
+import { createUserSession, getUserId } from "~/session.server";
+import { verifyLogin } from "~/models/user.server";
+import { isSubmitting, safeRedirect, validateEmail } from "~/utils";
+import { SubmitButton } from "~/components/Button";
+import { styles } from "~/styles/shared";
+import { WithFormLabel } from "~/components/WithFormLabel";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
 
   if (userId) {
-    throw redirect('/');
+    throw redirect("/");
   }
   return {
-    isFirst: Boolean(new URL(request.url).searchParams.get('first')),
+    isFirst: Boolean(new URL(request.url).searchParams.get("first")),
   };
 };
 
@@ -38,29 +38,29 @@ interface ActionData {
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
-  const email = formData.get('email');
-  const password = formData.get('password');
-  const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
-  const remember = formData.get('remember');
+  const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
     return data<ActionData>(
-      { errors: { email: 'Email is invalid' } },
+      { errors: { email: "Email is invalid" } },
       { status: 400 }
     );
   }
 
-  if (typeof password !== 'string' || password.length === 0) {
+  if (typeof password !== "string" || password.length === 0) {
     return data<ActionData>(
-      { errors: { password: 'Password is required' } },
+      { errors: { password: "Password is required" } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return data<ActionData>(
-      { errors: { password: 'Password is too short' } },
+      { errors: { password: "Password is too short" } },
       { status: 400 }
     );
   }
@@ -69,7 +69,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   if (!user) {
     return data<ActionData>(
-      { errors: { email: 'Invalid email or password' } },
+      { errors: { email: "Invalid email or password" } },
       { status: 400 }
     );
   }
@@ -77,7 +77,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   return createUserSession({
     request,
     userId: user.id,
-    remember: remember === 'on' ? true : false,
+    remember: remember === "on" ? true : false,
     redirectTo,
   });
 };
@@ -85,7 +85,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 export const meta: MetaFunction = () => {
   return [
     {
-      title: 'Login',
+      title: "Login",
     },
   ];
 };
@@ -95,7 +95,7 @@ export default function LoginPage({
   actionData,
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/channels';
+  const redirectTo = searchParams.get("redirectTo") || "/channels";
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const transition = useNavigation();
@@ -112,14 +112,14 @@ export default function LoginPage({
     <>
       <div>
         <h1 className="my-2 text-4xl font-bold dark:text-white">
-          {loaderData.isFirst ? 'Welcome!' : 'Welcome back!'}
+          {loaderData.isFirst ? "Welcome!" : "Welcome back!"}
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <Link
             className="font-bold underline"
             to={{
-              pathname: '/welcome',
+              pathname: "/welcome",
               search: searchParams.toString(),
             }}
           >
@@ -131,25 +131,25 @@ export default function LoginPage({
         <Form method="post" className="space-y-6">
           {[
             {
-              label: 'Email address',
-              placeholder: 'name@example.com',
+              label: "Email address",
+              placeholder: "name@example.com",
               ref: emailRef,
-              id: 'email',
-              name: 'email',
-              type: 'email',
+              id: "email",
+              name: "email",
+              type: "email",
               ariaInvalid: actionData?.errors?.email ? true : undefined,
-              ariaDescribedBy: 'email-error',
+              ariaDescribedBy: "email-error",
               error: actionData?.errors?.email,
             },
             {
-              label: 'Password',
+              label: "Password",
               placeholder: undefined,
               ref: passwordRef,
-              id: 'password',
-              name: 'password',
-              type: 'password',
+              id: "password",
+              name: "password",
+              type: "password",
               ariaInvalid: actionData?.errors?.password ? true : undefined,
-              ariaDescribedBy: 'password-error',
+              ariaDescribedBy: "password-error",
               error: actionData?.errors?.password,
             },
           ].map((formField) => (
@@ -187,7 +187,7 @@ export default function LoginPage({
                 id="remember"
                 name="remember"
                 type="checkbox"
-                className={'h-4 w-4 '}
+                className={"h-4 w-4 "}
               />
               <label
                 htmlFor="remember"

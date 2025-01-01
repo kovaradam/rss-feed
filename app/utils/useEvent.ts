@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFunction = (...args: any[]) => any;
@@ -8,7 +8,7 @@ type AnyFunction = (...args: any[]) => any;
  */
 export function useEvent<T extends AnyFunction>(callback?: T) {
   const ref = React.useRef<AnyFunction | undefined>(() => {
-    throw new Error('Cannot call an event handler while rendering.');
+    throw new Error("Cannot call an event handler while rendering.");
   });
   React.useEffect(() => {
     ref.current = callback;

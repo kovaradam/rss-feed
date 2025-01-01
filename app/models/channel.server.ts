@@ -1,9 +1,9 @@
-import { prisma } from '~/db.server';
-import type { Channel, Collection, Item, User } from '@prisma/client';
-import type { ItemParseResult } from './parse-xml';
-import { parseChannelXml } from './parse-xml';
-import invariant from 'tiny-invariant';
-import { JSDOM } from 'jsdom';
+import { prisma } from "~/db.server";
+import type { Channel, Collection, Item, User } from "@prisma/client";
+import type { ItemParseResult } from "./parse-xml";
+import { parseChannelXml } from "./parse-xml";
+import invariant from "tiny-invariant";
+import { JSDOM } from "jsdom";
 
 export type { Channel, Item };
 
@@ -18,12 +18,12 @@ export async function createChannelFromXml(
   try {
     [channel, items] = await parseChannelXml(xmlInput);
 
-    invariant(channel.link, 'Link is missing in the RSS definition');
+    invariant(channel.link, "Link is missing in the RSS definition");
     invariant(
-      typeof channel.link === 'string',
-      'Link has been parsed in wrong format'
+      typeof channel.link === "string",
+      "Link has been parsed in wrong format"
     );
-    invariant(channel.title, 'Title is missing in the RSS definition');
+    invariant(channel.title, "Title is missing in the RSS definition");
   } catch (_) {
     throw new IncorrectDefinitionError();
   }
@@ -70,8 +70,8 @@ export async function createChannelFromXml(
 }
 
 export async function createChanel(input: {
-  userId: User['id'];
-  channel: Omit<Channel, 'userId'>;
+  userId: User["id"];
+  channel: Omit<Channel, "userId">;
   items: ItemParseResult;
 }) {
   return prisma.channel.create({
@@ -160,8 +160,8 @@ export async function updateChannel(
 ) {
   invariant(await getChannel({ where: { id: params.where.id, userId } }));
   let { category } = params.data;
-  if (typeof category === 'string') {
-    category = category.split('/').filter(Boolean).join('/');
+  if (typeof category === "string") {
+    category = category.split("/").filter(Boolean).join("/");
     if (category) {
       params.data.category = `/${category}/`;
     }
@@ -185,7 +185,7 @@ export async function deleteChannelCategory({
   return prisma.channel.update({
     where: { id },
     data: {
-      category: channel.category.replace(category, '').replace('//', '/'),
+      category: channel.category.replace(category, "").replace("//", "/"),
     },
   });
 }
@@ -195,7 +195,7 @@ export async function getChannels(
 ) {
   return prisma.channel.findMany({
     ...params,
-    orderBy: { title: 'asc', ...params?.orderBy },
+    orderBy: { title: "asc", ...params?.orderBy },
   });
 }
 
@@ -206,7 +206,7 @@ export async function deleteChannels() {
 export function deleteChannel({
   id,
   userId,
-}: Pick<Channel, 'id'> & { userId: User['id'] }) {
+}: Pick<Channel, "id"> & { userId: User["id"] }) {
   return prisma.channel.deleteMany({
     where: { id, userId },
   });
@@ -243,7 +243,7 @@ export async function getQuotesByUser(
   return prisma.$transaction([
     prisma.quote.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       select: {
         content: true,
         createdAt: true,
@@ -279,7 +279,7 @@ export async function getQuotesByItem(
   return prisma.$transaction([
     prisma.quote.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: params?.count ? Math.min(params?.count, 1000) : undefined,
     }),
     prisma.quote.count({ where }),
@@ -314,7 +314,7 @@ export async function updateChannelItem(
   params: Parameters<typeof prisma.item.update>[0]
 ) {
   const itemId = params.where.id;
-  invariant(await getChannelItem(itemId ?? '', userId));
+  invariant(await getChannelItem(itemId ?? "", userId));
   return prisma.item.update(params);
 }
 
@@ -322,14 +322,14 @@ export async function getItemsByCollection(
   {
     collectionId,
     userId,
-  }: { collectionId: Collection['id']; userId: User['id'] },
+  }: { collectionId: Collection["id"]; userId: User["id"] },
   params?: Parameters<typeof prisma.item.findMany>[0]
 ) {
   const collection = await prisma.collection.findFirst({
     where: { id: collectionId },
   });
 
-  const categories = collection?.category?.split('/').filter(Boolean);
+  const categories = collection?.category?.split("/").filter(Boolean);
 
   return prisma.item.findMany({
     ...params,
@@ -353,7 +353,7 @@ export async function getItemsByCollection(
 
 export type ChannelItemsFilter = Parameters<
   typeof getItemsByFilters
->[0]['filters'];
+>[0]["filters"];
 
 export async function getItemsByFilters(
   {
@@ -369,7 +369,7 @@ export async function getItemsByFilters(
       excludeHiddenFromFeed: boolean | null;
       search: string | null;
     };
-    userId: User['id'];
+    userId: User["id"];
   },
   params?: Parameters<typeof prisma.item.findMany>[0]
 ) {
@@ -399,7 +399,7 @@ export async function getItemsByFilters(
             }
           : undefined,
 
-      ...getItemQueryFilter(filters.search ?? ''),
+      ...getItemQueryFilter(filters.search ?? ""),
     },
   });
 
@@ -442,7 +442,7 @@ async function getChannelPageMeta(url: string, signal: AbortSignal) {
 
   function getContent(selector: string) {
     const node = window.document.querySelector(selector);
-    return node?.getAttribute('content');
+    return node?.getAttribute("content");
   }
 
   return {

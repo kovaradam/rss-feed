@@ -1,13 +1,13 @@
-import React from 'react';
+import React from "react";
 
 export function useChannelRefreshFetcher() {
   const status = React.useSyncExternalStore(
     RefreshFetcherStore.subscribe,
     RefreshFetcherStore.getStatus,
-    () => 'idle' as const
+    () => "idle" as const
   );
 
-  if (typeof status === 'number') {
+  if (typeof status === "number") {
     return {
       newItemCount: status,
       refresh: RefreshFetcherStore.refresh,
@@ -19,22 +19,22 @@ export function useChannelRefreshFetcher() {
   };
 }
 
-useChannelRefreshFetcher.path = '/api/refresh-channels';
-useChannelRefreshFetcher.method = 'PATCH' as const;
-useChannelRefreshFetcher.invalidateMethod = 'PUT' as const;
+useChannelRefreshFetcher.path = "/api/refresh-channels";
+useChannelRefreshFetcher.method = "PATCH" as const;
+useChannelRefreshFetcher.invalidateMethod = "PUT" as const;
 
 class RefreshFetcherStore {
   private static abortController = new AbortController();
   private static listeners: Array<() => void> = [];
-  private static status: 'pending' | 'idle' | number = 'idle';
+  private static status: "pending" | "idle" | number = "idle";
 
   static refresh = async () => {
     // Prevent refresh while fetching to avoid losing results
-    if (this.status === 'pending') {
+    if (this.status === "pending") {
       return;
     }
 
-    this.setStatus('pending');
+    this.setStatus("pending");
 
     try {
       const newChannelCount = await this.fetchRefresh();
@@ -62,7 +62,7 @@ class RefreshFetcherStore {
 
       const newItemCount = data.at(-1);
 
-      if (typeof newItemCount !== 'number') {
+      if (typeof newItemCount !== "number") {
         throw new Error();
       }
 

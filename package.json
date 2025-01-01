@@ -17,9 +17,6 @@
     "prepare": "husky install",
     "test": "vitest run"
   },
-  "prettier": {
-    "singleQuote": true
-  },
   "eslintIgnore": [
     "/node_modules",
     "/build",

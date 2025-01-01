@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import type { MailOptions } from 'nodemailer/lib/json-transport';
+import nodemailer from "nodemailer";
+import type { MailOptions } from "nodemailer/lib/json-transport";
 
 export class Mail {
   private static config: Awaited<ReturnType<typeof createTransporter>>;
@@ -17,10 +17,10 @@ export class Mail {
       to: recipient, // list of receivers
     });
 
-    console.log('Message sent: ', info.messageId, ' rcpt: ', info.accepted);
+    console.log("Message sent: ", info.messageId, " rcpt: ", info.accepted);
 
     // Preview only available when sending through an Ethereal account
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 
     return info;
@@ -28,7 +28,7 @@ export class Mail {
 }
 
 export async function createTransporter() {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
 
   let account;
   if (isProduction) {
@@ -44,7 +44,7 @@ export async function createTransporter() {
 
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
-    host: isProduction ? process.env.SMTP_URL : 'smtp.ethereal.email',
+    host: isProduction ? process.env.SMTP_URL : "smtp.ethereal.email",
     port: isProduction ? 465 : 587,
     auth: {
       user: account.user, // generated ethereal user

@@ -1,21 +1,21 @@
-import { Form, Link, redirect, useNavigation } from 'react-router';
-import { getUserById, sendConfirmEmail } from '~/models/user.server';
-import { requireUserId } from '~/session.server';
-import { createMeta } from '~/utils';
-import type { Route } from './+types/welcome.confirm-email';
+import { Form, Link, redirect, useNavigation } from "react-router";
+import { getUserById, sendConfirmEmail } from "~/models/user.server";
+import { requireUserId } from "~/session.server";
+import { createMeta } from "~/utils";
+import type { Route } from "./+types/welcome.confirm-email";
 
-export const meta = createMeta(() => [{ title: 'Confirm email' }]);
+export const meta = createMeta(() => [{ title: "Confirm email" }]);
 
 export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
-  if (request.method !== 'PATCH') {
-    throw new Response('Not supported', { status: 405 });
+  if (request.method !== "PATCH") {
+    throw new Response("Not supported", { status: 405 });
   }
 
   const user = await getUserById(userId);
 
   if (!user) {
-    throw new Response('Not found', { status: 404 });
+    throw new Response("Not found", { status: 404 });
   }
 
   const mailResult = await sendConfirmEmail(user, request);
@@ -28,10 +28,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUserById(userId);
 
   if (!user?.requestedEmail) {
-    throw redirect('/');
+    throw redirect("/");
   }
 
-  return { user, allowSkip: process.env.NODE_ENV !== 'production' };
+  return { user, allowSkip: process.env.NODE_ENV !== "production" };
 }
 
 export default function ConfirmEmailPage({
@@ -46,18 +46,18 @@ export default function ConfirmEmailPage({
         Please confirm your email address.
       </h1>
       <p>
-        An email with confirmation link has been sent to your address{' '}
+        An email with confirmation link has been sent to your address{" "}
         <a
           href={`mailto:${loaderData.user?.requestedEmail}`}
           className="text-rose-400"
         >
           <b>{loaderData.user?.requestedEmail}</b>
         </a>
-        .{' '}
+        .{" "}
       </p>
       <div className="mt-10 flex w-full gap-2 text-slate-400">
         <Form method="patch">
-          {transition.formMethod === 'PATCH' ? (
+          {transition.formMethod === "PATCH" ? (
             <span>Sending e-mail...</span>
           ) : (
             <>

@@ -4,53 +4,53 @@ import {
   RssIcon,
   TrashIcon,
   UserIcon,
-} from '@heroicons/react/outline';
-import { Link, useFetcher } from 'react-router';
-import { convert } from 'html-to-text';
-import React from 'react';
-import invariant from 'tiny-invariant';
-import { UseAppTitle } from '~/components/AppTitle';
-import { SubmitButton } from '~/components/Button';
-import { ChannelItemDetail } from '~/components/ChannelItemDetail/ChannelItemDetail';
-import { DescriptionList } from '~/components/DescriptionList';
-import { Href } from '~/components/Href';
-import { PageHeading } from '~/components/PageHeading';
-import { ShowMoreLink } from '~/components/ShowMoreLink';
-import { TimeFromNow } from '~/components/TimeFromNow';
-import { WithFormLabel } from '~/components/WithFormLabel';
+} from "@heroicons/react/outline";
+import { Link, useFetcher } from "react-router";
+import { convert } from "html-to-text";
+import React from "react";
+import invariant from "tiny-invariant";
+import { UseAppTitle } from "~/components/AppTitle";
+import { SubmitButton } from "~/components/Button";
+import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
+import { DescriptionList } from "~/components/DescriptionList";
+import { Href } from "~/components/Href";
+import { PageHeading } from "~/components/PageHeading";
+import { ShowMoreLink } from "~/components/ShowMoreLink";
+import { TimeFromNow } from "~/components/TimeFromNow";
+import { WithFormLabel } from "~/components/WithFormLabel";
 import {
   addQuoteToItem,
   deleteQuote,
   getChannelItem,
   getQuotesByItem,
-} from '~/models/channel.server';
-import { requireUserId } from '~/session.server';
-import { styles } from '~/styles/shared';
-import { createMeta } from '~/utils';
-import type { Route } from './+types/channels.$channelId.articles.$itemId';
-import { HistoryStack } from '~/utils/history-stack';
+} from "~/models/channel.server";
+import { requireUserId } from "~/session.server";
+import { styles } from "~/styles/shared";
+import { createMeta } from "~/utils";
+import type { Route } from "./+types/channels.$channelId.articles.$itemId";
+import { HistoryStack } from "~/utils/history-stack";
 
 export const meta = createMeta();
 
 export async function action({ request, params }: Route.ActionArgs) {
-  if (request.method !== 'POST') {
-    throw new Response('Invalid method', { status: 400 });
+  if (request.method !== "POST") {
+    throw new Response("Invalid method", { status: 400 });
   }
   const itemId = params.itemId as string;
   const userId = await requireUserId(request);
   const form = await request.formData();
 
-  if (form.get('action') === 'delete') {
-    const id = form.get('id');
-    invariant(typeof id === 'string');
+  if (form.get("action") === "delete") {
+    const id = form.get("id");
+    invariant(typeof id === "string");
     await deleteQuote(id, userId);
-    return new Response('ok', { status: 200 });
+    return new Response("ok", { status: 200 });
   }
 
-  const quote = form.get('quote');
+  const quote = form.get("quote");
 
-  if (!quote || typeof quote !== 'string') {
-    return { error: 'Please provide a quote content' };
+  if (!quote || typeof quote !== "string") {
+    return { error: "Please provide a quote content" };
   }
 
   const result = await addQuoteToItem(quote, { itemId, userId });
@@ -61,7 +61,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const item = await getChannelItem(params.itemId as string, userId);
-  const countParam = new URL(request.url).searchParams.get('count');
+  const countParam = new URL(request.url).searchParams.get("count");
   const quoteCount =
     !countParam || isNaN(Number(countParam)) ? 30 : Number(countParam);
 
@@ -74,7 +74,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   );
 
   if (!item) {
-    throw new Response('Not found', { status: 404 });
+    throw new Response("Not found", { status: 404 });
   }
 
   return {
@@ -83,7 +83,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     quotes,
     cursor:
       quotes.length < totalQuoteCount
-        ? { name: 'count', value: String(quotes.length + 10) }
+        ? { name: "count", value: String(quotes.length + 10) }
         : null,
   };
 }
@@ -92,13 +92,13 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
   const { item } = loaderData;
 
   const fetcher = useFetcher<typeof action>();
-  const submittedQuote = fetcher.formData?.get('quote');
+  const submittedQuote = fetcher.formData?.get("quote");
   const quotes =
-    typeof submittedQuote === 'string'
+    typeof submittedQuote === "string"
       ? [
           {
             content: submittedQuote,
-            id: 'new',
+            id: "new",
             createdAt: new Date(),
           },
         ].concat(loaderData.quotes)
@@ -108,7 +108,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
     return convert(item.description);
   }, [item.description]);
 
-  const formRef = React.useRef<React.ElementRef<'form'>>(null);
+  const formRef = React.useRef<React.ElementRef<"form">>(null);
 
   const backEntry = HistoryStack.useStack()[1];
 
@@ -119,7 +119,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         to={backEntry?.href ?? `/channels/${item.channelId}`}
         className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
       >
-        <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4 " />{' '}
+        <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4 " />{" "}
         {backEntry?.title ?? item.channel.title}
       </Link>
       <PageHeading>
@@ -131,10 +131,10 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       <DescriptionList className=" py-2">
         {[
           {
-            label: 'Link',
+            label: "Link",
             visuallyHidden: true,
             content: <Href href={item.link} className="break-all" />,
-            id: 'link',
+            id: "link",
           },
           {
             label: (
@@ -147,7 +147,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
                 {item.channel.title}
               </Link>
             ),
-            id: 'channel',
+            id: "channel",
           },
           {
             label: (
@@ -156,7 +156,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
               </>
             ),
             content: item.author,
-            id: 'author',
+            id: "author",
           },
           {
             label: (
@@ -165,7 +165,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
               </>
             ),
             content: <TimeFromNow date={item.pubDate} />,
-            id: 'published',
+            id: "published",
           },
         ].map((entry) => (
           <span className="flex items-start gap-1" key={entry.id}>
@@ -176,7 +176,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
               {entry.label}
             </DescriptionList.Term>
             <DescriptionList.Definition>
-              {entry.content || 'missing'}
+              {entry.content || "missing"}
             </DescriptionList.Definition>
           </span>
         ))}
@@ -186,7 +186,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           </DescriptionList.Term>
           <DescriptionList.Definition>
             <p className="[overflow-wrap:anywhere] dark:text-white">
-              {description || 'missing'}
+              {description || "missing"}
             </p>
           </DescriptionList.Definition>
         </span>
@@ -214,7 +214,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
             </div>
           )}
         </WithFormLabel>
-        {fetcher.data && 'error' in fetcher.data && (
+        {fetcher.data && "error" in fetcher.data && (
           <p className="text-red-700">{fetcher.data?.error}</p>
         )}
       </fetcher.Form>

@@ -39,13 +39,13 @@
   @apply absolute top-0 z-20 h-1 w-0 bg-rose-700 bg-opacity-25;
 }
 
-.progress[data-loading='true'] {
+.progress[data-loading="true"] {
   transition: width var(--duration);
   transition-delay: var(500ms);
   @apply w-full;
 }
 
-.progress[data-loading='true'] div {
+.progress[data-loading="true"] div {
   @apply h-full w-1/2 bg-rose-500;
   animation: progress;
   animation-duration: var(--duration);

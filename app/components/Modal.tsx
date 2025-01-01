@@ -1,9 +1,9 @@
-import type { Props as ReactModalProps } from 'react-modal';
-import { ClientOnly } from './ClientOnly';
-import useSound from '~/utils/use-sound';
-import closeSound from '/sounds/navigation_backward-selection-minimal.wav?url';
-import openSound from '/sounds/navigation_forward-selection-minimal.wav?url';
-import ReactModal from 'react-modal';
+import type { Props as ReactModalProps } from "react-modal";
+import { ClientOnly } from "./ClientOnly";
+import useSound from "~/utils/use-sound";
+import closeSound from "/sounds/navigation_backward-selection-minimal.wav?url";
+import openSound from "/sounds/navigation_forward-selection-minimal.wav?url";
+import ReactModal from "react-modal";
 
 type Props = ReactModalProps;
 
@@ -25,21 +25,21 @@ const RenderModal = (props: Props) => {
       {...props}
       style={{
         content: {
-          top: '30%',
-          left: '50%',
-          transform: 'translate(-50%,-50%)',
-          border: 'none',
-          boxShadow: '0 0.1rem 5rem -1rem #00000061',
-          borderRadius: '0.7rem',
-          padding: '0',
-          height: 'min-content',
-          width: '80ch',
-          maxWidth: '90vw',
+          top: "30%",
+          left: "50%",
+          transform: "translate(-50%,-50%)",
+          border: "none",
+          boxShadow: "0 0.1rem 5rem -1rem #00000061",
+          borderRadius: "0.7rem",
+          padding: "0",
+          height: "min-content",
+          width: "80ch",
+          maxWidth: "90vw",
           ...props.style?.content,
         },
         overlay: {
-          zIndex: '20',
-          backgroundColor: '#00000075',
+          zIndex: "20",
+          backgroundColor: "#00000075",
           ...props.style?.overlay,
         },
       }}

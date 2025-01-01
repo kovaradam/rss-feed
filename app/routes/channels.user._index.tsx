@@ -1,5 +1,5 @@
-import { requireUser } from '~/session.server';
-import { Form, useNavigation } from 'react-router';
+import { requireUser } from "~/session.server";
+import { Form, useNavigation } from "react-router";
 import {
   BookmarkIcon,
   ClockIcon,
@@ -8,39 +8,39 @@ import {
   TrashIcon,
   VolumeOffIcon,
   VolumeUpIcon,
-} from '@heroicons/react/outline';
-import { Button, SubmitButton } from '~/components/Button';
-import { AsideWrapper } from '~/components/AsideWrapper';
-import { updateUser } from '~/models/user.server';
-import { ChannelCategoryLinks } from '~/components/ChannelCategories';
-import { getChannels } from '~/models/channel.server';
-import { Modal } from '~/components/Modal';
-import React from 'react';
-import { PageHeading } from '~/components/PageHeading';
-import { UseAppTitle } from '~/components/AppTitle';
-import confirmSound from '/sounds/state-change_confirm-up.wav?url';
-import { useSound } from '~/utils/use-sound';
-import type { Route } from './+types/channels.user._index';
+} from "@heroicons/react/outline";
+import { Button, SubmitButton } from "~/components/Button";
+import { AsideWrapper } from "~/components/AsideWrapper";
+import { updateUser } from "~/models/user.server";
+import { ChannelCategoryLinks } from "~/components/ChannelCategories";
+import { getChannels } from "~/models/channel.server";
+import { Modal } from "~/components/Modal";
+import React from "react";
+import { PageHeading } from "~/components/PageHeading";
+import { UseAppTitle } from "~/components/AppTitle";
+import confirmSound from "/sounds/state-change_confirm-up.wav?url";
+import { useSound } from "~/utils/use-sound";
+import type { Route } from "./+types/channels.user._index";
 
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
 
-  if (request.method === 'POST') {
+  if (request.method === "POST") {
     const updatedUser = updateUser(user.id, {
       soundsAllowed: !user.soundsAllowed,
     });
     return { user: updatedUser };
   }
-  throw new Response('Not allowed', { status: 405 });
+  throw new Response("Not allowed", { status: 405 });
 }
 
 export async function loader(args: Route.LoaderArgs) {
   const user = await requireUser(args.request);
   const channels = await getChannels({ where: { userId: user.id } });
   const categories = channels
-    .flatMap((channel) => channel.category.split('/').filter(Boolean))
+    .flatMap((channel) => channel.category.split("/").filter(Boolean))
     .filter((category, idx, array) => array.indexOf(category) === idx)
-    .join('/');
+    .join("/");
   return { user: user, categories };
 }
 
@@ -59,19 +59,19 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
           <dl>
             {[
               {
-                label: 'Registered on',
+                label: "Registered on",
                 value: new Date(user.createdAt).toLocaleDateString(),
                 icon: <ClockIcon className="h-4" />,
               },
               {
-                label: 'Categories',
+                label: "Categories",
                 icon: <BookmarkIcon className="h-4" />,
                 value: categories ? (
                   <span className="flex flex-wrap gap-1 ">
                     <ChannelCategoryLinks category={categories} />
                   </span>
                 ) : (
-                  'No categories yet'
+                  "No categories yet"
                 ),
               },
             ].map((item) => (
@@ -92,7 +92,7 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
             <Button
               type="submit"
               className="flex h-full  gap-2 sm:w-full"
-              disabled={transition.formMethod === 'PATCH'}
+              disabled={transition.formMethod === "PATCH"}
               onClick={() => {
                 if (!user.soundsAllowed) {
                   playConfirm();
@@ -101,14 +101,14 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
             >
               {user.soundsAllowed ? (
                 <>
-                  <VolumeOffIcon className="h-6 w-4" />{' '}
+                  <VolumeOffIcon className="h-6 w-4" />{" "}
                   <span className="pointer-events-none hidden sm:block sm:w-full">
                     Disable sounds
                   </span>
                 </>
               ) : (
                 <>
-                  <VolumeUpIcon className="h-6 w-4" />{' '}
+                  <VolumeUpIcon className="h-6 w-4" />{" "}
                   <span className="pointer-events-none hidden sm:block sm:w-full">
                     Enable sounds
                   </span>
@@ -118,7 +118,7 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
           </Form>
           <Form action="edit-email">
             <Button type="submit" className="flex h-full gap-2 sm:w-full">
-              <MailIcon className="h-6 w-4" />{' '}
+              <MailIcon className="h-6 w-4" />{" "}
               <span className="pointer-events-none hidden sm:block sm:w-full">
                 Update email
               </span>
@@ -127,7 +127,7 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
           <br />
           <Form action="/logout" method="post">
             <Button type="submit" className="flex gap-2 sm:w-full">
-              <LogoutIcon className="h-6 w-4" />{' '}
+              <LogoutIcon className="h-6 w-4" />{" "}
               <span className="hidden sm:block sm:w-full">Log out</span>
             </Button>
           </Form>
@@ -156,7 +156,7 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
           <Modal
             isOpen={isDeleteDialogOpen}
             onRequestClose={() => setIsDeleteDialogOpen(false)}
-            style={{ content: { maxWidth: '90vw', width: '50ch' } }}
+            style={{ content: { maxWidth: "90vw", width: "50ch" } }}
           >
             <h2 className="text-2xl">Are you sure?</h2>
             <p className="my-4 text-slate-500">
