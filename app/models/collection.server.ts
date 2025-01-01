@@ -63,6 +63,25 @@ export async function deleteCollection(id: string, userId: string) {
   return prisma.collection.delete({ where: { id } });
 }
 
+export async function deleteCollectionCategory({
+  category,
+  id,
+  userId,
+}: {
+  id: string;
+  category: string;
+  userId: string;
+}) {
+  const collection = await getCollection(id, userId);
+  invariant(collection);
+  return prisma.collection.update({
+    where: { id },
+    data: {
+      category: collection.category?.replace(category, '')?.replace('//', '/'),
+    },
+  });
+}
+
 export function getBooleanValue(input: string | null) {
   switch (input) {
     case 'null':

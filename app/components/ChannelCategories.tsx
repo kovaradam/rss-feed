@@ -5,7 +5,8 @@ import { Tooltip } from './Tooltip';
 
 type Props = {
   category: string;
-  delete?: MouseEventHandler<HTMLButtonElement>;
+  onDelete?: MouseEventHandler<HTMLButtonElement>;
+  formName?: string;
 };
 
 const className =
@@ -20,17 +21,24 @@ export function ChannelCategories(props: Props): JSX.Element {
         .map((category) => (
           <span className={className} key={category}>
             {category}
-            {props.delete && (
+            {props.onDelete && (
               <button
-                onClick={props.delete}
+                onClick={(e) => {
+                  e.preventDefault();
+                  props.onDelete?.(e);
+                }}
                 value={category}
-                type="button"
+                name="delete-category"
+                type="submit"
                 aria-label="Remove category"
                 className="relative"
               >
                 <XIcon className="w-4" />
                 <Tooltip />
               </button>
+            )}
+            {props.formName && (
+              <input type="hidden" value={category} name={props.formName} />
             )}
           </span>
         ))}

@@ -133,13 +133,26 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
           </Form>
           <br className="flex-1" />
           <span className="flex-1 sm:hidden" />
+
           <Button
-            className="flex sm:w-full "
+            className="script-only flex sm:w-full "
             onClick={() => setIsDeleteDialogOpen(true)}
           >
             <TrashIcon className="h-6 w-4" />
             <span className="hidden sm:block sm:w-full">Delete account</span>
           </Button>
+
+          <noscript>
+            <Form method="post" action="/logout" className="w-full">
+              <Button className="flex sm:w-full " name="action" value="delete">
+                <TrashIcon className="h-6 w-4" />
+                <span className="hidden sm:block sm:w-full">
+                  Delete account
+                </span>
+              </Button>
+            </Form>
+          </noscript>
+
           <Modal
             isOpen={isDeleteDialogOpen}
             onRequestClose={() => setIsDeleteDialogOpen(false)}
@@ -159,11 +172,13 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
               >
                 <span>Cancel</span>
               </Button>
-              <Form method="delete" action="/logout" className="w-full">
+              <Form method="post" action="/logout" className="w-full">
                 <SubmitButton
                   type="submit"
                   className="w-full whitespace-nowrap "
                   data-silent
+                  name="action"
+                  value="delete"
                 >
                   Yes, Delete
                 </SubmitButton>

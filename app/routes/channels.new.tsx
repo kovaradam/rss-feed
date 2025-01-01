@@ -17,6 +17,7 @@ import { styles } from '~/styles/shared';
 import { createTitle, isSubmitting } from '~/utils';
 import { mapValue } from '~/utils/map-value';
 import type { Route } from './+types/channels.new';
+import { HistoryStack } from '~/utils/history-stack';
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -116,6 +117,8 @@ export default function NewChannelPage({
   const transition = useNavigation();
   const isSaving = isSubmitting(transition);
 
+  const backEntry = HistoryStack.useStack()[1];
+
   return (
     <>
       <UseAppTitle default />
@@ -153,7 +156,7 @@ export default function NewChannelPage({
         </WithFormLabel>
         <SubmitSection
           isSubmitting={isSaving}
-          cancelProps={{ to: '/channels' }}
+          cancelProps={{ to: backEntry?.href ?? '/channels', scriptOnly: true }}
           submitProps={{ children: 'Add channel' }}
         />
       </Form>

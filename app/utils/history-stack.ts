@@ -1,9 +1,13 @@
+import React from 'react';
+
 export class HistoryStack {
   private static historyStackArray: Array<{
     href: string;
     title: string;
     historyLength: number;
   }> = [];
+
+  private static listeners: Array<() => void> = [];
 
   static add = (
     newEntry: Omit<
@@ -13,7 +17,7 @@ export class HistoryStack {
   ) => {
     const lastEntry = this.peek();
     if (!lastEntry) {
-      this.push({ ...newEntry });
+      this.push(newEntry);
       return;
     }
 
@@ -55,6 +59,22 @@ export class HistoryStack {
 
   static clear = () => {
     this.historyStackArray = [];
+  };
+
+  static useStack = () => {
+    React.useSyncExternalStore(
+      this.subscribe,
+      () => this.peek()?.href,
+      () => ''
+    );
+    return this.getStack();
+  };
+
+  private static subscribe = (newListener: (typeof this.listeners)[number]) => {
+    this.listeners = [newListener].concat(this.listeners);
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== newListener);
+    };
   };
 }
 

@@ -1,7 +1,10 @@
 import { Form, useNavigation, redirect, data } from 'react-router';
 import invariant from 'tiny-invariant';
 import { UseAppTitle } from '~/components/AppTitle';
-import { useCategoryInput } from '~/components/CategoryInput';
+import {
+  CategoryInput,
+  getCategoryFormValue,
+} from '~/components/CategoryInput';
 import { PageHeading } from '~/components/PageHeading';
 import { SubmitSection } from '~/components/SubmitSection';
 import { WithFormLabel } from '~/components/WithFormLabel';
@@ -10,19 +13,21 @@ import {
   getChannels,
   updateChannel,
   getChannel,
+  deleteChannelCategory,
 } from '~/models/channel.server';
 import { requireUserId } from '~/session.server';
 import { styles } from '~/styles/shared';
-import { createTitle, isSubmitting } from '~/utils';
+import { createTitle, enumerate, isSubmitting, type ValueOf } from '~/utils';
 import type { Route } from './+types/channels.$channelId.edit';
 
-const _fieldNames = [
+const fieldNames = enumerate([
   'title',
   'description',
   'image-url',
   'category',
   'language',
-] as const;
+  'delete-category',
+]);
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -32,7 +37,7 @@ export const meta = ({ data }: Route.MetaArgs) => {
   ];
 };
 
-type FieldName = (typeof _fieldNames)[number];
+type FieldName = ValueOf<typeof fieldNames>;
 
 type ActionData = {
   errors: Partial<Record<FieldName, string | null>> | undefined;
@@ -58,16 +63,29 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     return data<ActionData>({ errors }, { status: 400 });
   }
 
+  const categoryToDelete = form[fieldNames['delete-category']];
+
   const channel = await updateChannel(userId, {
     where: { id: channelId },
     data: {
       title: form.title as string,
-      category: form.category as string,
+      category: categoryToDelete
+        ? undefined
+        : getCategoryFormValue(formData, fieldNames.category),
       description: form.description ?? '',
       imageUrl: form['image-url'] ?? '',
       language: form.language ?? '',
     },
   });
+
+  if (categoryToDelete) {
+    await deleteChannelCategory({
+      id: channelId,
+      category: categoryToDelete,
+      userId,
+    });
+    return null;
+  }
 
   throw redirect('/channels/'.concat(channel.id));
 };
@@ -123,21 +141,13 @@ export default function Channels({
 
   const isSaving = isSubmitting(transition);
 
-  const { renderCategoryInput, renderCategoryForm } = useCategoryInput({
-    categorySuggestions: categories,
-    defaultValue: channel.category ?? '',
-    fakeInputName: 'new-category',
-    formId: 'new-category-form',
-    name: 'category',
-    autoFocus: inputProps(focusName === 'new-category').autoFocus,
-    inputClassName,
-  });
-
   return (
     <>
       <UseAppTitle>{channel?.title}</UseAppTitle>
       <PageHeading>Edit channel</PageHeading>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
+        {/* To prevent submitting with category-delete buttons */}
+        <input type="submit" hidden />
         <div>
           <WithFormLabel label="Title" required>
             <input
@@ -162,7 +172,13 @@ export default function Channels({
             />
           </WithFormLabel>
         </div>
-        <div>{renderCategoryInput()}</div>
+        <CategoryInput
+          categorySuggestions={categories}
+          defaultValue={channel.category ?? ''}
+          name={'category'}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus={inputProps(focusName === 'new-category').autoFocus}
+        />
         <div>
           <WithFormLabel label="Language">
             <input
@@ -188,7 +204,6 @@ export default function Channels({
           isSubmitting={isSaving}
         />
       </Form>
-      {renderCategoryForm()}
     </>
   );
 }

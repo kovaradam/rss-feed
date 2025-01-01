@@ -170,6 +170,26 @@ export async function updateChannel(
   return prisma.channel.update(params);
 }
 
+export async function deleteChannelCategory({
+  id,
+  category,
+  userId,
+}: {
+  id: string;
+  userId: string;
+  category: string;
+}) {
+  const channel = await getChannel({ where: { id, userId } });
+  invariant(channel);
+
+  return prisma.channel.update({
+    where: { id },
+    data: {
+      category: channel.category.replace(category, '').replace('//', '/'),
+    },
+  });
+}
+
 export async function getChannels(
   params: Parameters<typeof prisma.channel.findMany>[0]
 ) {

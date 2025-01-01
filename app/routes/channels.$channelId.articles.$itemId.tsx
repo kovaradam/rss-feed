@@ -40,9 +40,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const userId = await requireUserId(request);
   const form = await request.formData();
 
-  const intent = form.get('intent');
-
-  if (intent === 'delete') {
+  if (form.get('action') === 'delete') {
     const id = form.get('id');
     invariant(typeof id === 'string');
     await deleteQuote(id, userId);
@@ -112,7 +110,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
 
   const formRef = React.useRef<React.ElementRef<'form'>>(null);
 
-  const backEntry = HistoryStack.peek(1);
+  const backEntry = HistoryStack.useStack()[1];
 
   return (
     <>
@@ -256,9 +254,13 @@ function Quote(props: { content: string; createdAt: Date; id: string }) {
       <div className="flex justify-between text-slate-500 dark:text-slate-400">
         <TimeFromNow date={props.createdAt} />
         <fetcher.Form method="post">
-          <input type="hidden" name="intent" value="delete" />
           <input type="hidden" name="id" value={props.id} />
-          <button type="submit" aria-label="Delete quote">
+          <button
+            type="submit"
+            aria-label="Delete quote"
+            name="action"
+            value="delete"
+          >
             <TrashIcon className="pointer-events-none w-4" />
           </button>
         </fetcher.Form>

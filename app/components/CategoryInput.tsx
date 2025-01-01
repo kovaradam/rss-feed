@@ -1,33 +1,29 @@
 import { PlusIcon } from '@heroicons/react/outline';
-import { Form } from 'react-router';
-import React from 'react';
+import React, { useId } from 'react';
 import { Button } from './Button';
 import { ChannelCategories } from './ChannelCategories';
 import { Tooltip } from './Tooltip';
 import { WithFormLabel } from './WithFormLabel';
+import { ClientOnly } from './ClientOnly';
+import { styles } from '../styles/shared';
 
 type CategoryInputProps = {
-  fakeInputName: string;
   name: string;
-  value: string;
-  setValue: (value: React.SetStateAction<string>) => void;
-  inputValue: string;
-  setInputValue: (value: React.SetStateAction<string>) => void;
+  defaultValue: string;
   autoFocus?: boolean;
-  inputClassName?: string;
   categorySuggestions: string[];
-  formId: string;
 };
 
-const showInputId = 'fake-category-input';
+export function CategoryInput(props: CategoryInputProps): JSX.Element {
+  const [category, setCategory] = React.useState(props.defaultValue);
+  const [inputValue, setInputValue] = React.useState('');
 
-function CategoryInput(props: CategoryInputProps): JSX.Element {
   const deleteCategory: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
     const categoryToRemove = (event.currentTarget as HTMLButtonElement).value;
 
-    props.setValue((prev) =>
+    setCategory((prev) =>
       prev
         .split('/')
         .filter((category) => category !== categoryToRemove)
@@ -35,23 +31,44 @@ function CategoryInput(props: CategoryInputProps): JSX.Element {
     );
   };
 
+  const addCategory = () => {
+    setCategory((prev) => {
+      if (prev.split('/').find((prevCategory) => prevCategory === inputValue)) {
+        return prev;
+      }
+      setInputValue('');
+      return prev.concat('/').concat(inputValue).concat('/');
+    });
+  };
+
+  const fakeInputId = useId();
+
   return (
-    <WithFormLabel label="Category:" htmlFor={showInputId}>
-      <div className="flex gap-1">
-        <ChannelCategories category={props.value} delete={deleteCategory} />
+    <WithFormLabel label="Category:" htmlFor={fakeInputId}>
+      <div className="flex flex-wrap gap-1">
+        <ChannelCategories
+          category={category}
+          onDelete={deleteCategory}
+          formName={props.name}
+        />
       </div>
       <div className="flex gap-2">
         <input
           placeholder="e.g. gardening"
-          name={props.fakeInputName}
+          name={props.name}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={props.autoFocus}
-          className={props.inputClassName}
-          id={showInputId}
-          form={props.formId}
+          className={styles.input}
+          id={fakeInputId}
           list="category-suggestions"
-          value={props.inputValue}
-          onChange={(e) => props.setInputValue(e.currentTarget.value)}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addCategory();
+            }
+          }}
         />
         <datalist id="category-suggestions">
           {props.categorySuggestions.map((category) => (
@@ -61,87 +78,63 @@ function CategoryInput(props: CategoryInputProps): JSX.Element {
           ))}
         </datalist>
         <Button
-          className="relative rounded bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
-          type="submit"
-          form={props.formId}
+          className="script-only relative rounded bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
+          type="button"
           aria-label="Add category"
+          onClick={addCategory}
         >
           <PlusIcon className="w-4 " />
           <Tooltip />
         </Button>
       </div>
+      <noscript>
+        <p className="text-sm text-slate-700">
+          To add multiple categories, join them with symbol &quot;/&quot;, e. g.{' '}
+          <span className="bg-gray-50">gardening/sports</span>.
+        </p>
+      </noscript>
 
-      <input
-        value={
-          props.inputValue
-            ? `${props.value}${props.value.endsWith('/') ? '' : '/'}${
-                props.inputValue
-              }`
-            : props.value
-        }
-        type="hidden"
-        name={props.name}
-      />
+      <ClientOnly>
+        <input
+          value={
+            inputValue
+              ? `${category}${category.endsWith('/') ? '' : '/'}${inputValue}`
+              : category
+          }
+          type="hidden"
+          name={props.name}
+        />
+      </ClientOnly>
     </WithFormLabel>
   );
 }
 
-CategoryInput.Form = CategoryInputForm;
+export function getCategoryFormValue(formData: FormData, name: string) {
+  const values = formData.getAll(name);
+  const uniqueCategories = values
+    .flatMap((value) => (typeof value === 'string' ? value.split('/') : null))
+    .filter(
+      (value, index, array) => value !== null && array.indexOf(value) === index
+    );
 
-function CategoryInputForm(
-  props: Pick<CategoryInputProps, 'formId' | 'setValue' | 'fakeInputName'> & {
-    clearInputValue(): void;
-  }
-): JSX.Element {
-  return (
-    <Form
-      id={props.formId}
-      onSubmit={(event) => {
-        event.preventDefault();
-        const category = new FormData(event.target as HTMLFormElement).get(
-          props.fakeInputName
-        );
-
-        if (typeof category !== 'string') {
-          return;
-        }
-
-        props.setValue((prev) => {
-          if (
-            prev.split('/').find((prevCategory) => prevCategory === category)
-          ) {
-            return prev;
-          }
-          props.clearInputValue();
-          return prev.concat('/').concat(category).concat('/');
-        });
-      }}
-    />
-  );
+  return uniqueCategories.join('/');
 }
 
-export function useCategoryInput({
-  defaultValue,
-  ...props
-}: Omit<
-  CategoryInputProps,
-  'value' | 'setValue' | 'inputValue' | 'setInputValue'
-> & {
-  defaultValue: string;
-}) {
-  const [category, setCategory] = React.useState(defaultValue);
-  const [inputValue, setInputValue] = React.useState('');
+if (import.meta.vitest) {
+  const { test, expect } = import.meta.vitest;
 
-  const state = {
-    value: category,
-    setValue: setCategory,
-    inputValue,
-    setInputValue,
-    clearInputValue: () => setInputValue(''),
-  };
+  test('concatenates multiple values', () => {
+    const formData = new FormData();
+    formData.append('c', 'a');
+    formData.append('c', 'b');
+    formData.append('c', 'c/d');
+    expect(getCategoryFormValue(formData, 'c')).toBe('a/b/c/d');
+  });
 
-  return {
-    renderCategoryInput: () => <CategoryInput {...props} {...state} />,
-    renderCategoryForm: () => <CategoryInputForm {...props} {...state} />,
-  };
+  test('ignores duplicates', () => {
+    const formData = new FormData();
+    formData.append('c', 'a');
+    formData.append('c', 'a');
+    expect(getCategoryFormValue(formData, 'c')).toBe('a');
+  });
 }

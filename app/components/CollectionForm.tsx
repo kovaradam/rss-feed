@@ -7,15 +7,16 @@ import {
 } from 'react-router';
 import { styles } from '~/styles/shared';
 import { Button } from './Button';
-import { useCategoryInput } from './CategoryInput';
+import { CategoryInput } from './CategoryInput';
 import { WithFormLabel } from './WithFormLabel';
 import { PageHeading } from './PageHeading';
 import { SubmitSection } from './SubmitSection';
 import { TrashIcon } from '@heroicons/react/outline';
+import { HistoryStack } from '~/utils/history-stack';
 
 const inputClassName = styles.input;
 
-type Props = { deleteFormId?: string; title: string };
+type Props = { title: string; isEditForm?: boolean };
 
 export function CollectionForm<
   LoaderData extends {
@@ -35,39 +36,36 @@ export function CollectionForm<
     transition.state !== 'idle' && transition.formMethod === 'POST';
 
   const isDeleting =
-    transition.state !== 'idle' && transition.formMethod === 'DELETE';
+    transition.state !== 'idle' &&
+    transition.formData?.get('action') === 'delete';
 
-  const Categories = useCategoryInput({
-    categorySuggestions: data.categories,
-    defaultValue: data.defaultValue?.category ?? '',
-    fakeInputName: 'new-category',
-    formId: 'new-category-form',
-    inputClassName: styles.input,
-    name: 'category',
-  });
-
-  const isEditForm = Boolean(props.deleteFormId);
+  const backEntry = HistoryStack.useStack()[1];
 
   return (
     <div>
       <header className="flex max-w-xl justify-between">
         <PageHeading>{props.title}</PageHeading>
-        {props.deleteFormId && (
-          <Button
-            form={props.deleteFormId}
-            type="submit"
-            disabled={isDeleting}
-            className="flex h-fit items-center gap-2 md:min-w-[20ch]"
-          >
-            <TrashIcon className="w-4" />
-            <span className="pointer-events-none hidden md:block">
-              {isDeleting ? 'Deleting...' : 'Delete collection'}
-            </span>
-          </Button>
+        {props.isEditForm && (
+          <Form method="post">
+            <Button
+              type="submit"
+              disabled={isDeleting}
+              className="flex h-fit items-center gap-2 md:min-w-[20ch]"
+              name="action"
+              value="delete"
+            >
+              <TrashIcon className="w-4" />
+              <span className="pointer-events-none hidden md:block">
+                {isDeleting ? 'Deleting...' : 'Delete collection'}
+              </span>
+            </Button>
+          </Form>
         )}
       </header>
 
       <Form method="post" className="flex max-w-xl flex-col gap-4">
+        {/* To prevent submitting with category-delete buttons */}
+        <input type="submit" hidden />
         <div>
           <WithFormLabel label={'Title'} required htmlFor="title">
             {(field) => (
@@ -136,7 +134,12 @@ export function CollectionForm<
           </div>
         ))}
 
-        <div>{Categories.renderCategoryInput()}</div>
+        <CategoryInput
+          categorySuggestions={data.categories}
+          defaultValue={data.defaultValue?.category ?? ''}
+          name={'category'}
+        />
+
         <WithFormLabel label="Language">
           {({ htmlFor }) => (
             <>
@@ -160,18 +163,15 @@ export function CollectionForm<
           cancelProps={{
             to: data.defaultValue?.id
               ? '/channels/collections/'.concat(data.defaultValue?.id ?? '')
-              : '/channels',
+              : backEntry?.href ?? '/channels',
+            scriptOnly: true,
           }}
           submitProps={{
-            children: isEditForm ? 'Save changes' : 'Create collection',
+            children: props.isEditForm ? 'Save changes' : 'Create collection',
           }}
           isSubmitting={isSaving}
         />
       </Form>
-      {Categories.renderCategoryForm()}
-      {props.deleteFormId && (
-        <Form method="delete" id={props.deleteFormId}></Form>
-      )}
     </div>
   );
 }

@@ -101,18 +101,17 @@ export const loader = async ({
 export const action = async ({ request, params }: Route.ActionArgs) => {
   invariant(params.channelId, 'channelId not found');
   const userId = await requireUserId(request);
+  const formData = await request.formData();
+  const action = formData.get('action');
 
-  if (request.method === 'DELETE') {
+  if (action === 'delete') {
     await deleteChannel({ userId, id: params.channelId });
-
     throw redirect('/channels');
   }
 
-  if (request.method === 'PUT') {
-    return ChannelItemDetailService.handleAction(request);
+  if (ChannelItemDetailService.isChannelItemUpdate(formData)) {
+    return ChannelItemDetailService.handleAction(userId, formData);
   }
-
-  const formData = await request.formData();
 
   if (request.method === 'POST') {
     const updatedParseErrors = {
@@ -292,7 +291,6 @@ export default function ChannelDetailsPage() {
                   updatedAt: channel.updatedAt,
                 },
               }}
-              formMethod="put"
               wrapperClassName=" sm:shadow-none sm:px-0 sm:rounded-none dark:sm:bg-transparent dark:sm:border-b-slate-600 dark:sm:border-b"
             />
             <hr className="hidden dark:block dark:border-slate-600" />
@@ -329,7 +327,7 @@ export default function ChannelDetailsPage() {
         </Link>
         <br />
         <Form
-          method="delete"
+          method="post"
           onSubmit={(event) => {
             if (!confirm('Are you sure?')) {
               event.preventDefault();
@@ -340,7 +338,9 @@ export default function ChannelDetailsPage() {
             type="submit"
             title="Delete this channel"
             className="flex h-full w-fit items-center gap-2 sm:w-full"
-            isLoading={transition.formMethod === 'DELETE'}
+            isLoading={transition.formData?.get('action') === 'delete'}
+            name="action"
+            value="delete"
           >
             <TrashIcon className="w-4" />{' '}
             <span className="pointer-events-none hidden flex-1 text-center sm:block">

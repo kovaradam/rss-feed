@@ -12,18 +12,26 @@ import {
   deleteCollection,
   updateCollection,
   getCollection,
+  deleteCollectionCategory,
 } from '~/models/collection.server';
 import { requireUserId } from '~/session.server';
-import { createTitle, uniqueArrayFilter } from '~/utils';
+import {
+  createTitle,
+  enumerate,
+  uniqueArrayFilter,
+  type ValueOf,
+} from '~/utils';
 import type { Route } from './+types/channels.collections.$collectionId.edit';
+import { getCategoryFormValue } from '~/components/CategoryInput';
 
-const _fieldNames = [
+const fieldNames = enumerate([
   'title',
   'read',
   'bookmarked',
   'category',
   'language',
-] as const;
+  'delete-category',
+]);
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -33,7 +41,7 @@ export const meta = ({ data }: Route.MetaArgs) => {
   ];
 };
 
-type FieldName = (typeof _fieldNames)[number];
+type FieldName = ValueOf<typeof fieldNames>;
 
 type ActionData = {
   errors: Partial<Record<'title', string | null>> | undefined;
@@ -49,7 +57,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     string | null
   >;
 
-  if (request.method === 'DELETE') {
+  if (formData.get('action') === 'delete') {
     await deleteCollection(collectionId, userId);
     throw redirect('/channels');
   }
@@ -63,6 +71,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     return data<ActionData>({ errors }, { status: 400 });
   }
 
+  const categoryToDelete = form[fieldNames['delete-category']];
+
   const collection = await updateCollection(collectionId, userId, {
     where: {},
     data: {
@@ -70,10 +80,21 @@ export const action: ActionFunction = async ({ request, params }) => {
       title: form.title as string,
       bookmarked: getBooleanValue(form.bookmarked),
       read: getBooleanValue(form.read),
-      category: form.category ?? undefined,
+      category: categoryToDelete
+        ? undefined
+        : getCategoryFormValue(formData, fieldNames.category) ?? undefined,
       language: form.language ?? undefined,
     },
   });
+
+  if (categoryToDelete) {
+    await deleteCollectionCategory({
+      id: collectionId,
+      category: categoryToDelete,
+      userId,
+    });
+    return null;
+  }
 
   throw redirect('/channels/collections/'.concat(collection.id));
 };
@@ -126,7 +147,7 @@ export default function EditCollectionPage() {
       <UseAppTitle>{data.defaultValue.title}</UseAppTitle>
       <CollectionForm<LoaderData, ActionData>
         title={'Edit collection'}
-        deleteFormId="delete-form"
+        isEditForm
       />
     </>
   );

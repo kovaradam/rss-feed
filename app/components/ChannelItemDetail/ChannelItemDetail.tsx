@@ -8,7 +8,6 @@ import {
   BookmarkIcon as SolidBookmarkIcon,
   CheckCircleIcon as SolidCheckIcon,
 } from '@heroicons/react/solid';
-import type { FormProps } from 'react-router';
 import { Link, useFetcher } from 'react-router';
 import useSound from '~/utils/use-sound';
 import type { ItemWithChannel } from '~/models/channel.server';
@@ -24,7 +23,6 @@ import { Tooltip } from '../Tooltip';
 
 type Props = {
   item: ItemWithChannel;
-  formMethod: FormProps['method'];
   query?: string;
   hideImage?: boolean;
   wrapperClassName?: string;
@@ -110,7 +108,7 @@ export function ChannelItemDetail(props: Props): JSX.Element {
               playSubmit: bookmarked ? playCancel : playConfirm,
             },
           ].map((formItem) => (
-            <fetcher.Form method={props.formMethod} key={formItem.name}>
+            <fetcher.Form method="post" key={formItem.name}>
               <RequiredFormData itemId={item.id} />
               <input
                 type="hidden"
@@ -124,6 +122,8 @@ export function ChannelItemDetail(props: Props): JSX.Element {
                 data-silent
                 aria-label={formItem.title}
                 onClick={() => formItem.playSubmit()}
+                name="action"
+                value="update-channel-item"
               >
                 <formItem.Icon
                   className={`w-4  ${

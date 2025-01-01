@@ -111,8 +111,11 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export const action = async ({ request }: Route.ActionArgs) => {
-  if (request.method === 'POST') {
-    return ChannelItemDetailService.handleAction(request);
+  const userId = await requireUserId(request);
+  const formData = await request.formData();
+
+  if (ChannelItemDetailService.isChannelItemUpdate(formData)) {
+    return ChannelItemDetailService.handleAction(userId, formData);
   }
 };
 
@@ -202,7 +205,6 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                         : null,
                     },
                   }}
-                  formMethod="post"
                   query={filters.search ?? undefined}
                 />
               </li>

@@ -123,3 +123,20 @@ export function isSubmitting({
 }: ReturnType<typeof useNavigation>) {
   return (state === 'loading' || state === 'submitting') && Boolean(formMethod);
 }
+
+export function enumerate<T extends readonly string[]>(
+  input: [...T]
+): { [key in T[number]]: key } {
+  return Object.fromEntries(input.map((v) => [v, v])) as ReturnType<
+    typeof enumerate<T>
+  >;
+}
+
+export type ValueOf<T extends object> = T[keyof T];
+
+export function classToggle(
+  isApply: boolean | undefined | null,
+  className: string
+) {
+  return isApply ? className : '';
+}
