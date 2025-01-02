@@ -61,7 +61,7 @@ export default function App() {
         />
         <meta
           name="description"
-          content="Keep up with the latest web content using an organized RSS feed."
+          content="Keep up with the latest web content with an RSS feed."
         />
         <meta name="keywords" content="RSS feed, RSS, journal, news" />
         <Meta />
