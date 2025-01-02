@@ -41,10 +41,10 @@ export function CategoryInput(props: CategoryInputProps) {
     });
   };
 
-  const fakeInputId = useId();
+  const inputId = useId();
 
   return (
-    <WithFormLabel label="Category:" htmlFor={fakeInputId}>
+    <WithFormLabel label="Category:" htmlFor={inputId}>
       <div className="flex flex-wrap gap-1">
         <ChannelCategories
           category={category}
@@ -59,7 +59,7 @@ export function CategoryInput(props: CategoryInputProps) {
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={props.autoFocus}
           className={styles.input}
-          id={fakeInputId}
+          id={inputId}
           list="category-suggestions"
           value={inputValue}
           onChange={(e) => setInputValue(e.currentTarget.value)}
@@ -81,7 +81,10 @@ export function CategoryInput(props: CategoryInputProps) {
           className="script-only relative rounded bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
           type="button"
           aria-label="Add category"
-          onClick={addCategory}
+          onClick={() => {
+            addCategory();
+            document.getElementById(inputId)?.focus();
+          }}
         >
           <PlusIcon className="w-4 " />
           <Tooltip />
