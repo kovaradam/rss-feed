@@ -4,7 +4,6 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
   useHref,
   useLoaderData,
   useLocation,
@@ -20,6 +19,7 @@ import type { Route } from "./+types/root";
 import React from "react";
 import { HistoryStack } from "./utils/history-stack";
 import { lastTitle } from "./utils";
+import { useScrollRestoration } from "./utils/use-scroll-restoration";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -51,6 +51,8 @@ export default function App() {
     HistoryStack.add({ href, title: lastTitle });
   }, [href]);
 
+  useScrollRestoration();
+
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>
@@ -78,8 +80,6 @@ export default function App() {
         )}
 
         <Outlet />
-        <ScrollRestoration />
-
         <Scripts />
       </body>
       {data.user?.soundsAllowed && (
