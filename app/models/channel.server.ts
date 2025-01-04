@@ -227,6 +227,12 @@ export async function getChannelItem(itemId: string, userId: string) {
   });
 }
 
+export async function getChannelItemByLink(link: string, userId: string) {
+  return prisma.item.findFirst({
+    where: { link: link, channel: { userId: userId } },
+  });
+}
+
 export async function getQuotesByUser(
   userId: string,
   params?: { query: string | null; count?: number }
