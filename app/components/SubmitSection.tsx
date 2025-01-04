@@ -1,7 +1,7 @@
 import type { LinkProps } from "react-router";
-import { Link } from "react-router";
 import { SubmitButton, buttonStyle } from "./Button";
 import { c } from "~/utils";
+import { BackLink } from "./BackLink";
 
 export function SubmitSection(props: {
   cancelProps: LinkProps & { scriptOnly?: boolean };
@@ -19,7 +19,7 @@ export function SubmitSection(props: {
       >
         {props.submitProps.children}
       </SubmitButton>
-      <Link
+      <BackLink
         {...props.cancelProps}
         className={`${c(
           props.cancelProps?.scriptOnly,
@@ -30,7 +30,7 @@ export function SubmitSection(props: {
         to={props.cancelProps.to}
       >
         {props.cancelProps.children ?? "Cancel"}
-      </Link>
+      </BackLink>
     </div>
   );
 }

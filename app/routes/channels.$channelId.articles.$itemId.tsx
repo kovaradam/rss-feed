@@ -28,7 +28,7 @@ import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.articles.$itemId";
-import { HistoryStack } from "~/utils/history-stack";
+import { BackLink } from "~/components/BackLink";
 
 export const meta = createMeta();
 
@@ -90,7 +90,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
   const { item } = loaderData;
-
   const fetcher = useFetcher<typeof action>();
   const submittedQuote = fetcher.formData?.get("quote");
   const quotes =
@@ -110,18 +109,21 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
 
   const formRef = React.useRef<React.ElementRef<"form">>(null);
 
-  const backEntry = HistoryStack.useStack()[1];
-
   return (
     <>
       <UseAppTitle>Article detail</UseAppTitle>
-      <Link
-        to={backEntry?.href ?? `/channels/${item.channelId}`}
+      <BackLink
         className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
+        to={`/channels/${item.channelId}`}
       >
-        <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4 " />{" "}
-        {backEntry?.title ?? item.channel.title}
-      </Link>
+        {(backEntry) => (
+          <>
+            <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4 " />
+            {backEntry?.title ?? item.channel.title}
+          </>
+        )}
+      </BackLink>
+
       <PageHeading>
         <ChannelItemDetail.Title
           title={item.title}

@@ -46,9 +46,16 @@ export class HistoryStack {
       "historyLength"
     >
   ) => {
-    const newEntry = { ...input, historyLength: globalThis.history?.length };
+    const newEntry = {
+      ...input,
+      historyLength: globalThis.history?.state?.idx,
+    };
 
-    if (this.historyStackArray[0]?.historyLength === newEntry.historyLength) {
+    if (
+      newEntry.historyLength !== undefined &&
+      this.historyStackArray[0]?.historyLength === newEntry.historyLength
+    ) {
+      // replace
       this.historyStackArray[0] = newEntry;
     } else {
       this.historyStackArray = [newEntry]
@@ -88,12 +95,14 @@ if (import.meta.vitest) {
   const { it, expect, beforeEach } = import.meta.vitest;
 
   beforeEach(() => {
-    globalThis.history = { length: 0 } as never;
+    globalThis.history = { state: { idx: 0 } } as never;
     HistoryStack.clear();
   });
 
   const createEntry = (href: string) => {
-    globalThis.history = { length: globalThis.history.length + 1 } as never;
+    globalThis.history = {
+      state: { idx: globalThis.history.state.idx + 1 },
+    } as never;
     return {
       title: `title_${href}`,
       href: href,

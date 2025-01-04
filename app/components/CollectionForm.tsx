@@ -12,7 +12,6 @@ import { WithFormLabel } from "./WithFormLabel";
 import { PageHeading } from "./PageHeading";
 import { SubmitSection } from "./SubmitSection";
 import { TrashIcon } from "@heroicons/react/outline";
-import { HistoryStack } from "~/utils/history-stack";
 
 const inputClassName = styles.input;
 
@@ -38,8 +37,6 @@ export function CollectionForm<
   const isDeleting =
     transition.state !== "idle" &&
     transition.formData?.get("action") === "delete";
-
-  const backEntry = HistoryStack.useStack()[1];
 
   return (
     <div>
@@ -163,7 +160,7 @@ export function CollectionForm<
           cancelProps={{
             to: data.defaultValue?.id
               ? "/channels/collections/".concat(data.defaultValue?.id ?? "")
-              : backEntry?.href ?? "/channels",
+              : "/channels",
             scriptOnly: true,
           }}
           submitProps={{
