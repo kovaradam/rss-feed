@@ -31,6 +31,7 @@ import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 import { getChannels } from "~/models/channel.server";
 import { Tooltip } from "~/components/Tooltip";
 import type { Route } from "./+types/channels";
+import { ChevronUpIcon } from "@heroicons/react/solid";
 
 export const meta = createMeta();
 
@@ -293,7 +294,9 @@ export function ErrorBoundary(props: { error: Error }) {
   return <ErrorMessage>Something went wrong</ErrorMessage>;
 }
 
-function StyledNavLink(props: NavLinkProps) {
+function StyledNavLink(
+  props: React.PropsWithChildren<Omit<NavLinkProps, "children">>
+) {
   return (
     <NavLink
       {...props}
@@ -306,8 +309,24 @@ function StyledNavLink(props: NavLinkProps) {
             : props.className
         }`
       }
+      onClick={(event) => {
+        if (event.currentTarget.getAttribute("aria-current") === "page") {
+          document.body.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }}
     >
-      {props.children}
+      {({ isActive }) => (
+        <>
+          {props.children}
+          <div className="ml-auto flex w-4 items-center">
+            {isActive && (
+              <ChevronUpIcon
+                className={`active-scroll:scale-100 w-5 scale-0 transition-all`}
+              />
+            )}
+          </div>
+        </>
+      )}
     </NavLink>
   );
 }

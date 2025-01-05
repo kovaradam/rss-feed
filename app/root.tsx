@@ -51,6 +51,18 @@ export default function App() {
     HistoryStack.add({ href, title: lastTitle });
   }, [href]);
 
+  React.useEffect(() => {
+    const listener = () => {
+      if (document.body.scrollTop > 200) {
+        document.body.classList.add("scroll");
+      } else {
+        document.body.classList.remove("scroll");
+      }
+    };
+    document.body.addEventListener("scroll", listener);
+    return () => document.body.addEventListener("scroll", listener);
+  }, []);
+
   useScrollRestoration();
 
   return (
