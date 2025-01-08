@@ -96,6 +96,7 @@ export default function ChannelsPage() {
 
   const [channelFilter, setChannelFilter] = React.useState("");
 
+  const hideNavbar = () => setIsNavExpanded(false);
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <div className="flex flex-col sm:overflow-x-visible ">
@@ -110,10 +111,7 @@ export default function ChannelsPage() {
             } duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
             data-nav-sliding-element
           >
-            <NavWrapper
-              isExpanded={isNavExpanded}
-              hide={() => setIsNavExpanded(false)}
-            >
+            <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
                 <h1 className="sticky top-0 z-10 hidden items-end truncate  p-4 font-bold sm:flex sm:text-4xl dark:text-slate-300">
                   <span className="overflow-hidden text-ellipsis">
@@ -128,6 +126,7 @@ export default function ChannelsPage() {
                       }  hover:bg-slate-200 active:bg-slate-300 sm:h-auto sm:py-2 sm:font-bold sm:shadow`
                     }
                     to={"/channels/new"}
+                    hideNavbar={hideNavbar}
                   >
                     <PlusIcon className="w-4 " style={{ strokeWidth: "3px" }} />{" "}
                     Add RSS Channel
@@ -164,7 +163,7 @@ export default function ChannelsPage() {
                   ].map((link) => (
                     <React.Fragment key={link.to}>
                       <hr className="dark:border-slate-800" />
-                      <StyledNavLink to={link.to} end>
+                      <StyledNavLink to={link.to} end hideNavbar={hideNavbar}>
                         {link.content}
                       </StyledNavLink>
                     </React.Fragment>
@@ -178,6 +177,7 @@ export default function ChannelsPage() {
                       <li key={collection.id}>
                         <StyledNavLink
                           to={`/channels/collections/${collection.id}`}
+                          hideNavbar={hideNavbar}
                         >
                           <ArchiveIcon className="w-4" />
                           {collection.title}
@@ -188,6 +188,7 @@ export default function ChannelsPage() {
                       <StyledNavLink
                         className={` hover:bg-slate-100 hover:text-yellow-900 dark:hover:text-slate-300`}
                         to={`/channels/collections/new`}
+                        hideNavbar={hideNavbar}
                       >
                         <PlusIcon className="w-4" />
                         New collection
@@ -236,7 +237,11 @@ export default function ChannelsPage() {
                         )
                         .map((channel) => (
                           <li key={channel.id}>
-                            <StyledNavLink className="block" to={channel.id}>
+                            <StyledNavLink
+                              className="block"
+                              to={channel.id}
+                              hideNavbar={() => setIsNavExpanded(false)}
+                            >
                               <span className="pointer-events-none">
                                 <Highlight
                                   input={channel.title}
@@ -295,7 +300,9 @@ export function ErrorBoundary(props: { error: Error }) {
 }
 
 function StyledNavLink(
-  props: React.PropsWithChildren<Omit<NavLinkProps, "children">>
+  props: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {
+    hideNavbar: () => void;
+  }
 ) {
   return (
     <NavLink
@@ -311,6 +318,7 @@ function StyledNavLink(
       }
       onClick={(event) => {
         if (event.currentTarget.getAttribute("aria-current") === "page") {
+          props.hideNavbar();
           document.body.scrollTo({ top: 0, behavior: "smooth" });
         }
       }}
