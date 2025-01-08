@@ -20,6 +20,7 @@ export function BackLink({ children, ...props }: Props) {
   return React.createElement(
     backEntry ? "button" : Link,
     {
+      type: backEntry ? "button" : undefined,
       ...props,
       onClick: () => {
         if (backEntry) {
