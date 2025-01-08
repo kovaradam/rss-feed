@@ -129,58 +129,60 @@ export default function LoginPage({
       </div>
       <div className={`w-full sm:max-w-md `}>
         <Form method="post" className="space-y-6">
-          {[
-            {
-              label: "Email address",
-              placeholder: "name@example.com",
-              ref: emailRef,
-              id: "email",
-              name: "email",
-              type: "email",
-              ariaInvalid: actionData?.errors?.email ? true : undefined,
-              ariaDescribedBy: "email-error",
-              error: actionData?.errors?.email,
-            },
-            {
-              label: "Password",
-              placeholder: undefined,
-              ref: passwordRef,
-              id: "password",
-              name: "password",
-              type: "password",
-              ariaInvalid: actionData?.errors?.password ? true : undefined,
-              ariaDescribedBy: "password-error",
-              error: actionData?.errors?.password,
-            },
-          ].map((formField) => (
-            <WithFormLabel
-              key={formField.id}
-              htmlFor={formField.id}
-              label={formField.label}
-            >
-              <input
-                ref={formField.ref}
-                id={formField.id}
-                required
-                name={formField.name}
-                type={formField.type}
-                placeholder={formField.placeholder}
-                aria-invalid={formField.ariaInvalid}
-                aria-describedby={formField.ariaDescribedBy}
-                className={styles.input}
-              />
-              {formField.error && (
-                <div
-                  className="pt-1 text-red-800 dark:text-red-400"
-                  id={formField.ariaDescribedBy}
-                >
-                  {formField.error}
-                </div>
-              )}
-            </WithFormLabel>
-          ))}
+          {
+            // eslint-disable-next-line react-compiler/react-compiler
+            [
+              {
+                label: "Email address",
+                placeholder: "name@example.com",
+                ref: emailRef,
+                id: "email",
+                name: "email",
+                type: "email",
+                ariaInvalid: actionData?.errors?.email ? true : undefined,
+                ariaDescribedBy: "email-error",
+                error: actionData?.errors?.email,
+              },
+              {
+                label: "Password",
+                placeholder: undefined,
+                ref: passwordRef,
+                id: "password",
+                name: "password",
+                type: "password",
+                ariaInvalid: actionData?.errors?.password ? true : undefined,
+                ariaDescribedBy: "password-error",
+                error: actionData?.errors?.password,
+              },
+            ].map((formField) => (
+              <WithFormLabel
+                key={formField.id}
+                htmlFor={formField.id}
+                label={formField.label}
+              >
+                <input
+                  ref={formField.ref}
+                  id={formField.id}
+                  required
+                  name={formField.name}
+                  type={formField.type}
+                  placeholder={formField.placeholder}
+                  aria-invalid={formField.ariaInvalid}
+                  aria-describedby={formField.ariaDescribedBy}
+                  className={styles.input}
+                />
+                {formField.error && (
+                  <div
+                    className="pt-1 text-red-800 dark:text-red-400"
+                    id={formField.ariaDescribedBy}
+                  >
+                    {formField.error}
+                  </div>
+                )}
+              </WithFormLabel>
+            ))
+          }
           <input type="hidden" name="redirectTo" value={redirectTo} />
-
           <div className="flex items-center justify-between pb-2">
             <div className="flex items-center">
               <input

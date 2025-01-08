@@ -12,12 +12,15 @@ export function Tooltip(
   }>
 ) {
   const id = React.useId();
-  const elementRef = React.useRef<HTMLDivElement>(null);
+  const [elementRef, setElementRef] = React.useState<HTMLDivElement | null>(
+    null
+  );
   const positionTimeoutRef = React.useRef(-1);
   const [position, setPosition] = React.useState<Position | null>(null);
+
   const getTarget = React.useCallback(
-    () => props.target ?? elementRef.current?.parentElement,
-    [props.target]
+    () => props.target ?? elementRef?.parentElement,
+    [props.target, elementRef]
   );
 
   const show = React.useCallback(() => {
@@ -108,7 +111,9 @@ export function Tooltip(
         bottom: position?.y === "top" ? "100%" : "auto",
       }}
       id={id}
-      ref={elementRef}
+      ref={(e) => {
+        if (e) setElementRef(e);
+      }}
     >
       {getTarget()?.getAttribute("aria-label") ?? props.children}
     </div>
