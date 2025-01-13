@@ -9,6 +9,7 @@ export function UseAppTitle(
   }, [setTitle, props.children]);
   return null;
 }
+
 export function AppTitle(props: { defaultTitle: string }) {
   const { title } = React.useContext(AppTitle.Context);
   return <>{title ?? props.defaultTitle}</>;
