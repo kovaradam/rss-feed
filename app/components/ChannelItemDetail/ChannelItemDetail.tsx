@@ -81,6 +81,7 @@ export function ChannelItemDetail(props: Props) {
             {
               name: ChannelItemDetail.form.names.hiddenFromFeed,
               value: String(!hiddenFromFeed),
+              currentValue: String(hiddenFromFeed),
               Icon: HiddenFromFeedIcon,
               title: hiddenFromFeed ? "Show in feed" : "Hide in feed",
               className: `${
@@ -91,6 +92,7 @@ export function ChannelItemDetail(props: Props) {
             {
               name: ChannelItemDetail.form.names.read,
               value: String(!read),
+              currentValue: String(read),
               Icon: ReadIcon,
               title: !read ? "Mark as read" : "Mark as not read yet",
               className: "hover:bg-green-200 dark:hover:bg-slate-900",
@@ -99,6 +101,7 @@ export function ChannelItemDetail(props: Props) {
             {
               name: ChannelItemDetail.form.names.bookmarked,
               value: String(!bookmarked),
+              currentValue: String(bookmarked),
               Icon: BookmarkIcon,
 
               title: !bookmarked
@@ -107,9 +110,21 @@ export function ChannelItemDetail(props: Props) {
               className: "hover:bg-yellow-100 dark:hover:bg-slate-900",
               playSubmit: bookmarked ? playCancel : playConfirm,
             },
-          ].map((formItem) => (
+          ].map((formItem, _, array) => (
             <fetcher.Form method="post" key={formItem.name}>
               <RequiredFormData itemId={item.id} />
+
+              {array
+                .filter((i) => i.name !== formItem.name)
+                .map((otherItem) => (
+                  <input
+                    key={otherItem.name}
+                    type="hidden"
+                    name={otherItem.name}
+                    value={otherItem.currentValue}
+                  />
+                ))}
+
               <input
                 type="hidden"
                 name={formItem.name}

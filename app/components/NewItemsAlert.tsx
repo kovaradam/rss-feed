@@ -3,14 +3,14 @@ import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 
 export function NewItemsAlert() {
   /** submits mutation that triggers query revalidation */
-  const newItemsFetcher = useFetcher({ key: "refresh-revalidate" });
+  const invalidateFetcher = useFetcher({ key: "refresh-revalidate" });
   /** refreshFetcher does not trigger revalidation */
   const refresh = useChannelRefreshFetcher();
 
-  const isFetchingNewItems = newItemsFetcher?.state !== "idle";
+  const isFetchingNewItems = invalidateFetcher?.state !== "idle";
 
   if (
-    ((refresh.newItemCount ?? 0) === 0 || newItemsFetcher.data) &&
+    ((refresh.newItemCount ?? 0) === 0 || invalidateFetcher.data) &&
     !isFetchingNewItems
   ) {
     return null;
@@ -22,7 +22,7 @@ export function NewItemsAlert() {
         type="submit"
         className="flex h-10 w-full items-center justify-center rounded  bg-white p-2 text-gray-900 shadow-md hover:bg-slate-50 disabled:bg-transparent disabled:shadow-none dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
         onClick={() => {
-          newItemsFetcher.submit(
+          invalidateFetcher.submit(
             {},
             {
               method: useChannelRefreshFetcher.invalidateMethod,

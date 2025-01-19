@@ -1,5 +1,4 @@
 import { FilterIcon } from "@heroicons/react/outline";
-import type { ShouldRevalidateFunction } from "react-router";
 import { Link, useNavigation } from "react-router";
 import React from "react";
 import { UseAppTitle } from "~/components/AppTitle";
@@ -11,7 +10,6 @@ import { ErrorMessage } from "~/components/ErrorMessage";
 import { PageSearchInput } from "~/components/PageSearchInput";
 import { NewItemsAlert } from "~/components/NewItemsAlert";
 import { ShowMoreLink } from "~/components/ShowMoreLink";
-import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 import type { ItemWithChannel } from "~/models/channel.server";
 import { getItemsByFilters, getChannels } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
@@ -239,10 +237,3 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
 export function ErrorBoundary() {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }
-
-export const shouldRevalidate: ShouldRevalidateFunction = ({ formMethod }) => {
-  if (formMethod === useChannelRefreshFetcher.method) {
-    return false;
-  }
-  return true;
-};

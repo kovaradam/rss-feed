@@ -19,7 +19,7 @@ export function useChannelRefreshFetcher() {
   };
 }
 
-useChannelRefreshFetcher.path = "/api/refresh-channels";
+useChannelRefreshFetcher.path = "/api/refresh-channels" as const;
 useChannelRefreshFetcher.method = "PATCH" as const;
 useChannelRefreshFetcher.invalidateMethod = "PUT" as const;
 
@@ -29,8 +29,11 @@ class RefreshFetcherStore {
   private static status: "pending" | "idle" | number = "idle";
 
   static refresh = async () => {
-    // Prevent refresh while fetching to avoid losing results
-    if (this.status === "pending") {
+    if (
+      // Prevent refresh while fetching or while holding results to avoid losing them
+      this.status === "pending" ||
+      (typeof this.status === "number" && this.status > 0)
+    ) {
       return;
     }
 

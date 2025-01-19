@@ -7,7 +7,6 @@ export const ChannelItemDetailService = {
     const { names, getBooleanValue } = ChannelItemDetail.form;
     const itemId = formData.get(names.itemId);
     invariant(typeof itemId === "string", "Item id was not provided");
-
     const bookmarked = formData.get(names.bookmarked);
     const read = formData.get(names.read);
     const hiddenFromFeed = formData.get(names.hiddenFromFeed);

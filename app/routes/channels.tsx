@@ -11,8 +11,8 @@ import {
   SearchIcon,
   UserIcon,
 } from "@heroicons/react/outline";
-import type { NavLinkProps } from "react-router";
 import {
+  type NavLinkProps,
   Form,
   NavLink,
   Outlet,
@@ -299,11 +299,12 @@ export function ErrorBoundary(props: { error: Error }) {
   return <ErrorMessage>Something went wrong</ErrorMessage>;
 }
 
-function StyledNavLink(
-  props: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {
-    hideNavbar: () => void;
-  }
-) {
+function StyledNavLink({
+  hideNavbar,
+  ...props
+}: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {
+  hideNavbar: () => void;
+}) {
   return (
     <NavLink
       {...props}
@@ -318,7 +319,7 @@ function StyledNavLink(
       }
       onClick={(event) => {
         if (event.currentTarget.getAttribute("aria-current") === "page") {
-          props.hideNavbar();
+          hideNavbar();
           document.body.scrollTo({ top: 0, behavior: "smooth" });
         }
       }}
