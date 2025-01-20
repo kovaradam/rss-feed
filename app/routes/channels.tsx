@@ -99,6 +99,13 @@ export default function ChannelsPage() {
   const hideNavbar = () => setIsNavExpanded(false);
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
+      <a
+        href="#main"
+        className="bg-accent absolute z-10 scale-0 rounded p-1 text-white focus:scale-100"
+      >
+        Skip to main content
+      </a>
+
       <div className="flex flex-col sm:overflow-x-visible ">
         <UseAppTitle>{data.title}</UseAppTitle>
         <div
@@ -276,6 +283,7 @@ export default function ChannelsPage() {
                 </div>
               </header>
               <main
+                id="main"
                 className={`p-6 ${
                   navigation.formAction?.includes("logout")
                     ? "animate-pulse opacity-60"
