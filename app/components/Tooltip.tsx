@@ -63,19 +63,15 @@ export function Tooltip(
     }
     target?.setAttribute("aria-describedby", id);
 
-    target.addEventListener("mouseover", show);
-    target.addEventListener("focus", show);
-    target.addEventListener("blur", hide);
-    target.addEventListener("mouseleave", hide);
-    target.addEventListener("click", hide);
+    const controller = new AbortController();
 
-    return () => {
-      target.removeEventListener("hover", show);
-      target.removeEventListener("focus", show);
-      target.removeEventListener("blur", hide);
-      target.removeEventListener("mouseleave", hide);
-      target.removeEventListener("click", hide);
-    };
+    target.addEventListener("mouseover", show, { signal: controller.signal });
+    target.addEventListener("focus", show, { signal: controller.signal });
+    target.addEventListener("blur", hide, { signal: controller.signal });
+    target.addEventListener("mouseleave", hide, { signal: controller.signal });
+    target.addEventListener("click", hide, { signal: controller.signal });
+
+    return () => controller.abort();
   }, [id, getTarget, show, hide]);
 
   useEffect(() => {
@@ -83,16 +79,18 @@ export function Tooltip(
       return;
     }
 
-    function escapeHandler(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        hide();
-      }
-    }
+    const controller = new AbortController();
+    window.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape") {
+          hide();
+        }
+      },
+      { signal: controller.signal }
+    );
 
-    window.addEventListener("keydown", escapeHandler);
-    return () => {
-      window.removeEventListener("keydown", escapeHandler);
-    };
+    return () => controller.abort();
   }, [position, hide]);
 
   return (

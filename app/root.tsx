@@ -52,15 +52,19 @@ export default function App() {
   }, [href]);
 
   React.useEffect(() => {
-    const listener = () => {
-      if (document.body.scrollTop > 200) {
-        document.body.classList.add("scroll");
-      } else {
-        document.body.classList.remove("scroll");
-      }
-    };
-    document.body.addEventListener("scroll", listener);
-    return () => document.body.addEventListener("scroll", listener);
+    const controller = new AbortController();
+    document.body.addEventListener(
+      "scroll",
+      () => {
+        if (document.body.scrollTop > 200) {
+          document.body.classList.add("scroll");
+        } else {
+          document.body.classList.remove("scroll");
+        }
+      },
+      { signal: controller.signal }
+    );
+    return () => controller.abort();
   }, []);
 
   useScrollRestoration();
