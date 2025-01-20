@@ -107,10 +107,10 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
     return convert(item.description);
   }, [item.description]);
 
-  const formRef = React.useRef<React.ElementRef<"form">>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   return (
-    <>
+    <div style={{ viewTransitionName: `${item.id}` }}>
       <UseAppTitle>Article detail</UseAppTitle>
       <BackLink
         className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
@@ -130,12 +130,12 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           description={item.description}
         />
       </PageHeading>
-      <DescriptionList className=" py-2">
+      <DescriptionList className={`py-2`}>
         {[
           {
             label: "Link",
             visuallyHidden: true,
-            content: <Href href={item.link} className="break-all" />,
+            content: <Href href={item.link} className={`break-all`} />,
             id: "link",
           },
           {
@@ -220,7 +220,6 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           <p className="text-red-700">{fetcher.data?.error}</p>
         )}
       </fetcher.Form>
-
       <hr className="my-2 mt-4" />
       <ul>
         {quotes.map((quote) => (
@@ -233,7 +232,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         ))}
       </ul>
       {loaderData.cursor && <ShowMoreLink cursor={loaderData.cursor} />}
-    </>
+    </div>
   );
 }
 
