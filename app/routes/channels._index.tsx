@@ -1,5 +1,10 @@
-import { FilterIcon } from "@heroicons/react/outline";
-import { Link, useNavigation } from "react-router";
+import {
+  Link,
+  useFetchers,
+  useNavigation,
+  ShouldRevalidateFunctionArgs,
+  Fetcher,
+} from "react-router";
 import React from "react";
 import { UseAppTitle } from "~/components/AppTitle";
 import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
@@ -16,6 +21,7 @@ import { requireUserId } from "~/session.server";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { isEmptyObject } from "~/utils/is-empty-object";
 import type { Route } from "./+types/channels._index";
+import { Filter } from "~/components/icons/Filter";
 
 const itemCountName = "item-count";
 
@@ -102,7 +108,13 @@ export const action = async ({ request }: Route.ActionArgs) => {
 };
 
 export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
-  const { items, channels, categories, filters, cursor } = loaderData;
+  const {
+    items: serverItems,
+    channels,
+    categories,
+    filters,
+    cursor,
+  } = loaderData;
 
   const transition = useNavigation();
   const isLoading = transition.state === "loading";
@@ -136,6 +148,69 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     [filters, channels, categories]
   );
 
+  const fetchers = useFetchers();
+
+  const [updatedItems, addUpdatedItem] = React.useReducer(
+    (
+      prev: typeof serverItems,
+      update: { fetcher: Fetcher; items: typeof prev }
+    ) => {
+      if (
+        update.fetcher.formData?.get(ChannelItemDetail.form.names.action) !==
+        ChannelItemDetail.form.values["update-channel-item"]
+      ) {
+        return prev;
+      }
+
+      const itemId = update.fetcher.formData?.get(
+        ChannelItemDetail.form.names.itemId
+      );
+
+      const itemToUpdate = update.items.find((i) => i.id === itemId);
+
+      if (!itemToUpdate) {
+        return prev;
+      }
+
+      return prev
+        .filter((i) => i.id !== itemToUpdate.id)
+        .concat({
+          ...itemToUpdate,
+          bookmarked:
+            update.fetcher.formData?.get(
+              ChannelItemDetail.form.names.bookmarked
+            ) === String(true),
+          read:
+            update.fetcher.formData?.get(ChannelItemDetail.form.names.read) ===
+            String(true),
+          hiddenFromFeed:
+            update.fetcher.formData?.get(
+              ChannelItemDetail.form.names.hiddenFromFeed
+            ) === String(true),
+        });
+    },
+    []
+  );
+
+  React.useEffect(() => {
+    fetchers.forEach((f) => addUpdatedItem({ fetcher: f, items: serverItems }));
+    // eslint-disable-next-line react-compiler/react-compiler
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(fetchers), addUpdatedItem, serverItems]);
+
+  const items = serverItems
+    .map((i) => updatedItems.find((updated) => updated.id === i.id) ?? i)
+    .filter((i) => {
+      if (i.hiddenFromFeed && !filters.includeHiddenFromFeed) {
+        return false;
+      }
+      if (i.read && !filters.includeRead) {
+        return false;
+      }
+
+      return true;
+    });
+
   return (
     <>
       <UseAppTitle>Your feed</UseAppTitle>
@@ -144,7 +219,12 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           <Details
             className="mb-4 w-full sm:hidden"
             title="Filter articles"
-            icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
+            icon={
+              <Filter
+                className="pointer-events-none w-4 min-w-4"
+                fill={isFilters ? "currentColor" : undefined}
+              />
+            }
           >
             <FilterForm />
           </Details>
@@ -223,7 +303,12 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             <Details
               title="Filter articles"
               className="w-60"
-              icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
+              icon={
+                <Filter
+                  className="pointer-events-none w-4 min-w-4"
+                  fill={isFilters ? "currentColor" : undefined}
+                />
+              }
             >
               <FilterForm />
             </Details>
@@ -236,4 +321,11 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary() {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
+}
+
+export function shouldRevalidate({ formData }: ShouldRevalidateFunctionArgs) {
+  return (
+    formData?.get(ChannelItemDetail.form.names.action) !==
+    ChannelItemDetail.form.values["update-channel-item"]
+  );
 }

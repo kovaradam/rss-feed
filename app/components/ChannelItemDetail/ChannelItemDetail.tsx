@@ -1,7 +1,6 @@
 import {
   BookmarkIcon as OutlineBookmarkIcon,
   CheckCircleIcon,
-  EyeIcon,
 } from "@heroicons/react/outline";
 import {
   EyeOffIcon,
@@ -20,6 +19,8 @@ import { Highlight } from "../Highlight";
 import { convert } from "html-to-text";
 import React from "react";
 import { Tooltip } from "../Tooltip";
+import { enumerate } from "~/utils";
+import { Eye } from "../icons/Eye";
 
 type Props = {
   item: ItemWithChannel;
@@ -48,7 +49,7 @@ export function ChannelItemDetail(props: Props) {
 
   const ReadIcon = read ? SolidCheckIcon : CheckCircleIcon;
   const BookmarkIcon = bookmarked ? SolidBookmarkIcon : OutlineBookmarkIcon;
-  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : EyeIcon;
+  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : Eye;
 
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
   const [playCancel] = useSound(cancelSound, { volume: 0.1 });
@@ -136,15 +137,17 @@ export function ChannelItemDetail(props: Props) {
 
               <button
                 type="submit"
-                className={"relative rounded p-1 ".concat(formItem.className)}
+                className={"group relative rounded p-1 ".concat(
+                  formItem.className
+                )}
                 data-silent
                 aria-label={formItem.title}
                 onClick={() => formItem.playSubmit()}
-                name="action"
-                value="update-channel-item"
+                name={ChannelItemDetail.form.names.action}
+                value={ChannelItemDetail.form.values["update-channel-item"]}
               >
                 <formItem.Icon
-                  className={`w-4  ${
+                  className={`h-4 w-4 ${
                     formItem.value === "false"
                       ? "text-black dark:text-white"
                       : ""
@@ -200,12 +203,14 @@ export function ChannelItemDetail(props: Props) {
 }
 
 ChannelItemDetail.form = {
-  names: {
-    itemId: "itemId",
-    bookmarked: "bookmarked",
-    read: "read",
-    hiddenFromFeed: "hiddenFromFeed",
-  },
+  names: enumerate([
+    "itemId",
+    "bookmarked",
+    "read",
+    "hiddenFromFeed",
+    "action",
+  ]),
+  values: enumerate(["update-channel-item"]),
   getBooleanValue(formValue: FormDataEntryValue | null): boolean | undefined {
     if (formValue === "true") {
       return true;

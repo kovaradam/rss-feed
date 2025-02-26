@@ -1,7 +1,7 @@
-import { XIcon } from "@heroicons/react/outline";
 import { Link } from "react-router";
 import type { MouseEventHandler } from "react";
 import { Tooltip } from "./Tooltip";
+import { X } from "./icons/X";
 
 type Props = {
   category: string;
@@ -33,7 +33,7 @@ export function ChannelCategories(props: Props) {
                 aria-label="Remove category"
                 className="relative"
               >
-                <XIcon className="w-4" />
+                <X className="w-4" />
                 <Tooltip />
               </button>
             )}

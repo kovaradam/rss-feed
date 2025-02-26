@@ -1,4 +1,3 @@
-import { PlusIcon } from "@heroicons/react/outline";
 import React, { useId } from "react";
 import { Button } from "./Button";
 import { ChannelCategories } from "./ChannelCategories";
@@ -6,6 +5,7 @@ import { Tooltip } from "./Tooltip";
 import { WithFormLabel } from "./WithFormLabel";
 import { ClientOnly } from "./ClientOnly";
 import { styles } from "../styles/shared";
+import { Plus } from "./icons/Plus";
 
 type CategoryInputProps = {
   name: string;
@@ -86,7 +86,7 @@ export function CategoryInput(props: CategoryInputProps) {
             document.getElementById(inputId)?.focus();
           }}
         >
-          <PlusIcon className="w-4 " />
+          <Plus className="w-4 " />
           <Tooltip />
         </Button>
       </div>

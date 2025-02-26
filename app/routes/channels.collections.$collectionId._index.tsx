@@ -1,4 +1,4 @@
-import { FilterIcon, PencilIcon } from "@heroicons/react/outline";
+import { PencilIcon } from "@heroicons/react/outline";
 import {
   Link,
   useNavigation,
@@ -28,6 +28,7 @@ import { getCollection } from "~/models/collection.server";
 import { requireUserId } from "~/session.server";
 import { createTitle } from "~/utils";
 import type { Route } from "./+types/channels.collections.$collectionId._index";
+import { Filter } from "~/components/icons/Filter";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -139,7 +140,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           <Details
             title="Filter articles"
             className="mb-4 w-full sm:hidden"
-            icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
+            icon={<Filter className="pointer-events-none w-4 min-w-4" />}
           >
             <FilterForm />
           </Details>
@@ -217,7 +218,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             <Details
               title="Filter articles"
               className={"mb-2 hidden w-60 sm:flex"}
-              icon={<FilterIcon className="pointer-events-none w-4 min-w-4" />}
+              icon={<Filter className="pointer-events-none w-4 min-w-4" />}
             >
               <FilterForm />
             </Details>
