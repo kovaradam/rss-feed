@@ -22,6 +22,7 @@ import { ChannelItemDetailService } from "~/components/ChannelItemDetail/Channel
 import { isEmptyObject } from "~/utils/is-empty-object";
 import type { Route } from "./+types/channels._index";
 import { Filter } from "~/components/icons/Filter";
+import { SpinTransition } from "~/components/animations/SpinTransition";
 
 const itemCountName = "item-count";
 
@@ -220,10 +221,13 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             className="mb-4 w-full sm:hidden"
             title="Filter articles"
             icon={
-              <Filter
-                className="pointer-events-none w-4 min-w-4"
-                fill={isFilters ? "currentColor" : undefined}
-              />
+              <SpinTransition>
+                <Filter
+                  key={String(isFilters)}
+                  className="pointer-events-none w-4 min-w-4"
+                  fill={isFilters ? "currentColor" : undefined}
+                />
+              </SpinTransition>
             }
           >
             <FilterForm />
@@ -304,10 +308,13 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
               title="Filter articles"
               className="w-60"
               icon={
-                <Filter
-                  className="pointer-events-none w-4 min-w-4"
-                  fill={isFilters ? "currentColor" : undefined}
-                />
+                <SpinTransition>
+                  <Filter
+                    key={String(isFilters)}
+                    className="pointer-events-none w-4 min-w-4"
+                    fill={isFilters ? "currentColor" : undefined}
+                  />
+                </SpinTransition>
               }
             >
               <FilterForm />

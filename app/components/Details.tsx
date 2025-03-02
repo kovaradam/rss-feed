@@ -12,7 +12,7 @@ export function Details(props: Props) {
       className={` cursor-pointer rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
     >
       <summary
-        className={`group flex px-2 ${
+        className={`group flex w-full items-center px-2 ${
           props.icon ? "[&::-webkit-details-marker]:hidden" : ""
         }`}
       >

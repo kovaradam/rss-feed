@@ -1,8 +1,4 @@
 import {
-  BookmarkIcon as OutlineBookmarkIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/outline";
-import {
   EyeOffIcon,
   BookmarkIcon as SolidBookmarkIcon,
   CheckCircleIcon as SolidCheckIcon,
@@ -21,6 +17,9 @@ import React from "react";
 import { Tooltip } from "../Tooltip";
 import { enumerate } from "~/utils";
 import { Eye } from "../icons/Eye";
+import { CircleCheck } from "../icons/CircleCheck";
+import { Bookmark } from "../icons/Bookmark";
+import { SpinTransition } from "../animations/SpinTransition";
 
 type Props = {
   item: ItemWithChannel;
@@ -47,8 +46,8 @@ export function ChannelItemDetail(props: Props) {
       : sentHiddenFromFeed === String(true),
   ];
 
-  const ReadIcon = read ? SolidCheckIcon : CheckCircleIcon;
-  const BookmarkIcon = bookmarked ? SolidBookmarkIcon : OutlineBookmarkIcon;
+  const ReadIcon = read ? SolidCheckIcon : CircleCheck;
+  const BookmarkIcon = bookmarked ? SolidBookmarkIcon : Bookmark;
   const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : Eye;
 
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
@@ -146,13 +145,16 @@ export function ChannelItemDetail(props: Props) {
                 name={ChannelItemDetail.form.names.action}
                 value={ChannelItemDetail.form.values["update-channel-item"]}
               >
-                <formItem.Icon
-                  className={`h-4 w-4 ${
-                    formItem.value === "false"
-                      ? "text-black dark:text-white"
-                      : ""
-                  } pointer-events-none ${formItem.className}`}
-                />
+                <SpinTransition>
+                  <formItem.Icon
+                    className={`h-4 w-4 ${
+                      formItem.value === "false"
+                        ? "text-black dark:text-white"
+                        : ""
+                    } pointer-events-none ${formItem.className}`}
+                    key={formItem.value}
+                  />
+                </SpinTransition>
                 <Tooltip>{formItem.title}</Tooltip>
               </button>
             </fetcher.Form>

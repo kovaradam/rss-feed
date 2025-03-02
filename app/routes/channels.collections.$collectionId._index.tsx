@@ -29,6 +29,7 @@ import { requireUserId } from "~/session.server";
 import { createTitle } from "~/utils";
 import type { Route } from "./+types/channels.collections.$collectionId._index";
 import { Filter } from "~/components/icons/Filter";
+import { SpinTransition } from "~/components/animations/SpinTransition";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -140,7 +141,15 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           <Details
             title="Filter articles"
             className="mb-4 w-full sm:hidden"
-            icon={<Filter className="pointer-events-none w-4 min-w-4" />}
+            icon={
+              <SpinTransition>
+                <Filter
+                  className="pointer-events-none w-4 min-w-4"
+                  key={String(isFilters)}
+                  fill={isFilters ? "currentColor" : undefined}
+                />
+              </SpinTransition>
+            }
           >
             <FilterForm />
           </Details>
@@ -217,8 +226,16 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           <AsideWrapper>
             <Details
               title="Filter articles"
-              className={"mb-2 hidden w-60 sm:flex"}
-              icon={<Filter className="pointer-events-none w-4 min-w-4" />}
+              className={"mb-2 hidden w-60 sm:block"}
+              icon={
+                <SpinTransition>
+                  <Filter
+                    className="pointer-events-none w-4 min-w-4"
+                    key={String(isFilters)}
+                    fill={isFilters ? "currentColor" : undefined}
+                  />
+                </SpinTransition>
+              }
             >
               <FilterForm />
             </Details>
