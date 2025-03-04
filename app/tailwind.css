@@ -79,3 +79,13 @@
 @view-transition {
   navigation: auto;
 }
+
+@media (not (prefers-reduced-motion)) {
+  :is(a, button, input, summary):active svg {
+    scale: 0.8;
+  }
+
+  :is(a, button, input, summary) svg {
+    transition: scale 200ms;
+  }
+}

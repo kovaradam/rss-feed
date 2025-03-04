@@ -138,3 +138,7 @@ export function enumerate<T extends readonly string[]>(
 export function c(isApply: boolean | undefined | null, className: string) {
   return isApply ? className : "";
 }
+
+export function getPrefersReducedMotion() {
+  return globalThis.matchMedia?.("(prefers-reduced-motion)").matches === true;
+}

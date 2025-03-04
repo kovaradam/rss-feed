@@ -1,4 +1,5 @@
 import React from "react";
+import { getPrefersReducedMotion } from "~/utils";
 
 interface Props<T> {
   timeout: number;
@@ -16,9 +17,7 @@ export function TimedTransition<T>(props: Props<T>) {
   const [prev, setPrev] = React.useState(props.value);
   const next = props.value;
 
-  const isDisabled = globalThis.matchMedia?.(
-    "(prefers-reduced-motion)"
-  ).matches;
+  const isDisabled = getPrefersReducedMotion();
 
   const timeout = props.timeout;
 
@@ -40,7 +39,7 @@ export function TimedTransition<T>(props: Props<T>) {
   }, [setPrev, prev, next, timeout, isDisabled]);
 
   return props.render({
-    prev,
+    prev: isDisabled ? next : prev,
     next,
     timeout,
     isTransition: getKey(prev) !== getKey(next),

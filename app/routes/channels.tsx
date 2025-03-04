@@ -26,7 +26,7 @@ import { NavWrapper } from "~/components/NavWrapper";
 import { Highlight } from "~/components/Highlight";
 import { getCollections } from "~/models/collection.server";
 import { requireUser } from "~/session.server";
-import { createMeta, useUser } from "~/utils";
+import { createMeta, getPrefersReducedMotion, useUser } from "~/utils";
 import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 import { getChannels } from "~/models/channel.server";
 import { Tooltip } from "~/components/Tooltip";
@@ -143,7 +143,7 @@ export default function ChannelsPage() {
                       to: `/channels`,
                       content: (
                         <>
-                          {isRefreshing ? (
+                          {isRefreshing && !getPrefersReducedMotion() ? (
                             <div className={"relative flex items-center"}>
                               <RefreshIcon
                                 className={`w-4 rotate-180 animate-spin`}
