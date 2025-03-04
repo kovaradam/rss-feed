@@ -92,7 +92,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
           },
         },
       },
-    },
+    }
   )) as ItemWithChannel[];
 
   const channels = await getChannels({
@@ -130,7 +130,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
 
   const FilterForm = React.useCallback(
     () => <ChannelItemFilterForm formId={"filter-form"} filters={filters} />,
-    [filters],
+    [filters]
   );
 
   return (

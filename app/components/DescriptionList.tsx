@@ -16,7 +16,7 @@ DescriptionList.Term = function DescriptionTerm(
           children: React.ReactNode;
         }
       | { visuallyHidden: true; children: string }
-    ),
+    )
 ) {
   return (
     <dt
@@ -25,7 +25,7 @@ DescriptionList.Term = function DescriptionTerm(
         .concat(
           "visuallyHidden" in props && props.visuallyHidden === true
             ? "visually-hidden "
-            : "",
+            : ""
         )
         .concat(props.className ?? "")}
     >
@@ -35,13 +35,13 @@ DescriptionList.Term = function DescriptionTerm(
 };
 
 DescriptionList.Definition = function DescriptionDefinition(
-  props: React.HTMLAttributes<HTMLElement>,
+  props: React.HTMLAttributes<HTMLElement>
 ) {
   return (
     <dd
       {...props}
       className={" text-slate-500 dark:text-slate-400 ".concat(
-        props.className ?? "",
+        props.className ?? ""
       )}
     >
       {props.children}

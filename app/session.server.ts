@@ -27,7 +27,7 @@ async function getSession(request: Request) {
 }
 
 export async function getUserId(
-  request: Request,
+  request: Request
 ): Promise<User["id"] | undefined> {
   const session = await getSession(request);
 
@@ -48,8 +48,8 @@ export async function getUser(request: Request) {
 export async function requireUserId(
   request: Request,
   redirectTo: string = mapValue(new URL(request.url))(
-    (url) => url.pathname + url.search + url.hash,
-  ),
+    (url) => url.pathname + url.search + url.hash
+  )
 ) {
   const userId = await getUserId(request);
   if (!userId) {

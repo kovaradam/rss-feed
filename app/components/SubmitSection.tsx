@@ -13,7 +13,7 @@ export function SubmitSection(props: {
       <SubmitButton
         {...props.submitProps}
         className={"w-full whitespace-nowrap sm:w-min".concat(
-          props.submitProps.className ?? "",
+          props.submitProps.className ?? ""
         )}
         isLoading={props.isSubmitting}
       >
@@ -23,7 +23,7 @@ export function SubmitSection(props: {
         {...props.cancelProps}
         className={`${c(
           props.cancelProps?.scriptOnly,
-          "script-only",
+          "script-only"
         )} ${buttonStyle} w-full justify-center rounded p-2 sm:w-min ${
           props.cancelProps.className
         }`}

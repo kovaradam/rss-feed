@@ -13,7 +13,7 @@ export class HistoryStack {
     newEntry: Omit<
       (typeof HistoryStack.historyStackArray)[number],
       "historyLength"
-    >,
+    >
   ) => {
     const lastEntry = this.peek();
     if (!lastEntry) {
@@ -44,7 +44,7 @@ export class HistoryStack {
     input: Omit<
       (typeof HistoryStack.historyStackArray)[number],
       "historyLength"
-    >,
+    >
   ) => {
     const newEntry = {
       ...input,
@@ -72,7 +72,7 @@ export class HistoryStack {
     React.useSyncExternalStore(
       this.subscribe,
       () => this.peek()?.href,
-      () => "",
+      () => ""
     );
     return this.getStack();
   };

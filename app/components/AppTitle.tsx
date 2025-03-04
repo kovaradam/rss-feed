@@ -1,7 +1,7 @@
 import React from "react";
 
 export function UseAppTitle(
-  props: { children: string } | { default: true; children?: undefined },
+  props: { children: string } | { default: true; children?: undefined }
 ) {
   const { setTitle } = React.useContext(AppTitle.Context);
   React.useEffect(() => {

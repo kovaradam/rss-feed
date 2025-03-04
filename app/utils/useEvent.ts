@@ -15,6 +15,6 @@ export function useEvent<T extends AnyFunction>(callback?: T) {
   });
   return React.useCallback<AnyFunction>(
     (...args) => ref.current?.apply(null, args),
-    [],
+    []
   ) as T;
 }

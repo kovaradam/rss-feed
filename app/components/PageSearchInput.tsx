@@ -21,7 +21,7 @@ export function PageSearchInput(props: {
           window.clearTimeout(debounceId.current);
           debounceId.current = window.setTimeout(
             () => submitButtonRef.current?.click(),
-            500,
+            500
           );
         }}
         className={styles.input.concat(" mb-4 py-2 text-center sm:text-left")}

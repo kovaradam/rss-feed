@@ -20,7 +20,7 @@ export default function useSound<T = any>(
     interrupt = false,
     onload,
     ...delegated
-  }: HookOptions<T> = {} as HookOptions,
+  }: HookOptions<T> = {} as HookOptions
 ) {
   const HowlConstructor = React.useRef<HowlStatic | null>(null);
   const isMounted = React.useRef(false);
@@ -80,7 +80,7 @@ export default function useSound<T = any>(
           volume,
           onload: handleLoad,
           ...delegated,
-        }),
+        })
       );
     }
     // The linter wants to run this effect whenever ANYTHING changes,
@@ -126,7 +126,7 @@ export default function useSound<T = any>(
 
       sound.play(options.id);
     },
-    [sound, soundEnabled, interrupt],
+    [sound, soundEnabled, interrupt]
   );
 
   const stop: ExposedData["stop"] = React.useCallback(
@@ -136,7 +136,7 @@ export default function useSound<T = any>(
       }
       sound.stop(id as never);
     },
-    [sound],
+    [sound]
   );
 
   const pause: ExposedData["pause"] = React.useCallback(
@@ -146,7 +146,7 @@ export default function useSound<T = any>(
       }
       sound.pause(id as never);
     },
-    [sound],
+    [sound]
   );
 
   const returnedValue: ReturnedValue = [

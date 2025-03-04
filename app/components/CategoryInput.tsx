@@ -19,7 +19,7 @@ export function CategoryInput(props: CategoryInputProps) {
   const [inputValue, setInputValue] = React.useState("");
 
   const deleteCategory: React.MouseEventHandler<HTMLButtonElement> = (
-    event,
+    event
   ) => {
     const categoryToRemove = (event.currentTarget as HTMLButtonElement).value;
 
@@ -27,7 +27,7 @@ export function CategoryInput(props: CategoryInputProps) {
       prev
         .split("/")
         .filter((category) => category !== categoryToRemove)
-        .join("/"),
+        .join("/")
     );
   };
 
@@ -117,7 +117,7 @@ export function getCategoryFormValue(formData: FormData, name: string) {
   const uniqueCategories = values
     .flatMap((value) => (typeof value === "string" ? value.split("/") : null))
     .filter(
-      (value, index, array) => value !== null && array.indexOf(value) === index,
+      (value, index, array) => value !== null && array.indexOf(value) === index
     );
 
   return uniqueCategories.join("/");

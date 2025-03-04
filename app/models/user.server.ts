@@ -23,7 +23,7 @@ export async function getUsers() {
 export async function createUser(
   email: User["email"],
   password: string,
-  params?: { isAdmin: boolean },
+  params?: { isAdmin: boolean }
 ) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -63,7 +63,7 @@ export async function validateUserEmail(id: User["id"]) {
 
 export async function sendConfirmEmail(
   user: Pick<User, "id" | "requestedEmail">,
-  request: Request,
+  request: Request
 ) {
   invariant(user.requestedEmail, "Requested email missing");
 
@@ -81,7 +81,7 @@ export async function sendConfirmEmail(
 export async function requestUpdateUserEmail(
   id: User["id"],
   newEmail: string,
-  request: Request,
+  request: Request
 ) {
   sendConfirmEmail({ id, requestedEmail: newEmail }, request);
 
@@ -95,7 +95,7 @@ export async function requestUpdateUserEmail(
 
 export async function updateUser(
   id: User["id"],
-  data: Prisma.UserUpdateArgs["data"],
+  data: Prisma.UserUpdateArgs["data"]
 ) {
   return await prisma.user.update({
     where: { id: id },
@@ -122,7 +122,7 @@ export async function makeUserAdmin(id: User["id"], isAdmin: boolean) {
 
 export async function verifyLogin(
   email: User["email"],
-  password: Password["hash"],
+  password: Password["hash"]
 ) {
   const userWithPassword = await prisma.user.findUnique({
     where: { email },
@@ -137,7 +137,7 @@ export async function verifyLogin(
 
   const isValid = await bcrypt.compare(
     password,
-    userWithPassword.password.hash,
+    userWithPassword.password.hash
   );
 
   if (!isValid) {

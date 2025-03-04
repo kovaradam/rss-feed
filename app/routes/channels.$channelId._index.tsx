@@ -158,7 +158,7 @@ export default function ChannelDetailsPage() {
 
   const category = channel.category.slice(
     channel.category.startsWith("/") ? 1 : 0,
-    channel.category.endsWith("/") ? -1 : undefined,
+    channel.category.endsWith("/") ? -1 : undefined
   );
 
   const isParseErrors = data.channel.itemPubDateParseError;

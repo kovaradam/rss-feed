@@ -32,7 +32,7 @@ export function Highlight(props: { query: string; input: string }) {
       elements.push({
         element: props.input.slice(
           startIdx + props.query.length,
-          startIndices[arrayIdx + 1],
+          startIndices[arrayIdx + 1]
         ),
         key: key++,
       });

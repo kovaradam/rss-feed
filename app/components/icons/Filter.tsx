@@ -2,7 +2,7 @@ import React from "react";
 import { ClientOnly } from "../ClientOnly";
 
 export function Filter(
-  props: React.SVGProps<SVGSVGElement> & { size?: string },
+  props: React.SVGProps<SVGSVGElement> & { size?: string }
 ) {
   const stroke = props.stroke ?? "currentColor";
   return (

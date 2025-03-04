@@ -48,21 +48,21 @@ export const action = async ({ request }: Route.ActionArgs) => {
   if (!validateEmail(email)) {
     return data<ActionData>(
       { errors: { email: "Email is invalid" } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   if (typeof password !== "string" || password.length === 0) {
     return data<ActionData>(
       { errors: { password: "Password is required" } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return data<ActionData>(
       { errors: { password: "Password is too short" } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -70,7 +70,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   if (existingUser) {
     return data<ActionData>(
       { errors: { email: "User with this email already exists." } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

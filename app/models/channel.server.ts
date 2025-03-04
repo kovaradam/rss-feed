@@ -10,7 +10,7 @@ export type { Channel, Item };
 export async function createChannelFromXml(
   xmlInput: string,
   request: { userId: string; channelHref: string },
-  abortSignal: AbortSignal,
+  abortSignal: AbortSignal
 ) {
   let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
   let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
@@ -21,7 +21,7 @@ export async function createChannelFromXml(
     invariant(channel.link, "Link is missing in the RSS definition");
     invariant(
       typeof channel.link === "string",
-      "Link has been parsed in wrong format",
+      "Link has been parsed in wrong format"
     );
     invariant(channel.title, "Title is missing in the RSS definition");
   } catch (_) {
@@ -45,7 +45,7 @@ export async function createChannelFromXml(
     try {
       const channelPageMeta = await getChannelPageMeta(
         new URL(request.channelHref).origin,
-        abortSignal,
+        abortSignal
       );
       channel.imageUrl = channelPageMeta.image;
     } catch (error) {
@@ -105,7 +105,7 @@ export async function refreshChannel(params: {
   });
 
   const newItems = parsedItems.filter(
-    (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link),
+    (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link)
   );
 
   const updatedChannel = await updateChannel(params.userId, {
@@ -149,14 +149,14 @@ export async function refreshChannel(params: {
 }
 
 export async function getChannel(
-  params: Parameters<typeof prisma.channel.findMany>[0],
+  params: Parameters<typeof prisma.channel.findMany>[0]
 ) {
   return prisma.channel.findFirst(params);
 }
 
 export async function updateChannel(
   userId: string,
-  params: Parameters<typeof prisma.channel.update>[0],
+  params: Parameters<typeof prisma.channel.update>[0]
 ) {
   invariant(await getChannel({ where: { id: params.where.id, userId } }));
   let { category } = params.data;
@@ -191,7 +191,7 @@ export async function deleteChannelCategory({
 }
 
 export async function getChannels(
-  params: Parameters<typeof prisma.channel.findMany>[0],
+  params: Parameters<typeof prisma.channel.findMany>[0]
 ) {
   return prisma.channel.findMany({
     ...params,
@@ -235,7 +235,7 @@ export async function getChannelItemByLink(link: string, userId: string) {
 
 export async function getQuotesByUser(
   userId: string,
-  params?: { query: string | null; count?: number },
+  params?: { query: string | null; count?: number }
 ) {
   const queryFilter = params?.query
     ? { contains: params?.query as string }
@@ -279,7 +279,7 @@ export async function getQuotesByUser(
 export async function getQuotesByItem(
   itemId: string,
   userId: string,
-  params?: { count?: number },
+  params?: { count?: number }
 ) {
   const where = { itemId, item: { channel: { userId } } };
   return prisma.$transaction([
@@ -294,7 +294,7 @@ export async function getQuotesByItem(
 
 export async function addQuoteToItem(
   content: string,
-  { itemId, userId }: { itemId: string; userId: string },
+  { itemId, userId }: { itemId: string; userId: string }
 ) {
   const item = await prisma.item.findFirst({
     where: { id: itemId, channel: { userId } },
@@ -317,7 +317,7 @@ export async function deleteQuote(id: string, userId: string) {
 
 export async function updateChannelItem(
   userId: string,
-  params: Parameters<typeof prisma.item.update>[0],
+  params: Parameters<typeof prisma.item.update>[0]
 ) {
   const itemId = params.where.id;
   invariant(await getChannelItem(itemId ?? "", userId));
@@ -329,7 +329,7 @@ export async function getItemsByCollection(
     collectionId,
     userId,
   }: { collectionId: Collection["id"]; userId: User["id"] },
-  params?: Parameters<typeof prisma.item.findMany>[0],
+  params?: Parameters<typeof prisma.item.findMany>[0]
 ) {
   const collection = await prisma.collection.findFirst({
     where: { id: collectionId },
@@ -377,7 +377,7 @@ export async function getItemsByFilters(
     };
     userId: User["id"];
   },
-  params?: Parameters<typeof prisma.item.findMany>[0],
+  params?: Parameters<typeof prisma.item.findMany>[0]
 ) {
   const items = await getChannelItems({
     ...params,

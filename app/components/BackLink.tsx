@@ -14,7 +14,7 @@ export function BackLink({ children, ...props }: Props) {
 
   // Prevent rendering next entry during transition
   const [prevEntry, setPrevEntry] = React.useState<typeof backEntry | null>(
-    null,
+    null
   );
 
   return React.createElement(
@@ -29,8 +29,6 @@ export function BackLink({ children, ...props }: Props) {
         }
       },
     },
-    typeof children === "function"
-      ? children(prevEntry ?? backEntry)
-      : children,
+    typeof children === "function" ? children(prevEntry ?? backEntry) : children
   );
 }
