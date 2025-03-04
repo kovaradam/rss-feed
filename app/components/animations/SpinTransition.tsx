@@ -4,7 +4,7 @@ export function SpinTransition(props: React.PropsWithChildren) {
   return (
     <>
       <style href="SpinTransition">{`
-        @keyframes spin {
+        @keyframes spin3d {
           from {
             transform: rotate3d(0, 1, 0, var(--from));
           }
@@ -25,7 +25,7 @@ export function SpinTransition(props: React.PropsWithChildren) {
         }
 
         .spin {
-          animation-name: spin;
+          animation-name: spin3d;
           animation-duration: calc(var(--timeout) / 2);
           animation-fill-mode: forwards;
         }

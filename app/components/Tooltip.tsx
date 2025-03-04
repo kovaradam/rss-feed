@@ -62,6 +62,7 @@ export function Tooltip(
       return;
     }
     target?.setAttribute("aria-describedby", id);
+    target?.setAttribute("interesttarget", id);
 
     const controller = new AbortController();
 
@@ -95,6 +96,7 @@ export function Tooltip(
 
   return (
     <div
+      popover={"hint" as never}
       className={`absolute z-50 ${
         position ? "flex" : "hidden"
       } items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-opacity-90 p-2 text-white dark:border`}
