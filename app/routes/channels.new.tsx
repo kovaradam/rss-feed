@@ -75,7 +75,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
         userId,
         channelHref: channelUrl.href,
       },
-      request.signal
+      request.signal,
     );
   } catch (error) {
     let response: ActionData;
@@ -187,7 +187,7 @@ function TextWithLink(props: { text: string }) {
                 <Link to={props.to} className="underline">
                   {props.label}
                 </Link>
-              )
+              ),
           )}
         </React.Fragment>
       ))}

@@ -9,7 +9,7 @@ async function seed() {
 
   const adminEnvVariables = ["ADMIN_EMAIL", "ADMIN_PASS"];
   const [adminEmail, adminPassword] = adminEnvVariables.map(
-    (key) => process.env[key]
+    (key) => process.env[key],
   );
 
   // Check config vars
@@ -17,7 +17,7 @@ async function seed() {
     adminEmail && adminPassword,
     `Missing admin credentials (please define ${adminEnvVariables
       .map((key) => `"${key}"`)
-      .join(" and ")} in the ".env" file)`
+      .join(" and ")} in the ".env" file)`,
   );
 
   // cleanup the existing database

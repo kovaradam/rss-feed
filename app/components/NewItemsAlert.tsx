@@ -27,7 +27,7 @@ export function NewItemsAlert() {
             {
               method: useChannelRefreshFetcher.invalidateMethod,
               action: useChannelRefreshFetcher.path,
-            }
+            },
           );
         }}
         disabled={isFetchingNewItems}

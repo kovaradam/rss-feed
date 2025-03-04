@@ -33,7 +33,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const itemCountRequest = itemCountParam ? Number(itemCountParam) : 30;
 
   const [filterChannels, filterCategories] = ["channels", "categories"].map(
-    (name) => searchParams.getAll(name)
+    (name) => searchParams.getAll(name),
   );
   const [before, after, search, includeReadParam, includeHiddenFromFeed] = [
     ChannelItemFilterForm.names.before,
@@ -77,7 +77,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
           },
         },
       },
-    }
+    },
   );
 
   const channels = getChannels({ where: { userId } });
@@ -146,7 +146,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
         canExcludeRead
       />
     ),
-    [filters, channels, categories]
+    [filters, channels, categories],
   );
 
   const fetchers = useFetchers();
@@ -154,7 +154,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
   const [updatedItems, addUpdatedItem] = React.useReducer(
     (
       prev: typeof serverItems,
-      update: { fetcher: Fetcher; items: typeof prev }
+      update: { fetcher: Fetcher; items: typeof prev },
     ) => {
       if (
         update.fetcher.formData?.get(ChannelItemDetail.form.names.action) !==
@@ -164,7 +164,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
       }
 
       const itemId = update.fetcher.formData?.get(
-        ChannelItemDetail.form.names.itemId
+        ChannelItemDetail.form.names.itemId,
       );
 
       const itemToUpdate = update.items.find((i) => i.id === itemId);
@@ -179,18 +179,18 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           ...itemToUpdate,
           bookmarked:
             update.fetcher.formData?.get(
-              ChannelItemDetail.form.names.bookmarked
+              ChannelItemDetail.form.names.bookmarked,
             ) === String(true),
           read:
             update.fetcher.formData?.get(ChannelItemDetail.form.names.read) ===
             String(true),
           hiddenFromFeed:
             update.fetcher.formData?.get(
-              ChannelItemDetail.form.names.hiddenFromFeed
+              ChannelItemDetail.form.names.hiddenFromFeed,
             ) === String(true),
         });
     },
-    []
+    [],
   );
 
   React.useEffect(() => {

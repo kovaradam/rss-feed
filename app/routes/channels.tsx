@@ -240,7 +240,7 @@ export default function ChannelsPage() {
                         ?.filter((channel) =>
                           channel.title
                             .toLowerCase()
-                            .includes(channelFilter.toLocaleLowerCase())
+                            .includes(channelFilter.toLocaleLowerCase()),
                         )
                         .map((channel) => (
                           <li key={channel.id}>
@@ -428,7 +428,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
 
 function registerNavSwipeCallbacks(
   isExpanded: boolean,
-  setIsExpanded: (value: boolean) => void
+  setIsExpanded: (value: boolean) => void,
 ): Pick<
   React.HTMLAttributes<HTMLDivElement>,
   "onTouchStart" | "onTouchMove" | "onTouchEnd"
@@ -436,10 +436,10 @@ function registerNavSwipeCallbacks(
   return {
     onTouchStart: (event) => {
       event.currentTarget.dataset.touchStartX = String(
-        event.targetTouches[0]?.clientX
+        event.targetTouches[0]?.clientX,
       );
       event.currentTarget.dataset.touchStartY = String(
-        event.targetTouches[0]?.clientY
+        event.targetTouches[0]?.clientY,
       );
     },
     onTouchMove: (event) => {
@@ -459,17 +459,17 @@ function registerNavSwipeCallbacks(
         (isExpanded ? diffX > 0 : diffX < 0)
       ) {
         const slidingElement = event.currentTarget.querySelector(
-          "[data-nav-sliding-element]"
+          "[data-nav-sliding-element]",
         );
         slidingElement?.setAttribute(
           "style",
-          `translate:${-1 * diffX}px;transition:none;`
+          `translate:${-1 * diffX}px;transition:none;`,
         );
       }
     },
     onTouchEnd: (event) => {
       const slidingElement = event.currentTarget.querySelector(
-        "[data-nav-sliding-element]"
+        "[data-nav-sliding-element]",
       );
 
       slidingElement?.setAttribute("style", "");

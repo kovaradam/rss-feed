@@ -42,7 +42,7 @@ export function UseSounds() {
       },
       {
         signal: abortController.signal,
-      }
+      },
     );
 
     return () => abortController.abort();

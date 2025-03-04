@@ -137,7 +137,7 @@ export function ChannelItemDetail(props: Props) {
               <button
                 type="submit"
                 className={"group relative rounded p-1 ".concat(
-                  formItem.className
+                  formItem.className,
                 )}
                 data-silent
                 aria-label={formItem.title}
