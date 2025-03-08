@@ -19,8 +19,8 @@ export function SpinTransition(props: React.PropsWithChildren) {
         }
 
         .spin-out {
-          --from: 90deg;
-          --to: 180deg;
+          --from: 270deg;
+          --to: 0deg;
           display:none;
         }
 
