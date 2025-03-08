@@ -21,12 +21,9 @@
   .background {
     --size: 0.1ex;
 
-    background-image:
-      radial-gradient(#e2e8f0 var(--size), transparent 0),
+    background-image: radial-gradient(#e2e8f0 var(--size), transparent 0),
       radial-gradient(#e2e8f0 var(--size), #fff 0);
-    background-position:
-      0 0,
-      16px 16px;
+    background-position: 0 0, 16px 16px;
     background-size: 32px 32px;
   }
 }
