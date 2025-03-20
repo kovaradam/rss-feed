@@ -22,7 +22,9 @@ export function WithFormLabel(props: Props) {
           <span className="text-slate-500 dark:text-slate-100">(required)</span>
         )}
       </legend>
-      {typeof children === "function" ? children(props) : children}
+      {typeof children === "function"
+        ? children({ ...props, htmlFor })
+        : children}
     </fieldset>
   );
 }

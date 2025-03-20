@@ -224,11 +224,9 @@ export default function ChannelsPage() {
                       <label
                         className="absolute right-1 z-10"
                         htmlFor="channels-filter"
+                        aria-label="Filter channels by name"
                       >
-                        <SearchIcon
-                          className="w-4 "
-                          aria-label="Filter channels"
-                        />
+                        <SearchIcon className="w-4 " />
                       </label>
                     </form>
                   </h2>

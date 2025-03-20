@@ -181,11 +181,14 @@ export default function Channels({
         />
         <div>
           <WithFormLabel label="Language">
-            <input
-              defaultValue={channel.language}
-              name={"language"}
-              {...inputProps(focusName === "language")}
-            />
+            {({ htmlFor }) => (
+              <input
+                id={htmlFor}
+                defaultValue={channel.language}
+                name={"language"}
+                {...inputProps(focusName === "language")}
+              />
+            )}
           </WithFormLabel>
         </div>
         <div>
