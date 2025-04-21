@@ -136,7 +136,6 @@ export default function LoginPage({
                 label: "Email address",
                 placeholder: "name@example.com",
                 ref: emailRef,
-                id: "email",
                 name: "email",
                 type: "email",
                 ariaInvalid: actionData?.errors?.email ? true : undefined,
@@ -147,7 +146,6 @@ export default function LoginPage({
                 label: "Password",
                 placeholder: undefined,
                 ref: passwordRef,
-                id: "password",
                 name: "password",
                 type: "password",
                 ariaInvalid: actionData?.errors?.password ? true : undefined,
@@ -156,28 +154,32 @@ export default function LoginPage({
               },
             ].map((formField) => (
               <WithFormLabel
-                key={formField.id}
-                htmlFor={formField.id}
+                key={formField.name}
+                htmlFor={formField.name}
                 label={formField.label}
               >
-                <input
-                  ref={formField.ref}
-                  id={formField.id}
-                  required
-                  name={formField.name}
-                  type={formField.type}
-                  placeholder={formField.placeholder}
-                  aria-invalid={formField.ariaInvalid}
-                  aria-describedby={formField.ariaDescribedBy}
-                  className={styles.input}
-                />
-                {formField.error && (
-                  <div
-                    className="pt-1 text-red-800 dark:text-red-400"
-                    id={formField.ariaDescribedBy}
-                  >
-                    {formField.error}
-                  </div>
+                {({ htmlFor }) => (
+                  <>
+                    <input
+                      ref={formField.ref}
+                      id={htmlFor}
+                      required
+                      name={formField.name}
+                      type={formField.type}
+                      placeholder={formField.placeholder}
+                      aria-invalid={formField.ariaInvalid}
+                      aria-describedby={formField.ariaDescribedBy}
+                      className={styles.input}
+                    />
+                    {formField.error && (
+                      <div
+                        className="pt-1 text-red-800 dark:text-red-400"
+                        id={formField.ariaDescribedBy}
+                      >
+                        {formField.error}
+                      </div>
+                    )}
+                  </>
                 )}
               </WithFormLabel>
             ))

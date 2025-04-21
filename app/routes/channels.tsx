@@ -32,6 +32,7 @@ import { getChannels } from "~/models/channel.server";
 import { Tooltip } from "~/components/Tooltip";
 import type { Route } from "./+types/channels";
 import { ChevronUpIcon } from "@heroicons/react/solid";
+import { href } from "react-router";
 
 export const meta = createMeta();
 
@@ -132,7 +133,7 @@ export default function ChannelsPage() {
                         !isActive ? "text-yellow-900" : ""
                       }  hover:bg-slate-200 active:bg-slate-300 sm:h-auto sm:py-2 sm:font-bold sm:shadow`
                     }
-                    to={"/channels/new"}
+                    to={href("/channels/new")}
                     hideNavbar={hideNavbar}
                   >
                     <PlusIcon className="w-4 " style={{ strokeWidth: "3px" }} />{" "}
@@ -140,7 +141,7 @@ export default function ChannelsPage() {
                   </StyledNavLink>
                   {[
                     {
-                      to: `/channels`,
+                      to: href(`/channels`),
                       content: (
                         <>
                           {isRefreshing && !getPrefersReducedMotion() ? (
@@ -159,7 +160,7 @@ export default function ChannelsPage() {
                       ),
                     },
                     {
-                      to: "/channels/quotes",
+                      to: href("/channels/quotes"),
                       content: (
                         <>
                           <ChatAltIcon className="w-4" />
@@ -194,7 +195,7 @@ export default function ChannelsPage() {
                     <li>
                       <StyledNavLink
                         className={` hover:bg-slate-100 hover:text-yellow-900 dark:hover:text-slate-300`}
-                        to={`/channels/collections/new`}
+                        to={href(`/channels/collections/new`)}
                         hideNavbar={hideNavbar}
                       >
                         <PlusIcon className="w-4" />
@@ -265,7 +266,7 @@ export default function ChannelsPage() {
               </div>
             </NavWrapper>
             <div className="flex-1">
-              <header className="z-10 flex  w-full justify-center whitespace-nowrap border-b bg-white sm:relative sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
+              <header className="z-10 flex w-screen justify-center whitespace-nowrap border-b bg-white sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
                 <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
                   <button
                     aria-label="Toggle navigation"

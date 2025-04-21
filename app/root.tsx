@@ -83,9 +83,11 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
-        {(!navigation.formAction || navigation.formMethod === "GET") && (
+        {(!navigation.formAction ||
+          navigation.formMethod === "GET" ||
+          navigation.formData?.get("loader") === String(true)) && (
           <div
-            data-loading={navigation.state === "loading"}
+            data-loading={["loading", "submitting"].includes(navigation.state)}
             className="progress"
           >
             <div className="" />

@@ -147,7 +147,7 @@ export default function NewChannelPage({
             ))
           ) : (
             <span className="pt-1 text-slate-500 dark:text-slate-400">
-              Provide a URL of a RSS feed you wish to add
+              Provide a URL of an RSS feed you wish to add
             </span>
           )}
         </WithFormLabel>

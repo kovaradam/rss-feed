@@ -1,28 +1,30 @@
+import React from "react";
 import {
+  Fetcher,
+  Form,
+  href,
   Link,
+  ShouldRevalidateFunctionArgs,
   useFetchers,
   useNavigation,
-  ShouldRevalidateFunctionArgs,
-  Fetcher,
 } from "react-router";
-import React from "react";
+import { SpinTransition } from "~/components/animations/SpinTransition";
 import { UseAppTitle } from "~/components/AppTitle";
 import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
+import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { ChannelItemFilterForm } from "~/components/ChannelItemFilterForm";
 import { ChannelItemList } from "~/components/ChannelItemList";
 import { Details } from "~/components/Details";
 import { ErrorMessage } from "~/components/ErrorMessage";
-import { PageSearchInput } from "~/components/PageSearchInput";
+import { Filter } from "~/components/icons/Filter";
 import { NewItemsAlert } from "~/components/NewItemsAlert";
+import { PageSearchInput } from "~/components/PageSearchInput";
 import { ShowMoreLink } from "~/components/ShowMoreLink";
 import type { ItemWithChannel } from "~/models/channel.server";
-import { getItemsByFilters, getChannels } from "~/models/channel.server";
+import { getChannels, getItemsByFilters } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
-import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { isEmptyObject } from "~/utils/is-empty-object";
 import type { Route } from "./+types/channels._index";
-import { Filter } from "~/components/icons/Filter";
-import { SpinTransition } from "~/components/animations/SpinTransition";
 
 const itemCountName = "item-count";
 
@@ -240,10 +242,10 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           <NewItemsAlert />
 
           {items.length === 0 && (
-            <div className="flex flex-col gap-2 text-center text-lg font-bold">
+            <div className="flex flex-col gap-2 text-center text-lg ">
               {channels.length !== 0 ? (
                 <>
-                  <p className="mt-6 dark:text-white">
+                  <p className="mt-6 font-bold dark:text-white">
                     No articles found {isFilters && "matching your criteria"}
                   </p>
                   <img
@@ -255,27 +257,56 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                 </>
               ) : (
                 <div className="mt-8 flex flex-col items-center gap-16">
-                  <div>
-                    <p className="dark:text-white">
+                  <div className="[&_p]:w-full [&_p]:text-center [&_p]:font-normal [&_p]:text-slate-500 [&_p]:dark:text-slate-300">
+                    <h3 className="pb-2 font-bold dark:text-white">
                       You are not subscribed to any RSS feeds.
-                    </p>
-                    <p className="mb-4 font-normal text-slate-500 dark:text-slate-300">
+                    </h3>
+                    <p className="mb-4">
+                      To get started, you should{" "}
                       <Link
-                        to={"/channels/new"}
+                        to={href("/channels/new")}
                         className="font-bold text-yellow-900 underline dark:text-white"
                       >
-                        Add a new channel
-                      </Link>{" "}
-                      to get started!
+                        add a new channel
+                      </Link>
+                      .
                     </p>
+                    <hr className="my-4" />
+                    <p>
+                      If you cannot think of any site that provides RSS feed
+                      right now, you can try adding one of these:
+                    </p>
+                    <ul className="flex flex-col gap-6">
+                      {recommendedChannels.map((item) => (
+                        <li
+                          key={item.href}
+                          className="flex justify-center rounded bg-white bg-opacity-60 pt-8 "
+                        >
+                          <img
+                            src={item.img}
+                            alt=""
+                            className="pointer-events-none absolute h-14 -rotate-6 pt-6 opacity-50"
+                          />
+
+                          <Form action={href("/channels/new")} method="PUT">
+                            <input
+                              type="hidden"
+                              value={item.href}
+                              name="channel-url"
+                            ></input>
+                            <input
+                              type="hidden"
+                              name="loader"
+                              value={"true"}
+                            ></input>
+                            <button className="font-bold underline">
+                              {item.title}
+                            </button>
+                          </Form>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <img
-                    alt=""
-                    src="/sitting-reading.svg"
-                    width={"50%"}
-                    data-from="https://www.opendoodles.com/"
-                    className="dark:invert-[.7]"
-                  />
                 </div>
               )}
             </div>
@@ -336,3 +367,21 @@ export function shouldRevalidate({ formData }: ShouldRevalidateFunctionArgs) {
     ChannelItemDetail.form.values["update-channel-item"]
   );
 }
+
+const recommendedChannels = [
+  {
+    href: "https://feeds.npr.org/1039/rss.xml",
+    title: <>NPR Topics: Music</>,
+    img: "https://static-assets.npr.org/chrome_svg/npr-logo-2025.svg",
+  },
+  {
+    href: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    title: <>BBC News - Science & Environment</>,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/BBC_Logo_2021.svg/560px-BBC_Logo_2021.svg.png",
+  },
+  {
+    href: "https://www.nasa.gov/feeds/iotd-feed/",
+    title: <>NASA Image of the Day</>,
+    img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg",
+  },
+];

@@ -9,7 +9,7 @@ export function SubmitSection(props: {
   isSubmitting: boolean;
 }) {
   return (
-    <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row-reverse">
+    <div className="flex flex-col items-center justify-between gap-4 sm:flex-row-reverse">
       <SubmitButton
         {...props.submitProps}
         className={"w-full whitespace-nowrap sm:w-min".concat(
