@@ -11,6 +11,7 @@ export function useChannelRefreshFetcher() {
     return {
       newItemCount: status,
       refresh: RefreshFetcherStore.refresh,
+      reset: RefreshFetcherStore.reset,
     };
   }
   return {
@@ -81,6 +82,11 @@ class RefreshFetcherStore {
     return () => {
       this.listeners = this.listeners.filter((l) => l !== newListener);
     };
+  };
+
+  static reset = () => {
+    this.abortController.abort();
+    this.setStatus("idle");
   };
 
   private static notify = () => {
