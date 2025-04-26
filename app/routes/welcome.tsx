@@ -20,7 +20,7 @@ export default function Welcome() {
             <span className="mb-8 block font-normal italic dark:text-white">
               No noise.
             </span>
-            Only the the stuff thant interests{" "}
+            Only the the stuff that interests{" "}
             <span className="font-normal italic dark:text-white">you</span>.
           </p>
         </div>
