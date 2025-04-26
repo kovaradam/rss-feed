@@ -15,7 +15,7 @@ export async function action({ request }: Route.LoaderArgs) {
     return { errors: { email: "invalid email" } };
   }
   const regOpts = await generateRegistrationOptions({
-    rpID: import.meta.env.SERVER_DOMAIN,
+    rpID: process.env.SERVER_DOMAIN as string,
     rpName: "Web journal",
     userName: email,
     userDisplayName: email,
