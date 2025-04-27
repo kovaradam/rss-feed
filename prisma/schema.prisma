@@ -21,6 +21,7 @@ model User {
 
   channels    Channel[]
   collections Collection[]
+  passkeys    WebAuthnCredential[]
 }
 
 model Password {
@@ -115,4 +116,23 @@ model Quote {
 
   itemId String
   item   Item   @relation(fields: [itemId], references: [id])
+}
+
+model WebAuthnChallenge {
+  email     String   @id()
+  createdAt DateTime @default(now())
+  challenge String
+}
+
+model WebAuthnCredential {
+  id           String    @id() @default(cuid())
+  credentialId String
+  createdAt    DateTime  @default(now())
+  publicKey    Bytes
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId       String
+  lastUsedAt   DateTime?
+  counter      Int
+  deviceType   String
+  transports   String?
 }

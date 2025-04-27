@@ -3,6 +3,7 @@ import { getUserById, sendConfirmEmail } from "~/models/user.server";
 import { requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/welcome.confirm-email";
+import { SERVER_ENV } from "~/env.server";
 
 export const meta = createMeta(() => [{ title: "Confirm email" }]);
 
@@ -31,7 +32,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw redirect("/");
   }
 
-  return { user, allowSkip: process.env.NODE_ENV !== "production" };
+  return { user, allowSkip: !SERVER_ENV.is.prod };
 }
 
 export default function ConfirmEmailPage({
@@ -46,7 +47,7 @@ export default function ConfirmEmailPage({
         Please confirm your email address.
       </h1>
       <p>
-        An email with confirmation link has been sent to your address{" "}
+        An email with confirmation link has been sent to your email address{" "}
         <a
           href={`mailto:${loaderData.user?.requestedEmail}`}
           className="text-rose-400"

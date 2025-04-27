@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import type { MailOptions } from "nodemailer/lib/json-transport";
+import { SERVER_ENV } from "~/env.server";
 
 export class Mail {
   private static config: Awaited<ReturnType<typeof createTransporter>>;
@@ -28,13 +29,13 @@ export class Mail {
 }
 
 export async function createTransporter() {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = SERVER_ENV.is.prod;
 
   let account;
   if (isProduction) {
     account = {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      user: SERVER_ENV.mail.user,
+      pass: SERVER_ENV.mail.password,
     };
   } else {
     // Generate test SMTP service account from ethereal.email
@@ -44,7 +45,7 @@ export async function createTransporter() {
 
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
-    host: isProduction ? process.env.SMTP_URL : "smtp.ethereal.email",
+    host: isProduction ? SERVER_ENV.mail.smtpUrl : "smtp.ethereal.email",
     port: isProduction ? 465 : 587,
     auth: {
       user: account.user, // generated ethereal user

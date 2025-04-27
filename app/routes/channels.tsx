@@ -11,28 +11,29 @@ import {
   SearchIcon,
   UserIcon,
 } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/solid";
+import React from "react";
 import {
   type NavLinkProps,
   Form,
+  href,
+  Link,
   NavLink,
   Outlet,
   useLoaderData,
   useNavigation,
 } from "react-router";
-import React from "react";
 import { AppTitle, UseAppTitle } from "~/components/AppTitle";
 import { ErrorMessage } from "~/components/ErrorMessage";
-import { NavWrapper } from "~/components/NavWrapper";
 import { Highlight } from "~/components/Highlight";
+import { NavWrapper } from "~/components/NavWrapper";
+import { Tooltip } from "~/components/Tooltip";
+import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
+import { getChannels } from "~/models/channel.server";
 import { getCollections } from "~/models/collection.server";
 import { requireUser } from "~/session.server";
 import { createMeta, getPrefersReducedMotion, useUser } from "~/utils";
-import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
-import { getChannels } from "~/models/channel.server";
-import { Tooltip } from "~/components/Tooltip";
 import type { Route } from "./+types/channels";
-import { ChevronUpIcon } from "@heroicons/react/solid";
-import { href } from "react-router";
 
 export const meta = createMeta();
 
@@ -392,8 +393,8 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
           </li>
           <hr className="my-1" />
           <li>
-            <a
-              href="/channels/user"
+            <Link
+              to={href("/channels/user")}
               className="relative flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
             >
               <CogIcon className="w-4" />
@@ -401,7 +402,7 @@ function UserMenu(props: { user: ReturnType<typeof useUser> }) {
               <Tooltip position={{ x: "left-box" }}>
                 Update your profile
               </Tooltip>
-            </a>
+            </Link>
           </li>
           {props.user.isAdmin && (
             <>

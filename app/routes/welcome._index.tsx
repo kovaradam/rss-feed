@@ -17,7 +17,7 @@ import {
 } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
-import { createTitle, safeRedirect, validateEmail } from "~/utils";
+import { createTitle, validateEmail } from "~/utils";
 import type { Route } from "./+types/welcome._index";
 
 export const meta = () => {
@@ -43,7 +43,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  const redirectTo = formData.get("redirectTo") ?? "/";
 
   if (!validateEmail(email)) {
     return data<ActionData>(
@@ -74,14 +74,16 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   }
 
-  const user = await createUser(email, password);
+  const user = await createUser({
+    email,
+    auth: { password, type: "password" },
+  });
   sendConfirmEmail(user, request);
 
   return createUserSession({
     request,
     userId: user.id,
-    remember: false,
-    redirectTo,
+    redirectTo: redirectTo as string,
   });
 };
 
