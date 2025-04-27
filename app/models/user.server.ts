@@ -1,12 +1,24 @@
-import type { Password, Prisma, User } from "@prisma/client";
+import type {
+  Password,
+  Prisma,
+  User,
+  WebAuthnCredential,
+} from "@prisma/client";
 import bcrypt from "bcryptjs";
 import invariant from "tiny-invariant";
 
 import { prisma } from "~/db.server";
 import { createDefaultCollections } from "./collection.server";
 import { Mail } from "./mail.server";
+import {
+  AuthenticatorTransportFuture,
+  VerifiedRegistrationResponse,
+} from "@simplewebauthn/server";
 
 export type { User } from "@prisma/client";
+
+type PasskeyRegistration =
+  Required<VerifiedRegistrationResponse>["registrationInfo"];
 
 export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
@@ -20,23 +32,43 @@ export async function getUsers() {
   return prisma.user.findMany();
 }
 
-export async function createUser(
-  email: User["email"],
-  password: string,
-  params?: { isAdmin: boolean }
-) {
-  const hashedPassword = await bcrypt.hash(password, 10);
+export async function createUser(params: {
+  email: User["email"];
+  auth:
+    | {
+        type: "password";
+        password: string;
+      }
+    | {
+        type: "passkey";
+        passkeyRegistration: Required<VerifiedRegistrationResponse>["registrationInfo"];
+      };
+  isAdmin?: boolean;
+}) {
+  const hashedPassword =
+    params.auth.type === "password"
+      ? await bcrypt.hash(params.auth.password, 10)
+      : null;
+
+  const passKey =
+    params.auth.type === "passkey"
+      ? getPasskeyInputFromRegistration(params.auth.passkeyRegistration)
+      : null;
 
   const user = await prisma.user.create({
     data: {
-      email,
-      requestedEmail: email,
-      password: {
-        create: {
-          hash: hashedPassword,
-        },
-      },
+      email: params.email,
+      requestedEmail:
+        params.auth.type === "password" ? params.email : undefined,
       isAdmin: params?.isAdmin ?? false,
+      password: hashedPassword
+        ? {
+            create: {
+              hash: hashedPassword,
+            },
+          }
+        : undefined,
+      passkeys: passKey ? { create: passKey } : undefined,
     },
   });
 
@@ -149,3 +181,62 @@ export async function verifyLogin(
 
   return userWithoutPassword;
 }
+
+function getPasskeyInputFromRegistration(
+  registration: PasskeyRegistration
+): Omit<Prisma.WebAuthnCredentialCreateInput, "userId" | "user"> {
+  const { credential } = registration;
+  return {
+    credentialId: credential.id,
+    counter: credential.counter,
+    publicKey: Buffer.from(credential.publicKey),
+    deviceType: registration.credentialDeviceType,
+    transports: credential.transports
+      ? mapTransports.toDb(credential.transports)
+      : undefined,
+  };
+}
+
+export const mapTransports = {
+  toDb: (transports: AuthenticatorTransportFuture[]) => transports.join(";"),
+  fromDb: (transports: WebAuthnCredential["transports"]) =>
+    transports?.split(";") as AuthenticatorTransportFuture[] | undefined,
+};
+
+export const getPasskeysByUser = async (email: string) => {
+  try {
+    return (
+      await prisma.webAuthnCredential.findMany({
+        where: { user: { email } },
+      })
+    ).map((passKey) => ({
+      ...passKey,
+      transports: mapTransports.fromDb(passKey.transports),
+    }));
+  } catch (_) {
+    return [];
+  }
+};
+
+export const getPasskeyByCredentialId = async (params: {
+  email: string;
+  credentialId: string;
+}) => {
+  const passkey = await prisma.webAuthnCredential.findFirst({
+    where: { credentialId: params.credentialId, user: { email: params.email } },
+  });
+  if (!passkey) {
+    return null;
+  }
+  return {
+    passkey: {
+      ...passkey,
+      transports: mapTransports.fromDb(passkey.transports),
+    },
+    incrementCounter: () =>
+      prisma.webAuthnCredential.update({
+        data: { counter: { increment: 1 } },
+        where: { id: passkey.id },
+      }),
+  };
+};

@@ -5,16 +5,16 @@ interface Props extends React.ComponentProps<"input"> {
   formLabel?: React.ReactNode;
 }
 
-export function Input(props: Props) {
+export function Input({ formLabel, ...inputProps }: Props) {
   const input = (
     <input
-      {...props}
-      className={styles.input.concat(" ").concat(props.className ?? "")}
+      {...inputProps}
+      className={styles.input.concat(" ").concat(inputProps.className ?? "")}
     ></input>
   );
 
-  if (props.formLabel) {
-    return <WithFormLabel label={props.formLabel}>{input}</WithFormLabel>;
+  if (formLabel) {
+    return <WithFormLabel label={formLabel}>{input}</WithFormLabel>;
   }
 
   return input;
