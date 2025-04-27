@@ -1,11 +1,10 @@
 import { createCookieSessionStorage, redirect } from "react-router";
-import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
 import { getUserById } from "~/models/user.server";
 import { mapValue } from "./utils/map-value";
-
-invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
+import { SERVER_ENV } from "./env.server";
+import { safeRedirect } from "./utils";
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -14,8 +13,8 @@ const sessionStorage = createCookieSessionStorage({
     maxAge: 0,
     path: "/",
     sameSite: "lax",
-    secrets: [process.env.SESSION_SECRET],
-    secure: process.env.NODE_ENV === "production",
+    secrets: [SERVER_ENV.sessionSecret],
+    secure: SERVER_ENV.is.prod,
   },
 });
 
@@ -78,25 +77,21 @@ export async function requireUser(request: Request) {
 export async function createUserSession({
   request,
   userId,
-  remember,
   redirectTo,
 }: {
   request: Request;
   userId: string;
-  remember: boolean;
   redirectTo: string;
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
 
-  throw redirect(redirectTo, {
+  throw redirect(safeRedirect(redirectTo, "/"), {
     headers: new Headers([
       [
         "Set-Cookie",
         await sessionStorage.commitSession(session, {
-          maxAge: remember
-            ? 60 * 60 * 24 * 400 // 400 days
-            : undefined,
+          maxAge: 60 * 60 * 24 * 400, // 400 days
         }),
       ],
       ["Set-Cookie", KNOWN_USER_COOKIE],

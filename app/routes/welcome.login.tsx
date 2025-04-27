@@ -13,7 +13,7 @@ import * as React from "react";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
-import { isSubmitting, safeRedirect, validateEmail } from "~/utils";
+import { isSubmitting, validateEmail } from "~/utils";
 import { SubmitButton } from "~/components/Button";
 import { styles } from "~/styles/shared";
 import { WithFormLabel } from "~/components/WithFormLabel";
@@ -40,9 +40,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
-
-  const remember = formData.get("remember");
+  const redirectTo = formData.get("redirectTo") ?? "/";
 
   if (!validateEmail(email)) {
     return data<ActionData>(
@@ -65,9 +63,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   }
 
-  const user = await verifyLogin(email, password);
+  const userId = await verifyLogin(email, password);
 
-  if (!user) {
+  if (!userId) {
     return data<ActionData>(
       { errors: { email: "Invalid email or password" } },
       { status: 400 }
@@ -76,9 +74,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   return createUserSession({
     request,
-    userId: user.id,
-    remember: remember === "on" ? true : false,
-    redirectTo,
+    userId: userId,
+    redirectTo: redirectTo as string,
   });
 };
 
@@ -185,22 +182,7 @@ export default function LoginPage({
             ))
           }
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center">
-              <input
-                id="remember"
-                name="remember"
-                type="checkbox"
-                className={"h-4 w-4 "}
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900 dark:text-white"
-              >
-                Remember me
-              </label>
-            </div>
-          </div>
+
           <SubmitButton
             className=" w-full self-end"
             isLoading={isSubmitting(transition)}

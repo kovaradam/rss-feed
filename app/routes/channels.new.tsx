@@ -79,12 +79,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   } catch (error) {
     let response: ActionData;
+    let isErrorToStore = true;
 
     switch (true) {
       case error instanceof ChannelExistsError:
         response = {
           create: `RSS feed with this address already exists, see channel [${error.channel.title}](/channels/${error.channel.id})`,
         };
+        isErrorToStore = false;
         break;
       case error instanceof UnavailableDbError:
         response = {
@@ -101,7 +103,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
         response = { create: "Could not save RSS feed, please try later" };
     }
 
-    storeFailedUpload(String(inputChannelHref), String(error));
+    if (isErrorToStore) {
+      storeFailedUpload(String(inputChannelHref), String(error));
+    }
 
     return response;
   }
