@@ -81,6 +81,13 @@ export default function App() {
         <meta name="keywords" content="RSS feed, RSS, journal, news" />
         <Meta />
         <Links />
+        <noscript>
+          <style>
+            {`.script-only {
+              display: none;
+              }`}
+          </style>
+        </noscript>
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
         {(!navigation.formAction ||
