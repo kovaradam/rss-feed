@@ -132,6 +132,15 @@ export function enumerate<T extends readonly string[]>(
   >;
 }
 
+export function asEnum<
+  T extends string[],
+  U extends ReturnType<typeof enumerate<T>>
+>(enumerated: U, input: unknown, fallback: keyof U): keyof U {
+  return Object.keys(enumerated).includes(input as never)
+    ? (input as keyof U)
+    : fallback;
+}
+
 /**
  * className toggle
  */
@@ -142,3 +151,5 @@ export function c(isApply: boolean | undefined | null, className: string) {
 export function getPrefersReducedMotion() {
   return globalThis.matchMedia?.("(prefers-reduced-motion)").matches === true;
 }
+
+export const LoginTypes = enumerate(["password", "passkey"]);

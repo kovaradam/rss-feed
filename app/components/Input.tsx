@@ -1,6 +1,7 @@
 import { styles } from "~/styles/shared";
 import { WithFormLabel } from "./WithFormLabel";
 import { ExclamationIcon } from "@heroicons/react/outline";
+import { useFormStatus } from "react-dom";
 
 interface Props extends React.ComponentProps<"input"> {
   formLabel?: React.ReactNode;
@@ -8,11 +9,13 @@ interface Props extends React.ComponentProps<"input"> {
 }
 
 export function Input({ formLabel, errors, ...inputProps }: Props) {
+  const formStatus = useFormStatus();
   const input = (
     <>
       <input
         {...inputProps}
         className={styles.input.concat(" ").concat(inputProps.className ?? "")}
+        disabled={inputProps.disabled || formStatus.pending}
         aria-describedby={(inputProps["aria-describedby"] ?? "").concat(
           errors?.map((e) => e.id).join(" ") ?? ""
         )}
