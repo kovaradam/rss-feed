@@ -64,6 +64,7 @@ export default function PasskeyLogin() {
         } catch (e) {
           console.error(e);
         }
+
         if (response.ok) {
           navigate(response.headers.get("location") || "/channels");
         }
