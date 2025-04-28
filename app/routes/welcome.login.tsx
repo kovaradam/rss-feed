@@ -17,6 +17,8 @@ import { isSubmitting, validateEmail } from "~/utils";
 import { SubmitButton } from "~/components/Button";
 import { styles } from "~/styles/shared";
 import { WithFormLabel } from "~/components/WithFormLabel";
+import { Switch } from "~/components/Switch";
+import { PasskeyForm, WithPasskeySupport } from "~/components/PasskeyForm";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
@@ -58,7 +60,11 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   if (password.length < 8) {
     return data<ActionData>(
-      { errors: { password: "Password is too short" } },
+      {
+        errors: {
+          password: "Password is too short, provide at least 8 characters",
+        },
+      },
       { status: 400 }
     );
   }
@@ -105,6 +111,10 @@ export default function LoginPage({
     }
   }, [actionData]);
 
+  const [loginType, setLoginType] = React.useState(
+    "password" as "password" | "passkey"
+  );
+
   return (
     <>
       <div>
@@ -125,71 +135,87 @@ export default function LoginPage({
         </p>
       </div>
       <div className={`w-full sm:max-w-md `}>
-        <Form method="post" className="space-y-6">
-          {
-            // eslint-disable-next-line react-compiler/react-compiler
-            [
-              {
-                label: "Email address",
-                placeholder: "name@example.com",
-                ref: emailRef,
-                name: "email",
-                type: "email",
-                ariaInvalid: actionData?.errors?.email ? true : undefined,
-                ariaDescribedBy: "email-error",
-                error: actionData?.errors?.email,
-              },
-              {
-                label: "Password",
-                placeholder: undefined,
-                ref: passwordRef,
-                name: "password",
-                type: "password",
-                ariaInvalid: actionData?.errors?.password ? true : undefined,
-                ariaDescribedBy: "password-error",
-                error: actionData?.errors?.password,
-              },
-            ].map((formField) => (
-              <WithFormLabel
-                key={formField.name}
-                htmlFor={formField.name}
-                label={formField.label}
-              >
-                {({ htmlFor }) => (
-                  <>
-                    <input
-                      ref={formField.ref}
-                      id={htmlFor}
-                      required
-                      name={formField.name}
-                      type={formField.type}
-                      placeholder={formField.placeholder}
-                      aria-invalid={formField.ariaInvalid}
-                      aria-describedby={formField.ariaDescribedBy}
-                      className={styles.input}
-                    />
-                    {formField.error && (
-                      <div
-                        className="pt-1 text-red-800 dark:text-red-400"
-                        id={formField.ariaDescribedBy}
-                      >
-                        {formField.error}
-                      </div>
-                    )}
-                  </>
-                )}
-              </WithFormLabel>
-            ))
-          }
-          <input type="hidden" name="redirectTo" value={redirectTo} />
+        <WithPasskeySupport>
+          <Switch
+            value={loginType}
+            onClick={setLoginType}
+            options={[
+              { value: "password", element: "Password" },
+              { value: "passkey", element: "Passkey" },
+            ]}
+            className="mb-6"
+          />
+        </WithPasskeySupport>
+        {loginType === "passkey" ? (
+          <PasskeyForm />
+        ) : (
+          <Form method="post" className="space-y-6">
+            {
+              // eslint-disable-next-line react-compiler/react-compiler
+              [
+                {
+                  label: "Email address",
+                  placeholder: "name@example.com",
+                  ref: emailRef,
+                  name: "email",
+                  type: "email",
+                  ariaInvalid: actionData?.errors?.email ? true : undefined,
+                  ariaDescribedBy: "email-error",
+                  error: actionData?.errors?.email,
+                },
+                {
+                  label: "Password",
+                  placeholder: undefined,
+                  ref: passwordRef,
+                  name: "password",
+                  type: "password",
+                  ariaInvalid: actionData?.errors?.password ? true : undefined,
+                  ariaDescribedBy: "password-error",
+                  error: actionData?.errors?.password,
+                },
+              ].map((formField) => (
+                <WithFormLabel
+                  key={formField.name}
+                  htmlFor={formField.name}
+                  label={formField.label}
+                >
+                  {({ htmlFor }) => (
+                    <>
+                      <input
+                        ref={formField.ref}
+                        id={htmlFor}
+                        required
+                        name={formField.name}
+                        type={formField.type}
+                        placeholder={formField.placeholder}
+                        aria-invalid={formField.ariaInvalid}
+                        aria-describedby={formField.ariaDescribedBy}
+                        className={styles.input}
+                      />
+                      {formField.error && (
+                        <div
+                          className="pt-1 text-red-800 dark:text-red-400"
+                          id={formField.ariaDescribedBy}
+                        >
+                          {formField.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </WithFormLabel>
+              ))
+            }
 
-          <SubmitButton
-            className=" w-full self-end"
-            isLoading={isSubmitting(transition)}
-          >
-            Log in
-          </SubmitButton>
-        </Form>
+            <input type="hidden" name="redirectTo" value={redirectTo} />
+
+            <SubmitButton
+              className=" w-full self-end"
+              isLoading={isSubmitting(transition)}
+            >
+              Log in
+            </SubmitButton>
+          </Form>
+        )}
       </div>
     </>
   );

@@ -42,7 +42,6 @@ export function NewItemsAlert() {
 function LoadingIcon() {
   return (
     <div className="flex gap-2">
-      <style></style>
       {[0, 1, 2].map((idx) => (
         <div
           key={idx}
