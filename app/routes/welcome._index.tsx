@@ -17,8 +17,10 @@ import {
 } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
-import { createTitle, validateEmail } from "~/utils";
+import { asEnum, createTitle, LoginTypes, validateEmail } from "~/utils";
 import type { Route } from "./+types/welcome._index";
+import { PasskeyForm, WithPasskeySupport } from "~/components/PasskeyForm";
+import { Switch } from "~/components/Switch";
 
 export const meta = () => {
   return [{ title: createTitle("Welcome") }];
@@ -108,6 +110,15 @@ export default function Welcome() {
     transition.state === "submitting" ||
     (transition.state === "loading" && Boolean(transition.formMethod));
 
+  const [loginType, setLoginType] = React.useState(
+    asEnum(LoginTypes, searchParams.get("lt"), "password")
+  );
+
+  const toLogin = {
+    pathname: "login",
+    search: (searchParams.set("lt", loginType), searchParams.toString()),
+  };
+
   return (
     <>
       <div>
@@ -116,98 +127,104 @@ export default function Welcome() {
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
           Get started with a new account or{" "}
-          <Link
-            to={{
-              pathname: "login",
-              search: searchParams.toString(),
-            }}
-            className={`font-bold underline`}
-          >
+          <Link to={toLogin} className={`font-bold underline`}>
             log In
           </Link>{" "}
           if you already have one.
         </p>
       </div>
       <div className={`w-full sm:max-w-md`}>
-        <Form method="post" className="space-y-6">
-          {
-            // eslint-disable-next-line react-compiler/react-compiler
-            [
-              {
-                label: "Email address",
-                placeholder: "name@example.com",
-                ref: emailRef,
-                id: "email",
-                name: "email",
-                type: "email",
-                ariaInvalid: actionData?.errors?.email ? true : undefined,
-                ariaDescribedBy: "email-error",
-                error: actionData?.errors?.email,
-              },
-              {
-                label: "Password",
-                placeholder: undefined,
-                ref: passwordRef,
-                id: "password",
-                name: "password",
-                type: "password",
-                ariaInvalid: actionData?.errors?.password ? true : undefined,
-                ariaDescribedBy: "password-error",
-                error: actionData?.errors?.password,
-              },
-            ].map((formField) => (
-              <WithFormLabel
-                htmlFor={formField.id}
-                label={formField.label}
-                key={formField.id}
-              >
-                <input
-                  ref={formField.ref}
-                  id={formField.id}
-                  required
-                  name={formField.name}
-                  type={formField.type}
-                  placeholder={formField.placeholder}
-                  aria-invalid={formField.ariaInvalid}
-                  aria-describedby={formField.ariaDescribedBy}
-                  className={styles.input}
-                />
-                {formField.error && (
-                  <div
-                    className="pt-1 text-red-800 dark:text-red-400"
-                    id={formField.ariaDescribedBy}
-                  >
-                    {formField.error}
-                  </div>
-                )}
-              </WithFormLabel>
-            ))
-          }
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={redirectTo}
-            disabled={isSubmitting}
+        <WithPasskeySupport>
+          <Switch
+            value={loginType}
+            onClick={setLoginType}
+            options={[
+              { value: "password", element: "Password" },
+              { value: "passkey", element: "Passkey" },
+            ]}
+            className="mb-6"
           />
-          <div className="flex flex-col items-center justify-between gap-1 pt-4 sm:flex-row">
-            <SubmitButton
-              className="w-full sm:w-48 sm:px-8"
-              isLoading={isSubmitting}
-            >
-              Create Account
-            </SubmitButton>
-            <span className="text-slate-500">or</span>
-            <Link
-              to={{
-                pathname: "login",
-                search: searchParams.toString(),
-              }}
-              className={`${buttonStyle} w-full justify-center sm:w-48 `}
-            >
-              log In
-            </Link>{" "}
-          </div>
-        </Form>
+        </WithPasskeySupport>
+        {loginType === "passkey" ? (
+          <PasskeyForm />
+        ) : (
+          <Form method="post" className="space-y-6">
+            {
+              // eslint-disable-next-line react-compiler/react-compiler
+              [
+                {
+                  label: "Email address",
+                  placeholder: "name@example.com",
+                  ref: emailRef,
+                  id: "email",
+                  name: "email",
+                  type: "email",
+                  ariaInvalid: actionData?.errors?.email ? true : undefined,
+                  ariaDescribedBy: "email-error",
+                  error: actionData?.errors?.email,
+                },
+                {
+                  label: "Password",
+                  placeholder: undefined,
+                  ref: passwordRef,
+                  id: "password",
+                  name: "password",
+                  type: "password",
+                  ariaInvalid: actionData?.errors?.password ? true : undefined,
+                  ariaDescribedBy: "password-error",
+                  error: actionData?.errors?.password,
+                },
+              ].map((formField) => (
+                <WithFormLabel
+                  htmlFor={formField.id}
+                  label={formField.label}
+                  key={formField.id}
+                >
+                  <input
+                    ref={formField.ref}
+                    id={formField.id}
+                    required
+                    name={formField.name}
+                    type={formField.type}
+                    placeholder={formField.placeholder}
+                    aria-invalid={formField.ariaInvalid}
+                    aria-describedby={formField.ariaDescribedBy}
+                    className={styles.input}
+                  />
+                  {formField.error && (
+                    <div
+                      className="pt-1 text-red-800 dark:text-red-400"
+                      id={formField.ariaDescribedBy}
+                    >
+                      {formField.error}
+                    </div>
+                  )}
+                </WithFormLabel>
+              ))
+            }
+            <input
+              type="hidden"
+              name="redirectTo"
+              value={redirectTo}
+              disabled={isSubmitting}
+            />
+            <div className="flex flex-col items-center justify-between gap-1 pt-4 sm:flex-row">
+              <SubmitButton
+                className="w-full sm:w-48 sm:px-8"
+                isLoading={isSubmitting}
+              >
+                Create Account
+              </SubmitButton>
+              <span className="text-slate-500">or</span>
+              <Link
+                to={toLogin}
+                className={`${buttonStyle} w-full justify-center sm:w-48 `}
+              >
+                log In
+              </Link>{" "}
+            </div>
+          </Form>
+        )}
       </div>
     </>
   );

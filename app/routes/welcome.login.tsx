@@ -13,7 +13,7 @@ import * as React from "react";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
-import { isSubmitting, validateEmail } from "~/utils";
+import { asEnum, isSubmitting, LoginTypes, validateEmail } from "~/utils";
 import { SubmitButton } from "~/components/Button";
 import { styles } from "~/styles/shared";
 import { WithFormLabel } from "~/components/WithFormLabel";
@@ -112,7 +112,7 @@ export default function LoginPage({
   }, [actionData]);
 
   const [loginType, setLoginType] = React.useState(
-    "password" as "password" | "passkey"
+    asEnum(LoginTypes, searchParams.get("lt"), "password")
   );
 
   return (
@@ -127,7 +127,8 @@ export default function LoginPage({
             className="font-bold underline"
             to={{
               pathname: "/welcome",
-              search: searchParams.toString(),
+              search:
+                (searchParams.set("lt", loginType), searchParams.toString()),
             }}
           >
             Sign up
