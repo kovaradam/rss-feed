@@ -95,13 +95,26 @@ export async function validateUserEmail(id: User["id"]) {
     return null;
   }
 
-  return await prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id: id },
     data: {
       email: user.requestedEmail,
       requestedEmail: null,
     },
+    select: {
+      id: true,
+      passkeys: { select: { credentialId: true } },
+      password: { select: { userId: true } },
+    },
   });
+
+  return {
+    loginType: updatedUser.passkeys.length
+      ? "passkey"
+      : updatedUser.password?.userId
+      ? "password"
+      : null,
+  };
 }
 
 export async function sendConfirmEmail(

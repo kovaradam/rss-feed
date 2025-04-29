@@ -1,14 +1,17 @@
+import React from "react";
 import {
+  data,
   Form,
   Link,
-  useActionData,
-  useSearchParams,
-  useNavigation,
-  data,
   redirect,
+  useActionData,
+  useLocation,
+  useNavigation,
+  useSearchParams,
 } from "react-router";
-import React from "react";
-import { SubmitButton, buttonStyle } from "~/components/Button";
+import { buttonStyle, SubmitButton } from "~/components/Button";
+import { PasskeyForm, WithPasskeySupport } from "~/components/PasskeyForm";
+import { Switch } from "~/components/Switch";
 import { WithFormLabel } from "~/components/WithFormLabel";
 import {
   createUser,
@@ -19,8 +22,6 @@ import { createUserSession, getUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
 import { asEnum, createTitle, LoginTypes, validateEmail } from "~/utils";
 import type { Route } from "./+types/welcome._index";
-import { PasskeyForm, WithPasskeySupport } from "~/components/PasskeyForm";
-import { Switch } from "~/components/Switch";
 
 export const meta = () => {
   return [{ title: createTitle("Welcome") }];
@@ -91,6 +92,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
 export default function Welcome() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+
   const redirectTo = searchParams.get("redirectTo") ?? "/channels";
   const actionData = useActionData() as ActionData;
   const emailRef = React.useRef<HTMLInputElement>(null);
@@ -111,12 +114,13 @@ export default function Welcome() {
     (transition.state === "loading" && Boolean(transition.formMethod));
 
   const [loginType, setLoginType] = React.useState(
-    asEnum(LoginTypes, searchParams.get("lt"), "password")
+    asEnum(LoginTypes, location.hash.slice(1), "password")
   );
 
   const toLogin = {
     pathname: "login",
-    search: (searchParams.set("lt", loginType), searchParams.toString()),
+    search: searchParams.toString(),
+    hash: loginType,
   };
 
   return (

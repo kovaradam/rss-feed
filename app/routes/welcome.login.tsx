@@ -1,24 +1,25 @@
 import type { Route } from "./+types/welcome.login";
 
-import type { MetaFunction } from "react-router";
+import * as React from "react";
 import {
+  type MetaFunction,
   data,
-  redirect,
   Form,
   Link,
-  useSearchParams,
+  redirect,
   useNavigation,
+  useSearchParams,
+  useLocation,
 } from "react-router";
-import * as React from "react";
 
-import { createUserSession, getUserId } from "~/session.server";
-import { verifyLogin } from "~/models/user.server";
-import { asEnum, isSubmitting, LoginTypes, validateEmail } from "~/utils";
 import { SubmitButton } from "~/components/Button";
-import { styles } from "~/styles/shared";
-import { WithFormLabel } from "~/components/WithFormLabel";
-import { Switch } from "~/components/Switch";
 import { PasskeyForm, WithPasskeySupport } from "~/components/PasskeyForm";
+import { Switch } from "~/components/Switch";
+import { WithFormLabel } from "~/components/WithFormLabel";
+import { verifyLogin } from "~/models/user.server";
+import { createUserSession, getUserId } from "~/session.server";
+import { styles } from "~/styles/shared";
+import { asEnum, isSubmitting, LoginTypes, validateEmail } from "~/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
@@ -98,6 +99,7 @@ export default function LoginPage({
   actionData,
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const redirectTo = searchParams.get("redirectTo") || "/channels";
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
@@ -112,7 +114,7 @@ export default function LoginPage({
   }, [actionData]);
 
   const [loginType, setLoginType] = React.useState(
-    asEnum(LoginTypes, searchParams.get("lt"), "password")
+    asEnum(LoginTypes, location.hash.slice(1), "password")
   );
 
   return (
@@ -127,8 +129,8 @@ export default function LoginPage({
             className="font-bold underline"
             to={{
               pathname: "/welcome",
-              search:
-                (searchParams.set("lt", loginType), searchParams.toString()),
+              search: searchParams.toString(),
+              hash: loginType,
             }}
           >
             Sign up
