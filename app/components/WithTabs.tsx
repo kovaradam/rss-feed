@@ -34,9 +34,8 @@ export function WithTabs<T extends string>(props: {
         disabled={props.disabled}
         className={`${styles.input} script-only grid  gap-[var(--gap)] bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] sm:[--hor:0] ${props.className}`}
         style={{
-          [isVertical
-            ? "gridTemplateRows"
-            : "gridTemplateColumns"]: `repeat(${props.options.length}, 1fr)`,
+          [isVertical ? "gridTemplateRows" : "gridTemplateColumns"]:
+            `repeat(${props.options.length}, 1fr)`,
         }}
         onKeyDown={(e) => {
           const tablist = e.currentTarget;
