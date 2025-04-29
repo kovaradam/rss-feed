@@ -2,6 +2,7 @@ import { validateUserEmail } from "~/models/user.server";
 import { logout } from "~/session.server";
 import type { Route } from "./+types/welcome.confirm-email.$userId";
 import { href, redirect } from "react-router";
+import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = params.userId ?? "";
@@ -9,9 +10,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const validatedUser = await validateUserEmail(userId);
 
   if (validatedUser?.loginType) {
+    const searchParams = new URLSearchParams();
+    searchParams.set(WithPasskeyFormTabs.queryParam, validatedUser.loginType);
     return logout(
       request,
-      href("/welcome/email-confirmed").concat(`#${validatedUser.loginType}`)
+      href("/welcome/email-confirmed")
+        .concat("?")
+        .concat(searchParams.toString())
     );
   }
 

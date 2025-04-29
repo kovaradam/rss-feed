@@ -22,9 +22,11 @@ export default function ConfirmEmailPage() {
       <p className="text-slate-500">
         You can continue to{" "}
         <Link
-          to={href("/welcome/login")
-            .concat("?first=true")
-            .concat(location.hash)}
+          to={{
+            pathname: href("/welcome/login"),
+            hash: location.hash,
+            search: location.search,
+          }}
           className="font-bold text-rose-400 underline"
         >
           log in

@@ -21,12 +21,9 @@
   .background {
     --size: 0.1ex;
 
-    background-image:
-      radial-gradient(#e2e8f0 var(--size), transparent 0),
+    background-image: radial-gradient(#e2e8f0 var(--size), transparent 0),
       radial-gradient(#e2e8f0 var(--size), #fff 0);
-    background-position:
-      0 0,
-      16px 16px;
+    background-position: 0 0, 16px 16px;
     background-size: 32px 32px;
   }
 }
@@ -85,4 +82,23 @@
   :is(a, button, input, summary) svg {
     transition: scale 200ms;
   }
+}
+
+:root {
+  --ease: linear(
+    0 0%,
+    0.2342 12.49%,
+    0.4374 24.99%,
+    0.6093 37.49%,
+    0.6835 43.74%,
+    0.7499 49.99%,
+    0.8086 56.25%,
+    0.8593 62.5%,
+    0.9023 68.75%,
+    0.9375 75%,
+    0.9648 81.25%,
+    0.9844 87.5%,
+    0.9961 93.75%,
+    1 100%
+  );
 }

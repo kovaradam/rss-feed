@@ -9,17 +9,15 @@ import {
   redirect,
   useNavigation,
   useSearchParams,
-  useLocation,
 } from "react-router";
 
 import { SubmitButton } from "~/components/Button";
-import { PasskeyForm, WithPasskeySupport } from "~/components/PasskeyForm";
-import { Switch } from "~/components/Switch";
 import { WithFormLabel } from "~/components/WithFormLabel";
+import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
 import { verifyLogin } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
-import { asEnum, isSubmitting, LoginTypes, validateEmail } from "~/utils";
+import { isSubmitting, validateEmail } from "~/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
@@ -99,7 +97,6 @@ export default function LoginPage({
   actionData,
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
-  const location = useLocation();
   const redirectTo = searchParams.get("redirectTo") || "/channels";
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
@@ -112,10 +109,6 @@ export default function LoginPage({
       passwordRef.current?.focus();
     }
   }, [actionData]);
-
-  const [loginType, setLoginType] = React.useState(
-    asEnum(LoginTypes, location.hash.slice(1), "password")
-  );
 
   return (
     <>
@@ -130,7 +123,6 @@ export default function LoginPage({
             to={{
               pathname: "/welcome",
               search: searchParams.toString(),
-              hash: loginType,
             }}
           >
             Sign up
@@ -138,87 +130,79 @@ export default function LoginPage({
         </p>
       </div>
       <div className={`w-full sm:max-w-md `}>
-        <WithPasskeySupport>
-          <Switch
-            value={loginType}
-            onClick={setLoginType}
-            options={[
-              { value: "password", element: "Password" },
-              { value: "passkey", element: "Passkey" },
-            ]}
-            className="mb-6"
-          />
-        </WithPasskeySupport>
-        {loginType === "passkey" ? (
-          <PasskeyForm />
-        ) : (
-          <Form method="post" className="space-y-6">
-            {
-              // eslint-disable-next-line react-compiler/react-compiler
-              [
-                {
-                  label: "Email address",
-                  placeholder: "name@example.com",
-                  ref: emailRef,
-                  name: "email",
-                  type: "email",
-                  ariaInvalid: actionData?.errors?.email ? true : undefined,
-                  ariaDescribedBy: "email-error",
-                  error: actionData?.errors?.email,
-                },
-                {
-                  label: "Password",
-                  placeholder: undefined,
-                  ref: passwordRef,
-                  name: "password",
-                  type: "password",
-                  ariaInvalid: actionData?.errors?.password ? true : undefined,
-                  ariaDescribedBy: "password-error",
-                  error: actionData?.errors?.password,
-                },
-              ].map((formField) => (
-                <WithFormLabel
-                  key={formField.name}
-                  htmlFor={formField.name}
-                  label={formField.label}
+        <WithPasskeyFormTabs
+          passwordForm={
+            <Form method="post" className="space-y-6">
+              {
+                // eslint-disable-next-line react-compiler/react-compiler
+                [
+                  {
+                    label: "Email address",
+                    placeholder: "name@example.com",
+                    ref: emailRef,
+                    name: "email",
+                    type: "email",
+                    ariaInvalid: actionData?.errors?.email ? true : undefined,
+                    ariaDescribedBy: "email-error",
+                    error: actionData?.errors?.email,
+                  },
+                  {
+                    label: "Password",
+                    placeholder: undefined,
+                    ref: passwordRef,
+                    name: "password",
+                    type: "password",
+                    ariaInvalid: actionData?.errors?.password
+                      ? true
+                      : undefined,
+                    ariaDescribedBy: "password-error",
+                    error: actionData?.errors?.password,
+                  },
+                ].map((formField) => (
+                  <WithFormLabel
+                    key={formField.name}
+                    htmlFor={formField.name}
+                    label={formField.label}
+                  >
+                    {({ htmlFor }) => (
+                      <>
+                        <input
+                          ref={formField.ref}
+                          id={htmlFor}
+                          required
+                          name={formField.name}
+                          type={formField.type}
+                          placeholder={formField.placeholder}
+                          aria-invalid={formField.ariaInvalid}
+                          aria-describedby={formField.ariaDescribedBy}
+                          className={styles.input}
+                        />
+                        {formField.error && (
+                          <div
+                            className="pt-1 text-red-800 dark:text-red-400"
+                            id={formField.ariaDescribedBy}
+                          >
+                            {formField.error}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </WithFormLabel>
+                ))
+              }
+
+              <input type="hidden" name="redirectTo" value={redirectTo} />
+              <div className="pt-4">
+                <SubmitButton
+                  className="w-full"
+                  isLoading={isSubmitting(transition)}
                 >
-                  {({ htmlFor }) => (
-                    <>
-                      <input
-                        ref={formField.ref}
-                        id={htmlFor}
-                        required
-                        name={formField.name}
-                        type={formField.type}
-                        placeholder={formField.placeholder}
-                        aria-invalid={formField.ariaInvalid}
-                        aria-describedby={formField.ariaDescribedBy}
-                        className={styles.input}
-                      />
-                      {formField.error && (
-                        <div
-                          className="pt-1 text-red-800 dark:text-red-400"
-                          id={formField.ariaDescribedBy}
-                        >
-                          {formField.error}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </WithFormLabel>
-              ))
-            }
-
-            <input type="hidden" name="redirectTo" value={redirectTo} />
-
-            <SubmitButton
-              className=" w-full self-end"
-              isLoading={isSubmitting(transition)}
-            >
-              Log in
-            </SubmitButton>
-          </Form>
-        )}
+                  Log in
+                </SubmitButton>
+              </div>
+            </Form>
+          }
+        />
       </div>
     </>
   );

@@ -33,6 +33,7 @@ export class WebAuthnService {
           residentKey: "preferred",
           userVerification: "preferred",
         },
+        timeout: CEREMONY_TIMEOUT,
       });
       await this.#storeChallenge({
         challenge: registrationOptions.challenge,
@@ -43,10 +44,14 @@ export class WebAuthnService {
       const authenticationOptions = await generateAuthenticationOptions({
         rpID: this.#relyingPartyId,
 
-        allowCredentials: (await getPasskeysByUser(email)).map((passkey) => ({
+        allowCredentials: (
+          await getPasskeysByUser(email)
+        ).map((passkey) => ({
           id: passkey.credentialId,
           transports: passkey.transports,
         })),
+
+        timeout: CEREMONY_TIMEOUT,
       });
 
       await this.#storeChallenge({
@@ -142,8 +147,9 @@ export class WebAuthnService {
   static #clearStaleChallenges = () => {
     if (!this.#clearTimeoutId) {
       this.#clearTimeoutId = globalThis.setTimeout(async () => {
-        // https://w3c.github.io/webauthn/#sctn-timeout-recommended-range
-        const fiveMinutesBack = new Date(new Date().getTime() - 1000 * 60 * 5);
+        const fiveMinutesBack = new Date(
+          new Date().getTime() - CEREMONY_TIMEOUT
+        );
 
         try {
           const result = await prisma.webAuthnChallenge.deleteMany({
@@ -168,3 +174,6 @@ export class WebAuthnService {
 }
 
 WebAuthnService.init();
+
+// https://w3c.github.io/webauthn/#sctn-timeout-recommended-range
+const CEREMONY_TIMEOUT = 1000 * 60 * 5;
