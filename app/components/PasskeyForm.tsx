@@ -1,5 +1,4 @@
 import {
-  browserSupportsWebAuthn,
   startAuthentication,
   startRegistration,
 } from "@simplewebauthn/browser";
@@ -7,7 +6,7 @@ import {
 import { href, useNavigate, useSearchParams } from "react-router";
 import { SubmitButton } from "~/components/Button";
 import { Input } from "~/components/Input";
-import React, { PropsWithChildren } from "react";
+import React from "react";
 
 export function PasskeyForm() {
   const navigate = useNavigate();
@@ -108,19 +107,5 @@ async function authenticateWithPasskey(registrationFormData: FormData) {
   if (response.ok) {
     return { redirect: response.headers.get("location") || "/channels" };
   }
-  return null;
-}
-
-export function WithPasskeySupport(props: PropsWithChildren) {
-  const [isSupported, setIsSupported] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsSupported(browserSupportsWebAuthn());
-  }, []);
-
-  if (isSupported) {
-    return props.children;
-  }
-
   return null;
 }
