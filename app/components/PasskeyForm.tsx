@@ -24,7 +24,10 @@ export function PasskeyForm() {
   const [state, action] = React.useActionState(passkeyAction, null);
 
   return (
-    <form action={action} className="space-y-6">
+    <form
+      action={action}
+      className="min-h-[var(--welcome-form-min-height)] space-y-6"
+    >
       <>
         <Input
           name="email"

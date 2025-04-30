@@ -32,10 +32,11 @@ export function WithTabs<T extends string>(props: {
     <>
       <fieldset
         disabled={props.disabled}
-        className={`${styles.input} script-only grid  gap-[var(--gap)] bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] sm:[--hor:0] ${props.className}`}
+        className={`${styles.input} script-only grid gap-[var(--gap)] bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] sm:[--hor:0] dark:text-slate-100 ${props.className}`}
         style={{
-          [isVertical ? "gridTemplateRows" : "gridTemplateColumns"]:
-            `repeat(${props.options.length}, 1fr)`,
+          [isVertical
+            ? "gridTemplateRows"
+            : "gridTemplateColumns"]: `repeat(${props.options.length}, 1fr)`,
         }}
         onKeyDown={(e) => {
           const tablist = e.currentTarget;
@@ -78,7 +79,7 @@ export function WithTabs<T extends string>(props: {
         tabIndex={0}
       >
         <span
-          className="bg-white shadow"
+          className="rounded-sm bg-white shadow transition-transform motion-reduce:transition-none dark:bg-slate-800"
           style={{
             gridRow: 1,
             gridColumn: 1,
@@ -86,7 +87,6 @@ export function WithTabs<T extends string>(props: {
               100 * currentOptionIndex
             }% + calc(var(--gap) * ${currentOptionIndex})))`,
             zIndex: 0,
-            transition: `transform 100ms var(--ease)`,
           }}
         ></span>
         {props.options.map((option, index) => (
@@ -101,7 +101,7 @@ export function WithTabs<T extends string>(props: {
             className={"rounded-sm p-1 text-center ".concat(
               option.value === currentValue
                 ? ""
-                : "text-gray-600 hover:bg-gray-100 hover:text-inherit"
+                : "text-gray-600 hover:bg-gray-100 hover:text-inherit dark:text-slate-300 dark:hover:bg-slate-700"
             )}
             style={{
               zIndex: 1,

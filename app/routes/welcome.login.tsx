@@ -132,7 +132,10 @@ export default function LoginPage({
       <div className={`w-full sm:max-w-md `}>
         <WithPasskeyFormTabs
           passwordForm={
-            <Form method="post" className="space-y-6">
+            <Form
+              method="post"
+              className="min-h-[var(--welcome-form-min-height)] space-y-6"
+            >
               {
                 // eslint-disable-next-line react-compiler/react-compiler
                 [

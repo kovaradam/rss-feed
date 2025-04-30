@@ -24,12 +24,8 @@ export default function Welcome() {
         <div className="flex flex-col gap-4 pb-8">
           <p className="text-pretty text-4xl font-bold text-blue-900 dark:text-slate-400">
             Keep up with the latest from the web.
-            <span className="mt-8 block font-normal dark:text-white">
-              No algorithms.
-            </span>
-            <span className="mb-8 block font-normal italic dark:text-white">
-              No noise.
-            </span>
+            <span className="mt-8 block font-normal">No algorithms.</span>
+            <span className="mb-8 block font-normal italic ">No noise.</span>
             Only the things that interest{" "}
             <span className="font-normal italic dark:text-white">you</span>.
           </p>
