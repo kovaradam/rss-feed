@@ -1,10 +1,20 @@
 import type { MetaFunction } from "react-router";
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
 import { ErrorMessage } from "~/components/ErrorMessage";
+import { getUserId } from "~/session.server";
 import { createTitle } from "~/utils";
+import { Route } from "./+types/welcome";
 
 export const meta: MetaFunction = () => {
   return [{ title: createTitle("Welcome") }];
+};
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const userId = await getUserId(request);
+  if (userId) {
+    throw redirect("/channels");
+  }
+  return {};
 };
 
 export default function Welcome() {
