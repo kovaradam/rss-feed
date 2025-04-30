@@ -1,5 +1,5 @@
-import { Form } from "react-router";
 import React from "react";
+import { Form, useSearchParams } from "react-router";
 
 type Props = React.ComponentProps<typeof Form> & {
   isLoading?: boolean;
@@ -11,7 +11,16 @@ type Props = React.ComponentProps<typeof Form> & {
  * Form that acts as a link to maintain scroll position after navigation
  */
 export function ShowMoreLink(props: Props) {
-  const isLoading = props.isLoading;
+  const [searchParams] = useSearchParams();
+  const otherValues = (props.otherValues ?? [])
+    .concat(
+      Array.from(searchParams.entries()).map(([name, value]) => ({
+        value,
+        name,
+      }))
+    )
+    .filter(({ name }) => name !== props.cursor.name);
+
   return (
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
       <button type={"submit"} className="hover:underline dark:text-white">
@@ -20,10 +29,10 @@ export function ShowMoreLink(props: Props) {
           name={props.cursor.name}
           value={props.cursor.value}
         />
-        {props.otherValues?.map(({ value, name }) => (
-          <input type="hidden" name={name} value={value} key={name} />
+        {otherValues.map(({ value, name }) => (
+          <input type="hidden" name={name} value={value} key={name + value} />
         ))}
-        {isLoading ? "Loading..." : "Show more"}
+        {props.isLoading ? "Loading..." : "Show more"}
       </button>
     </Form>
   );
