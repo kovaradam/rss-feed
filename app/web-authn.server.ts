@@ -44,7 +44,9 @@ export class WebAuthnService {
       const authenticationOptions = await generateAuthenticationOptions({
         rpID: this.#relyingPartyId,
 
-        allowCredentials: (await getPasskeysByUser(email)).map((passkey) => ({
+        allowCredentials: (
+          await getPasskeysByUser(email)
+        ).map((passkey) => ({
           id: passkey.credentialId,
           transports: passkey.transports,
         })),
@@ -109,7 +111,7 @@ export class WebAuthnService {
       expectedRPID: this.#relyingPartyId,
     });
     if (result.verified) {
-      passkeyResult.incrementCounter();
+      await passkeyResult.incrementCounter();
     }
     return result;
   };
