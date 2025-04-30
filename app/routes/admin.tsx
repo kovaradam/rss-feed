@@ -86,6 +86,7 @@ export default function AdminIndexPage({
               <td className="pr-5">Created at</td>
               <td className="pr-5">Updated at</td>
               <td className="pr-5">Login</td>
+              <td className="pr-5">Sessions</td>
               <td>Actions</td>
             </tr>
           </thead>
@@ -113,6 +114,7 @@ export default function AdminIndexPage({
                     .filter(Boolean)
                     .join(",")}
                 </td>
+                <td>{user.sessions}</td>
                 <td className="flex gap-1">
                   <Form method="delete">
                     <input type="hidden" value={user.id} name="user-id" />

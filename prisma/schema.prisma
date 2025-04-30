@@ -22,6 +22,7 @@ model User {
   channels    Channel[]
   collections Collection[]
   passkeys    WebAuthnCredential[]
+  sessions    Session[]
 }
 
 model Password {
@@ -135,4 +136,11 @@ model WebAuthnCredential {
   counter      Int
   deviceType   String
   transports   String?
+}
+
+model Session {
+  id        String   @id() @default(cuid())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
 }

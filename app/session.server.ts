@@ -5,6 +5,7 @@ import { getUserById } from "~/models/user.server";
 import { mapValue } from "./utils/map-value";
 import { SERVER_ENV } from "./env.server";
 import { safeRedirect } from "./utils";
+import { prisma } from "./db.server";
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -17,26 +18,43 @@ const sessionStorage = createCookieSessionStorage({
     secure: SERVER_ENV.is.prod,
   },
 });
+const SESSION_MAX_AGE_IN_SECONDS = 60 * 60 * 24 * 400; // 400 days
+const SESSION_MAX_AGE_IN_MS = SESSION_MAX_AGE_IN_SECONDS * 1000;
+const BROWSER_SESSION_ID_KEY = "sessionId";
 
-const USER_SESSION_KEY = "userId";
-
-async function getSession(request: Request) {
+async function getBrowserSession(request: Request) {
   const cookie = request.headers.get("Cookie");
   return sessionStorage.getSession(cookie);
 }
 
-export async function getUserId(
-  request: Request
-): Promise<User["id"] | undefined> {
-  const session = await getSession(request);
+export async function getUserId(request: Request): Promise<User["id"] | null> {
+  const browserSession = await getBrowserSession(request);
 
-  const userId = session.get(USER_SESSION_KEY);
-  return userId;
+  const sessionId = browserSession.get(BROWSER_SESSION_ID_KEY);
+
+  if (!sessionId) {
+    return null;
+  }
+  const serverSession = await prisma.session
+    .findUnique({
+      where: { id: sessionId },
+    })
+    .catch(() => null);
+
+  if (serverSession) {
+    const expiry = serverSession.createdAt.getTime() + SESSION_MAX_AGE_IN_MS;
+    if (expiry < Date.now()) {
+      prisma.session.delete({ where: { id: sessionId } });
+      return null;
+    }
+  }
+
+  return serverSession?.userId ?? null;
 }
 
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
-  if (userId === undefined) return null;
+  if (userId === null) return null;
 
   const user = await getUserById(userId);
   if (user) return user;
@@ -83,15 +101,17 @@ export async function createUserSession({
   userId: string;
   redirectTo: string;
 }) {
-  const session = await getSession(request);
-  session.set(USER_SESSION_KEY, userId);
+  const serverSession = prisma.session.create({ data: { userId } });
+  const browserSession = await getBrowserSession(request);
+
+  browserSession.set(BROWSER_SESSION_ID_KEY, (await serverSession).id);
 
   throw redirect(safeRedirect(redirectTo, "/"), {
     headers: new Headers([
       [
         "Set-Cookie",
-        await sessionStorage.commitSession(session, {
-          maxAge: 60 * 60 * 24 * 400, // 400 days
+        await sessionStorage.commitSession(browserSession, {
+          maxAge: SESSION_MAX_AGE_IN_SECONDS,
         }),
       ],
       ["Set-Cookie", KNOWN_USER_COOKIE],
@@ -100,10 +120,17 @@ export async function createUserSession({
 }
 
 export async function logout(request: Request, target = "/") {
-  const session = await getSession(request);
+  const browserSession = await getBrowserSession(request);
+  const sessionId = browserSession.get(BROWSER_SESSION_ID_KEY);
+
+  await prisma.session.delete({ where: { id: sessionId } }).catch((e) => {
+    console.error(e);
+    return null;
+  });
+
   throw redirect(target, {
     headers: new Headers([
-      ["Set-Cookie", await sessionStorage.destroySession(session)],
+      ["Set-Cookie", await sessionStorage.destroySession(browserSession)],
       ["Set-Cookie", KNOWN_USER_COOKIE],
     ]),
   });
@@ -114,3 +141,9 @@ export function isKnownUser(request: Request) {
 }
 
 const KNOWN_USER_COOKIE = "known-user=true";
+
+prisma.session.deleteMany({
+  where: {
+    createdAt: { lte: new Date(Date.now() - SESSION_MAX_AGE_IN_MS) },
+  },
+});

@@ -30,7 +30,7 @@ export async function getUserByEmail(email: User["email"]) {
 
 export async function getUsersAdminView() {
   const users = await prisma.user.findMany({
-    include: { passkeys: true, password: true },
+    include: { passkeys: true, password: true, sessions: true },
   });
   return users.map((u) => ({
     id: u.id,
@@ -41,6 +41,7 @@ export async function getUsersAdminView() {
     isAdmin: u.isAdmin,
     pw: u.password !== null,
     pk: u.passkeys.length !== 0,
+    sessions: u.sessions.length,
   }));
 }
 
@@ -112,8 +113,8 @@ export async function validateUserEmail(id: User["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
   };
 }
 
