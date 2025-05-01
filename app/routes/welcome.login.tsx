@@ -12,11 +12,10 @@ import {
 } from "react-router";
 
 import { SubmitButton } from "~/components/Button";
-import { WithFormLabel } from "~/components/WithFormLabel";
+import { Input } from "~/components/Input";
 import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
 import { verifyLogin } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
-import { styles } from "~/styles/shared";
 import { isSubmitting, validateEmail } from "~/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -68,19 +67,25 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   }
 
-  const userId = await verifyLogin(email, password);
+  const user = await verifyLogin(email, password);
 
-  if (!userId) {
+  if (!user) {
     return data<ActionData>(
-      { errors: { email: "Invalid email or password" } },
+      {
+        errors: {
+          email: "Invalid email or password",
+          password: "Invalid email or password",
+        },
+      },
       { status: 400 }
     );
   }
 
   return createUserSession({
     request,
-    userId: userId,
+    userId: user.userId,
     redirectTo: redirectTo as string,
+    credential: { type: "password", passwordId: user.passwordId },
   });
 };
 
@@ -162,35 +167,21 @@ export default function LoginPage({
                     error: actionData?.errors?.password,
                   },
                 ].map((formField) => (
-                  <WithFormLabel
+                  <Input
                     key={formField.name}
-                    htmlFor={formField.name}
-                    label={formField.label}
-                  >
-                    {({ htmlFor }) => (
-                      <>
-                        <input
-                          ref={formField.ref}
-                          id={htmlFor}
-                          required
-                          name={formField.name}
-                          type={formField.type}
-                          placeholder={formField.placeholder}
-                          aria-invalid={formField.ariaInvalid}
-                          aria-describedby={formField.ariaDescribedBy}
-                          className={styles.input}
-                        />
-                        {formField.error && (
-                          <div
-                            className="pt-1 text-red-800 dark:text-red-400"
-                            id={formField.ariaDescribedBy}
-                          >
-                            {formField.error}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </WithFormLabel>
+                    formLabel={formField.label}
+                    ref={formField.ref}
+                    required
+                    id={formField.name}
+                    name={formField.name}
+                    type={formField.type}
+                    placeholder={formField.placeholder}
+                    errors={
+                      formField.error
+                        ? [{ content: formField.error }]
+                        : undefined
+                    }
+                  />
                 ))
               }
 

@@ -4,7 +4,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider     = "prisma-client"
+  output       = "../app/__generated__/prisma/client"
+  moduleFormat = "esm"
 }
 
 model User {
@@ -26,10 +28,12 @@ model User {
 }
 
 model Password {
-  hash String
-
+  id     String @id() @default(uuid())
+  hash   String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
+
+  sessions Session[]
 }
 
 model Channel {
@@ -136,11 +140,19 @@ model WebAuthnCredential {
   counter      Int
   deviceType   String
   transports   String?
+
+  sessions Session[]
 }
 
 model Session {
-  id        String   @id() @default(cuid())
+  id        String   @id() @default(uuid())
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
+
+  password   Password? @relation(fields: [passwordId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  passwordId String?
+
+  webAuthnCredential   WebAuthnCredential? @relation(fields: [webAuthnCredentialId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  webAuthnCredentialId String?
 }

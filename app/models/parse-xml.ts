@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Channel, Item } from "@prisma/client";
+import type { Channel, Item } from "~/__generated__/prisma/client";
 import { parseStringPromise } from "xml2js";
 
 export type ChannelResult = Partial<

@@ -20,12 +20,14 @@ async function seed() {
   await createUser({
     email: userEmail,
     auth: { password: "racheliscool", type: "password" },
+    disableConfirmEmail: true,
   });
 
   await createUser({
     email: SERVER_ENV.admin.email,
     auth: { password: SERVER_ENV.admin.password, type: "password" },
     isAdmin: true,
+    disableConfirmEmail: true,
   });
 }
 

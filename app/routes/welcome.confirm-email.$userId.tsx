@@ -12,6 +12,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   if (validatedUser?.loginType) {
     const searchParams = new URLSearchParams();
     searchParams.set(WithPasskeyFormTabs.queryParam, validatedUser.loginType);
+    searchParams.set("first", String(true));
+    searchParams.set("email", validatedUser.email);
     return logout(
       request,
       href("/welcome/email-confirmed")
@@ -19,6 +21,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
         .concat(searchParams.toString())
     );
   }
+  console.log("fail");
 
   throw redirect("/");
 }

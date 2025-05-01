@@ -69,6 +69,7 @@ export class HistoryStack {
   };
 
   static useStack = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useSyncExternalStore(
       this.subscribe,
       () => this.peek()?.href,

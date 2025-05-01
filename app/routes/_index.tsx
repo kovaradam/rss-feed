@@ -1,4 +1,4 @@
-import { type MetaFunction } from "react-router";
+import { href, type MetaFunction } from "react-router";
 import { redirect } from "react-router";
 import { getUserId, isKnownUser } from "~/session.server";
 import { createTitle } from "~/utils";
@@ -11,10 +11,10 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
   if (userId) {
-    throw redirect("/channels");
+    throw redirect(href("/channels"));
   } else if (isKnownUser(request)) {
-    throw redirect("/welcome/login");
+    throw redirect(href("/welcome/login"));
   } else {
-    throw redirect("/welcome");
+    throw redirect(href("/welcome"));
   }
 };

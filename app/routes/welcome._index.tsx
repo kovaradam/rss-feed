@@ -10,17 +10,12 @@ import {
   useSearchParams,
 } from "react-router";
 import { buttonStyle, SubmitButton } from "~/components/Button";
-import { WithFormLabel } from "~/components/WithFormLabel";
 import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
-import {
-  createUser,
-  getUserByEmail,
-  sendConfirmEmail,
-} from "~/models/user.server";
+import { createUser, getUserByEmail } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
-import { styles } from "~/styles/shared";
 import { createTitle, validateEmail } from "~/utils";
 import type { Route } from "./+types/welcome._index";
+import { Input } from "~/components/Input";
 
 export const meta = () => {
   return [{ title: createTitle("Welcome") }];
@@ -29,7 +24,7 @@ export const meta = () => {
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
   if (userId) {
-    throw redirect("/channels");
+    throw redirect(href("/channels"));
   }
   return {};
 };
@@ -68,7 +63,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   }
 
-  const existingUser = await getUserByEmail(email);
+  const existingUser = await getUserByEmail(email, { id: true });
   if (existingUser) {
     return data<ActionData>(
       { errors: { email: "User with this email already exists." } },
@@ -80,12 +75,12 @@ export const action = async ({ request }: Route.ActionArgs) => {
     email,
     auth: { password, type: "password" },
   });
-  sendConfirmEmail(user, request);
 
   return createUserSession({
     request,
     userId: user.id,
     redirectTo: redirectTo as string,
+    credential: { type: "password", passwordId: user.password?.id as string },
   });
 };
 
@@ -165,31 +160,23 @@ export default function Welcome() {
                     error: actionData?.errors?.password,
                   },
                 ].map((formField) => (
-                  <WithFormLabel
-                    htmlFor={formField.id}
-                    label={formField.label}
-                    key={formField.id}
-                  >
-                    <input
+                  <>
+                    <Input
+                      key={formField.id}
+                      formLabel={formField.label}
                       ref={formField.ref}
                       id={formField.id}
                       required
                       name={formField.name}
                       type={formField.type}
                       placeholder={formField.placeholder}
-                      aria-invalid={formField.ariaInvalid}
-                      aria-describedby={formField.ariaDescribedBy}
-                      className={styles.input}
+                      errors={
+                        formField.error
+                          ? [{ content: formField.error }]
+                          : undefined
+                      }
                     />
-                    {formField.error && (
-                      <div
-                        className="pt-1 text-red-800 dark:text-red-400"
-                        id={formField.ariaDescribedBy}
-                      >
-                        {formField.error}
-                      </div>
-                    )}
-                  </WithFormLabel>
+                  </>
                 ))
               }
               <input

@@ -1,15 +1,53 @@
 import { WebAuthnService } from "~/web-authn.server";
 import { Route } from "./+types/api.passkey";
-import { createUser, getUserByEmail } from "~/models/user.server";
-import { createUserSession } from "~/session.server";
+import {
+  addPasskeyToUser,
+  createUser,
+  getUserByEmail,
+} from "~/models/user.server";
+import { createUserSession, requireUser } from "~/session.server";
+import invariant from "tiny-invariant";
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
   const action = formData.get("action");
 
   switch (action) {
-    case "abort":
-      return {};
+    case "add-get-options": {
+      const user = await requireUser(request, { email: true });
+      const registrationOptions = await WebAuthnService.startRegistration(
+        user.email
+      );
+
+      return registrationOptions;
+    }
+    case "add-verify": {
+      try {
+        const registrationResponse = formData.get("registration");
+        invariant(typeof registrationResponse === "string");
+
+        const user = await requireUser(request, { email: true, id: true });
+
+        const verification = await WebAuthnService.verifyRegistration({
+          request,
+          registrationResponse: JSON.parse(registrationResponse),
+          email: user.email,
+        });
+
+        invariant(verification.verified && verification.registrationInfo);
+
+        await addPasskeyToUser({
+          userId: user.id,
+          passkeyRegistration: verification.registrationInfo,
+          select: { id: true },
+        });
+
+        return { success: true };
+      } catch (e) {
+        console.error(e);
+      }
+      return { errors: { verification: "verification failed" } };
+    }
 
     case "get-options": {
       const email = formData.get("email");
@@ -39,7 +77,7 @@ export async function action({ request }: Route.LoaderArgs) {
         return { errors: { email: "email invalid" } };
       }
 
-      let user, verification;
+      let user, verification, passkeyId;
 
       if (typeof registrationResponse === "string") {
         verification = await WebAuthnService.verifyRegistration({
@@ -56,6 +94,7 @@ export async function action({ request }: Route.LoaderArgs) {
               type: "passkey",
             },
           });
+          passkeyId = user.passkeys[0]?.id;
         }
       }
 
@@ -70,8 +109,9 @@ export async function action({ request }: Route.LoaderArgs) {
           email: email,
         });
 
-        if (verification?.verified) {
-          user = await getUserByEmail(email);
+        if (verification?.result?.verified) {
+          user = await getUserByEmail(email, { id: true });
+          passkeyId = verification.passkeyId;
         }
       }
 
@@ -80,6 +120,7 @@ export async function action({ request }: Route.LoaderArgs) {
           userId: user.id,
           redirectTo: (formData.get("redirectTo") as string) ?? "/",
           request,
+          credential: { type: "passkey", passkeyId: passkeyId as string },
         });
       }
 

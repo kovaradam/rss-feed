@@ -13,20 +13,20 @@ export async function action({ request }: Route.ActionArgs) {
     throw new Response("Not supported", { status: 405 });
   }
 
-  const user = await getUserById(userId);
+  const user = await getUserById(userId, { id: true, requestedEmail: true });
 
   if (!user) {
     throw new Response("Not found", { status: 404 });
   }
 
-  const mailResult = await sendConfirmEmail(user, request);
+  const mailResult = await sendConfirmEmail(user);
 
   return { mail: mailResult };
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
-  const user = await getUserById(userId);
+  const user = await getUserById(userId, { requestedEmail: true, id: true });
 
   if (!user?.requestedEmail) {
     throw redirect("/");

@@ -8,7 +8,7 @@ import { SubmitButton } from "~/components/Button";
 import { Input } from "~/components/Input";
 import React from "react";
 
-export function PasskeyForm() {
+export function PasskeyLoginForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");

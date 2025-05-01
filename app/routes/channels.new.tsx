@@ -1,5 +1,5 @@
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
-import { Form, Link, useNavigation, redirect, data } from "react-router";
+import { Form, Link, useNavigation, redirect, data, href } from "react-router";
 import React from "react";
 import { UseAppTitle } from "~/components/AppTitle";
 import { PageHeading } from "~/components/PageHeading";
@@ -110,7 +110,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     return response;
   }
 
-  throw redirect("/channels/".concat(newChannel.id));
+  throw redirect(href("/channels/:channelId", { channelId: newChannel.id }));
 };
 
 export default function NewChannelPage({

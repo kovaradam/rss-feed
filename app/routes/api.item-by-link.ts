@@ -1,7 +1,7 @@
 import { requireUserId } from "~/session.server";
 import { Route } from "./+types/api.item-by-link";
 import { getChannelItemByLink } from "~/models/channel.server";
-import { redirect } from "react-router";
+import { href, redirect } from "react-router";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
@@ -16,5 +16,10 @@ export async function loader({ request }: Route.LoaderArgs) {
     });
   }
 
-  throw redirect(`/channels/${item.channelId}/articles/${item.id}`);
+  throw redirect(
+    href(`/channels/:channelId/articles/:itemId`, {
+      channelId: item.channelId,
+      itemId: item.id,
+    })
+  );
 }

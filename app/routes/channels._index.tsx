@@ -280,7 +280,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       {recommendedChannels.map((item) => (
                         <li
                           key={item.href}
-                          className="flex justify-center rounded bg-white bg-opacity-60 pt-8 "
+                          className="flex justify-center rounded bg-white bg-opacity-60 pt-8 dark:bg-inherit "
                         >
                           <img
                             src={item.img}
@@ -299,7 +299,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                               name="loader"
                               value={"true"}
                             ></input>
-                            <button className="font-bold underline">
+                            <button className="font-bold underline dark:text-white">
                               {item.title}
                             </button>
                           </Form>

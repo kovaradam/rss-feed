@@ -5,7 +5,6 @@ import {
   Outlet,
   Scripts,
   useHref,
-  useLoaderData,
   useLocation,
   useNavigation,
   isRouteErrorResponse,
@@ -29,22 +28,16 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => [{ title: "RSS Journal" }];
 
-type LoaderData = {
-  user: Awaited<ReturnType<typeof getUser>>;
-};
-
-export const loader = async ({
-  request,
-}: Route.LoaderArgs): Promise<LoaderData> => {
-  const user = await getUser(request);
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const user = await getUser(request, { soundsAllowed: true });
 
   return {
     user,
   };
 };
 
-export default function App() {
-  const data = useLoaderData<typeof loader>();
+export default function App(props: Route.ComponentProps) {
+  const data = props.loaderData;
   const navigation = useNavigation();
 
   const href = useHref(useLocation());
@@ -102,6 +95,7 @@ export default function App() {
             <div className="" />
           </div>
         )}
+        <div id="confirm-modal"></div>
 
         <Outlet />
         <Scripts />

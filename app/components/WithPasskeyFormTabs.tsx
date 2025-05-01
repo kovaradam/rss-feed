@@ -1,15 +1,10 @@
 import React from "react";
-import { PasskeyForm } from "./PasskeyForm";
+import { PasskeyLoginForm } from "./PasskeyLoginForm";
 import { WithTabs } from "./WithTabs";
-import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
+import { useIsPasskeySupported } from "~/utils/use-is-passkey-supported";
 
 export function WithPasskeyFormTabs(props: { passwordForm: React.ReactNode }) {
-  const [isSupported, setIsSupported] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsSupported(browserSupportsWebAuthn());
-  }, []);
-
+  const isSupported = useIsPasskeySupported();
   if (!isSupported) {
     return props.passwordForm;
   }
@@ -26,7 +21,7 @@ export function WithPasskeyFormTabs(props: { passwordForm: React.ReactNode }) {
         {
           value: "passkey",
           tabLabel: "Passkey",
-          tabPanel: <PasskeyForm />,
+          tabPanel: <PasskeyLoginForm />,
         },
       ]}
       className="mb-6"

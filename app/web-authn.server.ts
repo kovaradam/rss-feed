@@ -19,44 +19,18 @@ export class WebAuthnService {
   static #clearTimeoutId: NodeJS.Timeout | null = null;
 
   static start = async (email: string) => {
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await getUserByEmail(email, { email: true });
 
     if (!existingUser) {
-      const registrationOptions = await generateRegistrationOptions({
-        rpID: this.#relyingPartyId,
-        rpName: "Web journal",
-        userName: email,
-        userDisplayName: email,
-        attestationType: "none",
-        extensions: { credProps: true },
-        authenticatorSelection: {
-          residentKey: "preferred",
-          userVerification: "preferred",
-        },
-        timeout: CEREMONY_TIMEOUT,
-      });
-      await this.#storeChallenge({
-        challenge: registrationOptions.challenge,
-        email: email,
-      });
-      return { registrationOptions };
+      return {
+        registrationOptions: await this.startRegistration(email),
+      };
     } else {
-      const authenticationOptions = await generateAuthenticationOptions({
-        rpID: this.#relyingPartyId,
-
-        allowCredentials: (await getPasskeysByUser(email)).map((passkey) => ({
-          id: passkey.credentialId,
-          transports: passkey.transports,
-        })),
-
-        timeout: CEREMONY_TIMEOUT,
-      });
-
-      await this.#storeChallenge({
-        challenge: authenticationOptions.challenge,
-        email: email,
-      });
-      return { authenticationOptions };
+      return {
+        authenticationOptions: await this.#startAuthentication(
+          existingUser.email
+        ),
+      };
     }
   };
 
@@ -85,6 +59,9 @@ export class WebAuthnService {
     email: string;
   }) => {
     const challenge = await this.#getChallenge(params.email);
+    if (!challenge) {
+      console.error("challenge not found for email ", params.email);
+    }
     const passkeyResult = await getPasskeyByCredentialId({
       credentialId: params.authentiationResponse.id,
       email: params.email,
@@ -111,7 +88,49 @@ export class WebAuthnService {
     if (result.verified) {
       await passkeyResult.incrementCounter();
     }
-    return result;
+    return { result, passkeyId: passkeyResult.passkey.id };
+  };
+
+  static startRegistration = async (email: string) => {
+    const registrationOptions = await generateRegistrationOptions({
+      rpID: this.#relyingPartyId,
+      rpName: "Web journal",
+      userName: email,
+      userDisplayName: email,
+      attestationType: "none",
+      extensions: { credProps: true },
+      authenticatorSelection: {
+        residentKey: "preferred",
+        userVerification: "preferred",
+      },
+      timeout: CEREMONY_TIMEOUT,
+    });
+    await this.#storeChallenge({
+      challenge: registrationOptions.challenge,
+      email: email,
+    });
+    return registrationOptions;
+  };
+
+  static #startAuthentication = async (email: string) => {
+    const authenticationOptions = await generateAuthenticationOptions({
+      rpID: this.#relyingPartyId,
+
+      allowCredentials: (
+        await getPasskeysByUser(email)
+      ).map((passkey) => ({
+        id: passkey.credentialId,
+        transports: passkey.transports,
+      })),
+
+      timeout: CEREMONY_TIMEOUT,
+    });
+
+    await this.#storeChallenge({
+      challenge: authenticationOptions.challenge,
+      email: email,
+    });
+    return authenticationOptions;
   };
 
   static #storeChallenge = async (params: {

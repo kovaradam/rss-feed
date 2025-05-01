@@ -9,10 +9,10 @@ export function Details(props: Props) {
   return (
     <details
       {...props}
-      className={` cursor-pointer rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
+      className={` rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
     >
       <summary
-        className={`group flex w-full items-center px-2 ${
+        className={`group flex w-full cursor-pointer items-center px-2 ${
           props.icon ? "[&::-webkit-details-marker]:hidden" : ""
         }`}
       >

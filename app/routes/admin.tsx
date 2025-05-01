@@ -3,7 +3,6 @@ import {
   deleteFailedUpload,
   getFailedUploads,
 } from "~/models/failed-upload.server";
-import type { User } from "~/models/user.server";
 import {
   deleteUserById,
   getUsersAdminView,
@@ -12,7 +11,8 @@ import {
 import { requireUser } from "~/session.server";
 import type { Route } from "./+types/admin";
 
-function requireAdmin(user: User) {
+async function requireAdmin(request: Request) {
+  const user = await requireUser(request, { isAdmin: true });
   if (!user.isAdmin) {
     throw new Response("Not found", {
       status: 404,
@@ -22,8 +22,7 @@ function requireAdmin(user: User) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const user = await requireUser(request);
-  requireAdmin(user);
+  await requireAdmin(request);
 
   if (request.method === "DELETE") {
     const formData = await request.formData();
@@ -56,8 +55,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const user = await requireUser(request);
-  requireAdmin(user);
+  await requireAdmin(request);
 
   const users = await getUsersAdminView();
   const failedChannelUploads = await getFailedUploads();
