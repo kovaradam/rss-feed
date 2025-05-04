@@ -1,5 +1,5 @@
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
-import { Form, Link, useNavigation, redirect, data } from "react-router";
+import { Form, Link, useNavigation, redirect, data, href } from "react-router";
 import React from "react";
 import { UseAppTitle } from "~/components/AppTitle";
 import { PageHeading } from "~/components/PageHeading";
@@ -79,12 +79,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   } catch (error) {
     let response: ActionData;
+    let isErrorToStore = true;
 
     switch (true) {
       case error instanceof ChannelExistsError:
         response = {
           create: `RSS feed with this address already exists, see channel [${error.channel.title}](/channels/${error.channel.id})`,
         };
+        isErrorToStore = false;
         break;
       case error instanceof UnavailableDbError:
         response = {
@@ -101,12 +103,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
         response = { create: "Could not save RSS feed, please try later" };
     }
 
-    storeFailedUpload(String(inputChannelHref), String(error));
+    if (isErrorToStore) {
+      storeFailedUpload(String(inputChannelHref), String(error));
+    }
 
     return response;
   }
 
-  throw redirect("/channels/".concat(newChannel.id));
+  throw redirect(href("/channels/:channelId", { channelId: newChannel.id }));
 };
 
 export default function NewChannelPage({

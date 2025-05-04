@@ -1,21 +1,115 @@
 import { styles } from "~/styles/shared";
 import { WithFormLabel } from "./WithFormLabel";
+import { useFormStatus } from "react-dom";
+import { InputError } from "./InputError";
+import { replaceAll } from "~/utils/replace-all";
+import React from "react";
 
-interface Props extends React.ComponentProps<"input"> {
+type Error<T> = T extends string
+  ? {
+      content: T;
+    }
+  : { key: string; content: T };
+
+interface Props<T extends readonly React.ReactNode[]>
+  extends React.ComponentProps<"input"> {
   formLabel?: React.ReactNode;
+  errors?: { [K in keyof T]: Error<T[K]> };
+  wrapperClassName?: string;
 }
 
-export function Input(props: Props) {
+export function Input<T extends readonly React.ReactNode[]>({
+  formLabel,
+  wrapperClassName,
+  errors: errorsProp,
+  ...inputProps
+}: Props<T>) {
+  const formStatus = useFormStatus();
+
+  const errors = errorsProp?.map((e) => ({
+    ...e,
+    id: "key" in e ? e.key : replaceAll(e.content, " ", "-"),
+  }));
+
+  const _id = React.useId();
+  const id = inputProps.id ?? _id;
+
+  const [isShowPassword, setIsShowPassword] = React.useState(false);
+
   const input = (
-    <input
-      {...props}
-      className={styles.input.concat(" ").concat(props.className ?? "")}
-    ></input>
+    <div className={`${formLabel ? undefined : wrapperClassName}`}>
+      <style>
+        {`input:placeholder-shown ~ .password-toggle {display:none;}`}
+      </style>
+      <div
+        className="relative"
+        onBlur={(e) => {
+          const currentTarget = e.currentTarget;
+          setTimeout(() => {
+            if (!currentTarget.querySelector("*:focus")) {
+              setIsShowPassword(false);
+            }
+          });
+        }}
+      >
+        <input
+          {...inputProps}
+          placeholder={
+            inputProps.type === "password" ? " " : inputProps.placeholder
+          }
+          type={isShowPassword ? "text" : inputProps.type}
+          id={id}
+          className={styles.input
+            .concat(" ")
+            .concat(inputProps.className ?? "")}
+          disabled={inputProps.disabled || formStatus.pending}
+          aria-describedby={(inputProps["aria-describedby"] ?? "").concat(
+            errors?.map((e) => e.id).join(" ") ?? ""
+          )}
+          aria-invalid={errors ? true : undefined}
+        />
+        {inputProps.type === "password" && (
+          <button
+            type="button"
+            className="script-only password-toggle absolute right-2 top-0 h-full text-sm text-slate-600 hover:underline peer-placeholder-shown:hidden dark:text-slate-200"
+            onClick={() => setIsShowPassword((p) => !p)}
+          >
+            {isShowPassword ? "hide" : "show"}
+          </button>
+        )}
+      </div>
+      <div aria-live="polite">
+        {errors?.map((e) => (
+          <InputError key={e.id}>{e.content}</InputError>
+        ))}
+      </div>
+    </div>
   );
 
-  if (props.formLabel) {
-    return <WithFormLabel label={props.formLabel}>{input}</WithFormLabel>;
+  if (formLabel) {
+    return (
+      <WithFormLabel
+        label={formLabel}
+        required={inputProps.required}
+        className={wrapperClassName}
+        htmlFor={id}
+      >
+        {input}
+      </WithFormLabel>
+    );
   }
 
   return input;
 }
+
+Input.Email = function EmailInput<T extends readonly React.ReactNode[]>(
+  props: Omit<Props<T>, "type" | "placeholder">
+) {
+  return <Input {...props} type="email" placeholder="name@example.com" />;
+};
+
+Input.Password = function EmailInput<T extends readonly React.ReactNode[]>(
+  props: Omit<Props<T>, "type" | "placeholder">
+) {
+  return <Input {...props} type="password" />;
+};

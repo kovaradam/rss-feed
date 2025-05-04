@@ -1,4 +1,4 @@
-import type { Channel, Item } from "@prisma/client";
+import type { Channel, Item } from "~/__generated__/prisma/client";
 import {
   redirect,
   Form,
@@ -7,6 +7,7 @@ import {
   useLoaderData,
   useNavigation,
   useRouteError,
+  href,
 } from "react-router";
 import invariant from "tiny-invariant";
 import { Href } from "~/components/Href";
@@ -106,7 +107,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
 
   if (action === "delete") {
     await deleteChannel({ userId, id: params.channelId });
-    throw redirect("/channels");
+    throw redirect(href("/channels"));
   }
 
   if (ChannelItemDetailService.isChannelItemUpdate(formData)) {
@@ -144,7 +145,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     console.error(error);
   }
 
-  throw redirect("/channels/".concat(params.channelId));
+  throw redirect(href("/channels/:channelId", { channelId: params.channelId }));
 };
 
 export default function ChannelDetailsPage() {

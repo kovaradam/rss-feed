@@ -3,12 +3,16 @@ import {
   deleteFailedUpload,
   getFailedUploads,
 } from "~/models/failed-upload.server";
-import type { User } from "~/models/user.server";
-import { deleteUserById, getUsers, makeUserAdmin } from "~/models/user.server";
+import {
+  deleteUserById,
+  getUsersAdminView,
+  makeUserAdmin,
+} from "~/models/user.server";
 import { requireUser } from "~/session.server";
 import type { Route } from "./+types/admin";
 
-function requireAdmin(user: User) {
+async function requireAdmin(request: Request) {
+  const user = await requireUser(request, { isAdmin: true });
   if (!user.isAdmin) {
     throw new Response("Not found", {
       status: 404,
@@ -18,8 +22,7 @@ function requireAdmin(user: User) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const user = await requireUser(request);
-  requireAdmin(user);
+  await requireAdmin(request);
 
   if (request.method === "DELETE") {
     const formData = await request.formData();
@@ -52,13 +55,15 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const user = await requireUser(request);
-  requireAdmin(user);
+  await requireAdmin(request);
 
-  const users = await getUsers();
+  const users = await getUsersAdminView();
   const failedChannelUploads = await getFailedUploads();
 
-  return { users, failedChannelUploads };
+  return {
+    users,
+    failedChannelUploads,
+  };
 }
 
 export default function AdminIndexPage({
@@ -78,6 +83,8 @@ export default function AdminIndexPage({
               <td className="pr-5">Requested email</td>
               <td className="pr-5">Created at</td>
               <td className="pr-5">Updated at</td>
+              <td className="pr-5">Login</td>
+              <td className="pr-5">Sessions</td>
               <td>Actions</td>
             </tr>
           </thead>
@@ -86,8 +93,26 @@ export default function AdminIndexPage({
               <tr key={user.id}>
                 <td>{user.email}</td>
                 <td>{user.requestedEmail}</td>
-                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td>{new Date(user.updatedAt).toLocaleDateString()}</td>
+                <td>
+                  {new Date(user.createdAt).toLocaleDateString("en", {
+                    day: "numeric",
+                    month: "short",
+                    year: "2-digit",
+                  })}
+                </td>
+                <td>
+                  {new Date(user.updatedAt).toLocaleDateString("en", {
+                    day: "numeric",
+                    month: "short",
+                    year: "2-digit",
+                  })}
+                </td>
+                <td>
+                  {[user.pw ? "pw" : undefined, user.pk ? "pk" : undefined]
+                    .filter(Boolean)
+                    .join(",")}
+                </td>
+                <td>{user.sessions}</td>
                 <td className="flex gap-1">
                   <Form method="delete">
                     <input type="hidden" value={user.id} name="user-id" />

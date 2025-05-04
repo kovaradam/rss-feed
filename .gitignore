@@ -4,6 +4,8 @@ node_modules
 /public/build
 .env
 
+/app/__generated__
+
 /prisma/data.db
 /prisma/data.db-journal
 

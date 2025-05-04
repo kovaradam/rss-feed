@@ -7,9 +7,9 @@ import {
   requestUpdateUserEmail,
 } from "~/models/user.server";
 import { requireUser, requireUserId } from "~/session.server";
-import { styles } from "~/styles/shared";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.user.edit-email";
+import { Input } from "~/components/Input";
 
 export const meta = createMeta();
 
@@ -36,7 +36,7 @@ export async function action({ request }: Route.ActionArgs) {
     };
   }
 
-  const currentEmail = (await getUserById(userId))?.email;
+  const currentEmail = (await getUserById(userId, { email: true }))?.email;
 
   if (newEmail === currentEmail) {
     return {
@@ -46,23 +46,23 @@ export async function action({ request }: Route.ActionArgs) {
     };
   }
 
-  const userByEmail = await getUserByEmail(newEmail);
+  const userByEmail = await getUserByEmail(newEmail, { email: true });
 
-  if (userByEmail) {
+  if (userByEmail?.email) {
     return {
       errors: {
-        "new-email": "User with this email already exists",
+        "new-email": "Could not use this email",
       },
     };
   }
 
-  await requestUpdateUserEmail(userId, newEmail, request);
+  await requestUpdateUserEmail(userId, newEmail, { id: true });
 
   throw redirect("/");
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const user = await requireUser(request);
+  const user = await requireUser(request, { email: true });
   return { user, title: "Edit email" };
 }
 
@@ -86,32 +86,22 @@ export default function UserEditPage({
           },
           {
             name: "new-email",
-            label: (
-              <div>
-                New email <span className="text-slate-500">(required)</span>
-              </div>
-            ),
+            label: <div>New email</div>,
             required: true,
             value: "",
             error: actionData?.errors?.["new-email"],
           },
         ].map((item) => (
-          <fieldset
+          <Input.Email
             key={item.name}
-            className="flex w-full flex-col gap-1"
             disabled={item.disabled || isSubmitting}
-          >
-            <label htmlFor={item.name}>{item.label}</label>
-            <input
-              className={styles.input}
-              defaultValue={item.value}
-              id={item.name}
-              name={item.name}
-              required={item.required}
-              type="email"
-            />
-            {item.error && <p className="pt-1 text-red-700">{item.error}</p>}
-          </fieldset>
+            defaultValue={item.value}
+            id={item.name}
+            name={item.name}
+            required={item.required}
+            formLabel={item.label}
+            errors={item.error ? [{ content: item.error }] : undefined}
+          />
         ))}
         <SubmitSection
           cancelProps={{ to: "/channels/user" }}

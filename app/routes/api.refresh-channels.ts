@@ -4,8 +4,7 @@ import type { Route } from "./+types/api.refresh-channels";
 import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 
 export async function action({ request }: Route.LoaderArgs) {
-  const user = await requireUser(request);
-
+  const user = await requireUser(request, { id: true });
   if (request.method === useChannelRefreshFetcher.method) {
     try {
       const channels = await getChannels({
@@ -32,9 +31,7 @@ export async function action({ request }: Route.LoaderArgs) {
       return {
         newItemCount: results
           .map((result) =>
-            result.status === "fulfilled"
-              ? (result.value?.newItemCount ?? 0)
-              : 0
+            result.status === "fulfilled" ? result.value?.newItemCount ?? 0 : 0
           )
           .reduce((prev, next) => prev + (next ?? 0), 0),
       };

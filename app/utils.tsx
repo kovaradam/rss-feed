@@ -60,16 +60,6 @@ export function useOptionalUser(): User | undefined {
   return data.user;
 }
 
-export function useUser(): User {
-  const maybeUser = useOptionalUser();
-  if (!maybeUser) {
-    throw new Error(
-      "No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead."
-    );
-  }
-  return maybeUser;
-}
-
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
@@ -132,6 +122,15 @@ export function enumerate<T extends readonly string[]>(
   >;
 }
 
+export function asEnum<
+  T extends string[],
+  U extends ReturnType<typeof enumerate<T>>
+>(enumerated: U, input: unknown, fallback: keyof U): keyof U {
+  return Object.keys(enumerated).includes(input as never)
+    ? (input as keyof U)
+    : fallback;
+}
+
 /**
  * className toggle
  */
@@ -142,3 +141,5 @@ export function c(isApply: boolean | undefined | null, className: string) {
 export function getPrefersReducedMotion() {
   return globalThis.matchMedia?.("(prefers-reduced-motion)").matches === true;
 }
+
+export const LoginTypes = enumerate(["password", "passkey"]);

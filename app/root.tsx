@@ -5,20 +5,21 @@ import {
   Outlet,
   Scripts,
   useHref,
-  useLoaderData,
   useLocation,
   useNavigation,
+  isRouteErrorResponse,
+  useRouteError,
 } from "react-router";
 
 import stylesheet from "./tailwind.css?url";
 
-import { getUser } from "./session.server";
-import { UseSounds } from "./components/UseSounds";
-import { ClientOnly } from "./components/ClientOnly";
-import type { Route } from "./+types/root";
 import React from "react";
-import { HistoryStack } from "./utils/history-stack";
+import type { Route } from "./+types/root";
+import { ClientOnly } from "./components/ClientOnly";
+import { UseSounds } from "./components/UseSounds";
+import { getUser } from "./session.server";
 import { lastTitle } from "./utils";
+import { HistoryStack } from "./utils/history-stack";
 import { useScrollRestoration } from "./utils/use-scroll-restoration";
 
 export const links: LinksFunction = () => [
@@ -27,22 +28,16 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => [{ title: "RSS Journal" }];
 
-type LoaderData = {
-  user: Awaited<ReturnType<typeof getUser>>;
-};
-
-export const loader = async ({
-  request,
-}: Route.LoaderArgs): Promise<LoaderData> => {
-  const user = await getUser(request);
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const user = await getUser(request, { soundsAllowed: true });
 
   return {
     user,
   };
 };
 
-export default function App() {
-  const data = useLoaderData<typeof loader>();
+export default function App(props: Route.ComponentProps) {
+  const data = props.loaderData;
   const navigation = useNavigation();
 
   const href = useHref(useLocation());
@@ -81,6 +76,13 @@ export default function App() {
         <meta name="keywords" content="RSS feed, RSS, journal, news" />
         <Meta />
         <Links />
+        <noscript>
+          <style>
+            {`.script-only {
+              display: none;
+              }`}
+          </style>
+        </noscript>
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
         {(!navigation.formAction ||
@@ -93,6 +95,7 @@ export default function App() {
             <div className="" />
           </div>
         )}
+        <div id="confirm-modal"></div>
 
         <Outlet />
         <Scripts />
@@ -103,5 +106,30 @@ export default function App() {
         </ClientOnly>
       )}
     </html>
+  );
+}
+
+export function ErrorBoundary() {
+  const caught = useRouteError();
+  const isNotFound = isRouteErrorResponse(caught) && caught.status === 404;
+
+  return (
+    <main>
+      <title>Web journal</title>
+      <style>{`
+            main {
+              height: 100%;
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            `}</style>
+      {isNotFound ? (
+        <h1>404 Not found</h1>
+      ) : (
+        <h1>Ooops! this was unexpected</h1>
+      )}
+    </main>
   );
 }

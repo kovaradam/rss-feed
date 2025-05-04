@@ -31,12 +31,6 @@
   }
 }
 
-@media (scripting: none) {
-  .script-only {
-    display: none;
-  }
-}
-
 .progress {
   --duration: 1s;
   @apply absolute top-0 z-20 h-1 w-0 bg-rose-700 bg-opacity-25;
@@ -91,4 +85,9 @@
   :is(a, button, input, summary) svg {
     transition: scale 200ms;
   }
+}
+
+:root {
+  /* fixed height to prevent jankyness */
+  --welcome-form-min-height: 28ex;
 }

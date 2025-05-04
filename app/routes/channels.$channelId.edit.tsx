@@ -1,4 +1,4 @@
-import { Form, useNavigation, redirect, data } from "react-router";
+import { Form, useNavigation, redirect, data, href } from "react-router";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
 import {
@@ -87,7 +87,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     return null;
   }
 
-  throw redirect("/channels/".concat(channel.id));
+  throw redirect(href("/channels/:channelId", { channelId: channel.id }));
 };
 
 type LoaderData = {

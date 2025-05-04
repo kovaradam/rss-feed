@@ -1,6 +1,6 @@
 import { prisma } from "~/db.server";
 import type { FirstParam } from "./utils";
-import type { Collection } from "prisma/prisma-client";
+import type { Collection } from "~/__generated__/prisma/client";
 import invariant from "tiny-invariant";
 export type { Collection };
 
@@ -49,18 +49,16 @@ export async function createCollection(
 export async function updateCollection(
   id: string,
   userId: string,
-  params: FirstParam<typeof prisma.collection.update>
+  data: FirstParam<typeof prisma.collection.update>["data"]
 ) {
-  invariant(await getCollection(id, userId));
   return prisma.collection.update({
-    ...params,
-    where: { id: id },
+    data: data,
+    where: { id: id, userId: userId },
   });
 }
 
 export async function deleteCollection(id: string, userId: string) {
-  invariant(await getCollection(id, userId));
-  return prisma.collection.delete({ where: { id } });
+  return prisma.collection.delete({ where: { id, userId } });
 }
 
 export async function deleteCollectionCategory({
@@ -75,7 +73,7 @@ export async function deleteCollectionCategory({
   const collection = await getCollection(id, userId);
   invariant(collection);
   return prisma.collection.update({
-    where: { id },
+    where: { id, userId },
     data: {
       category: collection.category?.replace(category, "")?.replace("//", "/"),
     },

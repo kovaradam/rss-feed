@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import invariant from "tiny-invariant";
+import { SERVER_ENV } from "~/env.server";
 import { createUser } from "~/models/user.server";
 
 const prisma = new PrismaClient();
@@ -7,31 +7,27 @@ const prisma = new PrismaClient();
 async function seed() {
   const userEmail = "rachel@remix.run";
 
-  const adminEnvVariables = ["ADMIN_EMAIL", "ADMIN_PASS"];
-  const [adminEmail, adminPassword] = adminEnvVariables.map(
-    (key) => process.env[key]
-  );
-
-  // Check config vars
-  invariant(
-    adminEmail && adminPassword,
-    `Missing admin credentials (please define ${adminEnvVariables
-      .map((key) => `"${key}"`)
-      .join(" and ")} in the ".env" file)`
-  );
-
   // cleanup the existing database
   await prisma.user.delete({ where: { email: userEmail } }).catch(() => {
     // no worries if it doesn't exist yet
   });
-  await prisma.user.delete({ where: { email: adminEmail } }).catch(() => {
-    // no worries if it doesn't exist yet
+  await prisma.user
+    .delete({ where: { email: SERVER_ENV.admin.email } })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    });
+
+  await createUser({
+    email: userEmail,
+    auth: { password: "racheliscool", type: "password" },
+    disableConfirmEmail: true,
   });
 
-  await createUser(userEmail, "racheliscool");
-
-  await createUser(adminEmail, adminPassword, {
+  await createUser({
+    email: SERVER_ENV.admin.email,
+    auth: { password: SERVER_ENV.admin.password, type: "password" },
     isAdmin: true,
+    disableConfirmEmail: true,
   });
 }
 

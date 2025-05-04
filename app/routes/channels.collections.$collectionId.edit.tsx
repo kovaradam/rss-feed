@@ -1,5 +1,5 @@
 import type { ActionFunction } from "react-router";
-import { useLoaderData, redirect, data } from "react-router";
+import { useLoaderData, redirect, data, href } from "react-router";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
 
@@ -54,7 +54,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (formData.get("action") === "delete") {
     await deleteCollection(collectionId, userId);
-    throw redirect("/channels");
+    throw redirect(href("/channels"));
   }
 
   const errors = {} as typeof form;
@@ -69,17 +69,13 @@ export const action: ActionFunction = async ({ request, params }) => {
   const categoryToDelete = form[fieldNames["delete-category"]];
 
   const collection = await updateCollection(collectionId, userId, {
-    where: {},
-    data: {
-      userId,
-      title: form.title as string,
-      bookmarked: getBooleanValue(form.bookmarked),
-      read: getBooleanValue(form.read),
-      category: categoryToDelete
-        ? undefined
-        : (getCategoryFormValue(formData, fieldNames.category) ?? undefined),
-      language: form.language ?? undefined,
-    },
+    title: form.title as string,
+    bookmarked: getBooleanValue(form.bookmarked),
+    read: getBooleanValue(form.read),
+    category: categoryToDelete
+      ? undefined
+      : getCategoryFormValue(formData, fieldNames.category) ?? undefined,
+    language: form.language ?? undefined,
   });
 
   if (categoryToDelete) {
@@ -91,7 +87,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     return null;
   }
 
-  throw redirect("/channels/collections/".concat(collection.id));
+  throw redirect(
+    href("/channels/collections/:collectionId", { collectionId: collection.id })
+  );
 };
 
 type LoaderData = {

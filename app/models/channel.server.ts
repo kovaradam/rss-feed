@@ -1,5 +1,10 @@
 import { prisma } from "~/db.server";
-import type { Channel, Collection, Item, User } from "@prisma/client";
+import type {
+  Channel,
+  Collection,
+  Item,
+  User,
+} from "~/__generated__/prisma/client";
 import type { ItemParseResult } from "./parse-xml";
 import { parseChannelXml } from "./parse-xml";
 import invariant from "tiny-invariant";
@@ -213,7 +218,7 @@ export function deleteChannel({
 }
 
 export async function getChannelItems<
-  T extends Parameters<typeof prisma.item.findMany>[0],
+  T extends Parameters<typeof prisma.item.findMany>[0]
 >(params: T) {
   return prisma.item.findMany(params);
 }

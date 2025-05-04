@@ -1,4 +1,5 @@
 import React from "react";
+import { href } from "react-router";
 
 export function useChannelRefreshFetcher() {
   const status = React.useSyncExternalStore(
@@ -20,7 +21,7 @@ export function useChannelRefreshFetcher() {
   };
 }
 
-useChannelRefreshFetcher.path = "/api/refresh-channels" as const;
+useChannelRefreshFetcher.path = href("/api/refresh-channels");
 useChannelRefreshFetcher.method = "PATCH" as const;
 useChannelRefreshFetcher.invalidateMethod = "PUT" as const;
 

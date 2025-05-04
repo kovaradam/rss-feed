@@ -1,4 +1,4 @@
-import { redirect, data } from "react-router";
+import { redirect, data, href } from "react-router";
 import { UseAppTitle } from "~/components/AppTitle";
 import { CollectionForm } from "~/components/CollectionForm";
 import { ErrorMessage } from "~/components/ErrorMessage";
@@ -58,7 +58,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
     },
   });
 
-  throw redirect("/channels/collections/".concat(collection.id));
+  throw redirect(
+    href("/channels/collections/:collectionId", { collectionId: collection.id })
+  );
 };
 
 type LoaderData = {

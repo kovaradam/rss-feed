@@ -13,7 +13,7 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
-  ignorePatterns: ["app/utils/use-sound"],
+  ignorePatterns: ["app/utils/use-sound", "app/__generated__"],
 
   // Base config
   extends: ["eslint:recommended"],

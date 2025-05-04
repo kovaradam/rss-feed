@@ -1,22 +1,22 @@
 import type { Route } from "./+types/welcome.login";
 
-import type { MetaFunction } from "react-router";
+import * as React from "react";
 import {
+  type MetaFunction,
   data,
-  redirect,
   Form,
   Link,
-  useSearchParams,
+  redirect,
   useNavigation,
+  useSearchParams,
 } from "react-router";
-import * as React from "react";
 
-import { createUserSession, getUserId } from "~/session.server";
-import { verifyLogin } from "~/models/user.server";
-import { isSubmitting, safeRedirect, validateEmail } from "~/utils";
 import { SubmitButton } from "~/components/Button";
-import { styles } from "~/styles/shared";
-import { WithFormLabel } from "~/components/WithFormLabel";
+import { Input } from "~/components/Input";
+import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
+import { verifyLogin } from "~/models/user.server";
+import { createUserSession, getUserId } from "~/session.server";
+import { isSubmitting, validateEmail } from "~/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
@@ -40,9 +40,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
-
-  const remember = formData.get("remember");
+  const redirectTo = formData.get("redirectTo") ?? "/";
 
   if (!validateEmail(email)) {
     return data<ActionData>(
@@ -60,7 +58,11 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   if (password.length < 8) {
     return data<ActionData>(
-      { errors: { password: "Password is too short" } },
+      {
+        errors: {
+          password: "Password is too short, provide at least 8 characters",
+        },
+      },
       { status: 400 }
     );
   }
@@ -69,16 +71,21 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   if (!user) {
     return data<ActionData>(
-      { errors: { email: "Invalid email or password" } },
+      {
+        errors: {
+          email: "Invalid email or password",
+          password: "Invalid email or password",
+        },
+      },
       { status: 400 }
     );
   }
 
   return createUserSession({
     request,
-    userId: user.id,
-    remember: remember === "on" ? true : false,
-    redirectTo,
+    userId: user.userId,
+    redirectTo: redirectTo as string,
+    credential: { type: "password", passwordId: user.passwordId },
   });
 };
 
@@ -128,86 +135,68 @@ export default function LoginPage({
         </p>
       </div>
       <div className={`w-full sm:max-w-md `}>
-        <Form method="post" className="space-y-6">
-          {
-            // eslint-disable-next-line react-compiler/react-compiler
-            [
+        <WithPasskeyFormTabs
+          passwordForm={
+            <Form
+              method="post"
+              className="min-h-[var(--welcome-form-min-height)] space-y-6"
+            >
               {
-                label: "Email address",
-                placeholder: "name@example.com",
-                ref: emailRef,
-                name: "email",
-                type: "email",
-                ariaInvalid: actionData?.errors?.email ? true : undefined,
-                ariaDescribedBy: "email-error",
-                error: actionData?.errors?.email,
-              },
-              {
-                label: "Password",
-                placeholder: undefined,
-                ref: passwordRef,
-                name: "password",
-                type: "password",
-                ariaInvalid: actionData?.errors?.password ? true : undefined,
-                ariaDescribedBy: "password-error",
-                error: actionData?.errors?.password,
-              },
-            ].map((formField) => (
-              <WithFormLabel
-                key={formField.name}
-                htmlFor={formField.name}
-                label={formField.label}
-              >
-                {({ htmlFor }) => (
-                  <>
-                    <input
-                      ref={formField.ref}
-                      id={htmlFor}
-                      required
-                      name={formField.name}
-                      type={formField.type}
-                      placeholder={formField.placeholder}
-                      aria-invalid={formField.ariaInvalid}
-                      aria-describedby={formField.ariaDescribedBy}
-                      className={styles.input}
-                    />
-                    {formField.error && (
-                      <div
-                        className="pt-1 text-red-800 dark:text-red-400"
-                        id={formField.ariaDescribedBy}
-                      >
-                        {formField.error}
-                      </div>
-                    )}
-                  </>
-                )}
-              </WithFormLabel>
-            ))
+                // eslint-disable-next-line react-compiler/react-compiler
+                [
+                  {
+                    label: "Email address",
+                    placeholder: "name@example.com",
+                    ref: emailRef,
+                    name: "email",
+                    type: "email",
+                    ariaInvalid: actionData?.errors?.email ? true : undefined,
+                    ariaDescribedBy: "email-error",
+                    error: actionData?.errors?.email,
+                  },
+                  {
+                    label: "Password",
+                    placeholder: undefined,
+                    ref: passwordRef,
+                    name: "password",
+                    type: "password",
+                    ariaInvalid: actionData?.errors?.password
+                      ? true
+                      : undefined,
+                    ariaDescribedBy: "password-error",
+                    error: actionData?.errors?.password,
+                  },
+                ].map((formField) => (
+                  <Input
+                    key={formField.name}
+                    formLabel={formField.label}
+                    ref={formField.ref}
+                    required
+                    id={formField.name}
+                    name={formField.name}
+                    type={formField.type}
+                    placeholder={formField.placeholder}
+                    errors={
+                      formField.error
+                        ? [{ content: formField.error }]
+                        : undefined
+                    }
+                  />
+                ))
+              }
+
+              <input type="hidden" name="redirectTo" value={redirectTo} />
+              <div className="pt-4">
+                <SubmitButton
+                  className="w-full"
+                  isLoading={isSubmitting(transition)}
+                >
+                  Log in
+                </SubmitButton>
+              </div>
+            </Form>
           }
-          <input type="hidden" name="redirectTo" value={redirectTo} />
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center">
-              <input
-                id="remember"
-                name="remember"
-                type="checkbox"
-                className={"h-4 w-4 "}
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900 dark:text-white"
-              >
-                Remember me
-              </label>
-            </div>
-          </div>
-          <SubmitButton
-            className=" w-full self-end"
-            isLoading={isSubmitting(transition)}
-          >
-            Log in
-          </SubmitButton>
-        </Form>
+        />
       </div>
     </>
   );

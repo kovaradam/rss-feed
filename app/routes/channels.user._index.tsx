@@ -1,55 +1,188 @@
-import { requireUser } from "~/session.server";
-import { Form, useNavigation } from "react-router";
+import { getBrowserSessionId, requireUser } from "~/session.server";
+import { Form, href, useFetcher, useNavigation } from "react-router";
 import {
   BookmarkIcon,
+  CheckCircleIcon,
   ClockIcon,
-  LogoutIcon,
+  FingerPrintIcon,
+  InformationCircleIcon,
+  KeyIcon,
+  LockClosedIcon,
   MailIcon,
   TrashIcon,
   VolumeOffIcon,
   VolumeUpIcon,
 } from "@heroicons/react/outline";
 import { Button, SubmitButton } from "~/components/Button";
-import { AsideWrapper } from "~/components/AsideWrapper";
-import { updateUser } from "~/models/user.server";
+import {
+  removePasskeyOfUser,
+  updatePassword,
+  updateUser,
+  verifyLogin,
+} from "~/models/user.server";
 import { ChannelCategoryLinks } from "~/components/ChannelCategories";
-import { getChannels } from "~/models/channel.server";
-import { Modal } from "~/components/Modal";
+
 import React from "react";
 import { PageHeading } from "~/components/PageHeading";
 import { UseAppTitle } from "~/components/AppTitle";
-import confirmSound from "/sounds/state-change_confirm-up.wav?url";
+import enableSound from "/sounds/state-change_confirm-up.wav?url";
+import disableSound from "/sounds/state-change_confirm-down.wav?url";
 import { useSound } from "~/utils/use-sound";
 import type { Route } from "./+types/channels.user._index";
+import { Details } from "~/components/Details";
+import { useIsPasskeySupported } from "~/utils/use-is-passkey-supported";
+import { PasskeyAddForm } from "~/components/PasskeyAddForm";
+import { HiddenInputs } from "~/components/HiddenInputs";
+import { enumerate } from "~/utils";
+import { confirm } from "~/utils/confirm";
+import { InputError } from "~/components/InputError";
+import { Input } from "~/components/Input";
+
+const actions = enumerate([
+  "toggle-sound",
+  "remove-passkey",
+  "update-password",
+]);
 
 export async function action({ request }: Route.ActionArgs) {
-  const user = await requireUser(request);
+  const user = await requireUser(request, {
+    soundsAllowed: true,
+    id: true,
+    email: true,
+    password: { select: { id: true } },
+    passkeys: { select: { id: true } },
+  });
 
-  if (request.method === "POST") {
-    const updatedUser = updateUser(user.id, {
-      soundsAllowed: !user.soundsAllowed,
-    });
-    return { user: updatedUser };
+  const formData = await request.formData();
+  switch (formData.get("action")) {
+    case actions["toggle-sound"]: {
+      const updatedUser = updateUser(
+        user.id,
+        {
+          soundsAllowed: !user.soundsAllowed,
+        },
+        { soundsAllowed: true }
+      );
+      return { user: updatedUser };
+    }
+    case actions["remove-passkey"]: {
+      const passkeyId = formData.get("passkey-id") || null;
+      const isOnlyLoginOption = user.passkeys.length === 1 && !user.password;
+      if (typeof passkeyId !== "string" || isOnlyLoginOption) {
+        return { errors: { passkey: "Could not delete passkey", passkeyId } };
+      }
+      const updatedUser = removePasskeyOfUser({
+        userId: user.id,
+        passkeyId: passkeyId,
+        select: { passkeys: { select: { id: true } } },
+      });
+      return { user: updatedUser };
+    }
+
+    case actions["update-password"]: {
+      const currentPassword = formData.get("current-password"),
+        newPassword = formData.get("new-password");
+
+      if (user.password) {
+        if (typeof currentPassword !== "string") {
+          return {
+            errors: { currentPassword: "Provided password is invalid" },
+          };
+        }
+
+        const verifiedUser = await verifyLogin(user.email, currentPassword);
+
+        if (!verifiedUser) {
+          return {
+            errors: {
+              currentPassword: "Provided password is incorrect",
+            },
+          };
+        }
+      }
+
+      if (typeof newPassword !== "string") {
+        return { errors: { newPassword: "Provided password is invalid" } };
+      }
+
+      if (newPassword.length < 8) {
+        return {
+          errors: {
+            newPassword: "Password is too short, provide at least 8 characters",
+          },
+        };
+      }
+
+      await updatePassword({
+        userId: user.id,
+        newPassword: newPassword,
+      });
+
+      return user.password
+        ? { passwordUpdated: true, updatedAt: Date.now() }
+        : { passwordCreated: true, updatedAt: Date.now() };
+    }
   }
   throw new Response("Not allowed", { status: 405 });
 }
 
 export async function loader(args: Route.LoaderArgs) {
-  const user = await requireUser(args.request);
-  const channels = await getChannels({ where: { userId: user.id } });
-  const categories = channels
+  const sessionId = await getBrowserSessionId(args.request);
+  const user = await requireUser(args.request, {
+    channels: { select: { category: true } },
+    email: true,
+    createdAt: true,
+    soundsAllowed: true,
+    passkeys: {
+      select: {
+        lastUsedAt: true,
+        id: true,
+        sessions: { select: { id: true } },
+      },
+    },
+    password: { select: { id: true, sessions: { select: { id: true } } } },
+  });
+
+  const categories = user?.channels
     .flatMap((channel) => channel.category.split("/").filter(Boolean))
     .filter((category, idx, array) => array.indexOf(category) === idx)
     .join("/");
-  return { user: user, categories };
+
+  return {
+    user: {
+      ...user,
+      password: user.password
+        ? {
+            isCurrentLogin: user.password?.sessions.find(
+              (s) => s.id === sessionId
+            ),
+            sessionCount: user.password.sessions.length,
+          }
+        : undefined,
+
+      passkeys: user.passkeys.map((p) => ({
+        isCurrentLogin: Boolean(p.sessions.find((s) => s.id === sessionId)),
+        lastUsedAt: p.lastUsedAt,
+        id: p.id,
+        sessionCount: p.sessions.length,
+      })),
+    },
+    categories,
+  };
 }
 
-export default function UserPage({ loaderData }: Route.ComponentProps) {
+export default function UserPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const { user, categories } = loaderData;
-  const transition = useNavigation();
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-  const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
+  const navigation = useNavigation();
+  const [playEnable] = useSound(enableSound, { volume: 0.1 });
+  const [playDisable] = useSound(disableSound, { volume: 0.1 });
+  const isPasskeySupported = useIsPasskeySupported();
 
+  const fetcher = useFetcher();
+  actionData ??= fetcher.data;
   return (
     <>
       <UseAppTitle>Your profile</UseAppTitle>
@@ -60,7 +193,15 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
             {[
               {
                 label: "Registered on",
-                value: new Date(user.createdAt).toLocaleDateString(),
+                value: (
+                  <time>
+                    {new Date(user.createdAt).toLocaleDateString("en", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </time>
+                ),
                 icon: <ClockIcon className="h-4" />,
               },
               {
@@ -86,106 +227,255 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
               </span>
             ))}
           </dl>
-        </section>
-        <AsideWrapper className="sm:w-[22ch]">
-          <Form method="post">
-            <Button
-              type="submit"
-              className="flex h-full  gap-2 sm:w-full"
-              disabled={transition.formMethod === "PATCH"}
-              onClick={() => {
-                if (!user.soundsAllowed) {
-                  playConfirm();
-                }
-              }}
-            >
-              {user.soundsAllowed ? (
-                <>
-                  <VolumeOffIcon className="h-6 w-4" />{" "}
-                  <span className="pointer-events-none hidden sm:block sm:w-full">
-                    Disable sounds
-                  </span>
-                </>
-              ) : (
-                <>
-                  <VolumeUpIcon className="h-6 w-4" />{" "}
-                  <span className="pointer-events-none hidden sm:block sm:w-full">
-                    Enable sounds
-                  </span>
-                </>
-              )}
-            </Button>
-          </Form>
-          <Form action="edit-email">
-            <Button type="submit" className="flex h-full gap-2 sm:w-full">
-              <MailIcon className="h-6 w-4" />{" "}
-              <span className="pointer-events-none hidden sm:block sm:w-full">
-                Update email
-              </span>
-            </Button>
-          </Form>
-          <br />
-          <Form action="/logout" method="post">
-            <Button type="submit" className="flex gap-2 sm:w-full">
-              <LogoutIcon className="h-6 w-4" />{" "}
-              <span className="hidden sm:block sm:w-full">Log out</span>
-            </Button>
-          </Form>
-          <br className="flex-1" />
-          <span className="flex-1 sm:hidden" />
+          <hr></hr>
+          <div className="flex flex-col gap-4">
+            <h4 className="font-bold dark:text-white">General</h4>
 
-          <Button
-            className="script-only flex sm:w-full "
-            onClick={() => setIsDeleteDialogOpen(true)}
-          >
-            <TrashIcon className="h-6 w-4" />
-            <span className="hidden sm:block sm:w-full">Delete account</span>
-          </Button>
-
-          <noscript>
-            <Form method="post" action="/logout" className="w-full">
-              <Button className="flex sm:w-full " name="action" value="delete">
-                <TrashIcon className="h-6 w-4" />
-                <span className="hidden sm:block sm:w-full">
-                  Delete account
-                </span>
+            <Form method="post">
+              <HiddenInputs
+                inputs={[{ name: "action", value: actions["toggle-sound"] }]}
+              />
+              <Button
+                type="submit"
+                className="flex min-w-[20ch] gap-2"
+                disabled={navigation.formMethod === "PATCH"}
+                data-silent
+                onClick={() => {
+                  if (!user.soundsAllowed) {
+                    playEnable();
+                  } else {
+                    playDisable();
+                  }
+                }}
+              >
+                {user.soundsAllowed ? (
+                  <>
+                    <VolumeOffIcon className="h-6 w-4" />{" "}
+                    <span className="pointer-events-none w-full">
+                      Disable sounds
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeUpIcon className="h-6 w-4" />{" "}
+                    <span className="pointer-events-none w-full">
+                      Enable sounds
+                    </span>
+                  </>
+                )}
               </Button>
             </Form>
-          </noscript>
 
-          <Modal
-            isOpen={isDeleteDialogOpen}
-            onRequestClose={() => setIsDeleteDialogOpen(false)}
-            style={{ content: { maxWidth: "90vw", width: "50ch" } }}
-          >
-            <h2 className="text-2xl">Are you sure?</h2>
-            <p className="my-4 text-slate-500">
-              This will permanently delete your account
-            </p>
-
-            <fieldset className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row">
-              <Button
-                type="button"
-                className=" flex w-full justify-center"
-                onClick={() => setIsDeleteDialogOpen(false)}
-                data-silent
-              >
-                <span>Cancel</span>
+            <h4 className="font-bold dark:text-white">Login and credentials</h4>
+            <Form action={href("/channels/user/edit-email")}>
+              <Button type="submit" className="flex min-w-[20ch] gap-2">
+                <MailIcon className="h-6 w-4" />{" "}
+                <span className="pointer-events-none w-full">Update email</span>
               </Button>
-              <Form method="post" action="/logout" className="w-full">
-                <SubmitButton
-                  type="submit"
-                  className="w-full whitespace-nowrap "
-                  data-silent
-                  name="action"
-                  value="delete"
-                >
-                  Yes, Delete
+            </Form>
+            {(actionData?.passwordCreated || actionData?.passwordUpdated) && (
+              <div className="flex gap-1 rounded bg-green-100 p-2 pl-4 text-green-800">
+                <CheckCircleIcon className="inline w-4 min-w-4" />
+                <p className="flex-1 text-center">
+                  Password was{" "}
+                  {actionData.passwordCreated ? <>created</> : <>updated</>}{" "}
+                  successfuly
+                </p>
+              </div>
+            )}
+            <Details
+              title={user.password ? "Update password" : "Add password"}
+              icon={<LockClosedIcon className="w-4" />}
+              key={actionData?.updatedAt}
+            >
+              <Form method="post" className="flex flex-col gap-2">
+                <HiddenInputs.Action value={actions["update-password"]} />
+
+                {loaderData.user.password?.isCurrentLogin && (
+                  <p className="text-slate-600">
+                    <InformationCircleIcon className="inline w-4 min-w-4" />{" "}
+                    This will log you out of this device
+                    {loaderData.user.password?.sessionCount > 1 && (
+                      <> and other devices logged in using this password</>
+                    )}
+                  </p>
+                )}
+
+                {loaderData.user.password && (
+                  <Input.Password
+                    name="current-password"
+                    formLabel="Current password"
+                    autoComplete="current-password"
+                    required
+                    errors={
+                      actionData?.errors?.currentPassword
+                        ? [{ content: actionData?.errors?.currentPassword }]
+                        : undefined
+                    }
+                  />
+                )}
+
+                <Input.Password
+                  name="new-password"
+                  formLabel="New password"
+                  autoComplete="new-password"
+                  required
+                  errors={
+                    actionData?.errors?.newPassword
+                      ? [{ content: actionData?.errors?.newPassword }]
+                      : undefined
+                  }
+                />
+                <SubmitButton>
+                  {loaderData.user.password ? (
+                    <>Update password</>
+                  ) : (
+                    <>Add password</>
+                  )}
                 </SubmitButton>
               </Form>
-            </fieldset>
-          </Modal>
-        </AsideWrapper>
+            </Details>
+            <Details
+              title={"Manage passkeys"}
+              icon={<FingerPrintIcon className="w-4" />}
+            >
+              {user.passkeys.length === 0 && !isPasskeySupported && (
+                <p className="text-center text-slate-700">
+                  You have no passkeys
+                </p>
+              )}
+              <ul className="">
+                {user.passkeys.map((passkey) => (
+                  <React.Fragment key={passkey.id}>
+                    <li className="mb-1 flex overflow-hidden rounded-sm border last:mb-2 dark:border-slate-700">
+                      <KeyIcon className="w-8 min-w-8 border-r bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-400 " />
+                      <dl className="flex  flex-1 flex-col sm:flex-row">
+                        {[
+                          {
+                            label: "Last login:",
+                            value: (
+                              <time>
+                                {passkey.lastUsedAt?.toLocaleDateString("en", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "2-digit",
+                                }) ?? "-"}
+                              </time>
+                            ),
+                          },
+                          {
+                            label: "Status:",
+                            value: (
+                              <div className=" overflow-hidden rounded-md">
+                                {passkey.sessionCount > 0 ? (
+                                  <span className=" bg-green-100 p-1 text-green-700 dark:bg-green-700 dark:text-green-200">
+                                    {passkey.sessionCount} Device
+                                    {passkey.sessionCount === 1 ? "" : "s"}{" "}
+                                    logged in
+                                  </span>
+                                ) : (
+                                  <span className="bg-slate-200 p-1 text-slate-600 dark:bg-slate-600 dark:text-slate-200">
+                                    No device logged in
+                                  </span>
+                                )}
+                              </div>
+                            ),
+                          },
+                        ].map((item) => (
+                          <div
+                            key={item.label}
+                            className="min-w-24 border-b p-2 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 dark:border-slate-700"
+                          >
+                            <dd className="text-sm text-slate-600 dark:text-slate-400">
+                              {item.label}
+                            </dd>
+                            <dt>{item.value}</dt>
+                          </div>
+                        ))}
+                      </dl>
+                      {(user.passkeys.length > 1 || user.password) && (
+                        <form
+                          className="justify-end"
+                          method="post"
+                          onSubmit={async (e) => {
+                            e.preventDefault();
+                            await confirm({
+                              header: "Are you sure?",
+                              message: (
+                                <>
+                                  {passkey.isCurrentLogin ? (
+                                    <>This will log you out on this device</>
+                                  ) : passkey.sessionCount > 0 ? (
+                                    <>
+                                      This will log you out on device
+                                      {passkey.sessionCount === 1
+                                        ? ""
+                                        : "s"}{" "}
+                                      using this key
+                                    </>
+                                  ) : (
+                                    <>You will permanently delete this key</>
+                                  )}
+                                </>
+                              ),
+                              confirm: "Yes, delete",
+                              reject: "No, cancel",
+                            });
+                            fetcher.submit(e.target as typeof e.currentTarget);
+                          }}
+                        >
+                          <HiddenInputs
+                            inputs={[
+                              {
+                                name: "action",
+                                value: actions["remove-passkey"],
+                              },
+                              { name: "passkey-id", value: passkey.id },
+                            ]}
+                          />
+                          <button
+                            aria-label="Delete passkey"
+                            className="h-full border-l p-2 dark:border-slate-700"
+                          >
+                            <TrashIcon className="pointer-events-none w-4 min-w-4" />
+                          </button>
+                        </form>
+                      )}
+                    </li>
+                    {actionData?.errors?.passkeyId === passkey.id && (
+                      <InputError className="mb-2">
+                        {actionData?.errors.passkey}
+                      </InputError>
+                    )}
+                  </React.Fragment>
+                ))}
+              </ul>
+              {isPasskeySupported && <PasskeyAddForm />}
+            </Details>
+            <h4 className="font-bold dark:text-white">Account</h4>
+            <fetcher.Form
+              method="post"
+              action={href("/logout")}
+              className=""
+              onSubmit={async (e) => {
+                e.preventDefault();
+                await confirm({
+                  header: <>Are you sure?</>,
+                  message: <>This will permanently delete your account</>,
+                  confirm: "Yes, delete",
+                  reject: "No, cancel",
+                });
+                fetcher.submit(e.target as typeof e.currentTarget);
+              }}
+            >
+              <HiddenInputs inputs={[{ name: "action", value: "delete" }]} />
+              <Button className="flex min-w-[20ch] bg-slate-700 text-white hover:bg-slate-800">
+                <TrashIcon className="h-6 w-4" />
+                <span className="w-full">Delete account</span>
+              </Button>
+            </fetcher.Form>
+          </div>
+        </section>
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import type { Collection } from "@prisma/client";
+import type { Collection } from "~/__generated__/prisma/client";
 import {
   Form,
   useActionData,
@@ -25,7 +25,7 @@ export function CollectionForm<
   },
   ActionData extends {
     errors: Partial<Record<"title", string | null>> | undefined;
-  },
+  }
 >(props: Props) {
   const errors = useActionData<ActionData>()?.errors;
   const transition = useNavigation();
