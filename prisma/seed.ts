@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "~/__generated__/prisma/client";
 import { SERVER_ENV } from "~/env.server";
 import { createUser } from "~/models/user.server";
 
