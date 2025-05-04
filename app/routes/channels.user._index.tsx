@@ -231,13 +231,13 @@ export default function UserPage({
           <div className="flex flex-col gap-4">
             <h4 className="font-bold dark:text-white">General</h4>
 
-            <Form method="post">
+            <Form method="post" className="w-full sm:w-min">
               <HiddenInputs
                 inputs={[{ name: "action", value: actions["toggle-sound"] }]}
               />
               <Button
                 type="submit"
-                className="flex min-w-[20ch] gap-2"
+                className="flex w-full min-w-[20ch] gap-2"
                 disabled={navigation.formMethod === "PATCH"}
                 data-silent
                 onClick={() => {
@@ -267,8 +267,11 @@ export default function UserPage({
             </Form>
 
             <h4 className="font-bold dark:text-white">Login and credentials</h4>
-            <Form action={href("/channels/user/edit-email")}>
-              <Button type="submit" className="flex min-w-[20ch] gap-2">
+            <Form
+              action={href("/channels/user/edit-email")}
+              className="w-full sm:w-min"
+            >
+              <Button type="submit" className="flex w-full min-w-[20ch] gap-2">
                 <MailIcon className="h-6 w-4" />{" "}
                 <span className="pointer-events-none w-full">Update email</span>
               </Button>
@@ -456,7 +459,7 @@ export default function UserPage({
             <fetcher.Form
               method="post"
               action={href("/logout")}
-              className=""
+              className="w-full sm:w-fit"
               onSubmit={async (e) => {
                 e.preventDefault();
                 await confirm({
@@ -469,7 +472,7 @@ export default function UserPage({
               }}
             >
               <HiddenInputs inputs={[{ name: "action", value: "delete" }]} />
-              <Button className="flex min-w-[20ch] bg-slate-700 text-white hover:bg-slate-800">
+              <Button className="flex w-full min-w-[20ch] bg-slate-700 text-white hover:bg-slate-800">
                 <TrashIcon className="h-6 w-4" />
                 <span className="w-full">Delete account</span>
               </Button>
