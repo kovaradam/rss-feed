@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "react-router dev --host",
     "dev:test": "vitest watch",
-    "build": "react-router build",
+    "build": "npx prisma generate && react-router build",
     "start": "react-router-serve ./build/server/index.js",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
