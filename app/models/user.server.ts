@@ -135,8 +135,8 @@ export async function validateUserEmail(id: User["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
 }
@@ -356,9 +356,9 @@ export const getPasskeyByCredentialId = async (params: {
       ...passkey,
       transports: mapTransports.fromDb(passkey.transports),
     },
-    incrementCounter: () =>
+    updateCounter: (counter: number) =>
       prisma.webAuthnCredential.update({
-        data: { counter: { increment: 1 }, lastUsedAt: new Date() },
+        data: { counter: counter, lastUsedAt: new Date() },
         where: { id: passkey.id },
       }),
   };
