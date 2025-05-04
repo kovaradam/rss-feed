@@ -37,19 +37,7 @@ RUN npm run build
 # Finally, build the production image with minimal footprint
 FROM base
 
-<<<<<<< HEAD
 ENV DATABASE_URL=file:/data/sqlite.db
-=======
-# ENV DATABASE_URL=file:/data/sqlite.db
-ENV DATABASE_URL="file:./data.db?connection_limit=1"
-ENV SESSION_SECRET="super-duper-s3cret"
-ENV ADMIN_EMAIL=admin@web.journal
-ENV ADMIN_PASS=adminiscool
-ENV SMTP_URL=smtp.seznam.cz
-ENV MAIL_USER=web-journal@seznam.cz
-ENV MAIL_PASS=BZ2TwLkuSymivS
-ENV SERVER_DOMAIN=localhost
->>>>>>> 7a1d2a24a8e005ab2bde049cced5389592770a53
 
 ENV PORT="8080"
 ENV NODE_ENV="production"
