@@ -20,6 +20,7 @@ import {
   Link,
   NavLink,
   Outlet,
+  useLocation,
   useNavigation,
 } from "react-router";
 import { AppTitle, UseAppTitle } from "~/components/AppTitle";
@@ -362,9 +363,11 @@ function StyledNavLink({
 }
 
 function UserMenu(props: { email: string; isAdmin: boolean }) {
+  const location = useLocation();
   return (
     <>
       <details
+        key={location.pathname}
         className="peer relative flex justify-center  sm:w-full sm:flex-col-reverse"
         onBlurCapture={(event) => {
           const thisElement = event.currentTarget;
