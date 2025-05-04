@@ -64,7 +64,7 @@ export function CategoryInput(props: CategoryInputProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.currentTarget.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && e.currentTarget.value) {
               e.preventDefault();
               addCategory();
             }
