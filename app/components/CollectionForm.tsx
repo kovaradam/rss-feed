@@ -25,7 +25,7 @@ export function CollectionForm<
   },
   ActionData extends {
     errors: Partial<Record<"title", string | null>> | undefined;
-  }
+  },
 >(props: Props) {
   const errors = useActionData<ActionData>()?.errors;
   const transition = useNavigation();
