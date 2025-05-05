@@ -5,6 +5,7 @@ import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 
 export async function action({ request }: Route.LoaderArgs) {
   const user = await requireUser(request, { id: true });
+
   if (request.method === useChannelRefreshFetcher.method) {
     try {
       const channels = await getChannels({

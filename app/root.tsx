@@ -21,6 +21,7 @@ import { getUser } from "./session.server";
 import { lastTitle } from "./utils";
 import { HistoryStack } from "./utils/history-stack";
 import { useScrollRestoration } from "./utils/use-scroll-restoration";
+import { SERVER_ENV } from "./env.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -33,6 +34,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   return {
     user,
+    console: !SERVER_ENV.is.prod,
   };
 };
 
@@ -96,7 +98,11 @@ export default function App(props: Route.ComponentProps) {
           </div>
         )}
         <div id="confirm-modal"></div>
-
+        {data.console && (
+          <div className="absolute top-0 z-50 w-full bg-orange-200 sm:hidden">
+            <span id="console" />
+          </div>
+        )}
         <Outlet />
         <Scripts />
       </body>

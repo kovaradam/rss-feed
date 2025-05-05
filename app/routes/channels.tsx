@@ -82,23 +82,25 @@ export default function ChannelsPage(props: Route.ComponentProps) {
 
   const itemsContainer = globalThis.document?.getElementById("feed-container");
   const itemsContainerHeight = itemsContainer?.clientHeight;
+
   React.useLayoutEffect(() => {
     if ((newItemCount ?? 0) === 0 || !itemsContainerHeight) {
       return;
     }
+    if (
+      window.matchMedia("(max-width: 640px)").matches &&
+      document.body.style.overflowAnchor !== undefined
+    ) {
+      return;
+    }
     const newItemsContainerHeight = itemsContainer.clientHeight;
 
-    const scrollingElement =
-      window.matchMedia("(max-width: 640px)").matches &&
-      document.scrollingElement
-        ? document.scrollingElement
-        : document.body;
+    const scrollingElement = document.body;
 
     const scrollDiff = newItemsContainerHeight - itemsContainerHeight;
+
     if (scrollingElement.scrollTop && scrollDiff) {
-      scrollingElement.scrollTo({
-        top: scrollingElement.scrollTop + scrollDiff,
-      });
+      scrollingElement.scrollTop = scrollingElement.scrollTop + scrollDiff;
     }
   }, [newItemCount, itemsContainer, itemsContainerHeight]);
 
