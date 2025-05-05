@@ -79,7 +79,9 @@ export function Input<T extends readonly React.ReactNode[]>({
         )}
       </div>
       <div aria-live="polite">
-        {errors?.map((e) => <InputError key={e.id}>{e.content}</InputError>)}
+        {errors?.map((e) => (
+          <InputError key={e.id}>{e.content}</InputError>
+        ))}
       </div>
     </div>
   );

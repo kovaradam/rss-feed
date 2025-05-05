@@ -218,7 +218,7 @@ export function deleteChannel({
 }
 
 export async function getChannelItems<
-  T extends Parameters<typeof prisma.item.findMany>[0],
+  T extends Parameters<typeof prisma.item.findMany>[0]
 >(params: T) {
   return prisma.item.findMany(params);
 }
