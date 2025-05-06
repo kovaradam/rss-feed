@@ -122,16 +122,22 @@ export default function LoginPage({
           {loaderData.isFirst ? "Welcome!" : "Welcome back!"}
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          Don&apos;t have an account?{" "}
-          <Link
-            className="font-bold underline"
-            to={{
-              pathname: "/welcome",
-              search: searchParams.toString(),
-            }}
-          >
-            Sign up
-          </Link>
+          {loaderData.isFirst ? (
+            <>Your new journal is ready</>
+          ) : (
+            <>
+              Don&apos;t have an account?{" "}
+              <Link
+                className="font-bold underline"
+                to={{
+                  pathname: "/welcome",
+                  search: searchParams.toString(),
+                }}
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </p>
       </div>
       <div className={`w-full sm:max-w-md `}>

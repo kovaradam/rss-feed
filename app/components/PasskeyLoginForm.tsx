@@ -12,6 +12,7 @@ export function PasskeyLoginForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
+  const mailParam = searchParams.get("email");
 
   const passkeyAction = async (prev: unknown, formData: FormData) => {
     const result = await authenticateWithPasskey(formData);
@@ -29,17 +30,16 @@ export function PasskeyLoginForm() {
       className="min-h-[var(--welcome-form-min-height)] space-y-6"
     >
       <>
-        <Input
+        <Input.Email
           name="email"
           formLabel={"Email address"}
-          type="email"
           required
           autoComplete="email webauthn"
-          placeholder="name@example.com"
           errors={Object.values(state?.errors ?? {}).map((e) => ({
             content: e as string,
             id: e as string,
           }))}
+          defaultValue={typeof mailParam === "string" ? mailParam : undefined}
         />
 
         <input name={"action"} value={"get-options"} type={"hidden"} />
