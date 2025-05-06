@@ -135,8 +135,8 @@ export async function validateUserEmail(id: User["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
 }
@@ -210,12 +210,14 @@ export async function verifyLogin(
   email: User["email"],
   password: Password["hash"]
 ) {
-  const userWithPassword = await prisma.user.findUnique({
-    where: { email },
-    include: {
-      password: true,
-    },
-  });
+  const userWithPassword = await prisma.user
+    .findUnique({
+      where: { email },
+      include: {
+        password: true,
+      },
+    })
+    .catch(() => null);
 
   if (!userWithPassword?.password) {
     return null;

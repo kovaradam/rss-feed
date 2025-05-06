@@ -63,25 +63,33 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   }
 
-  const existingUser = await getUserByEmail(email, { id: true });
-  if (existingUser) {
+  try {
+    const existingUser = await getUserByEmail(email, { id: true });
+    if (existingUser) {
+      return data<ActionData>(
+        { errors: { email: "User with this email already exists." } },
+        { status: 400 }
+      );
+    }
+
+    const user = await createUser({
+      email,
+      auth: { password, type: "password" },
+    });
+
+    return createUserSession({
+      request,
+      userId: user.id,
+      redirectTo: redirectTo as string,
+      credential: { type: "password", passwordId: user.password?.id as string },
+    });
+  } catch (e) {
+    console.error(e);
     return data<ActionData>(
-      { errors: { email: "User with this email already exists." } },
+      { errors: { email: "Something went wrong, please try again later" } },
       { status: 400 }
     );
   }
-
-  const user = await createUser({
-    email,
-    auth: { password, type: "password" },
-  });
-
-  return createUserSession({
-    request,
-    userId: user.id,
-    redirectTo: redirectTo as string,
-    credential: { type: "password", passwordId: user.password?.id as string },
-  });
 };
 
 export default function Welcome() {

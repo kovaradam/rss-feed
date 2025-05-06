@@ -1,5 +1,6 @@
 import invariant from "tiny-invariant";
 import { mapValue } from "./utils/map-value";
+import "dotenv/config";
 
 export const SERVER_ENV = {
   is: {
