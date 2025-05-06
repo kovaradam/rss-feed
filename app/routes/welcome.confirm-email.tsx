@@ -1,4 +1,4 @@
-import { Form, Link, redirect, useNavigation } from "react-router";
+import { Form, href, Link, redirect, useNavigation } from "react-router";
 import { getUserById, sendConfirmEmail } from "~/models/user.server";
 import { requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
@@ -28,7 +28,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const user = await getUserById(userId, { requestedEmail: true, id: true });
 
-  if (!user?.requestedEmail) {
+  if (
+    !user?.requestedEmail &&
+    // while confirming in otl, this will be fired sooner than redirect from
+    // nested route, so do not redirect if this is not leaf route
+    new URL(request.url).pathname === href("/welcome/confirm-email")
+  ) {
     throw redirect("/");
   }
 
@@ -74,7 +79,7 @@ export default function ConfirmEmailPage({
         <Form action="/logout" method="post">
           <button type="submit">Log out</button>
         </Form>
-        {loaderData.allowSkip && (
+        {loaderData.allowSkip && loaderData.user && (
           <>
             |
             <Link className="" to={loaderData.user.id}>

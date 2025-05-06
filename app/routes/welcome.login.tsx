@@ -150,6 +150,7 @@ export default function LoginPage({
                     ref: emailRef,
                     name: "email",
                     type: "email",
+                    defaultValue: searchParams.get("email"),
                     ariaInvalid: actionData?.errors?.email ? true : undefined,
                     ariaDescribedBy: "email-error",
                     error: actionData?.errors?.email,
@@ -179,6 +180,11 @@ export default function LoginPage({
                     errors={
                       formField.error
                         ? [{ content: formField.error }]
+                        : undefined
+                    }
+                    defaultValue={
+                      typeof formField.defaultValue === "string"
+                        ? formField.defaultValue
                         : undefined
                     }
                   />

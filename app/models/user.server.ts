@@ -113,7 +113,7 @@ export async function createUser(params: {
 export async function validateUserEmail(id: User["id"]) {
   const user = await getUserById(id, { requestedEmail: true });
 
-  if (!user || !user.requestedEmail) {
+  if (!user?.requestedEmail) {
     return null;
   }
 
@@ -135,8 +135,8 @@ export async function validateUserEmail(id: User["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
 }
