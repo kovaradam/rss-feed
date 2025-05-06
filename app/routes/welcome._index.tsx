@@ -63,6 +63,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     );
   }
 
+  let user: Awaited<ReturnType<typeof createUser>>;
   try {
     const existingUser = await getUserByEmail(email, { id: true });
     if (existingUser) {
@@ -72,16 +73,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
       );
     }
 
-    const user = await createUser({
+    user = await createUser({
       email,
       auth: { password, type: "password" },
-    });
-
-    return createUserSession({
-      request,
-      userId: user.id,
-      redirectTo: redirectTo as string,
-      credential: { type: "password", passwordId: user.password?.id as string },
     });
   } catch (e) {
     console.error(e);
@@ -90,6 +84,13 @@ export const action = async ({ request }: Route.ActionArgs) => {
       { status: 400 }
     );
   }
+
+  return createUserSession({
+    request,
+    userId: user.id,
+    redirectTo: redirectTo as string,
+    credential: { type: "password", passwordId: user.password?.id as string },
+  });
 };
 
 export default function Welcome() {
