@@ -218,7 +218,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     <>
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
-        <section className="min-w-2/3 relative flex-1" id="feed-container">
+        <section className="min-w-2/3 relative flex-1">
           <Details
             className="mb-4 w-full sm:hidden"
             title="Filter articles"

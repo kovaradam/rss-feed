@@ -80,9 +80,8 @@ export default function ChannelsPage(props: Route.ComponentProps) {
     return () => window.removeEventListener("focus", refreshChannels);
   }, [refreshChannels]);
 
-  const itemsContainer = globalThis.document?.getElementById("feed-container");
-  const itemsContainerHeight = itemsContainer?.clientHeight;
-
+  const itemsContainer = globalThis.document?.body;
+  const itemsContainerHeight = itemsContainer?.scrollHeight;
   React.useLayoutEffect(() => {
     if ((newItemCount ?? 0) === 0 || !itemsContainerHeight) {
       return;
@@ -93,7 +92,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
     ) {
       return;
     }
-    const newItemsContainerHeight = itemsContainer.clientHeight;
+    const newItemsContainerHeight = itemsContainer.scrollHeight;
 
     const scrollingElement = document.body;
 

@@ -1,7 +1,11 @@
 import { createRoot, Root } from "react-dom/client";
 
-export function logMobile<T>(msg: T) {
-  logs.push({ msg, timestamp: Date.now(), id: logs.length });
+export function logMobile(...msg: unknown[]) {
+  logs.push({
+    msg: JSON.stringify(msg),
+    timestamp: Date.now(),
+    id: logs.length,
+  });
 
   renderConsole();
 }
