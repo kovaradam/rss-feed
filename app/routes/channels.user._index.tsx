@@ -8,6 +8,7 @@ import {
   InformationCircleIcon,
   KeyIcon,
   LockClosedIcon,
+  LogoutIcon,
   MailIcon,
   TrashIcon,
   VolumeOffIcon,
@@ -188,7 +189,15 @@ export default function UserPage({
       <UseAppTitle>Your profile</UseAppTitle>
       <div className="relative flex min-h-screen flex-col sm:flex-row">
         <section className="flex flex-1 flex-col gap-8 ">
-          <PageHeading>{user.email}</PageHeading>
+          <div className="flex justify-between">
+            <PageHeading>{user.email}</PageHeading>
+            <Form action={href("/logout")} method="post">
+              <Button className="flex ">
+                <LogoutIcon className="h-6 w-4" />
+                <span className="w-full">Log out</span>
+              </Button>
+            </Form>
+          </div>
           <dl>
             {[
               {

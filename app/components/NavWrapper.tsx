@@ -38,11 +38,11 @@ export function NavWrapper(props: Props) {
           {props.children}
         </div>
       </nav>
-      <div
-        className={`absolute right-0 top-0 z-10 h-full  w-full bg-black opacity-10 ${
-          props.isExpanded ? "visible touch-none" : "hidden"
-        } sm:hidden`}
-        onClickCapture={props.hide}
+      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+      <label
+        htmlFor="nav-toggle"
+        aria-hidden
+        className={`absolute right-0 top-0 z-10 hidden h-full w-full bg-black opacity-10  group-has-[#nav-toggle:checked]:flex group-has-[#nav-toggle:checked]:touch-none sm:hidden`}
       />
     </>
   );

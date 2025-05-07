@@ -64,7 +64,6 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   const data = props.loaderData;
   const navigation = useNavigation();
 
-  const [isNavExpanded, setIsNavExpanded] = React.useState(false);
   const [title, setTitle] = React.useState(data.title as string | undefined);
 
   const refreshFetcher = useChannelRefreshFetcher();
@@ -105,6 +104,8 @@ export default function ChannelsPage(props: Route.ComponentProps) {
 
   const [channelFilter, setChannelFilter] = React.useState("");
 
+  const [isNavExpanded, setIsNavExpanded] = useNavToggleState();
+
   const hideNavbar = () => setIsNavExpanded(false);
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
@@ -115,16 +116,15 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         Skip to main content
       </a>
 
-      <div className="flex flex-col sm:overflow-x-visible ">
+      <div className="group flex flex-col sm:overflow-x-visible">
+        <input type="checkbox" id="nav-toggle" className="hidden" />
         <UseAppTitle>{data.title}</UseAppTitle>
         <div
           className="background flex justify-center"
           {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}
         >
           <div
-            className={`relative flex h-full min-h-screen w-screen  2xl:w-2/3 ${
-              isNavExpanded ? "translate-x-3/4" : ""
-            } duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
+            className={`relative flex h-full min-h-screen w-screen  duration-200 ease-in group-has-[#nav-toggle:checked]:translate-x-3/4 sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
             data-nav-sliding-element
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
@@ -279,13 +279,13 @@ export default function ChannelsPage(props: Route.ComponentProps) {
             <div className="flex-1">
               <header className="z-10 flex w-screen justify-center whitespace-nowrap border-b bg-white sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
                 <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
-                  <button
+                  <label
                     aria-label="Toggle navigation"
-                    onClick={() => setIsNavExpanded((prev) => !prev)}
                     className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800"
+                    htmlFor="nav-toggle"
                   >
                     <MenuAlt2Icon className="w-6" />
-                  </button>
+                  </label>
                   <h1 className="truncate font-bold sm:text-3xl">
                     <AppTitle defaultTitle={data.title} />
                   </h1>
@@ -363,11 +363,21 @@ function StyledNavLink({
 
 function UserMenu(props: { email: string; isAdmin: boolean }) {
   const location = useLocation();
+  const linkStyle =
+    "text-md flex cursor-pointer items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700";
   return (
     <>
+      <noscript className="sm:flex-1">
+        <a href={href("/channels/user")} className={linkStyle}>
+          <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
+          <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
+            {props.email}
+          </span>
+        </a>
+      </noscript>
       <details
         key={location.pathname}
-        className="peer relative flex justify-center  sm:w-full sm:flex-col-reverse"
+        className="script-only peer relative flex  justify-center sm:w-full sm:flex-col-reverse"
         onBlurCapture={(event) => {
           const thisElement = event.currentTarget;
           const blurTimeout = setTimeout(() => {
@@ -382,7 +392,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
         }}
       >
         <summary
-          className="user-summary text-md flex cursor-pointer list-none items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700 [&::-webkit-details-marker]:hidden"
+          className={`${linkStyle} [&::-webkit-details-marker]:hidden`}
           aria-label="Toggle user menu"
         >
           <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
@@ -498,4 +508,32 @@ function registerNavSwipeCallbacks(
       setIsExpanded(diff < 0);
     },
   };
+}
+
+function useNavToggleState() {
+  const [isNavExpanded, setIsNavExpanded] = React.useState(
+    globalThis.document?.querySelector("#nav-toggle:checked") !== null
+  );
+
+  React.useEffect(() => {
+    const element = document.getElementById("nav-toggle");
+    if (!element) {
+      return;
+    }
+    const cb = () => {
+      setIsNavExpanded((element as HTMLInputElement).checked);
+    };
+    element.addEventListener("change", cb);
+    return () => element.removeEventListener("change", cb);
+  }, []);
+
+  return [
+    isNavExpanded,
+    (value: boolean) => {
+      const e = document.getElementById("nav-toggle") as HTMLInputElement;
+      if (e) {
+        e.checked = value;
+      }
+    },
+  ] as const;
 }
