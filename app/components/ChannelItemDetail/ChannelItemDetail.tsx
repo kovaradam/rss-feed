@@ -170,7 +170,7 @@ export function ChannelItemDetail(props: Props) {
           <img
             alt=""
             src={item.imageUrl}
-            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 text-sm italic sm:rounded-none dark:bg-slate-950"
+            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 object-cover text-sm italic sm:rounded-none dark:bg-slate-950"
             loading="lazy"
           />
         )}
