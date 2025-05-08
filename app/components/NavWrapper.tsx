@@ -42,7 +42,7 @@ export function NavWrapper(props: Props) {
       <label
         htmlFor="nav-toggle"
         aria-hidden
-        className={`absolute right-0 top-0 z-10 hidden h-full w-full bg-black opacity-10  group-has-[#nav-toggle:checked]:flex group-has-[#nav-toggle:checked]:touch-none sm:hidden`}
+        className={`absolute right-0 top-0 z-10 hidden h-full w-full bg-black opacity-10  sm:hidden [input:checked+div_&]:flex [input:checked+div_&]:touch-none`}
       />
     </>
   );

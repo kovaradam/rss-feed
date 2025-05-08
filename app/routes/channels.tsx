@@ -116,15 +116,15 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         Skip to main content
       </a>
 
-      <div className="group flex flex-col sm:overflow-x-visible">
-        <input type="checkbox" id="nav-toggle" className="hidden" />
+      <input type="checkbox" id="nav-toggle" className="hidden" />
+      <div className="flex flex-col sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
         <div
           className="background flex justify-center"
           {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}
         >
           <div
-            className={`relative flex h-full min-h-screen w-screen  duration-200 ease-in group-has-[#nav-toggle:checked]:translate-x-3/4 sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)]`}
+            className={`relative flex  h-full min-h-screen w-screen duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
             data-nav-sliding-element
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
