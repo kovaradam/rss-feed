@@ -15,8 +15,9 @@ import { SubmitButton } from "~/components/Button";
 import { Input } from "~/components/Input";
 import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
 import { verifyLogin } from "~/models/user.server";
+import { validate } from "~/models/validate";
 import { createUserSession, getUserId } from "~/session.server";
-import { isSubmitting, validateEmail } from "~/utils";
+import { isSubmitting } from "~/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const userId = await getUserId(request);
@@ -38,29 +39,17 @@ interface ActionData {
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
   const redirectTo = formData.get("redirectTo") ?? "/";
 
-  if (!validateEmail(email)) {
-    return data<ActionData>(
-      { errors: { email: "Email is invalid" } },
-      { status: 400 }
-    );
-  }
+  const email = validate.email(formData.get("email"));
+  const password = validate.password(formData.get("password"));
 
-  if (typeof password !== "string" || password.length === 0) {
-    return data<ActionData>(
-      { errors: { password: "Password is required" } },
-      { status: 400 }
-    );
-  }
-
-  if (password.length < 8) {
+  if (validate.isError(email) || validate.isError(password)) {
     return data<ActionData>(
       {
         errors: {
-          password: "Password is too short, provide at least 8 characters",
+          email: validate.getError(email),
+          password: validate.getError(password),
         },
       },
       { status: 400 }

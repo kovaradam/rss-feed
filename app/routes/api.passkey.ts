@@ -7,6 +7,7 @@ import {
 } from "~/models/user.server";
 import { createUserSession, requireUser } from "~/session.server";
 import invariant from "tiny-invariant";
+import { validate } from "~/models/validate";
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -50,10 +51,10 @@ export async function action({ request }: Route.LoaderArgs) {
     }
 
     case "get-options": {
-      const email = formData.get("email");
+      const email = validate.email(formData.get("email"));
 
-      if (typeof email !== "string") {
-        return { errors: { email: "invalid email" } };
+      if (validate.isError(email)) {
+        return { errors: { email: email.message } };
       }
 
       try {
@@ -72,9 +73,10 @@ export async function action({ request }: Route.LoaderArgs) {
     case "verify": {
       const registrationResponse = formData.get("registration");
 
-      const email = formData.get("email");
-      if (typeof email !== "string") {
-        return { errors: { email: "email invalid" } };
+      const email = validate.email(formData.get("email"));
+
+      if (validate.isError(email)) {
+        return { errors: { email: email.message } };
       }
 
       let user, verification, passkeyId;

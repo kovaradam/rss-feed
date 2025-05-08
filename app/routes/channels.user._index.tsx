@@ -38,6 +38,7 @@ import { enumerate } from "~/utils";
 import { confirm } from "~/utils/confirm";
 import { InputError } from "~/components/InputError";
 import { Input } from "~/components/Input";
+import { validate } from "~/models/validate";
 
 const actions = enumerate([
   "toggle-sound",
@@ -81,13 +82,15 @@ export async function action({ request }: Route.ActionArgs) {
     }
 
     case actions["update-password"]: {
-      const currentPassword = formData.get("current-password"),
-        newPassword = formData.get("new-password");
+      const currentPassword = validate.password(
+          formData.get("current-password")
+        ),
+        newPassword = validate.password(formData.get("new-password"));
 
       if (user.password) {
-        if (typeof currentPassword !== "string") {
+        if (validate.isError(currentPassword)) {
           return {
-            errors: { currentPassword: "Provided password is invalid" },
+            errors: { currentPassword: currentPassword.message },
           };
         }
 
@@ -102,16 +105,8 @@ export async function action({ request }: Route.ActionArgs) {
         }
       }
 
-      if (typeof newPassword !== "string") {
-        return { errors: { newPassword: "Provided password is invalid" } };
-      }
-
-      if (newPassword.length < 8) {
-        return {
-          errors: {
-            newPassword: "Password is too short, provide at least 8 characters",
-          },
-        };
+      if (validate.isError(newPassword)) {
+        return { errors: { newPassword: newPassword.message } };
       }
 
       await updatePassword({

@@ -58,7 +58,11 @@ async function authenticateWithPasskey(registrationFormData: FormData) {
     body: registrationFormData,
     method: "post",
   }).then((r) => r.json());
-  const { registrationOptions, authenticationOptions } = options;
+  const { registrationOptions, authenticationOptions, errors } = options;
+
+  if (errors) {
+    return { errors };
+  }
 
   const formData = new FormData();
 

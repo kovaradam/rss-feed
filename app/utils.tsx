@@ -60,10 +60,6 @@ export function useOptionalUser(): User | undefined {
   return data.user;
 }
 
-export function validateEmail(email: unknown): email is string {
-  return typeof email === "string" && email.length > 3 && email.includes("@");
-}
-
 export let lastTitle = "";
 
 export function createTitle(input: string): string {
@@ -124,7 +120,7 @@ export function enumerate<T extends readonly string[]>(
 
 export function asEnum<
   T extends string[],
-  U extends ReturnType<typeof enumerate<T>>,
+  U extends ReturnType<typeof enumerate<T>>
 >(enumerated: U, input: unknown, fallback: keyof U): keyof U {
   return Object.keys(enumerated).includes(input as never)
     ? (input as keyof U)

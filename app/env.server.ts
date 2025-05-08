@@ -1,34 +1,47 @@
-import invariant from "tiny-invariant";
-import { mapValue } from "./utils/map-value";
+import * as v from "valibot";
 import "dotenv/config";
+
+const EnvSchema = v.object({
+  domain: v.message(v.pipe(v.string(), v.nonEmpty()), "missing server domain!"),
+  sessionSecret: v.message(
+    v.pipe(v.string(), v.nonEmpty()),
+    "missing session secret!"
+  ),
+  mail: v.object({
+    smtpUrl: v.message(
+      v.pipe(v.string(), v.nonEmpty()),
+      "missing email smtp url!"
+    ),
+    user: v.message(v.pipe(v.string(), v.nonEmpty()), "missing email user!"),
+    password: v.message(
+      v.pipe(v.string(), v.nonEmpty()),
+      "missing email password!"
+    ),
+  }),
+  admin: v.object({
+    email: v.message(v.pipe(v.string(), v.nonEmpty()), "missing admin email!"),
+    password: v.message(
+      v.pipe(v.string(), v.nonEmpty()),
+      "missing admin password!"
+    ),
+  }),
+});
 
 export const SERVER_ENV = {
   is: {
     prod: process.env.NODE_ENV === "production",
   },
-  domain: mapValue(process.env.SERVER_DOMAIN)(
-    (domain) => (invariant(domain, "missing server domain!"), domain)
-  ),
-  sessionSecret: mapValue(process.env.SESSION_SECRET)(
-    (secret) => (invariant(secret, "missing session secret!"), secret)
-  ),
-  mail: {
-    smtpUrl: mapValue(process.env.SMTP_URL)(
-      (url) => (invariant(url, "missing email smtp url!"), url)
-    ),
-    user: mapValue(process.env.MAIL_USER)(
-      (user) => (invariant(user, "missing email user!"), user)
-    ),
-    password: mapValue(process.env.MAIL_PASS)(
-      (password) => (invariant(password, "missing email password!"), password)
-    ),
-  },
-  admin: {
-    email: mapValue(process.env.ADMIN_EMAIL)(
-      (email) => (invariant(email, "missing admin email!"), email)
-    ),
-    password: mapValue(process.env.ADMIN_PASS)(
-      (password) => (invariant(password, "missing admin password!"), password)
-    ),
-  },
+  ...v.parse(EnvSchema, {
+    domain: process.env.SERVER_DOMAIN,
+    sessionSecret: process.env.SESSION_SECRET,
+    mail: {
+      smtpUrl: process.env.SMTP_URL,
+      user: process.env.MAIL_USER,
+      password: process.env.MAIL_PASS,
+    },
+    admin: {
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASS,
+    },
+  }),
 };

@@ -13,9 +13,10 @@ import { buttonStyle, SubmitButton } from "~/components/Button";
 import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
-import { createTitle, validateEmail } from "~/utils";
+import { createTitle } from "~/utils";
 import type { Route } from "./+types/welcome._index";
 import { Input } from "~/components/Input";
+import { validate } from "~/models/validate";
 
 export const meta = () => {
   return [{ title: createTitle("Welcome") }];
@@ -38,27 +39,18 @@ interface ActionData {
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const email = validate.email(formData.get("email"));
+  const password = validate.password(formData.get("password"));
   const redirectTo = formData.get("redirectTo") ?? "/";
 
-  if (!validateEmail(email)) {
+  if (validate.isError(email) || validate.isError(password)) {
     return data<ActionData>(
-      { errors: { email: "Email is invalid" } },
-      { status: 400 }
-    );
-  }
-
-  if (typeof password !== "string" || password.length === 0) {
-    return data<ActionData>(
-      { errors: { password: "Password is required" } },
-      { status: 400 }
-    );
-  }
-
-  if (password.length < 8) {
-    return data<ActionData>(
-      { errors: { password: "Password is too short" } },
+      {
+        errors: {
+          email: validate.getError(email),
+          password: validate.getError(password),
+        },
+      },
       { status: 400 }
     );
   }

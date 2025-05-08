@@ -6,6 +6,7 @@ import { requireUser, requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.user.edit-email";
 import { Input } from "~/components/Input";
+import { validate } from "~/models/validate";
 
 export const meta = createMeta();
 
@@ -14,20 +15,12 @@ export async function action({ request }: Route.ActionArgs) {
 
   const formData = await request.formData();
 
-  const newEmail = formData.get("new-email");
+  const newEmail = validate.email(formData.get("new-email"));
 
-  if (!newEmail) {
+  if (validate.isError(newEmail)) {
     return {
       errors: {
-        "new-email": "This field is required",
-      },
-    };
-  }
-
-  if (typeof newEmail !== "string") {
-    return {
-      errors: {
-        "new-email": "New email is in invalid format",
+        "new-email": newEmail.message,
       },
     };
   }
