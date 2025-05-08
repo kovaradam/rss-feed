@@ -1,4 +1,5 @@
 import type {
+  EmailRequest,
   Password,
   Prisma,
   User,
@@ -40,12 +41,17 @@ export async function getUserByEmail<T extends UserSelect>(
 
 export async function getUsersAdminView() {
   const users = await prisma.user.findMany({
-    include: { passkeys: true, password: true, sessions: true },
+    include: {
+      passkeys: true,
+      password: true,
+      sessions: true,
+      emailRequest: true,
+    },
   });
   return users.map((u) => ({
     id: u.id,
     email: u.email,
-    requestedEmail: u.requestedEmail,
+    requestedEmail: u.emailRequest?.email,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,
     isAdmin: u.isAdmin,
@@ -82,7 +88,11 @@ export async function createUser(params: {
   const user = await prisma.user.create({
     data: {
       email: params.email,
-      requestedEmail: params.email,
+      emailRequest: {
+        create: {
+          email: params.email,
+        },
+      },
       isAdmin: params?.isAdmin ?? false,
       password: hashedPassword
         ? {
@@ -95,7 +105,7 @@ export async function createUser(params: {
     },
     select: {
       id: true,
-      requestedEmail: true,
+      emailRequest: true,
       passkeys: { select: { id: true } },
       password: { select: { id: true } },
     },
@@ -103,25 +113,28 @@ export async function createUser(params: {
 
   await createDefaultCollections(user.id);
 
-  if (!params.disableConfirmEmail) {
-    sendConfirmEmail(user);
+  if (!params.disableConfirmEmail && user.emailRequest) {
+    sendConfirmEmail(user.emailRequest);
   }
 
-  return user;
+  return {
+    id: user.id,
+    passwordId: user.password?.id,
+    passkeyIds: user.passkeys.map((p) => p.id),
+  };
 }
 
-export async function validateUserEmail(id: User["id"]) {
-  const user = await getUserById(id, { requestedEmail: true });
-
-  if (!user?.requestedEmail) {
+export async function validateUserEmail(requestId: EmailRequest["id"]) {
+  const emailRequest = await getEmailRequest(requestId);
+  if (!emailRequest) {
     return null;
   }
 
   const updatedUser = await prisma.user.update({
-    where: { id: id },
+    where: { id: emailRequest.userId },
     data: {
-      email: user.requestedEmail,
-      requestedEmail: null,
+      email: emailRequest.email,
+      emailRequest: { delete: true },
     },
     select: {
       id: true,
@@ -135,42 +148,43 @@ export async function validateUserEmail(id: User["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
 }
 
-export async function sendConfirmEmail(
-  user: Pick<User, "id" | "requestedEmail">
-) {
-  invariant(user.requestedEmail, "Requested email missing");
-
+export async function sendConfirmEmail(emailRequest: EmailRequest) {
   const link = `https://${SERVER_ENV.domain}${href(
-    "/welcome/confirm-email/:userId",
-    { userId: user.id }
+    "/welcome/confirm-email/:requestId",
+    { requestId: emailRequest.id }
   )}`;
-  return Mail.send(user.requestedEmail, {
+  return Mail.send(emailRequest.email, {
     subject: "Please confirm your e-mail address ✔",
     html: `Thank you for joining us!<br/><br/> Please verify your address by visiting <a href=${link}>${link}</a>`,
     text: `Thank you for joining us!\n\n Please verify your address by visiting ${link}`,
   }).catch(console.error);
 }
 
-export async function requestUpdateUserEmail<T extends UserSelect>(
-  id: User["id"],
-  newEmail: string,
-  select: T
-) {
-  sendConfirmEmail({ id, requestedEmail: newEmail });
+export async function requestUpdateUserEmail(id: User["id"], newEmail: string) {
+  const userByEmail = await getUserByEmail(newEmail, { email: true });
+  if (userByEmail) {
+    return "email-taken-error";
+  }
 
-  return await prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id: id },
     data: {
-      requestedEmail: newEmail,
+      emailRequest: { create: { email: newEmail } },
     },
-    select,
+    select: { emailRequest: true },
   });
+
+  if (updatedUser.emailRequest) {
+    sendConfirmEmail(updatedUser.emailRequest);
+  }
+
+  return updatedUser;
 }
 
 export async function updateUser<T extends UserSelect>(
@@ -368,4 +382,16 @@ export const getPasskeyByCredentialId = async (params: {
 
 function hashPassword(password: string) {
   return bcrypt.hash(password, 10);
+}
+
+async function getEmailRequest(requestId: string) {
+  const emailRequest = await prisma.emailRequest.findUnique({
+    where: { id: requestId },
+  });
+
+  if (!emailRequest) {
+    return null;
+  }
+
+  return emailRequest;
 }

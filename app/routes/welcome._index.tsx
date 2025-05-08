@@ -89,7 +89,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     request,
     userId: user.id,
     redirectTo: redirectTo as string,
-    credential: { type: "password", passwordId: user.password?.id as string },
+    credential: { type: "password", passwordId: user.passwordId as string },
   });
 };
 

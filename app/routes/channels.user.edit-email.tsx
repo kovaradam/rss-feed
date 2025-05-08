@@ -1,11 +1,7 @@
 import { Form, useNavigation, redirect } from "react-router";
 import { PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
-import {
-  getUserByEmail,
-  getUserById,
-  requestUpdateUserEmail,
-} from "~/models/user.server";
+import { getUserById, requestUpdateUserEmail } from "~/models/user.server";
 import { requireUser, requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.user.edit-email";
@@ -46,17 +42,15 @@ export async function action({ request }: Route.ActionArgs) {
     };
   }
 
-  const userByEmail = await getUserByEmail(newEmail, { email: true });
+  const result = await requestUpdateUserEmail(userId, newEmail);
 
-  if (userByEmail?.email) {
+  if (result === "email-taken-error") {
     return {
       errors: {
         "new-email": "Could not use this email",
       },
     };
   }
-
-  await requestUpdateUserEmail(userId, newEmail, { id: true });
 
   throw redirect("/");
 }

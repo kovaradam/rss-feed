@@ -1,13 +1,13 @@
 import { validateUserEmail } from "~/models/user.server";
 import { logout } from "~/session.server";
-import type { Route } from "./+types/welcome.confirm-email.$userId";
+import type { Route } from "./+types/welcome.confirm-email.$requestId";
 import { href, redirect } from "react-router";
 import { WithPasskeyFormTabs } from "~/components/WithPasskeyFormTabs";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  const userId = params.userId ?? "";
+  const requestId = params.requestId ?? "";
 
-  const validatedUser = await validateUserEmail(userId);
+  const validatedUser = await validateUserEmail(requestId);
 
   if (validatedUser?.loginType) {
     const searchParams = new URLSearchParams();

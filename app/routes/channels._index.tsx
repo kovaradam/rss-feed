@@ -285,7 +285,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                           <img
                             src={item.img}
                             alt=""
-                            className="pointer-events-none absolute h-14 -rotate-6 pt-6 opacity-50"
+                            className="pointer-events-none absolute h-14 -rotate-6 pt-6 opacity-50 transition-opacity [li:hover_&]:opacity-100"
                           />
 
                           <Form action={href("/channels/new")} method="PUT">
@@ -377,7 +377,7 @@ const recommendedChannels = [
   {
     href: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
     title: <>BBC News - Science & Environment</>,
-    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/BBC_Logo_2021.svg/560px-BBC_Logo_2021.svg.png",
+    img: "https://upload.wikimedia.org/wikipedia/commons/6/62/BBC_News_2019.svg",
   },
   {
     href: "https://www.nasa.gov/feeds/iotd-feed/",

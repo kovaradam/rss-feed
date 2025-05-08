@@ -94,7 +94,7 @@ export async function action({ request }: Route.LoaderArgs) {
               type: "passkey",
             },
           });
-          passkeyId = user.passkeys[0]?.id;
+          passkeyId = user.passkeyIds[0];
         }
       }
 

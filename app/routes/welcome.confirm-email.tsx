@@ -13,23 +13,26 @@ export async function action({ request }: Route.ActionArgs) {
     throw new Response("Not supported", { status: 405 });
   }
 
-  const user = await getUserById(userId, { id: true, requestedEmail: true });
+  const user = await getUserById(userId, { id: true, emailRequest: true });
 
-  if (!user) {
+  if (!user?.emailRequest) {
     throw new Response("Not found", { status: 404 });
   }
 
-  const mailResult = await sendConfirmEmail(user);
+  const mailResult = await sendConfirmEmail(user.emailRequest);
 
   return { mail: mailResult };
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
-  const user = await getUserById(userId, { requestedEmail: true, id: true });
+  const user = await getUserById(userId, {
+    emailRequest: { select: { email: true, id: true } },
+    id: true,
+  });
 
   if (
-    !user?.requestedEmail &&
+    !user?.emailRequest &&
     // while confirming in otl, this will be fired sooner than redirect from
     // nested route, so do not redirect if this is not leaf route
     new URL(request.url).pathname === href("/welcome/confirm-email")
@@ -37,7 +40,14 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw redirect("/");
   }
 
-  return { user, allowSkip: !SERVER_ENV.is.prod };
+  return {
+    user,
+    confirmLink: SERVER_ENV.is.prod
+      ? undefined
+      : href("/welcome/confirm-email/:requestId", {
+          requestId: user?.emailRequest?.id as string,
+        }),
+  };
 }
 
 export default function ConfirmEmailPage({
@@ -45,7 +55,7 @@ export default function ConfirmEmailPage({
   loaderData,
 }: Route.ComponentProps) {
   const transition = useNavigation();
-
+  const requestedEmail = loaderData.user?.emailRequest?.email;
   return (
     <section className="flex flex-col items-center justify-center p-6">
       <h1 className="my-2 mb-10 text-4xl font-bold">
@@ -53,11 +63,8 @@ export default function ConfirmEmailPage({
       </h1>
       <p>
         An email with confirmation link has been sent to your email address{" "}
-        <a
-          href={`mailto:${loaderData.user?.requestedEmail}`}
-          className="text-rose-400"
-        >
-          <b>{loaderData.user?.requestedEmail}</b>
+        <a href={`mailto:${requestedEmail}`} className="text-rose-400">
+          <b>{requestedEmail}</b>
         </a>
         .{" "}
       </p>
@@ -79,10 +86,10 @@ export default function ConfirmEmailPage({
         <Form action="/logout" method="post">
           <button type="submit">Log out</button>
         </Form>
-        {loaderData.allowSkip && loaderData.user && (
+        {loaderData.confirmLink && (
           <>
             |
-            <Link className="" to={loaderData.user.id}>
+            <Link className="" to={loaderData.confirmLink}>
               Skip confirmation
             </Link>
           </>

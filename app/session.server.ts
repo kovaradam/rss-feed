@@ -91,14 +91,14 @@ export async function requireUser<T extends Prisma.UserSelect>(
 
   const user = await getUserById(userId, {
     ...select,
-    requestedEmail: true,
+    emailRequest: { select: { id: true } },
   });
 
   if (!user) {
     throw await logout(request);
   }
 
-  if ("requestedEmail" in user && user.requestedEmail) {
+  if ("emailRequest" in user && user.emailRequest) {
     throw redirect(href(`/welcome/confirm-email`));
   }
 

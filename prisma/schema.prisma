@@ -10,11 +10,10 @@ generator client {
 }
 
 model User {
-  id             String  @id @default(cuid())
-  email          String  @unique
-  requestedEmail String? @unique
-  isAdmin        Boolean @default(false)
-  soundsAllowed  Boolean @default(true)
+  id            String  @id @default(cuid())
+  email         String  @unique
+  isAdmin       Boolean @default(false)
+  soundsAllowed Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -25,6 +24,16 @@ model User {
   collections Collection[]
   passkeys    WebAuthnCredential[]
   sessions    Session[]
+
+  emailRequest EmailRequest?
+}
+
+model EmailRequest {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 model Password {
