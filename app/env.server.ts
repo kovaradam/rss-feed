@@ -30,6 +30,7 @@ const EnvSchema = v.object({
 export const SERVER_ENV = {
   is: {
     prod: process.env.NODE_ENV === "production",
+    passwordResetSkip: process.env.PASSWORD_RESET_SKIP === "true",
   },
   ...v.parse(EnvSchema, {
     domain: process.env.SERVER_DOMAIN,

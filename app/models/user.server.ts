@@ -1,6 +1,7 @@
 import type {
   EmailRequest,
   Password,
+  PasswordReset,
   Prisma,
   User,
   WebAuthnCredential,
@@ -17,6 +18,7 @@ import {
 } from "@simplewebauthn/server";
 import { SERVER_ENV } from "~/env.server";
 import { href } from "react-router";
+import { createTtl } from "~/utils.server";
 
 export type { User } from "~/__generated__/prisma/client";
 
@@ -148,8 +150,8 @@ export async function validateUserEmail(requestId: EmailRequest["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
 }
@@ -164,6 +166,53 @@ export async function sendConfirmEmail(emailRequest: EmailRequest) {
     html: `Thank you for joining us!<br/><br/> Please verify your address by visiting <a href=${link}>${link}</a>`,
     text: `Thank you for joining us!\n\n Please verify your address by visiting ${link}`,
   }).catch(console.error);
+}
+
+export async function sendPasswordResetEmail(
+  operationId: PasswordReset["id"],
+  email: User["email"]
+) {
+  const link = `https://${SERVER_ENV.domain}${href(
+    "/welcome/password-reset/:operationId",
+    { operationId }
+  )}`;
+  return Mail.send(email, {
+    subject: "Reset your password ✔",
+    html: `You can now reset your password at <a href=${link}>${link}</a>`,
+    text: `You can now reset your password at ${link}`,
+  }).catch(console.error);
+}
+
+export async function requestPasswordReset(email: User["email"]) {
+  const user = await getUserByEmail(email, {
+    id: true,
+    passwordReset: { select: { id: true } },
+  });
+  invariant(user);
+
+  if (user?.passwordReset) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { passwordReset: { delete: true } },
+    });
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      passwordReset: {
+        create: {},
+      },
+    },
+    select: { passwordReset: true, email: true },
+  });
+
+  invariant(updatedUser.passwordReset?.id);
+  const operationId = updatedUser.passwordReset.id;
+
+  sendPasswordResetEmail(operationId, updatedUser.email);
+
+  return { operationId };
 }
 
 export async function requestUpdateUserEmail(id: User["id"], newEmail: string) {
@@ -289,6 +338,31 @@ export async function updatePassword(params: {
   return updatedUser;
 }
 
+export async function resetPassword(params: {
+  operationId: string;
+  newPassword: string;
+}) {
+  const operation = await getPasswordReset(params.operationId).catch(
+    () => null
+  );
+
+  if (!operation) {
+    return null;
+  }
+
+  const updatedUser = await updatePassword({
+    userId: operation.userId,
+    newPassword: params.newPassword,
+  });
+
+  await prisma.passwordReset.delete({ where: { id: operation.id } });
+
+  if (!updatedUser) {
+    return null;
+  }
+  return "success";
+}
+
 function getPasskeyInputFromRegistration(
   registration: PasskeyRegistration
 ): Omit<Prisma.WebAuthnCredentialCreateInput, "userId" | "user"> {
@@ -309,6 +383,33 @@ export const mapTransports = {
   fromDb: (transports: WebAuthnCredential["transports"]) =>
     transports?.split(";") as AuthenticatorTransportFuture[] | undefined,
 };
+
+export async function getPasswordReset(operationId: PasswordReset["id"]) {
+  const operation = await prisma.passwordReset.findUnique({
+    where: { id: operationId },
+  });
+
+  if (!operation) {
+    return null;
+  }
+
+  if (operation.createdAt.getTime() + PASSWORD_RESET_TTL < Date.now()) {
+    await prisma.passwordReset.delete({ where: { id: operationId } });
+    return null;
+  }
+
+  return operation;
+}
+
+const PASSWORD_RESET_TTL = createTtl(
+  1000 * 60 * 5 /** 5 minutes */,
+  async (ttl) => {
+    prisma.passwordReset.deleteMany({
+      where: { createdAt: { lte: new Date(Date.now() - ttl) } },
+    });
+  },
+  "0 * * * *" // every hour
+);
 
 export const getPasskeysByUser = async (email: string) => {
   try {

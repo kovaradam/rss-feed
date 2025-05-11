@@ -38,6 +38,7 @@ export default function Welcome() {
   );
 }
 
-export function ErrorBoundary({ error: _ }: { error: Error }) {
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

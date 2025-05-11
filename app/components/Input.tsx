@@ -14,13 +14,17 @@ type Error<T> = T extends string
 interface Props<T extends readonly React.ReactNode[]>
   extends React.ComponentProps<"input"> {
   formLabel?: React.ReactNode;
+  formLabelEndSlot?: React.ReactNode;
   errors?: { [K in keyof T]: Error<T[K]> };
   wrapperClassName?: string;
+  honeypot?: boolean;
 }
 
 export function Input<T extends readonly React.ReactNode[]>({
   formLabel,
+  formLabelEndSlot,
   wrapperClassName,
+  honeypot,
   errors: errorsProp,
   ...inputProps
 }: Props<T>) {
@@ -35,6 +39,10 @@ export function Input<T extends readonly React.ReactNode[]>({
   const id = inputProps.id ?? _id;
 
   const [isShowPassword, setIsShowPassword] = React.useState(false);
+
+  wrapperClassName = honeypot
+    ? "absolute -z-10 ".concat(wrapperClassName ?? "")
+    : wrapperClassName;
 
   const input = (
     <div className={`${formLabel ? undefined : wrapperClassName}`}>
@@ -54,6 +62,7 @@ export function Input<T extends readonly React.ReactNode[]>({
       >
         <input
           {...inputProps}
+          tabIndex={honeypot ? -1 : undefined}
           placeholder={
             inputProps.type === "password" ? " " : inputProps.placeholder
           }
@@ -79,7 +88,9 @@ export function Input<T extends readonly React.ReactNode[]>({
         )}
       </div>
       <div aria-live="polite">
-        {errors?.map((e) => <InputError key={e.id}>{e.content}</InputError>)}
+        {errors?.map((e) => (
+          <InputError key={e.id}>{e.content}</InputError>
+        ))}
       </div>
     </div>
   );
@@ -88,6 +99,7 @@ export function Input<T extends readonly React.ReactNode[]>({
     return (
       <WithFormLabel
         label={formLabel}
+        labelEndSlot={formLabelEndSlot}
         required={inputProps.required}
         className={wrapperClassName}
         htmlFor={id}

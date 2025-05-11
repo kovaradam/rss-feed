@@ -120,7 +120,7 @@ export function enumerate<T extends readonly string[]>(
 
 export function asEnum<
   T extends string[],
-  U extends ReturnType<typeof enumerate<T>>,
+  U extends ReturnType<typeof enumerate<T>>
 >(enumerated: U, input: unknown, fallback: keyof U): keyof U {
   return Object.keys(enumerated).includes(input as never)
     ? (input as keyof U)
@@ -139,3 +139,7 @@ export function getPrefersReducedMotion() {
 }
 
 export const LoginTypes = enumerate(["password", "passkey"]);
+
+export function stallHoneypot() {
+  return new Promise((t) => setTimeout(t, 500 + Math.random() * 1000));
+}

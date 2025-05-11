@@ -21,14 +21,12 @@ export const validate = {
 };
 
 function parseFrom<
-  T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>,
+  T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>
 >(schema: T) {
   function parse(input: unknown) {
     try {
       return v.parse(schema, input);
     } catch (e) {
-      console.log(e);
-
       return new UserError((e as v.ValiError<T>).message);
     }
   }

@@ -5,6 +5,7 @@ import {
   type MetaFunction,
   data,
   Form,
+  href,
   Link,
   redirect,
   useNavigation,
@@ -146,26 +147,32 @@ export default function LoginPage({
                     name: "email",
                     type: "email",
                     defaultValue: searchParams.get("email"),
-                    ariaInvalid: actionData?.errors?.email ? true : undefined,
-                    ariaDescribedBy: "email-error",
                     error: actionData?.errors?.email,
                   },
                   {
                     label: "Password",
-                    placeholder: undefined,
+                    labelEndSlot: (
+                      <Link
+                        to={{
+                          pathname: href("/welcome/password-reset"),
+                          search: searchParams.toString(),
+                        }}
+                        className="underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    ),
                     ref: passwordRef,
                     name: "password",
                     type: "password",
-                    ariaInvalid: actionData?.errors?.password
-                      ? true
-                      : undefined,
-                    ariaDescribedBy: "password-error",
+
                     error: actionData?.errors?.password,
                   },
                 ].map((formField) => (
                   <Input
                     key={formField.name}
                     formLabel={formField.label}
+                    formLabelEndSlot={formField.labelEndSlot}
                     ref={formField.ref}
                     required
                     id={formField.name}

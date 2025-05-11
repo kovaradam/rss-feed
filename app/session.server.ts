@@ -7,6 +7,7 @@ import { SERVER_ENV } from "./env.server";
 import { safeRedirect } from "./utils";
 import { prisma } from "./db.server";
 import { Prisma } from "~/__generated__/prisma/client";
+import { createTtl } from "./utils.server";
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -19,8 +20,18 @@ const sessionStorage = createCookieSessionStorage({
     secure: SERVER_ENV.is.prod,
   },
 });
-const SESSION_MAX_AGE_IN_SECONDS = 60 * 60 * 24 * 400; // 400 days
-const SESSION_MAX_AGE_IN_MS = SESSION_MAX_AGE_IN_SECONDS * 1000;
+
+const SESSION_MAX_AGE_IN_MS = createTtl(
+  60 * 60 * 24 * 400 * 1000 /** 400 days */,
+  async (ttl) => {
+    prisma.session.deleteMany({
+      where: {
+        createdAt: { lte: new Date(Date.now() - ttl) },
+      },
+    });
+  },
+  "0 0,12 * * *" // at 00 and 12
+);
 const BROWSER_SESSION_ID_KEY = "sessionId";
 
 async function getBrowserSession(request: Request) {
@@ -138,7 +149,7 @@ export async function createUserSession(params: {
       [
         "Set-Cookie",
         await sessionStorage.commitSession(browserSession, {
-          maxAge: SESSION_MAX_AGE_IN_SECONDS,
+          maxAge: SESSION_MAX_AGE_IN_MS / 1000,
         }),
       ],
       ["Set-Cookie", KNOWN_USER_COOKIE],
@@ -168,9 +179,3 @@ export function isKnownUser(request: Request) {
 }
 
 const KNOWN_USER_COOKIE = "known-user=true";
-
-prisma.session.deleteMany({
-  where: {
-    createdAt: { lte: new Date(Date.now() - SESSION_MAX_AGE_IN_MS) },
-  },
-});
