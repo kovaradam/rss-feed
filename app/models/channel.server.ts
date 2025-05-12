@@ -36,7 +36,7 @@ export async function createChannelFromXml(
   let dbChannel = null;
   try {
     dbChannel = await getChannel({
-      where: { link: channel.link, userId: request.userId },
+      where: { feedUrl: request.channelHref, userId: request.userId },
     });
   } catch (_) {
     throw new UnavailableDbError();
@@ -218,7 +218,7 @@ export function deleteChannel({
 }
 
 export async function getChannelItems<
-  T extends Parameters<typeof prisma.item.findMany>[0],
+  T extends Parameters<typeof prisma.item.findMany>[0]
 >(params: T) {
   return prisma.item.findMany(params);
 }
