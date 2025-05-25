@@ -12,8 +12,8 @@ export async function parseChannelXml(
 ): Promise<[ChannelResult, ItemParseResult]> {
   const result = await parseStringPromise(channelXml);
 
-  const rssData = getRssDataFromParsedXml(result);
-  const channelData = getChannelDataFromRssData(rssData);
+  const rssData = result?.rss ?? result.feed;
+  const channelData = rssData?.channel?.[0] ?? rssData;
   const rssVersion = rssData?.$?.version?.[0];
   channelData.rssVersion = rssVersion;
 
@@ -23,14 +23,6 @@ export async function parseChannelXml(
     channelDataTransformer.getResult(),
     channelDataTransformer.transformedItems,
   ];
-}
-
-function getRssDataFromParsedXml(parsedXml: Record<string, any>) {
-  return parsedXml?.rss ?? parsedXml.feed;
-}
-
-function getChannelDataFromRssData(rssData: Record<string, any>) {
-  return rssData?.channel?.[0] ?? rssData;
 }
 
 class ChannelDataTransformer {

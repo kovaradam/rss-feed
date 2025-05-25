@@ -5,12 +5,42 @@ import type {
   Item,
   User,
 } from "~/__generated__/prisma/client";
-import type { ItemParseResult } from "./parse-xml";
-import { parseChannelXml } from "./parse-xml";
+import type { ItemParseResult } from "./parsers/parse-channel-xml.server";
+import { parseChannelXml } from "./parsers/parse-channel-xml.server";
 import invariant from "tiny-invariant";
-import { JSDOM } from "jsdom";
+import * as cheerio from "cheerio";
+import { parseLinksFromHtml } from "./parsers/parse-html.server";
 
 export type { Channel, Item };
+
+export async function getChannelsFromUrl(url: URL, abortSignal: AbortSignal) {
+  const response = await fetch(url, { signal: abortSignal })
+    .then((r) => r.text())
+    .catch(() => {
+      throw new ChannelErrors.invalidUrl();
+    });
+
+  const query = cheerio.load(response);
+  const rssElement = query("feed,rss");
+  if (rssElement.length === 1) {
+    return { feedXml: response, type: "rss-definition" };
+  }
+
+  const links = parseLinksFromHtml(query);
+
+  if (!links.length) {
+    throw new ChannelErrors.htmlNoLinks();
+  }
+
+  if (links.length === 1 && links[0]) {
+    return getChannelsFromUrl(new URL(links[0].href, url), abortSignal);
+  }
+
+  return {
+    links: links,
+    type: "links",
+  };
+}
 
 export async function createChannelFromXml(
   xmlInput: string,
@@ -30,7 +60,7 @@ export async function createChannelFromXml(
     );
     invariant(channel.title, "Title is missing in the RSS definition");
   } catch (_) {
-    throw new IncorrectDefinitionError();
+    throw new ChannelErrors.incorrectDefinition();
   }
 
   let dbChannel = null;
@@ -39,11 +69,11 @@ export async function createChannelFromXml(
       where: { feedUrl: request.channelHref, userId: request.userId },
     });
   } catch (_) {
-    throw new UnavailableDbError();
+    throw new ChannelErrors.dbUnavailible();
   }
 
   if (dbChannel) {
-    throw new ChannelExistsError(dbChannel);
+    throw new ChannelErrors.channelExists(dbChannel);
   }
 
   if (!channel.imageUrl) {
@@ -435,25 +465,27 @@ export function getItemQueryFilter(query: string) {
   };
 }
 
-export class ChannelExistsError extends Error {
-  constructor(public channel: Channel) {
-    super();
-  }
-}
-
-export class UnavailableDbError extends Error {}
-
-export class IncorrectDefinitionError extends Error {}
-
+export const ChannelErrors = {
+  channelExists: class ChannelExistsError extends Error {
+    constructor(public channel: Channel) {
+      super();
+    }
+  },
+  invalidUrl: class InvalidUrlError extends Error {},
+  htmlNoLinks: class HtmlNoLinksError extends Error {},
+  dbUnavailible: class UnavailableDbError extends Error {},
+  incorrectDefinition: class IncorrectDefinitionError extends Error {},
+};
 async function getChannelPageMeta(url: string, signal: AbortSignal) {
   const response = await fetch(url, {
     signal: signal,
   });
-  const { window } = new JSDOM(await response.arrayBuffer());
+
+  const query = cheerio.load(await response.text());
 
   function getContent(selector: string) {
-    const node = window.document.querySelector(selector);
-    return node?.getAttribute("content");
+    const node = query(selector);
+    return node?.attr("content");
   }
 
   return {

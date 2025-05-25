@@ -187,7 +187,7 @@ export default function ChannelDetailsPage() {
 
           <span className="flex flex-wrap items-center gap-1 ">
             <DescriptionList.Term className="flex items-center gap-1">
-              <ClockIcon className="h-4" /> Last build date:
+              <ClockIcon className="h-4" /> Last update:
             </DescriptionList.Term>
             <DescriptionList.Definition className="flex flex-wrap gap-1">
               {data.channel.lastBuildDate ? (
