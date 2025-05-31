@@ -1,4 +1,5 @@
 import React from "react";
+import { mapValue } from "~/utils/map-value";
 
 type Props = {
   href: string;
@@ -16,7 +17,10 @@ export function Href(props: Props) {
       className={`underline ${props.className}`}
       style={props.style}
     >
-      {props.children ?? props.href}
+      {props.children ??
+        mapValue(props.href)((href) =>
+          href.endsWith("/") ? href.slice(0, -1) : href
+        )}
     </a>
   );
 }

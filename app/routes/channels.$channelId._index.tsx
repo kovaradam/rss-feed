@@ -312,7 +312,7 @@ export default function ChannelDetailsPage() {
             onClick={() => playRefresh()}
             type="submit"
             className="flex w-[13ch] items-center gap-2"
-            isLoading={isRefreshing}
+            isPending={isRefreshing}
           >
             <RefreshIcon
               className={`w-4  ${
@@ -339,7 +339,7 @@ export default function ChannelDetailsPage() {
             type="submit"
             title="Delete this channel"
             className="flex h-full w-fit items-center gap-2 sm:w-full"
-            isLoading={transition.formData?.get("action") === "delete"}
+            isPending={transition.formData?.get("action") === "delete"}
             name="action"
             value="delete"
           >

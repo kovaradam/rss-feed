@@ -236,9 +236,7 @@ export default function UserPage({
             <h4 className="font-bold dark:text-white">General</h4>
 
             <Form method="post" className="w-full sm:w-min">
-              <HiddenInputs
-                inputs={[{ name: "action", value: actions["toggle-sound"] }]}
-              />
+              <HiddenInputs inputs={{ action: actions["toggle-sound"] }} />
               <Button
                 type="submit"
                 className="flex w-full min-w-[20ch] gap-2"
@@ -432,13 +430,10 @@ export default function UserPage({
                           }}
                         >
                           <HiddenInputs
-                            inputs={[
-                              {
-                                name: "action",
-                                value: actions["remove-passkey"],
-                              },
-                              { name: "passkey-id", value: passkey.id },
-                            ]}
+                            inputs={{
+                              action: actions["remove-passkey"],
+                              ["passkey-id"]: passkey.id,
+                            }}
                           />
                           <button
                             aria-label="Delete passkey"
@@ -475,7 +470,7 @@ export default function UserPage({
                 fetcher.submit(e.target as typeof e.currentTarget);
               }}
             >
-              <HiddenInputs inputs={[{ name: "action", value: "delete" }]} />
+              <HiddenInputs inputs={{ action: "delete" }} />
               <Button className="flex w-full min-w-[20ch] bg-slate-700 text-white hover:bg-slate-800">
                 <TrashIcon className="h-6 w-4" />
                 <span className="w-full">Delete account</span>

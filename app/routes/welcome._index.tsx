@@ -189,7 +189,7 @@ export default function Welcome() {
               <div className="flex flex-col items-center justify-between gap-1 pt-4 sm:flex-row">
                 <SubmitButton
                   className="w-full sm:w-48 sm:px-8"
-                  isLoading={isSubmitting}
+                  isPending={isSubmitting}
                 >
                   Create Account
                 </SubmitButton>

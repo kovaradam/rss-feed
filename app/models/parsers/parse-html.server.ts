@@ -1,13 +1,20 @@
 import * as cheerio from "cheerio";
 
-export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
-  const linkElements = query(
-    '[rel="alternate"][type="application/rss+xml"],[href*="rss" i]'
-  ).filter((_, e) => e.tagName === "link" || e.tagName === "a");
+const RSS_LINK_QUERY = `
+  [rel="alternate"][type="application/rss+xml"],
+  [rel="alternate"][type="application/atom+xml"],
+  [href*="rss" i],
+  [href*="feed" i],
+  [href*="atom" i],
+  [title*="rss" i]
+  `;
 
-  const hrefs: Array<
-    { href: string } & ({ tagName: "a"; label: string } | { tagName: "link" })
-  > = [];
+export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
+  const linkElements = query(RSS_LINK_QUERY).filter(
+    (_, e) => e.tagName === "link" || e.tagName === "a"
+  );
+
+  const links: Array<{ href: string; tagName: "a" | "link" }> = [];
 
   linkElements.each((_, e) => {
     if (typeof e.attribs.href !== "string") {
@@ -15,17 +22,16 @@ export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
     }
 
     if (e.tagName === "a") {
-      hrefs.push({
+      links.push({
         href: e.attribs.href,
         tagName: "a",
-        label: query.text([e]).trim(),
       });
     }
 
     if (e.tagName === "link") {
-      hrefs.push({ href: e.attribs.href, tagName: "link" });
+      links.push({ href: e.attribs.href, tagName: "link" });
     }
   });
 
-  return hrefs;
+  return links;
 }

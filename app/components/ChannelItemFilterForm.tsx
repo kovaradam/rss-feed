@@ -1,11 +1,12 @@
 import { BanIcon } from "@heroicons/react/outline";
 import { Form, useLocation } from "react-router";
 import React from "react";
-import type { Channel, ChannelItemsFilter } from "~/models/channel.server";
+import type { ChannelItemsFilter } from "~/models/channel.server";
 import { styles } from "~/styles/shared";
 import { Button } from "./Button";
 import { WithFormLabel } from "./WithFormLabel";
 import { isEmptyObject } from "~/utils/is-empty-object";
+import { Channel } from "~/models/types.server";
 
 type Props = {
   filters: Partial<ChannelItemsFilter>;

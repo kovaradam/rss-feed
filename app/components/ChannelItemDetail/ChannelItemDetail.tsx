@@ -20,6 +20,7 @@ import { Eye } from "../icons/Eye";
 import { CircleCheck } from "../icons/CircleCheck";
 import { Bookmark } from "../icons/Bookmark";
 import { SpinTransition } from "../animations/SpinTransition";
+import { Item } from "~/models/types.server";
 
 type Props = {
   item: ItemWithChannel;
@@ -30,28 +31,6 @@ type Props = {
 
 export function ChannelItemDetail(props: Props) {
   const { channel, ...item } = props.item;
-
-  const fetcher = useFetcher();
-  const [sentBookmarked, sentRead, sentHiddenFromFeed] = [
-    fetcher.formData?.get(ChannelItemDetail.form.names.bookmarked) ?? null,
-    fetcher.formData?.get(ChannelItemDetail.form.names.read) ?? null,
-    fetcher.formData?.get(ChannelItemDetail.form.names.hiddenFromFeed) ?? null,
-  ];
-
-  const [bookmarked, read, hiddenFromFeed] = [
-    sentBookmarked === null ? item.bookmarked : sentBookmarked === String(true),
-    sentRead === null ? item.read : sentRead === String(true),
-    sentHiddenFromFeed === null
-      ? item.hiddenFromFeed
-      : sentHiddenFromFeed === String(true),
-  ];
-
-  const ReadIcon = read ? SolidCheckIcon : CircleCheck;
-  const BookmarkIcon = bookmarked ? SolidBookmarkIcon : Bookmark;
-  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : Eye;
-
-  const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
-  const [playCancel] = useSound(cancelSound, { volume: 0.1 });
 
   const description = React.useMemo(() => {
     return convert(item.description);
@@ -79,87 +58,7 @@ export function ChannelItemDetail(props: Props) {
           )}
         </Link>
 
-        <fieldset className="flex gap-2">
-          {[
-            {
-              name: ChannelItemDetail.form.names.hiddenFromFeed,
-              value: String(!hiddenFromFeed),
-              currentValue: String(hiddenFromFeed),
-              Icon: HiddenFromFeedIcon,
-              title: hiddenFromFeed ? "Show in feed" : "Hide in feed",
-              className: `${
-                hiddenFromFeed ? "hover:bg-green-200" : "hover:bg-red-200"
-              } dark:hover:bg-slate-900`,
-              playSubmit: hiddenFromFeed ? playConfirm : playCancel,
-            },
-            {
-              name: ChannelItemDetail.form.names.read,
-              value: String(!read),
-              currentValue: String(read),
-              Icon: ReadIcon,
-              title: !read ? "Mark as read" : "Mark as not read yet",
-              className: "hover:bg-green-200 dark:hover:bg-slate-900",
-              playSubmit: read ? playCancel : playConfirm,
-            },
-            {
-              name: ChannelItemDetail.form.names.bookmarked,
-              value: String(!bookmarked),
-              currentValue: String(bookmarked),
-              Icon: BookmarkIcon,
-
-              title: !bookmarked
-                ? "Bookmark article"
-                : "Remove from bookmarked articles",
-              className: "hover:bg-yellow-100 dark:hover:bg-slate-900",
-              playSubmit: bookmarked ? playCancel : playConfirm,
-            },
-          ].map((formItem, _, array) => (
-            <fetcher.Form method="post" key={formItem.name}>
-              <RequiredFormData itemId={item.id} />
-
-              {array
-                .filter((i) => i.name !== formItem.name)
-                .map((otherItem) => (
-                  <input
-                    key={otherItem.name}
-                    type="hidden"
-                    name={otherItem.name}
-                    value={otherItem.currentValue}
-                  />
-                ))}
-
-              <input
-                type="hidden"
-                name={formItem.name}
-                value={formItem.value}
-              />
-
-              <button
-                type="submit"
-                className={"group relative rounded p-1 ".concat(
-                  formItem.className
-                )}
-                data-silent
-                aria-label={formItem.title}
-                onClick={() => formItem.playSubmit()}
-                name={ChannelItemDetail.form.names.action}
-                value={ChannelItemDetail.form.values["update-channel-item"]}
-              >
-                <SpinTransition>
-                  <formItem.Icon
-                    className={`h-4 w-4 ${
-                      formItem.value === "false"
-                        ? "text-black dark:text-white"
-                        : ""
-                    } pointer-events-none ${formItem.className}`}
-                    key={formItem.value}
-                  />
-                </SpinTransition>
-                <Tooltip>{formItem.title}</Tooltip>
-              </button>
-            </fetcher.Form>
-          ))}
-        </fieldset>
+        <ChannelItemDetail.Actions item={item} />
       </span>
 
       <Href
@@ -250,4 +149,108 @@ ChannelItemDetail.Title = function ChannelItemDetailTitle({
     const result = convert(description.slice(0, 30));
     return result.slice(0, result.lastIndexOf(" ")).concat(" ...");
   }, [description, title]);
+};
+
+ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
+  item: Item;
+}) {
+  const { item } = props;
+
+  const fetcher = useFetcher();
+  const [sentBookmarked, sentRead, sentHiddenFromFeed] = [
+    fetcher.formData?.get(ChannelItemDetail.form.names.bookmarked) ?? null,
+    fetcher.formData?.get(ChannelItemDetail.form.names.read) ?? null,
+    fetcher.formData?.get(ChannelItemDetail.form.names.hiddenFromFeed) ?? null,
+  ];
+
+  const [bookmarked, read, hiddenFromFeed] = [
+    sentBookmarked === null ? item.bookmarked : sentBookmarked === String(true),
+    sentRead === null ? item.read : sentRead === String(true),
+    sentHiddenFromFeed === null
+      ? item.hiddenFromFeed
+      : sentHiddenFromFeed === String(true),
+  ];
+
+  const ReadIcon = read ? SolidCheckIcon : CircleCheck;
+  const BookmarkIcon = bookmarked ? SolidBookmarkIcon : Bookmark;
+  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : Eye;
+
+  const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
+  const [playCancel] = useSound(cancelSound, { volume: 0.1 });
+
+  return (
+    <fieldset className="flex gap-2">
+      {[
+        {
+          name: ChannelItemDetail.form.names.hiddenFromFeed,
+          value: String(!hiddenFromFeed),
+          currentValue: String(hiddenFromFeed),
+          Icon: HiddenFromFeedIcon,
+          title: hiddenFromFeed ? "Show in feed" : "Hide in feed",
+          className: `${
+            hiddenFromFeed ? "hover:bg-green-200" : "hover:bg-red-200"
+          } dark:hover:bg-slate-900`,
+          playSubmit: hiddenFromFeed ? playConfirm : playCancel,
+        },
+        {
+          name: ChannelItemDetail.form.names.read,
+          value: String(!read),
+          currentValue: String(read),
+          Icon: ReadIcon,
+          title: !read ? "Mark as read" : "Mark as not read yet",
+          className: "hover:bg-green-200 dark:hover:bg-slate-900",
+          playSubmit: read ? playCancel : playConfirm,
+        },
+        {
+          name: ChannelItemDetail.form.names.bookmarked,
+          value: String(!bookmarked),
+          currentValue: String(bookmarked),
+          Icon: BookmarkIcon,
+
+          title: !bookmarked
+            ? "Bookmark article"
+            : "Remove from bookmarked articles",
+          className: "hover:bg-yellow-100 dark:hover:bg-slate-900",
+          playSubmit: bookmarked ? playCancel : playConfirm,
+        },
+      ].map((formItem, _, array) => (
+        <fetcher.Form method="post" key={formItem.name}>
+          <RequiredFormData itemId={item.id} />
+
+          {array
+            .filter((i) => i.name !== formItem.name)
+            .map((otherItem) => (
+              <input
+                key={otherItem.name}
+                type="hidden"
+                name={otherItem.name}
+                value={otherItem.currentValue}
+              />
+            ))}
+
+          <input type="hidden" name={formItem.name} value={formItem.value} />
+
+          <button
+            type="submit"
+            className={"group relative rounded p-1 ".concat(formItem.className)}
+            data-silent
+            aria-label={formItem.title}
+            onClick={() => formItem.playSubmit()}
+            name={ChannelItemDetail.form.names.action}
+            value={ChannelItemDetail.form.values["update-channel-item"]}
+          >
+            <SpinTransition>
+              <formItem.Icon
+                className={`h-4 w-4 ${
+                  formItem.value === "false" ? "text-black dark:text-white" : ""
+                } pointer-events-none ${formItem.className}`}
+                key={formItem.value}
+              />
+            </SpinTransition>
+            <Tooltip>{formItem.title}</Tooltip>
+          </button>
+        </fetcher.Form>
+      ))}
+    </fieldset>
+  );
 };

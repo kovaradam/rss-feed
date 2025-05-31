@@ -8,23 +8,22 @@ export async function action({ request }: Route.LoaderArgs) {
 
   if (request.method === useChannelRefreshFetcher.method) {
     try {
-      const channels = await getChannels({
-        where: { userId: user.id },
+      const channels = await getChannels(user.id, {
         select: { id: true, feedUrl: true },
       });
       const results = await Promise.allSettled(
         channels.map(async (dbChannel) => {
           try {
-            return await refreshChannel({
+            return await refreshChannel.$cached({
               feedUrl: dbChannel.feedUrl,
               userId: user.id,
               signal: request.signal,
             });
           } catch (error) {
             if ((error as Error).name === "AbortError") {
-              return;
+              return null;
             }
-            console.error("update failed", error);
+            console.error("update failed", dbChannel.feedUrl, error);
             return null;
           }
         })
@@ -32,9 +31,7 @@ export async function action({ request }: Route.LoaderArgs) {
       return {
         newItemCount: results
           .map((result) =>
-            result.status === "fulfilled"
-              ? (result.value?.newItemCount ?? 0)
-              : 0
+            result.status === "fulfilled" ? result.value?.newItemCount ?? 0 : 0
           )
           .reduce((prev, next) => prev + (next ?? 0), 0),
       };

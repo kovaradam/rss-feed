@@ -8,7 +8,6 @@ import {
 import { PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
 import { WithFormLabel } from "~/components/WithFormLabel";
-import type { Channel } from "~/models/channel.server";
 import {
   getChannels,
   updateChannel,
@@ -19,6 +18,7 @@ import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
 import { createTitle, enumerate, isSubmitting } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.edit";
+import { Channel } from "~/models/types.server";
 
 const fieldNames = enumerate([
   "title",
@@ -113,8 +113,7 @@ export const loader = async ({
     throw new Response("Not Found", { status: 404 });
   }
 
-  const channels = await getChannels({
-    where: { userId },
+  const channels = await getChannels(userId, {
     select: { category: true },
   });
 

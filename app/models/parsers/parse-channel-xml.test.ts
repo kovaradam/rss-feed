@@ -1,9 +1,11 @@
 import { expect, test } from "vitest";
 import { parseChannelXml } from "./parse-channel-xml.server";
-import { testData } from "./test-feed-data";
+import { TEST_FEED_DATA } from "./test-feed-data";
 
 test("valid feed result", async () => {
-  const [channelResult, items] = await parseChannelXml(testData.testChannel);
+  const [channelResult, items] = await parseChannelXml(
+    TEST_FEED_DATA.TEST_CHANNEL_1
+  );
   expect(channelResult.title).toBe("Feed Name");
   expect(channelResult.link).toBe("https://link.com");
   expect(channelResult.description).toBe("Description is missing");
