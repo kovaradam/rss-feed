@@ -8,8 +8,7 @@ export async function action({ request }: Route.LoaderArgs) {
 
   if (request.method === useChannelRefreshFetcher.method) {
     try {
-      const channels = await getChannels({
-        where: { userId: user.id },
+      const channels = await getChannels(user.id, {
         select: { id: true, feedUrl: true },
       });
       const results = await Promise.allSettled(
@@ -32,9 +31,7 @@ export async function action({ request }: Route.LoaderArgs) {
       return {
         newItemCount: results
           .map((result) =>
-            result.status === "fulfilled"
-              ? (result.value?.newItemCount ?? 0)
-              : 0
+            result.status === "fulfilled" ? result.value?.newItemCount ?? 0 : 0
           )
           .reduce((prev, next) => prev + (next ?? 0), 0),
       };

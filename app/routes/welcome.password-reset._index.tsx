@@ -124,7 +124,7 @@ export default function PasswordReset(props: Route.ComponentProps) {
           <div className="pt-4">
             <SubmitButton
               className="w-full"
-              isLoading={isSubmitting(transition)}
+              isPending={isSubmitting(transition)}
             >
               Send password reset link
             </SubmitButton>

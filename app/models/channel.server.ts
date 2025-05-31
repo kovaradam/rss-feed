@@ -1,4 +1,4 @@
-import { prisma } from "~/db.server";
+import { prisma } from "../db.server";
 import type {
   Channel,
   Collection,
@@ -9,38 +9,8 @@ import type { ItemParseResult } from "./parsers/parse-channel-xml.server";
 import { parseChannelXml } from "./parsers/parse-channel-xml.server";
 import invariant from "tiny-invariant";
 import * as cheerio from "cheerio";
-import { parseLinksFromHtml } from "./parsers/parse-html.server";
 
 export type { Channel, Item };
-
-export async function getChannelsFromUrl(url: URL, abortSignal: AbortSignal) {
-  const response = await fetch(url, { signal: abortSignal })
-    .then((r) => r.text())
-    .catch(() => {
-      throw new ChannelErrors.invalidUrl();
-    });
-
-  const query = cheerio.load(response);
-  const rssElement = query("feed,rss");
-  if (rssElement.length === 1) {
-    return { feedXml: response, type: "rss-definition" };
-  }
-
-  const links = parseLinksFromHtml(query);
-
-  if (!links.length) {
-    throw new ChannelErrors.htmlNoLinks();
-  }
-
-  if (links.length === 1 && links[0]) {
-    return getChannelsFromUrl(new URL(links[0].href, url), abortSignal);
-  }
-
-  return {
-    links: links,
-    type: "links",
-  };
-}
 
 export async function createChannelFromXml(
   xmlInput: string,
@@ -226,10 +196,12 @@ export async function deleteChannelCategory({
 }
 
 export async function getChannels(
-  params: Parameters<typeof prisma.channel.findMany>[0]
+  userId: User["id"],
+  params?: Parameters<typeof prisma.channel.findMany>[0]
 ) {
   return prisma.channel.findMany({
     ...params,
+    where: { ...params?.where, userId: userId },
     orderBy: { title: "asc", ...params?.orderBy },
   });
 }

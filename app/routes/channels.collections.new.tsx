@@ -73,8 +73,7 @@ export const loader = async ({
 }: Route.LoaderArgs): Promise<LoaderData> => {
   const userId = await requireUserId(request);
 
-  const channels = await getChannels({
-    where: { userId },
+  const channels = await getChannels(userId, {
     select: { category: true, language: true },
   });
 

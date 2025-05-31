@@ -1,3 +1,4 @@
+import { CheerioAPI } from "cheerio";
 import cron from "node-cron";
 
 export function createTtl(
@@ -8,4 +9,9 @@ export function createTtl(
   cleanup(ttl);
   cron.schedule(schedule, () => cleanup(ttl));
   return ttl;
+}
+
+export function getIsRssChannelFile(query: CheerioAPI) {
+  const rssElement = query("feed,rss");
+  return rssElement.length === 1;
 }

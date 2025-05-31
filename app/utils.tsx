@@ -147,3 +147,15 @@ export function stallHoneypot() {
 export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
+
+export function filterUnique<T>(
+  ...[equality]: T extends object ? [(a: T, b: T) => boolean] : []
+) {
+  return function (item: T, index: number, array: T[]) {
+    return array.findIndex((i) => equality?.(i, item) ?? i === item) === index;
+  };
+}
+
+export function booleanFilter<T>(input?: T | null): input is T {
+  return Boolean(input);
+}

@@ -15,7 +15,7 @@ export function SubmitSection(props: {
         className={"w-full whitespace-nowrap sm:w-min".concat(
           props.submitProps.className ?? ""
         )}
-        isLoading={props.isSubmitting}
+        isPending={props.isSubmitting}
       >
         {props.submitProps.children}
       </SubmitButton>

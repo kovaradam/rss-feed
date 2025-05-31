@@ -5,7 +5,7 @@ export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
     '[rel="alternate"][type="application/rss+xml"],[href*="rss" i]'
   ).filter((_, e) => e.tagName === "link" || e.tagName === "a");
 
-  const hrefs: Array<
+  const links: Array<
     { href: string } & ({ tagName: "a"; label: string } | { tagName: "link" })
   > = [];
 
@@ -15,7 +15,7 @@ export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
     }
 
     if (e.tagName === "a") {
-      hrefs.push({
+      links.push({
         href: e.attribs.href,
         tagName: "a",
         label: query.text([e]).trim(),
@@ -23,9 +23,9 @@ export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
     }
 
     if (e.tagName === "link") {
-      hrefs.push({ href: e.attribs.href, tagName: "link" });
+      links.push({ href: e.attribs.href, tagName: "link" });
     }
   });
 
-  return hrefs;
+  return links;
 }

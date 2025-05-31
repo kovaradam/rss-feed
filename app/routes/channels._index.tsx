@@ -82,7 +82,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     }
   );
 
-  const channels = getChannels({ where: { userId } });
+  const channels = getChannels(userId);
 
   const categories = (await channels)
     .flatMap((channel) => channel.category.split("/"))

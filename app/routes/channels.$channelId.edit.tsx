@@ -113,8 +113,7 @@ export const loader = async ({
     throw new Response("Not Found", { status: 404 });
   }
 
-  const channels = await getChannels({
-    where: { userId },
+  const channels = await getChannels(userId, {
     select: { category: true },
   });
 
