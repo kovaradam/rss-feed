@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import type { FirstParam } from "./utils";
+import type { FirstParam } from "../utils";
 import type { Collection } from "~/__generated__/prisma/client";
 import invariant from "tiny-invariant";
 export type { Collection };

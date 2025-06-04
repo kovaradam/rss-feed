@@ -83,12 +83,9 @@ export default function PasswordResetForm(props: Route.ComponentProps) {
             className="min-h-[var(--welcome-form-min-height)] "
           >
             <HiddenInputs
-              inputs={[
-                {
-                  name: fieldNames["operation-id"],
-                  value: loaderData.operationId,
-                },
-              ]}
+              inputs={{
+                [fieldNames["operation-id"]]: loaderData.operationId,
+              }}
             />
             {
               // eslint-disable-next-line react-compiler/react-compiler
@@ -121,7 +118,7 @@ export default function PasswordResetForm(props: Route.ComponentProps) {
             <div className="pt-10">
               <SubmitButton
                 className="w-full"
-                isLoading={isSubmitting(transition)}
+                isPending={isSubmitting(transition)}
               >
                 Update password
               </SubmitButton>

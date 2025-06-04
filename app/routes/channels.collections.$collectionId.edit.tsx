@@ -112,8 +112,7 @@ export const loader = async ({
   if (!collection) {
     throw new Response("Not Found", { status: 404 });
   }
-  const channels = await getChannels({
-    where: { userId },
+  const channels = await getChannels(userId, {
     select: { category: true, language: true },
   });
 

@@ -1,4 +1,4 @@
-import { PrismaClient } from "~/__generated__/prisma/client";
+import { PrismaClient } from "./__generated__/prisma/client";
 import { SERVER_ENV } from "./env.server";
 
 let prisma: PrismaClient;

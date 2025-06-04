@@ -197,7 +197,7 @@ export default function LoginPage({
               <div className="pt-4">
                 <SubmitButton
                   className="w-full"
-                  isLoading={isSubmitting(transition)}
+                  isPending={isSubmitting(transition)}
                 >
                   Log in
                 </SubmitButton>

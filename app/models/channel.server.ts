@@ -1,22 +1,39 @@
-import { prisma } from "~/db.server";
-import type {
-  Channel,
-  Collection,
-  Item,
-  User,
-} from "~/__generated__/prisma/client";
-import type { ItemParseResult } from "./parse-xml";
-import { parseChannelXml } from "./parse-xml";
-import invariant from "tiny-invariant";
-import { JSDOM } from "jsdom";
+import { prisma } from "../db.server";
 
-export type { Channel, Item };
+import type { ItemParseResult } from "./parsers/parse-channel-xml.server";
+import { parseChannelXml } from "./parsers/parse-channel-xml.server";
+import invariant from "tiny-invariant";
+import * as cheerio from "cheerio";
+import { Channel, Collection, Item, User } from "./types.server";
+import { ChannelErrors } from "./utils.server";
+import { cached } from "~/utils/cached";
+import { fetchChannel } from "./parsers/get-channels-from-url";
+import { normalizeHref } from "~/utils";
 
 export async function createChannelFromXml(
   xmlInput: string,
   request: { userId: string; channelHref: string },
   abortSignal: AbortSignal
 ) {
+  const feedUrl = request.channelHref;
+
+  let dbChannel = null;
+
+  try {
+    dbChannel = await getChannel({
+      where: {
+        feedUrl: { in: [feedUrl, normalizeHref(feedUrl)] },
+        userId: request.userId,
+      },
+    });
+  } catch (_) {
+    throw new ChannelErrors.dbUnavailible();
+  }
+
+  if (dbChannel) {
+    throw new ChannelErrors.channelExists(dbChannel);
+  }
+
   let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
   let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
 
@@ -30,26 +47,13 @@ export async function createChannelFromXml(
     );
     invariant(channel.title, "Title is missing in the RSS definition");
   } catch (_) {
-    throw new IncorrectDefinitionError();
-  }
-
-  let dbChannel = null;
-  try {
-    dbChannel = await getChannel({
-      where: { feedUrl: request.channelHref, userId: request.userId },
-    });
-  } catch (_) {
-    throw new UnavailableDbError();
-  }
-
-  if (dbChannel) {
-    throw new ChannelExistsError(dbChannel);
+    throw new ChannelErrors.incorrectDefinition();
   }
 
   if (!channel.imageUrl) {
     try {
       const channelPageMeta = await getChannelPageMeta(
-        new URL(request.channelHref).origin,
+        new URL(feedUrl).origin,
         abortSignal
       );
       channel.imageUrl = channelPageMeta.image;
@@ -60,7 +64,7 @@ export async function createChannelFromXml(
 
   let newChannel;
   try {
-    (channel as Channel).feedUrl = request.channelHref;
+    (channel as Channel).feedUrl = feedUrl;
     newChannel = await createChanel({
       channel: channel as Channel,
       userId: request.userId,
@@ -82,6 +86,7 @@ export async function createChanel(input: {
   return prisma.channel.create({
     data: {
       ...input.channel,
+      feedUrl: normalizeHref(input.channel.feedUrl),
       items: { create: input.items },
       user: {
         connect: {
@@ -96,62 +101,74 @@ export type ChannelWithItems = Channel & { items: Item[] };
 
 export type ItemWithChannel = Item & { channel: Channel };
 
-export async function refreshChannel(params: {
-  feedUrl: string;
-  userId: string;
-  signal: AbortSignal;
-}) {
-  const channelRequest = await fetch(params.feedUrl, { signal: params.signal });
-  const channelXml = await channelRequest.text();
-  const [parsedChannel, parsedItems] = await parseChannelXml(channelXml);
-  const dbChannelItems = await getChannelItems({
-    where: { channel: { feedUrl: params.feedUrl, userId: params.userId } },
-    select: { link: true },
-  });
+export const refreshChannel = cached({
+  fn: async (params: {
+    feedUrl: string;
+    userId: string;
+    signal: AbortSignal;
+  }) => {
+    const feedUrl = params.feedUrl;
+    const channelXml = await fetchChannel.$cached(
+      new URL(feedUrl),
+      params.signal
+    );
+    const [parsedChannel, parsedItems] = await parseChannelXml(
+      channelXml
+    ).catch((e) => {
+      console.log(feedUrl, e.message);
+      throw e;
+    });
+    const dbChannelItems = await getChannelItems({
+      where: { channel: { feedUrl: feedUrl, userId: params.userId } },
+      select: { link: true },
+    });
 
-  const newItems = parsedItems.filter(
-    (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link)
-  );
+    const newItems = parsedItems.filter(
+      (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link)
+    );
 
-  const updatedChannel = await updateChannel(params.userId, {
-    where: {
-      feedUrl_userId: {
-        feedUrl: params.feedUrl,
-        userId: params.userId,
+    const updatedChannel = await updateChannel(params.userId, {
+      where: {
+        feedUrl_userId: {
+          feedUrl: feedUrl,
+          userId: params.userId,
+        },
       },
-    },
-    data: {
-      lastBuildDate: parsedChannel.lastBuildDate,
-      refreshDate: new Date(),
-      items: {
-        create: newItems,
+      data: {
+        lastBuildDate: parsedChannel.lastBuildDate,
+        refreshDate: new Date(),
+        items: {
+          create: newItems,
+        },
       },
-    },
-  });
+    });
 
-  if (!updatedChannel.imageUrl) {
-    getChannelPageMeta(new URL(updatedChannel.link).origin, params.signal)
-      .then((meta) => {
-        if (!meta.image) {
-          return;
-        }
-        updateChannel(params.userId, {
-          where: {
-            feedUrl_userId: {
-              feedUrl: params.feedUrl,
-              userId: params.userId,
+    if (!updatedChannel.imageUrl) {
+      getChannelPageMeta(new URL(updatedChannel.link).origin, params.signal)
+        .then((meta) => {
+          if (!meta.image) {
+            return;
+          }
+          updateChannel(params.userId, {
+            where: {
+              feedUrl_userId: {
+                feedUrl: feedUrl,
+                userId: params.userId,
+              },
             },
-          },
-          data: {
-            imageUrl: meta.image,
-          },
-        });
-      })
-      .catch(console.error);
-  }
+            data: {
+              imageUrl: meta.image,
+            },
+          });
+        })
+        .catch(console.error);
+    }
 
-  return { updatedChannel, newItemCount: newItems.length };
-}
+    return { updatedChannel, newItemCount: newItems.length };
+  },
+  getKey: (params) => `${params.feedUrl}-${params.userId}`,
+  ttl: 60 * 1000,
+});
 
 export async function getChannel(
   params: Parameters<typeof prisma.channel.findMany>[0]
@@ -196,10 +213,12 @@ export async function deleteChannelCategory({
 }
 
 export async function getChannels(
-  params: Parameters<typeof prisma.channel.findMany>[0]
+  userId: User["id"],
+  params?: Parameters<typeof prisma.channel.findMany>[0]
 ) {
   return prisma.channel.findMany({
     ...params,
+    where: { ...params?.where, userId: userId },
     orderBy: { title: "asc", ...params?.orderBy },
   });
 }
@@ -435,25 +454,16 @@ export function getItemQueryFilter(query: string) {
   };
 }
 
-export class ChannelExistsError extends Error {
-  constructor(public channel: Channel) {
-    super();
-  }
-}
-
-export class UnavailableDbError extends Error {}
-
-export class IncorrectDefinitionError extends Error {}
-
 async function getChannelPageMeta(url: string, signal: AbortSignal) {
   const response = await fetch(url, {
     signal: signal,
   });
-  const { window } = new JSDOM(await response.arrayBuffer());
+
+  const query = cheerio.load(await response.text());
 
   function getContent(selector: string) {
-    const node = window.document.querySelector(selector);
-    return node?.getAttribute("content");
+    const node = query(selector);
+    return node?.attr("content");
   }
 
   return {

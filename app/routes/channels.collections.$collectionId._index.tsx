@@ -95,8 +95,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     }
   )) as ItemWithChannel[];
 
-  const channels = await getChannels({
-    where: { userId },
+  const channels = await getChannels(userId, {
     select: { id: true },
   });
 

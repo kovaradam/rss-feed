@@ -143,3 +143,29 @@ export const LoginTypes = enumerate(["password", "passkey"]);
 export function stallHoneypot() {
   return new Promise((t) => setTimeout(t, 500 + Math.random() * 1000));
 }
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
+export function filterUnique<T>(
+  ...[equality]: T extends object ? [(a: T, b: T) => boolean] : []
+) {
+  return function (item: T, index: number, array: T[]) {
+    return array.findIndex((i) => equality?.(i, item) ?? i === item) === index;
+  };
+}
+
+export function booleanFilter<T>(input?: T | null): input is T {
+  return Boolean(input);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FirstParam<T extends (...args: any) => any> = Parameters<T>[0];
+
+export function normalizeHref(href: string) {
+  if (href.endsWith("/")) {
+    return normalizeHref(href.slice(0, -1));
+  }
+  return href;
+}

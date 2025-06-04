@@ -1,20 +1,13 @@
-export function HiddenInputs(props: {
-  inputs: Array<{ name: string; value: string }>;
-}) {
+export function HiddenInputs(props: { inputs: Record<string, string> }) {
   return (
     <>
-      {props.inputs.map((item) => (
-        <input
-          type="hidden"
-          key={item.name}
-          name={item.name}
-          value={item.value}
-        />
+      {Object.entries(props.inputs).map(([name, value]) => (
+        <input type="hidden" key={name} name={name} value={value} />
       ))}
     </>
   );
 }
 
 HiddenInputs.Action = function ActionInput(props: { value: string }) {
-  return <input type="hidden" name="action" value={props.value} />;
+  return <HiddenInputs inputs={{ action: props.value }} />;
 };

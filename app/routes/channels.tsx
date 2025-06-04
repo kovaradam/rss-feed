@@ -42,8 +42,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     email: true,
     isAdmin: true,
   });
-  const channels = getChannels({
-    where: { userId: user.id },
+  const channels = getChannels(user.id, {
     select: { id: true, title: true },
   });
 

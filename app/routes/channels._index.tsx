@@ -82,7 +82,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     }
   );
 
-  const channels = getChannels({ where: { userId } });
+  const channels = getChannels(userId);
 
   const categories = (await channels)
     .flatMap((channel) => channel.category.split("/"))
@@ -288,7 +288,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                             className="pointer-events-none absolute h-14 -rotate-6 pt-6 opacity-50 transition-opacity [li:hover_&]:opacity-100"
                           />
 
-                          <Form action={href("/channels/new")} method="PUT">
+                          <Form action={href("/channels/new")} method="POST">
                             <input
                               type="hidden"
                               value={item.href}

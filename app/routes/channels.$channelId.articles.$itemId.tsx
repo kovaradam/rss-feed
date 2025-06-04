@@ -6,7 +6,6 @@ import {
   UserIcon,
 } from "@heroicons/react/outline";
 import { Link, useFetcher } from "react-router";
-import { convert } from "html-to-text";
 import React from "react";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
@@ -26,28 +25,37 @@ import {
 } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
-import { createMeta } from "~/utils";
+import { createMeta, enumerate } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.articles.$itemId";
 import { BackLink } from "~/components/BackLink";
+import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
+import { htmlToText } from "~/utils/html-to-text";
 
 export const meta = createMeta();
+
+const inputs = enumerate(["action", "quote", "id"]);
 
 export async function action({ request, params }: Route.ActionArgs) {
   if (request.method !== "POST") {
     throw new Response("Invalid method", { status: 400 });
   }
+
   const itemId = params.itemId as string;
   const userId = await requireUserId(request);
-  const form = await request.formData();
+  const formData = await request.formData();
 
-  if (form.get("action") === "delete") {
-    const id = form.get("id");
+  if (ChannelItemDetailService.isChannelItemUpdate(formData)) {
+    return ChannelItemDetailService.handleAction(userId, formData);
+  }
+
+  if (formData.get(inputs["action"]) === "delete") {
+    const id = formData.get(inputs["id"]);
     invariant(typeof id === "string");
     await deleteQuote(id, userId);
     return new Response("ok", { status: 200 });
   }
 
-  const quote = form.get("quote");
+  const quote = formData.get(inputs["quote"]);
 
   if (!quote || typeof quote !== "string") {
     return { error: "Please provide a quote content" };
@@ -104,7 +112,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       : loaderData.quotes;
 
   const description = React.useMemo(() => {
-    return convert(item.description);
+    return htmlToText(item.description);
   }, [item.description]);
 
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -112,6 +120,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
   return (
     <div style={{ viewTransitionName: `${item.id}` }}>
       <UseAppTitle>Article detail</UseAppTitle>
+
       <BackLink
         className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
         to={`/channels/${item.channelId}`}
@@ -124,12 +133,15 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         )}
       </BackLink>
 
-      <PageHeading>
-        <ChannelItemDetail.Title
-          title={item.title}
-          description={item.description}
-        />
-      </PageHeading>
+      <div className="flex flex-col justify-between md:flex-row">
+        <PageHeading>
+          <ChannelItemDetail.Title
+            title={item.title}
+            description={item.description}
+          />
+        </PageHeading>
+        <ChannelItemDetail.Actions item={item} />
+      </div>
       <DescriptionList className={`py-2`}>
         {[
           {
@@ -206,7 +218,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           {({ htmlFor }) => (
             <div className="flex flex-col gap-2 md:flex-row">
               <textarea
-                name="quote"
+                name={inputs["quote"]}
                 required
                 id={htmlFor}
                 className={styles.input}
@@ -255,11 +267,11 @@ function Quote(props: { content: string; createdAt: Date; id: string }) {
       <div className="flex justify-between text-slate-500 dark:text-slate-400">
         <TimeFromNow date={props.createdAt} />
         <fetcher.Form method="post">
-          <input type="hidden" name="id" value={props.id} />
+          <input type="hidden" name={inputs["id"]} value={props.id} />
           <button
             type="submit"
             aria-label="Delete quote"
-            name="action"
+            name={inputs["action"]}
             value="delete"
           >
             <TrashIcon className="pointer-events-none w-4" />
