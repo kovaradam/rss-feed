@@ -6,7 +6,6 @@ import {
   UserIcon,
 } from "@heroicons/react/outline";
 import { Link, useFetcher } from "react-router";
-import { convert } from "html-to-text";
 import React from "react";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
@@ -30,6 +29,7 @@ import { createMeta, enumerate } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.articles.$itemId";
 import { BackLink } from "~/components/BackLink";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
+import { htmlToText } from "~/utils/html-to-text";
 
 export const meta = createMeta();
 
@@ -112,7 +112,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       : loaderData.quotes;
 
   const description = React.useMemo(() => {
-    return convert(item.description);
+    return htmlToText(item.description);
   }, [item.description]);
 
   const formRef = React.useRef<HTMLFormElement>(null);

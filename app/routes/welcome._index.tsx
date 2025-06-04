@@ -161,23 +161,21 @@ export default function Welcome() {
                     error: actionData?.errors?.password,
                   },
                 ].map((formField) => (
-                  <>
-                    <Input
-                      key={formField.id}
-                      formLabel={formField.label}
-                      ref={formField.ref}
-                      id={formField.id}
-                      required
-                      name={formField.name}
-                      type={formField.type}
-                      placeholder={formField.placeholder}
-                      errors={
-                        formField.error
-                          ? [{ content: formField.error }]
-                          : undefined
-                      }
-                    />
-                  </>
+                  <Input
+                    key={formField.id}
+                    formLabel={formField.label}
+                    ref={formField.ref}
+                    id={formField.id}
+                    required
+                    name={formField.name}
+                    type={formField.type}
+                    placeholder={formField.placeholder}
+                    errors={
+                      formField.error
+                        ? [{ content: formField.error }]
+                        : undefined
+                    }
+                  />
                 ))
               }
               <input

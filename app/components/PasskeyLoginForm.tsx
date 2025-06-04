@@ -7,19 +7,23 @@ import { href, useNavigate, useSearchParams } from "react-router";
 import { SubmitButton } from "~/components/Button";
 import { Input } from "~/components/Input";
 import React from "react";
+import { enumerate } from "~/utils";
+
+const inputs = enumerate(["email", "redirectTo", "action"]);
 
 export function PasskeyLoginForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo");
-  const mailParam = searchParams.get("email");
+  const redirectTo = searchParams.get(inputs["redirectTo"]);
+  const mailParam = searchParams.get(inputs["email"]);
 
-  const passkeyAction = async (prev: unknown, formData: FormData) => {
+  const passkeyAction = async (_: unknown, formData: FormData) => {
     const result = await authenticateWithPasskey(formData);
     if (result?.redirect) {
       navigate(result.redirect);
+      return null;
     }
-    return result;
+    return { submitted: formData, errors: result?.errors };
   };
 
   const [state, action] = React.useActionState(passkeyAction, null);
@@ -31,7 +35,7 @@ export function PasskeyLoginForm() {
     >
       <>
         <Input.Email
-          name="email"
+          name={inputs["email"]}
           formLabel={"Email address"}
           required
           autoComplete="email webauthn"
@@ -39,13 +43,16 @@ export function PasskeyLoginForm() {
             content: e as string,
             id: e as string,
           }))}
-          defaultValue={typeof mailParam === "string" ? mailParam : undefined}
+          defaultValue={
+            (state?.submitted.get(inputs["email"]) as string) ??
+            (typeof mailParam === "string" ? mailParam : undefined)
+          }
         />
 
-        <input name={"action"} value={"get-options"} type={"hidden"} />
+        <input name={inputs["action"]} value={"get-options"} type={"hidden"} />
 
         {redirectTo && (
-          <input type="hidden" name="redirectTo" value={redirectTo} />
+          <input type="hidden" name={inputs["redirectTo"]} value={redirectTo} />
         )}
         <SubmitButton className="w-full">Continue</SubmitButton>
       </>
@@ -95,7 +102,7 @@ async function authenticateWithPasskey(registrationFormData: FormData) {
   }
 
   formData.set("action", "verify");
-  formData.set("email", registrationFormData.get("email") as string);
+  formData.set("email", registrationFormData.get(inputs["email"]) as string);
 
   const response = await fetch(href("/api/passkey"), {
     body: formData,
@@ -112,7 +119,7 @@ async function authenticateWithPasskey(registrationFormData: FormData) {
   }
 
   if (response.ok) {
-    return { redirect: response.headers.get("location") || "/channels" };
+    return { redirect: response.headers.get("location") || href("/channels") };
   }
   return null;
 }

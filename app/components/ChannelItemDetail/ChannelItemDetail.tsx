@@ -12,7 +12,6 @@ import { TimeFromNow } from "../TimeFromNow";
 import confirmSound from "/sounds/state-change_confirm-up.wav?url";
 import cancelSound from "/sounds/state-change_confirm-down.wav?url";
 import { Highlight } from "../Highlight";
-import { convert } from "html-to-text";
 import React from "react";
 import { Tooltip } from "../Tooltip";
 import { enumerate } from "~/utils";
@@ -21,6 +20,7 @@ import { CircleCheck } from "../icons/CircleCheck";
 import { Bookmark } from "../icons/Bookmark";
 import { SpinTransition } from "../animations/SpinTransition";
 import { Item } from "~/models/types.server";
+import { htmlToText } from "~/utils/html-to-text";
 
 type Props = {
   item: ItemWithChannel;
@@ -33,7 +33,7 @@ export function ChannelItemDetail(props: Props) {
   const { channel, ...item } = props.item;
 
   const description = React.useMemo(() => {
-    return convert(item.description);
+    return htmlToText(item.description);
   }, [item.description]);
 
   const itemTitle = ChannelItemDetail.Title({ description, title: item.title });
@@ -146,7 +146,7 @@ ChannelItemDetail.Title = function ChannelItemDetailTitle({
     if (title) {
       return title;
     }
-    const result = convert(description.slice(0, 30));
+    const result = htmlToText(description.slice(0, 30));
     return result.slice(0, result.lastIndexOf(" ")).concat(" ...");
   }, [description, title]);
 };

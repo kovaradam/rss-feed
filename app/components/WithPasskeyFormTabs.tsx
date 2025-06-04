@@ -5,6 +5,7 @@ import { useIsPasskeySupported } from "~/utils/use-is-passkey-supported";
 
 export function WithPasskeyFormTabs(props: { passwordForm: React.ReactNode }) {
   const isSupported = useIsPasskeySupported();
+
   if (!isSupported) {
     return props.passwordForm;
   }
