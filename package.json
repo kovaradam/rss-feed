@@ -25,9 +25,9 @@
   "dependencies": {
     "@heroicons/react": "^1.0.6",
     "@prisma/client": "^6.7.0",
-    "@react-router/fs-routes": "^7.5.3",
-    "@react-router/node": "^7.5.3",
-    "@react-router/serve": "^7.5.3",
+    "@react-router/fs-routes": "^7.6.2",
+    "@react-router/node": "^7.6.2",
+    "@react-router/serve": "^7.6.2",
     "@simplewebauthn/browser": "^13.1.0",
     "@simplewebauthn/server": "^13.1.1",
     "babel-plugin-react-compiler": "^19.0.0-beta-63e3235-20250105",
@@ -53,7 +53,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@react-router/dev": "^7.5.3",
+    "@react-router/dev": "^7.6.2",
     "@types/bcryptjs": "^2.4.2",
     "@types/eslint": "^8.4.3",
     "@types/howler": "2.1.2",
