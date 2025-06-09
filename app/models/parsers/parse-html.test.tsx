@@ -25,8 +25,6 @@ test("valid feed result", async () => {
   expect(result.length).toBe(2);
 
   expect(result[0]?.href).toBe("link1");
-  expect(result[0]?.tagName).toBe("link");
 
   expect(result[1]?.href).toBe("/rss");
-  expect(result[1]?.tagName).toBe("a");
 });

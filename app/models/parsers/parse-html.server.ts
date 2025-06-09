@@ -14,23 +14,16 @@ export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
     (_, e) => e.tagName === "link" || e.tagName === "a"
   );
 
-  const links: Array<{ href: string; tagName: "a" | "link" }> = [];
+  const links: Array<{ href: string }> = [];
 
   linkElements.each((_, e) => {
     if (typeof e.attribs.href !== "string") {
       return;
     }
 
-    if (e.tagName === "a") {
-      links.push({
-        href: e.attribs.href,
-        tagName: "a",
-      });
-    }
-
-    if (e.tagName === "link") {
-      links.push({ href: e.attribs.href, tagName: "link" });
-    }
+    links.push({
+      href: e.attribs.href,
+    });
   });
 
   return links;

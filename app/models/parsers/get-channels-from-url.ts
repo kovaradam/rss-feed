@@ -28,7 +28,7 @@ export async function getChannelsFromUrl(
 
   recursion.fetched.push(url.href);
 
-  const response = await fetchChannel.$cached(url, abortSignal).catch(() => {
+  const response = await fetchChannel.$cached(url, abortSignal).catch((_) => {
     throw new ChannelErrors.invalidUrl();
   });
 
@@ -70,10 +70,9 @@ export async function getChannelsFromUrl(
   const traversedLinks = (
     await Promise.allSettled(
       links
-        .filter((link) => link.tagName === "a")
-        .map((link) => u(link.href))
+        .filter((link) => link.href)
         .map(async (link) => {
-          return getChannelsFromUrl(link, abortSignal, nextRecursion);
+          return getChannelsFromUrl(u(link.href), abortSignal, nextRecursion);
         })
     )
   )
