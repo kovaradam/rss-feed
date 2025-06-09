@@ -42,10 +42,11 @@ export async function getChannelsFromUrl(
         feedXml: response,
         url: url,
         content: {
-          title: query("channel>title:first-of-type").text().trim(),
+          title: query(":is(feed,channel)>title:first-of-type").text().trim(),
           description:
-            query("channel>description:first-of-type").text().trim() ||
-            undefined,
+            query(":is(feed,channel)>:is(description,subtitle):first-of-type")
+              .text()
+              .trim() || undefined,
         },
       },
     ];
