@@ -249,7 +249,9 @@ export default function NewChannelPage({
                   <div className="flex justify-between ">
                     <div>
                       <h6 className="font-bold">{channel.title}</h6>
-                      <Href href={channel.href}>{channel.href}</Href>
+                      <Href href={channel.href} className="break-all">
+                        {channel.href}
+                      </Href>
                     </div>
                     {channel.channelId ? (
                       <Link
