@@ -13,7 +13,7 @@ import { createChannelFromXml, getChannels } from "~/models/channel.server";
 import { storeFailedUpload } from "~/models/failed-upload.server";
 import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
-import { createTitle, enumerate, isSubmitting } from "~/utils";
+import { createTitle, enumerate, isSubmitting, normalizeHref } from "~/utils";
 import { mapValue } from "~/utils/map-value";
 import type { Route } from "./+types/channels.new";
 import { getChannelsFromUrl } from "~/models/parsers/get-channels-from-url";
@@ -161,11 +161,15 @@ export const action = async ({
     await getChannels(userId, {
       select: { id: true, feedUrl: true },
     })
-  ).map((channel) => ({ url: new URL(channel.feedUrl), id: channel.id }));
+  ).map((channel) => ({
+    normalizedHref: normalizeHref(channel.feedUrl),
+    id: channel.id,
+  }));
 
   const feeds = channelResponse?.map((foundChannel) => ({
     channelId: userChannels.find(
-      (userChannel) => foundChannel.url.href === userChannel.url.href
+      (userChannel) =>
+        normalizeHref(foundChannel.url.href) === userChannel.normalizedHref
     )?.id,
     href: foundChannel.url.href,
     title: foundChannel.content.title,
@@ -247,7 +251,7 @@ export default function NewChannelPage({
                   className="mb-4 rounded-lg bg-white p-4  shadow"
                 >
                   <div className="flex justify-between ">
-                    <div>
+                    <div className="pr-4">
                       <h6 className="font-bold">{channel.title}</h6>
                       <Href href={channel.href} className="break-all">
                         {channel.href}
@@ -273,8 +277,11 @@ export default function NewChannelPage({
                         />
                         <FormButton
                           isPending={
-                            navigation.formData?.get(inputs["channel-url"]) ===
-                            channel.href
+                            normalizeHref(
+                              String(
+                                navigation.formData?.get(inputs["channel-url"])
+                              )
+                            ) === normalizeHref(channel.href)
                           }
                           className="h-fit rounded border-current bg-rose-100 p-1 px-2 text-rose-700 hover:bg-rose-200 active:bg-rose-50 disabled:pointer-events-none"
                         >
