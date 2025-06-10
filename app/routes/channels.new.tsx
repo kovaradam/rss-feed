@@ -251,7 +251,7 @@ export default function NewChannelPage({
                   className="mb-4 rounded-lg bg-white p-4  shadow"
                 >
                   <div className="flex justify-between ">
-                    <div className="pr-4">
+                    <div className="pr-8">
                       <h6 className="font-bold">{channel.title}</h6>
                       <Href href={channel.href} className="break-all">
                         {channel.href}
