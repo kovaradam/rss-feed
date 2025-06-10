@@ -80,7 +80,11 @@ export async function getChannelsFromUrl(
     .filter((result) => result.status === "fulfilled")
     .flatMap((result) => result.value)
     .filter(booleanFilter)
-    .filter(filterUnique((a, b) => a.url.href === b.url.href));
+    .filter(
+      filterUnique(
+        (a, b) => hrefToCompare(a.url.href) === hrefToCompare(b.url.href)
+      )
+    );
 
   return traversedLinks;
 }
@@ -96,3 +100,5 @@ export const fetchChannel = cached({
   getKey: (url) => normalizeHref(url.href),
   ttl: 60 * 1000,
 });
+
+const hrefToCompare = (href: string) => normalizeHref(href).replace("www.", "");
