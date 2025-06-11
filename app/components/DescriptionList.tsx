@@ -1,9 +1,8 @@
+import { clsx } from "clsx";
+
 export function DescriptionList(props: React.HTMLAttributes<HTMLDListElement>) {
   return (
-    <dl
-      {...props}
-      className={"flex flex-col gap-2 ".concat(props.className ?? "")}
-    >
+    <dl {...props} className={clsx("flex flex-col gap-2 ", props.className)}>
       {props.children}
     </dl>
   );
@@ -21,13 +20,13 @@ DescriptionList.Term = function DescriptionTerm(
   return (
     <dt
       {...props}
-      className={"text-slate-500 dark:text-slate-400 "
-        .concat(
-          "visuallyHidden" in props && props.visuallyHidden === true
-            ? "visually-hidden "
-            : ""
-        )
-        .concat(props.className ?? "")}
+      className={clsx(
+        "text-slate-500 dark:text-slate-400",
+        "visuallyHidden" in props &&
+          props.visuallyHidden === true &&
+          "_visually-hidden",
+        props.className
+      )}
     >
       {props.children}
     </dt>
@@ -40,9 +39,7 @@ DescriptionList.Definition = function DescriptionDefinition(
   return (
     <dd
       {...props}
-      className={" text-slate-500 dark:text-slate-400 ".concat(
-        props.className ?? ""
-      )}
+      className={clsx("text-slate-500 dark:text-slate-400", props.className)}
     >
       {props.children}
     </dd>

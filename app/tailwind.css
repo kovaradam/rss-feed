@@ -12,37 +12,40 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .background {
+  ._background {
     @apply bg-slate-900 caret-white accent-white;
   }
 }
 
 @media (prefers-color-scheme: light) {
-  .background {
+  ._background {
     --size: 0.1ex;
+    --dot-color: #e2e8f0;
+    --granularity: 32px;
 
-    background-image:
-      radial-gradient(#e2e8f0 var(--size), transparent 0),
-      radial-gradient(#e2e8f0 var(--size), #fff 0);
-    background-position:
-      0 0,
-      16px 16px;
-    background-size: 32px 32px;
+    background-image: radial-gradient(
+        var(--dot-color) var(--size),
+        transparent 0
+      ),
+      radial-gradient(var(--dot-color) var(--size), #fff 0);
+
+    background-position: 0 0, 16px 16px;
+    background-size: var(--granularity) var(--granularity);
   }
 }
 
-.progress {
+._progress {
   --duration: 1s;
   @apply absolute top-0 z-20 h-1 w-0 bg-rose-700 bg-opacity-25;
 }
 
-.progress[data-loading="true"] {
+._progress[data-loading="true"] {
   transition: width var(--duration);
   transition-delay: var(500ms);
   @apply w-full;
 }
 
-.progress[data-loading="true"] div {
+._progress[data-loading="true"] div {
   @apply h-full w-1/2 bg-rose-500;
   animation: progress;
   animation-duration: var(--duration);
@@ -62,7 +65,7 @@
   }
 }
 
-.visually-hidden {
+._visually-hidden {
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   height: 1px;

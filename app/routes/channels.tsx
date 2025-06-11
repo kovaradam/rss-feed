@@ -119,7 +119,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
       <div className="flex flex-col sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
         <div
-          className="background flex justify-center"
+          className="_background flex justify-center"
           {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}
         >
           <div

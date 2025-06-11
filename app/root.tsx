@@ -92,7 +92,7 @@ export default function App(props: Route.ComponentProps) {
           navigation.formData?.get("loader") === String(true)) && (
           <div
             data-loading={["loading", "submitting"].includes(navigation.state)}
-            className="progress"
+            className="_progress"
           >
             <div className="" />
           </div>
