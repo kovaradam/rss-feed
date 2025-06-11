@@ -29,7 +29,8 @@
       ),
       radial-gradient(var(--dot-color) var(--size), #fff 0);
 
-    background-position: 0 0, 16px 16px;
+    background-position: 0 0,
+      calc(var(--granularity) / 2) calc(var(--granularity) / 2);
     background-size: var(--granularity) var(--granularity);
   }
 }
