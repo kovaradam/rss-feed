@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { parseLinksFromHtml } from "./parse-html.server";
-import * as cheerio from "cheerio";
 import { renderToString } from "react-dom/server";
+import { getDocumentQuery } from "../utils.server";
 
 const html = renderToString(
   <html lang="en">
@@ -20,7 +20,7 @@ const html = renderToString(
 );
 
 test("valid feed result", async () => {
-  const result = parseLinksFromHtml(cheerio.load(html));
+  const result = parseLinksFromHtml(getDocumentQuery(html));
 
   expect(result.length).toBe(2);
 

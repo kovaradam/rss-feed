@@ -2,14 +2,16 @@
 import type { Channel, Item } from "~/__generated__/prisma/client";
 import { parseStringPromise } from "xml2js";
 
-export type ChannelResult = Partial<
-  Omit<Channel, "userId" | "feedUrl" | "id" | "updatedAt" | "createdAt">
+export type ChannelResult = Omit<
+  Channel,
+  "userId" | "feedUrl" | "id" | "updatedAt" | "createdAt"
 >;
+
 export type ItemParseResult = Omit<Item, "channelId" | "id">[];
 
 export async function parseChannelXml(
   channelXml: string
-): Promise<[ChannelResult, ItemParseResult]> {
+): Promise<{ channel: ChannelResult; channelItems: ItemParseResult }> {
   const result = await parseStringPromise(channelXml);
 
   const rssData = result?.rss ?? result.feed;
@@ -19,10 +21,10 @@ export async function parseChannelXml(
 
   const channelDataTransformer = new ChannelDataTransformer(channelData);
 
-  return [
-    channelDataTransformer.getResult(),
-    channelDataTransformer.transformedItems,
-  ];
+  return {
+    channel: channelDataTransformer.getResult(),
+    channelItems: channelDataTransformer.transformedItems,
+  };
 }
 
 class ChannelDataTransformer {
@@ -91,6 +93,7 @@ class ChannelDataTransformer {
       imageUrl: this.imageUrl,
       language: this.channelData?.language?.[0] || "",
       copyright: this.channelData?.copyright?.[0] ?? "",
+      refreshDate: null,
       lastBuildDate: this.lastBuildDate,
       rssVersion: this.channelData.rssVersion ?? "",
       itemPubDateParseError: this.hasItemPubDateErrors,

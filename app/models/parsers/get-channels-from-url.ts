@@ -1,7 +1,6 @@
 import { parseLinksFromHtml } from "./parse-html.server";
 import { booleanFilter, filterUnique, normalizeHref } from "../../utils";
-import { ChannelErrors } from "../utils.server";
-import * as cheerio from "cheerio";
+import { ChannelErrors, getDocumentQuery } from "../utils.server";
 import { getIsRssChannelFile } from "../../utils.server";
 import { cached } from "../../utils/cached";
 
@@ -32,7 +31,7 @@ export async function getChannelsFromUrl(
     throw new ChannelErrors.invalidUrl();
   });
 
-  const query = cheerio.load(response);
+  const query = getDocumentQuery(response);
 
   const isRssChannelFile = getIsRssChannelFile(query);
 

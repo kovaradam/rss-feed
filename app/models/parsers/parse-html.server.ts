@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { getDocumentQuery } from "../utils.server";
 
 const RSS_LINK_QUERY = `
   [rel="alternate"][type="application/rss+xml"],
@@ -9,7 +9,7 @@ const RSS_LINK_QUERY = `
   [title*="rss" i]
   `;
 
-export function parseLinksFromHtml(query: cheerio.CheerioAPI) {
+export function parseLinksFromHtml(query: ReturnType<typeof getDocumentQuery>) {
   const linkElements = query(RSS_LINK_QUERY).filter(
     (_, e) => e.tagName === "link" || e.tagName === "a"
   );

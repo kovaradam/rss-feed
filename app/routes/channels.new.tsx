@@ -237,23 +237,30 @@ export default function NewChannelPage({
         </Form>
         {feedsResponse && (
           <>
-            <h4 className="text-lg font-bold">
+            <hr className="border-dashed dark:border-slate-600" />
+            <h4 className="text-lg text-slate-500 dark:text-slate-400">
               There are multiple channels available from{" "}
               <Href href={feedsResponse.inputUrl.href} className="">
                 {feedsResponse.inputUrl.hostname}
               </Href>
               :
             </h4>
+            <hr className="border-dashed dark:border-slate-600" />
             <ul>
               {feedsResponse.feeds.map((channel) => (
                 <li
                   key={channel.href}
-                  className="mb-4 rounded-lg bg-white p-4  shadow"
+                  className="mb-4 rounded-lg bg-white p-4 shadow dark:bg-slate-800 dark:shadow-none"
                 >
                   <div className="flex justify-between ">
                     <div className="pr-8">
-                      <h6 className="font-bold">{channel.title}</h6>
-                      <Href href={channel.href} className="break-all">
+                      <h6 className="font-bold dark:text-white">
+                        {channel.title}
+                      </h6>
+                      <Href
+                        href={channel.href}
+                        className="break-all dark:text-slate-200"
+                      >
                         {channel.href}
                       </Href>
                     </div>
@@ -262,7 +269,7 @@ export default function NewChannelPage({
                         to={href("/channels/:channelId", {
                           channelId: channel.channelId,
                         })}
-                        className="flex h-fit gap-1 text-slate-700 hover:underline"
+                        className="flex h-fit gap-1 text-slate-700 hover:underline dark:text-slate-400"
                       >
                         <CheckCircleIcon className="w-4 min-w-4" />
                         Saved
@@ -283,7 +290,7 @@ export default function NewChannelPage({
                               )
                             ) === normalizeHref(channel.href)
                           }
-                          className="h-fit rounded border-current bg-rose-100 p-1 px-2 text-rose-700 hover:bg-rose-200 active:bg-rose-50 disabled:pointer-events-none"
+                          className="h-fit rounded border-current bg-rose-100 p-1 px-2 text-rose-700 hover:bg-rose-200 active:bg-rose-50 disabled:pointer-events-none dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700 "
                         >
                           <div className="flex items-center gap-1">
                             <PlusIcon className="w-4 min-w-4" />
@@ -293,7 +300,7 @@ export default function NewChannelPage({
                       </Form>
                     )}
                   </div>
-                  <p className="mt-2 text-slate-700 empty:mt-0">
+                  <p className="mt-2 text-slate-700 empty:mt-0 dark:text-white">
                     {channel.description}
                   </p>
                 </li>

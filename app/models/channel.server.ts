@@ -3,9 +3,8 @@ import { prisma } from "../db.server";
 import type { ItemParseResult } from "./parsers/parse-channel-xml.server";
 import { parseChannelXml } from "./parsers/parse-channel-xml.server";
 import invariant from "tiny-invariant";
-import * as cheerio from "cheerio";
 import { Channel, Collection, Item, User } from "./types.server";
-import { ChannelErrors } from "./utils.server";
+import { ChannelErrors, getDocumentQuery } from "./utils.server";
 import { cached } from "~/utils/cached";
 import { fetchChannel } from "./parsers/get-channels-from-url";
 import { normalizeHref } from "~/utils";
@@ -34,59 +33,65 @@ export async function createChannelFromXml(
     throw new ChannelErrors.channelExists(dbChannel);
   }
 
-  let channel: Awaited<ReturnType<typeof parseChannelXml>>[0];
-  let items: Awaited<ReturnType<typeof parseChannelXml>>[1];
+  let parseResult: Awaited<ReturnType<typeof parseChannelXml>>;
 
   try {
-    [channel, items] = await parseChannelXml(xmlInput);
+    parseResult = await parseChannelXml(xmlInput);
 
-    invariant(channel.link, "Link is missing in the RSS definition");
     invariant(
-      typeof channel.link === "string",
+      parseResult.channel.link,
+      "Link is missing in the RSS definition"
+    );
+    invariant(
+      typeof parseResult.channel.link === "string",
       "Link has been parsed in wrong format"
     );
-    invariant(channel.title, "Title is missing in the RSS definition");
+    invariant(
+      parseResult.channel.title,
+      "Title is missing in the RSS definition"
+    );
   } catch (_) {
     throw new ChannelErrors.incorrectDefinition();
   }
 
-  if (!channel.imageUrl) {
+  if (!parseResult.channel.imageUrl) {
     try {
       const channelPageMeta = await getChannelPageMeta(
         new URL(feedUrl).origin,
         abortSignal
       );
-      channel.imageUrl = channelPageMeta.image;
+      parseResult.channel.imageUrl = channelPageMeta.image ?? null;
     } catch (error) {
       console.error(error);
     }
   }
 
-  let newChannel;
   try {
-    (channel as Channel).feedUrl = feedUrl;
-    newChannel = await createChanel({
-      channel: channel as Channel,
+    return await createChanel({
+      channel: parseResult.channel,
+      feedUrl: feedUrl,
       userId: request.userId,
-      items: items ?? [],
+      items: parseResult.channelItems ?? [],
     });
   } catch (error) {
     console.error(error);
     throw error;
   }
-
-  return newChannel;
 }
 
 export async function createChanel(input: {
   userId: User["id"];
-  channel: Omit<Channel, "userId">;
+  feedUrl: string;
+  channel: Omit<
+    Channel,
+    "userId" | "updatedAt" | "createdAt" | "feedUrl" | "id"
+  >;
   items: ItemParseResult;
 }) {
   return prisma.channel.create({
     data: {
       ...input.channel,
-      feedUrl: normalizeHref(input.channel.feedUrl),
+      feedUrl: normalizeHref(input.feedUrl),
       items: { create: input.items },
       user: {
         connect: {
@@ -112,9 +117,7 @@ export const refreshChannel = cached({
       new URL(feedUrl),
       params.signal
     );
-    const [parsedChannel, parsedItems] = await parseChannelXml(
-      channelXml
-    ).catch((e) => {
+    const parseResult = await parseChannelXml(channelXml).catch((e) => {
       console.log(feedUrl, e.message);
       throw e;
     });
@@ -123,7 +126,7 @@ export const refreshChannel = cached({
       select: { link: true },
     });
 
-    const newItems = parsedItems.filter(
+    const newItems = parseResult.channelItems.filter(
       (item) => !dbChannelItems.find((dbItem) => dbItem.link === item.link)
     );
 
@@ -135,7 +138,7 @@ export const refreshChannel = cached({
         },
       },
       data: {
-        lastBuildDate: parsedChannel.lastBuildDate,
+        lastBuildDate: parseResult.channel.lastBuildDate,
         refreshDate: new Date(),
         items: {
           create: newItems,
@@ -237,7 +240,7 @@ export function deleteChannel({
 }
 
 export async function getChannelItems<
-  T extends Parameters<typeof prisma.item.findMany>[0],
+  T extends Parameters<typeof prisma.item.findMany>[0]
 >(params: T) {
   return prisma.item.findMany(params);
 }
@@ -459,7 +462,7 @@ async function getChannelPageMeta(url: string, signal: AbortSignal) {
     signal: signal,
   });
 
-  const query = cheerio.load(await response.text());
+  const query = getDocumentQuery(await response.text());
 
   function getContent(selector: string) {
     const node = query(selector);

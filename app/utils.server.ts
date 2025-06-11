@@ -1,5 +1,5 @@
-import { CheerioAPI } from "cheerio";
 import cron from "node-cron";
+import { getDocumentQuery } from "./models/utils.server";
 
 export function createTtl(
   ttl: number,
@@ -11,7 +11,9 @@ export function createTtl(
   return ttl;
 }
 
-export function getIsRssChannelFile(query: CheerioAPI) {
+export function getIsRssChannelFile(
+  query: ReturnType<typeof getDocumentQuery>
+) {
   const rssElement = query("feed,rss");
   return rssElement.length === 1;
 }

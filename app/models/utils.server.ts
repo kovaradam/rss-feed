@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import { Channel } from "./types.server";
 
 export const ChannelErrors = {
@@ -11,3 +12,7 @@ export const ChannelErrors = {
   dbUnavailible: class UnavailableDbError extends Error {},
   incorrectDefinition: class IncorrectDefinitionError extends Error {},
 };
+
+export function getDocumentQuery(xmlInput: string) {
+  return cheerio.load(xmlInput);
+}
