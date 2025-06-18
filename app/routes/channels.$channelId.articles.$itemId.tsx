@@ -30,6 +30,7 @@ import type { Route } from "./+types/channels.$channelId.articles.$itemId";
 import { BackLink } from "~/components/BackLink";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { htmlToText } from "~/utils/html-to-text";
+import { List } from "~/components/List";
 
 export const meta = createMeta();
 
@@ -233,7 +234,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         )}
       </fetcher.Form>
       <hr className="my-2 mt-4" />
-      <ul>
+      <List>
         {quotes.map((quote) => (
           <Quote
             key={quote.id}
@@ -242,7 +243,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
             id={quote.id}
           />
         ))}
-      </ul>
+      </List>
       {loaderData.cursor && <ShowMoreLink cursor={loaderData.cursor} />}
     </div>
   );

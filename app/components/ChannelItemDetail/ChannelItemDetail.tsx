@@ -238,9 +238,11 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
             onClick={() => formItem.playSubmit()}
             name={ChannelItemDetail.form.names.action}
             value={ChannelItemDetail.form.values["update-channel-item"]}
+            aria-pressed={formItem.value !== String(true)}
           >
             <SpinTransition>
               <formItem.Icon
+                aria-hidden
                 className={`h-4 w-4 ${
                   formItem.value === "false" ? "text-black dark:text-white" : ""
                 } pointer-events-none ${formItem.className}`}

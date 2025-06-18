@@ -34,6 +34,7 @@ import { getCollections } from "~/models/collection.server";
 import { requireUser } from "~/session.server";
 import { createMeta, getPrefersReducedMotion } from "~/utils";
 import type { Route } from "./+types/channels";
+import { List } from "~/components/List";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -187,7 +188,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   <h2 className="pl-4 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Collections
                   </h2>
-                  <ol>
+                  <List>
                     {data.collectionListItems?.map((collection) => (
                       <li key={collection.id}>
                         <StyledNavLink
@@ -209,7 +210,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                         New collection
                       </StyledNavLink>
                     </li>
-                  </ol>
+                  </List>
                   <hr className="dark:border-slate-800" />
                   <h2 className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Channels
@@ -241,7 +242,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   {!data.channels || data.channels.length === 0 ? (
                     <p className="p-4 dark:text-slate-500">No channels yet</p>
                   ) : (
-                    <ol>
+                    <List as="ol">
                       {data.channels
                         ?.filter((channel) =>
                           channel.title
@@ -264,7 +265,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                             </StyledNavLink>
                           </li>
                         ))}
-                    </ol>
+                    </List>
                   )}
                 </div>
                 <div className="relative hidden h-full w-full items-center px-2 sm:flex ">

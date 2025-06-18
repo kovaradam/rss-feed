@@ -39,6 +39,7 @@ import { confirm } from "~/utils/confirm";
 import { InputError } from "~/components/InputError";
 import { Input } from "~/components/Input";
 import { validate } from "~/models/validate";
+import { List } from "~/components/List";
 
 const actions = enumerate([
   "toggle-sound",
@@ -349,7 +350,7 @@ export default function UserPage({
                   You have no passkeys
                 </p>
               )}
-              <ul className="">
+              <List className="">
                 {user.passkeys.map((passkey) => (
                   <React.Fragment key={passkey.id}>
                     <li className="mb-1 flex overflow-hidden rounded-sm border last:mb-2 dark:border-slate-700">
@@ -451,7 +452,7 @@ export default function UserPage({
                     )}
                   </React.Fragment>
                 ))}
-              </ul>
+              </List>
               {isPasskeySupported && <PasskeyAddForm />}
             </Details>
             <h4 className="font-bold dark:text-white">Account</h4>

@@ -7,6 +7,7 @@ import { getQuotesByUser } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.quotes";
+import { List } from "~/components/List";
 
 export const meta = createMeta();
 
@@ -77,7 +78,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
           defaultValue={loaderData.search ?? ""}
         />
       </Form>
-      <ul className="relative">
+      <List className="relative">
         {loaderData.quotes.map((quote) => (
           <li
             id={quote.id}
@@ -112,7 +113,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
             </div>
           </li>
         ))}
-      </ul>
+      </List>
       {loaderData.cursor && (
         <ShowMoreLink
           cursor={loaderData.cursor}

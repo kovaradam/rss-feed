@@ -25,6 +25,7 @@ import { getChannels, getItemsByFilters } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 import { isEmptyObject } from "~/utils/is-empty-object";
 import type { Route } from "./+types/channels._index";
+import { List } from "~/components/List";
 
 const itemCountName = "item-count";
 
@@ -276,7 +277,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       If you cannot think of any site that provides RSS feed
                       right now, you can try adding one of these:
                     </p>
-                    <ul className="flex flex-col gap-6">
+                    <List className="flex flex-col gap-6">
                       {recommendedChannels.map((item) => (
                         <li
                           key={item.href}
@@ -305,7 +306,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                           </Form>
                         </li>
                       ))}
-                    </ul>
+                    </List>
                   </div>
                 </div>
               )}

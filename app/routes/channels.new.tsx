@@ -22,6 +22,8 @@ import { Href } from "~/components/Href";
 import { FormButton } from "~/components/Button";
 import { HiddenInputs } from "~/components/HiddenInputs";
 import { ChannelErrors } from "~/models/utils.server";
+import { List } from "~/components/List";
+import { useKeepTruthy } from "~/utils/use-keep-truthy";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -189,7 +191,9 @@ export default function NewChannelPage({
   const navigation = useNavigation();
   const isSaving = isSubmitting(navigation);
 
-  const feedsResponse = actionData && "feeds" in actionData ? actionData : null;
+  const feedsResponse = useKeepTruthy(
+    actionData && "feeds" in actionData ? actionData : null
+  );
 
   return (
     <>
@@ -246,7 +250,7 @@ export default function NewChannelPage({
               :
             </h4>
             <hr className="border-dashed dark:border-slate-600" />
-            <ul>
+            <List>
               {feedsResponse.feeds.map((channel) => (
                 <li
                   key={channel.href}
@@ -305,7 +309,7 @@ export default function NewChannelPage({
                   </p>
                 </li>
               ))}
-            </ul>
+            </List>
           </>
         )}
       </div>
