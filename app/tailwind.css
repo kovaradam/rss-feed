@@ -23,13 +23,12 @@
     --dot-color: #e2e8f0;
     --granularity: 32px;
 
-    background-image: radial-gradient(
-        var(--dot-color) var(--size),
-        transparent 0
-      ),
+    background-image:
+      radial-gradient(var(--dot-color) var(--size), transparent 0),
       radial-gradient(var(--dot-color) var(--size), #fff 0);
 
-    background-position: 0 0,
+    background-position:
+      0 0,
       calc(var(--granularity) / 2) calc(var(--granularity) / 2);
     background-size: var(--granularity) var(--granularity);
   }
