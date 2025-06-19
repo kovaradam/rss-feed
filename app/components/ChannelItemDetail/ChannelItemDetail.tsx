@@ -79,9 +79,11 @@ export function ChannelItemDetail(props: Props) {
           itemTitle
         )}
       </Href>
-      <span className="flex gap-1 text-slate-500 dark:text-slate-400">
-        {item.author}
-        <TimeFromNow date={new Date(item.pubDate)} />
+      <span className="text-slate-500 dark:text-slate-400">
+        <span className="flex flex-col gap-1 ">
+          {item.author}
+          <TimeFromNow date={new Date(item.pubDate)} />
+        </span>
       </span>
       <span className="my-1 flex gap-1 text-sm">
         <ChannelCategoryLinks category={channel.category} />
