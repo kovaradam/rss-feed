@@ -457,6 +457,7 @@ function registerNavSwipeCallbacks(
 > {
   const getSlidingElement = (event: React.TouchEvent<HTMLDivElement>) =>
     event.currentTarget.querySelector("[data-nav-sliding-element]");
+  const getOverlayElement = () => document.getElementById("overlay");
   return {
     onTouchStart: (event) => {
       event.currentTarget.dataset.touchStartX = String(
@@ -488,11 +489,15 @@ function registerNavSwipeCallbacks(
       ) {
         const slidingElement = getSlidingElement(event);
 
+        const opacity = Math.abs(diffX / event.currentTarget.clientWidth / 5);
         slidingElement?.setAttribute(
           "style",
-          `translate:${-1 * diffX}px;transition:none;--slide-rate:${
-            Math.abs(diffX) / event.currentTarget.clientWidth
-          }`
+          `translate:${-1 * diffX}px;transition:none;`
+        );
+
+        getOverlayElement()?.setAttribute(
+          "style",
+          `--opacity:${isExpanded ? 0.1 - opacity : opacity}`
         );
       }
     },
@@ -500,6 +505,7 @@ function registerNavSwipeCallbacks(
       const slidingElement = getSlidingElement(event);
 
       slidingElement?.setAttribute("style", "");
+      getOverlayElement()?.setAttribute("style", "");
 
       const diff = Number(event.currentTarget.getAttribute("data-slide-diff"));
 

@@ -41,14 +41,15 @@ export function NavWrapper(props: Props) {
       </nav>
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label
+        id="overlay"
         htmlFor="nav-toggle"
         aria-hidden
         className={clsx(
           `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-black transition-opacity sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
           // increasing opacity on opening slide
-          `opacity-[clamp(0,calc(var(--slide-rate,0)/5),0.1)]`,
+          `opacity-[clamp(0,var(--opacity,0),0.1)]`,
           // decreasing opacity on closing slide
-          `[input:checked+div_&]:opacity-[clamp(0,calc((1-var(--slide-rate,-1))*0.1),0.1)]`
+          `[input:checked+div_&]:opacity-[clamp(0,var(--opacity,0.1),0.1)]`
         )}
       />
     </>

@@ -82,6 +82,10 @@ export default function App(props: Route.ComponentProps) {
           content="Keep up with the latest web content with an RSS feed."
         />
         <meta name="keywords" content="RSS feed, RSS, journal, news" />
+        <script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        ></script>
         <Meta />
         <Links />
         <noscript>
