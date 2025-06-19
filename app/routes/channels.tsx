@@ -35,6 +35,7 @@ import { requireUser } from "~/session.server";
 import { createMeta, getPrefersReducedMotion } from "~/utils";
 import type { Route } from "./+types/channels";
 import { List } from "~/components/List";
+import { useOnWindowFocus } from "~/utils/use-on-window-focus";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -74,10 +75,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
     refreshChannels();
   }, [refreshChannels]);
 
-  React.useEffect(() => {
-    window.addEventListener("focus", refreshChannels);
-    return () => window.removeEventListener("focus", refreshChannels);
-  }, [refreshChannels]);
+  useOnWindowFocus(refreshChannels);
 
   const itemsContainer = globalThis.document?.body;
   const itemsContainerHeight = itemsContainer?.scrollHeight;
