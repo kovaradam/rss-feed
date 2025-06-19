@@ -213,7 +213,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   <h2 className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Channels
                     <form
-                      className="script-only relative flex w-full items-center"
+                      className="_script-only relative flex w-full items-center"
                       onSubmit={(e) => e.preventDefault()}
                     >
                       <input
@@ -375,7 +375,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
       </noscript>
       <details
         key={location.pathname}
-        className="script-only peer relative flex  justify-center sm:w-full sm:flex-col-reverse"
+        className="_script-only peer relative flex  justify-center sm:w-full sm:flex-col-reverse"
         onBlurCapture={(event) => {
           const thisElement = event.currentTarget;
           const blurTimeout = setTimeout(() => {

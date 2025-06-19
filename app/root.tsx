@@ -86,7 +86,7 @@ export default function App(props: Route.ComponentProps) {
         <Links />
         <noscript>
           <style>
-            {`.script-only {
+            {`._script-only {
               display: none;
               }`}
           </style>

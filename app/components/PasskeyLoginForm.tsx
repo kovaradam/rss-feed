@@ -8,6 +8,7 @@ import { SubmitButton } from "~/components/Button";
 import { Input } from "~/components/Input";
 import React from "react";
 import { enumerate } from "~/utils";
+import { ExclamationIcon } from "@heroicons/react/outline";
 
 const inputs = enumerate(["email", "redirectTo", "action"]);
 
@@ -33,29 +34,36 @@ export function PasskeyLoginForm() {
       action={action}
       className="min-h-[var(--welcome-form-min-height)] space-y-6"
     >
-      <>
-        <Input.Email
-          name={inputs["email"]}
-          formLabel={"Email address"}
-          required
-          autoComplete="email webauthn"
-          errors={Object.values(state?.errors ?? {}).map((e) => ({
-            content: e as string,
-            id: e as string,
-          }))}
-          defaultValue={
-            (state?.submitted.get(inputs["email"]) as string) ??
-            (typeof mailParam === "string" ? mailParam : undefined)
-          }
-        />
+      <noscript>
+        <div className="flex items-center gap-2 rounded border-current bg-yellow-200 p-2 pr-3 text-yellow-900 dark:border dark:bg-inherit dark:text-yellow-100">
+          <ExclamationIcon className=" h-6 w-4 min-w-4" />
+          <p className="text-pretty">
+            Passkey authorization does not work without JavaScript enabled in
+            your browser
+          </p>
+        </div>
+      </noscript>
+      <Input.Email
+        name={inputs["email"]}
+        formLabel={"Email address"}
+        required
+        autoComplete="email webauthn"
+        errors={Object.values(state?.errors ?? {}).map((e) => ({
+          content: e as string,
+          id: e as string,
+        }))}
+        defaultValue={
+          (state?.submitted.get(inputs["email"]) as string) ??
+          (typeof mailParam === "string" ? mailParam : undefined)
+        }
+      />
 
-        <input name={inputs["action"]} value={"get-options"} type={"hidden"} />
+      <input name={inputs["action"]} value={"get-options"} type={"hidden"} />
 
-        {redirectTo && (
-          <input type="hidden" name={inputs["redirectTo"]} value={redirectTo} />
-        )}
-        <SubmitButton className="w-full">Continue</SubmitButton>
-      </>
+      {redirectTo && (
+        <input type="hidden" name={inputs["redirectTo"]} value={redirectTo} />
+      )}
+      <SubmitButton className="w-full">Continue</SubmitButton>
     </form>
   );
 }

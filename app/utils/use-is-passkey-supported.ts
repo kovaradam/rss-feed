@@ -2,11 +2,13 @@ import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
 import React from "react";
 
 export function useIsPasskeySupported() {
-  const [isSupported, setIsSupported] = React.useState(false);
-
-  React.useLayoutEffect(() => {
-    setIsSupported(browserSupportsWebAuthn());
-  }, []);
+  const [isSupported] = React.useState(() => {
+    if (globalThis.document) {
+      return browserSupportsWebAuthn();
+    } else {
+      return true;
+    }
+  });
 
   return isSupported;
 }

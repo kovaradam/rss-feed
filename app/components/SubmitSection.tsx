@@ -23,7 +23,7 @@ export function SubmitSection(props: {
         {...props.cancelProps}
         className={`${c(
           props.cancelProps?.scriptOnly,
-          "script-only"
+          "_script-only"
         )} ${buttonStyle} w-full justify-center rounded p-2 sm:w-min ${
           props.cancelProps.className
         }`}

@@ -80,7 +80,7 @@ export function Input<T extends readonly React.ReactNode[]>({
         {inputProps.type === "password" && (
           <button
             type="button"
-            className="script-only password-toggle absolute right-2 top-0 h-full text-sm text-slate-600 hover:underline peer-placeholder-shown:hidden dark:text-slate-200"
+            className="_script-only password-toggle absolute right-2 top-0 h-full text-sm text-slate-600 hover:underline peer-placeholder-shown:hidden dark:text-slate-200"
             onClick={() => setIsShowPassword((p) => !p)}
           >
             {isShowPassword ? "hide" : "show"}
@@ -88,7 +88,9 @@ export function Input<T extends readonly React.ReactNode[]>({
         )}
       </div>
       <div aria-live="polite">
-        {errors?.map((e) => <InputError key={e.id}>{e.content}</InputError>)}
+        {errors?.map((e) => (
+          <InputError key={e.id}>{e.content}</InputError>
+        ))}
       </div>
     </div>
   );
