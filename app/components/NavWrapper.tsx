@@ -1,6 +1,7 @@
 import { useLocation } from "react-router";
 import React from "react";
 import { useEvent } from "~/utils/useEvent";
+import clsx from "clsx";
 
 type Props = {
   isExpanded: boolean;
@@ -42,7 +43,13 @@ export function NavWrapper(props: Props) {
       <label
         htmlFor="nav-toggle"
         aria-hidden
-        className={`absolute right-0 top-0 z-10 hidden h-full w-full bg-black opacity-10  sm:hidden [input:checked+div_&]:flex [input:checked+div_&]:touch-none`}
+        className={clsx(
+          `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-black transition-opacity sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
+          // increasing opacity on opening slide
+          `opacity-[clamp(0,calc(var(--slide-rate,0)/5),0.1)]`,
+          // decreasing opacity on closing slide
+          `[input:checked+div_&]:opacity-[clamp(0,calc((1-var(--slide-rate,-1))*0.1),0.1)]`
+        )}
       />
     </>
   );

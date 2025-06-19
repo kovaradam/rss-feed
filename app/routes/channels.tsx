@@ -119,10 +119,10 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         <UseAppTitle>{data.title}</UseAppTitle>
         <div
           className="_background flex justify-center"
-          {...registerNavSwipeCallbacks(isNavExpanded, setIsNavExpanded)}
+          {...registerNavSwipeCallbacks(setIsNavExpanded)}
         >
           <div
-            className={`relative flex  h-full min-h-screen w-screen duration-200 ease-in sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
+            className={`relative flex  h-full min-h-screen w-screen duration-200 ease-linear sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
             data-nav-sliding-element
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
@@ -450,12 +450,13 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
 }
 
 function registerNavSwipeCallbacks(
-  isExpanded: boolean,
   setIsExpanded: (value: boolean) => void
 ): Pick<
   React.HTMLAttributes<HTMLDivElement>,
   "onTouchStart" | "onTouchMove" | "onTouchEnd"
 > {
+  const getSlidingElement = (event: React.TouchEvent<HTMLDivElement>) =>
+    event.currentTarget.querySelector("[data-nav-sliding-element]");
   return {
     onTouchStart: (event) => {
       event.currentTarget.dataset.touchStartX = String(
@@ -477,23 +478,26 @@ function registerNavSwipeCallbacks(
 
       event.currentTarget?.setAttribute("data-slide-diff", String(diffX));
 
+      const isExpanded = (
+        document.getElementById("nav-toggle") as HTMLInputElement
+      )?.checked;
+
       if (
         Math.abs(diffX) > Math.abs(diffY) &&
         (isExpanded ? diffX > 0 : diffX < 0)
       ) {
-        const slidingElement = event.currentTarget.querySelector(
-          "[data-nav-sliding-element]"
-        );
+        const slidingElement = getSlidingElement(event);
+
         slidingElement?.setAttribute(
           "style",
-          `translate:${-1 * diffX}px;transition:none;`
+          `translate:${-1 * diffX}px;transition:none;--slide-rate:${
+            Math.abs(diffX) / event.currentTarget.clientWidth
+          }`
         );
       }
     },
     onTouchEnd: (event) => {
-      const slidingElement = event.currentTarget.querySelector(
-        "[data-nav-sliding-element]"
-      );
+      const slidingElement = getSlidingElement(event);
 
       slidingElement?.setAttribute("style", "");
 

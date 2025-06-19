@@ -80,7 +80,7 @@ export function ChannelItemDetail(props: Props) {
         )}
       </Href>
       <span className="text-slate-500 dark:text-slate-400">
-        <span className="flex flex-col gap-1 ">
+        <span className="flex flex-col gap-1">
           {item.author}
           <TimeFromNow date={new Date(item.pubDate)} />
         </span>
