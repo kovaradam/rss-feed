@@ -9,6 +9,7 @@ import {
   useNavigation,
   isRouteErrorResponse,
   useRouteError,
+  useRevalidator,
 } from "react-router";
 
 import stylesheet from "./tailwind.css?url";
@@ -22,6 +23,7 @@ import { lastTitle } from "./utils";
 import { HistoryStack } from "./utils/history-stack";
 import { useScrollRestoration } from "./utils/use-scroll-restoration";
 import { SERVER_ENV } from "./env.server";
+import { useOnWindowFocus } from "./utils/use-on-window-focus";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -65,6 +67,10 @@ export default function App(props: Route.ComponentProps) {
   }, []);
 
   useScrollRestoration();
+
+  const revalidator = useRevalidator();
+
+  useOnWindowFocus(revalidator.revalidate);
 
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">

@@ -1,21 +1,13 @@
 import type { MetaFunction } from "react-router";
-import { Outlet, useRevalidator } from "react-router";
+import { Outlet } from "react-router";
 import { ErrorMessage } from "~/components/ErrorMessage";
 import { createTitle } from "~/utils";
-import { useOnWindowFocus } from "~/utils/use-on-window-focus";
 
 export const meta: MetaFunction = () => {
   return [{ title: createTitle("Welcome") }];
 };
 
 export default function Welcome() {
-  const revalidator = useRevalidator();
-
-  useOnWindowFocus(() => {
-    // Revalidate loaders in case of user finishing signup in other window
-    revalidator.revalidate();
-  });
-
   return (
     <main className="relative flex h-[200vh] min-h-screen flex-col-reverse justify-center bg-white sm:h-screen sm:flex-row sm:justify-start dark:bg-slate-900 ">
       <section className="relative flex h-screen flex-col items-center justify-between bg-blue-100 p-[5%] before:absolute before:-top-10 before:h-10 before:w-full before:rounded-tl-[25%] before:rounded-tr-[55%] before:bg-inherit before:content-[''] sm:h-full sm:w-1/3 sm:before:hidden dark:bg-slate-950">
