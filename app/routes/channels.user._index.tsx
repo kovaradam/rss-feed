@@ -35,7 +35,7 @@ import { useIsPasskeySupported } from "~/utils/use-is-passkey-supported";
 import { PasskeyAddForm } from "~/components/PasskeyAddForm";
 import { HiddenInputs } from "~/components/HiddenInputs";
 import { enumerate } from "~/utils";
-import { confirm } from "~/utils/confirm";
+import { $confirm } from "~/utils/confirm";
 import { InputError } from "~/components/InputError";
 import { Input } from "~/components/Input";
 import { validate } from "~/models/validate";
@@ -405,7 +405,7 @@ export default function UserPage({
                           method="post"
                           onSubmit={async (e) => {
                             e.preventDefault();
-                            await confirm({
+                            await $confirm({
                               header: "Are you sure?",
                               message: (
                                 <>
@@ -462,7 +462,7 @@ export default function UserPage({
               className="w-full sm:w-fit"
               onSubmit={async (e) => {
                 e.preventDefault();
-                await confirm({
+                await $confirm({
                   header: <>Are you sure?</>,
                   message: <>This will permanently delete your account</>,
                   confirm: "Yes, delete",

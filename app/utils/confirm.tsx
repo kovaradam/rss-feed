@@ -4,7 +4,7 @@ import { Modal } from "~/components/Modal";
 
 let root: Root;
 
-export async function confirm(params: {
+export async function $confirm(params: {
   header: React.ReactNode;
   message: React.ReactNode;
   confirm: React.ReactNode;

@@ -8,6 +8,7 @@ import {
   useNavigation,
   useRouteError,
   href,
+  useFetcher,
 } from "react-router";
 import invariant from "tiny-invariant";
 import { Href } from "~/components/Href";
@@ -47,6 +48,8 @@ import { DescriptionList } from "~/components/DescriptionList";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { useSound } from "~/utils/use-sound";
 import type { Route } from "./+types/channels.$channelId._index";
+import { $confirm } from "~/utils/confirm";
+import { HiddenInputs } from "~/components/HiddenInputs";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -151,6 +154,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
 export default function ChannelDetailsPage() {
   const data = useLoaderData<typeof loader>();
   const transition = useNavigation();
+  const fetcher = useFetcher();
 
   const isRefreshing =
     transition.state !== "idle" && transition.formMethod === "PATCH";
@@ -329,20 +333,24 @@ export default function ChannelDetailsPage() {
         <br />
         <Form
           method="post"
-          onSubmit={(event) => {
-            if (!confirm("Are you sure?")) {
-              event.preventDefault();
-            }
+          onSubmit={async (event) => {
+            event.preventDefault();
+            await $confirm({
+              header: "Are you sure?",
+              message: "This will delete all saved data from this channel",
+              confirm: "Yes, delete",
+              reject: "Cancel",
+            });
+            const formEl = event.target as typeof event.currentTarget;
+            fetcher.submit(formEl, { method: formEl.method as never });
           }}
         >
           <Button
             type="submit"
-            title="Delete this channel"
             className="flex h-full w-fit items-center gap-2 sm:w-full"
-            isPending={transition.formData?.get("action") === "delete"}
-            name="action"
-            value="delete"
+            isPending={fetcher.formData?.get("action") === "delete"}
           >
+            <HiddenInputs inputs={{ loader: "true", action: "delete" }} />
             <TrashIcon className="w-4" />{" "}
             <span className="pointer-events-none hidden flex-1 text-center sm:block">
               Delete

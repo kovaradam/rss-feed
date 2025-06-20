@@ -122,7 +122,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
           {...registerNavSwipeCallbacks(setIsNavExpanded)}
         >
           <div
-            className={`relative flex  h-full min-h-screen w-screen duration-200 ease-linear sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
+            className={`relative flex  h-full min-h-screen w-screen duration-300 ease-out sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
             data-nav-sliding-element
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
@@ -444,7 +444,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
           )}
         </ul>
       </details>
-      <div className="invisible absolute -left-0 top-0 z-10 h-full w-full  bg-black opacity-30 peer-open:visible sm:peer-open:invisible"></div>
+      <div className="invisible absolute -left-0 top-0 z-10 h-full w-full bg-blue-950 opacity-30 peer-open:visible sm:peer-open:invisible"></div>
     </>
   );
 }
@@ -541,6 +541,7 @@ function useNavToggleState() {
       const e = document.getElementById("nav-toggle") as HTMLInputElement;
       if (e) {
         e.checked = value;
+        setIsNavExpanded(e.checked); // change handler does not fire when setting checked programaticaly
       }
     },
   ] as const;

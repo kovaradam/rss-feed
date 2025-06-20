@@ -45,7 +45,7 @@ export function NavWrapper(props: Props) {
         htmlFor="nav-toggle"
         aria-hidden
         className={clsx(
-          `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-black transition-opacity sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
+          `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-blue-950 transition-opacity duration-500 sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
           // increasing opacity on opening slide
           `opacity-[clamp(0,var(--opacity,0),0.1)]`,
           // decreasing opacity on closing slide
