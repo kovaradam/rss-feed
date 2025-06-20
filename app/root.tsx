@@ -37,6 +37,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   return {
     user,
     console: !SERVER_ENV.is.prod,
+    scan: !SERVER_ENV.is.prod,
   };
 };
 
@@ -82,10 +83,12 @@ export default function App(props: Route.ComponentProps) {
           content="Keep up with the latest web content with an RSS feed."
         />
         <meta name="keywords" content="RSS feed, RSS, journal, news" />
-        <script
-          crossOrigin="anonymous"
-          src="//unpkg.com/react-scan/dist/auto.global.js"
-        ></script>
+        {props.loaderData.scan && (
+          <script
+            crossOrigin="anonymous"
+            src="//unpkg.com/react-scan/dist/auto.global.js"
+          />
+        )}
         <Meta />
         <Links />
         <noscript>

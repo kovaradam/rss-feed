@@ -39,7 +39,7 @@ const RenderModal = (props: Props) => {
         },
         overlay: {
           zIndex: "20",
-          backgroundColor: "#15215175",
+          backgroundColor: "#0f183b54",
           ...props.style?.overlay,
         },
       }}

@@ -36,6 +36,7 @@ import { createMeta, getPrefersReducedMotion } from "~/utils";
 import type { Route } from "./+types/channels";
 import { List } from "~/components/List";
 import { useOnWindowFocus } from "~/utils/use-on-window-focus";
+import clsx from "clsx";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -114,7 +115,12 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         Skip to main content
       </a>
 
-      <input type="checkbox" id="nav-toggle" className="hidden" />
+      <input
+        type="checkbox"
+        id="nav-toggle"
+        className="hidden"
+        data-log-expanded={isNavExpanded}
+      />
       <div className="flex flex-col sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
         <div
@@ -122,8 +128,8 @@ export default function ChannelsPage(props: Route.ComponentProps) {
           {...registerNavSwipeCallbacks(setIsNavExpanded)}
         >
           <div
-            className={`relative flex  h-full min-h-screen w-screen duration-300 ease-out sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
-            data-nav-sliding-element
+            id="nav-sliding-element"
+            className={`relative flex  h-full min-h-screen w-screen duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
@@ -135,12 +141,12 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                 <div className="overscroll-contain sm:overflow-y-auto ">
                   <StyledNavLink
                     className={({ isActive }) =>
-                      `${
-                        !isActive ? "text-yellow-900" : ""
-                      }  hover:bg-slate-200 active:bg-slate-300 sm:h-auto sm:py-2 sm:font-bold sm:shadow`
+                      clsx(
+                        isActive ? "[&]:bg-rose-500" : "sm:text-yellow-900",
+                        `my-4  rounded-lg bg-rose-600 py-2 font-bold text-white shadow-lg shadow-rose-400 active:bg-rose-500 sm:h-auto sm:bg-inherit sm:py-2 sm:shadow hover:[&]:bg-rose-500 sm:[&]:hover:bg-slate-200 sm:[&]:active:bg-slate-300`
+                      )
                     }
                     to={href("/channels/new")}
-                    hideNavbar={hideNavbar}
                   >
                     <PlusIcon className="w-4 " style={{ strokeWidth: "3px" }} />{" "}
                     Add RSS Channel
@@ -177,7 +183,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   ].map((link) => (
                     <React.Fragment key={link.to}>
                       <hr className="dark:border-slate-800" />
-                      <StyledNavLink to={link.to} end hideNavbar={hideNavbar}>
+                      <StyledNavLink to={link.to} end>
                         {link.content}
                       </StyledNavLink>
                     </React.Fragment>
@@ -191,7 +197,6 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                       <li key={collection.id}>
                         <StyledNavLink
                           to={`/channels/collections/${collection.id}`}
-                          hideNavbar={hideNavbar}
                         >
                           <ArchiveIcon className="w-4" />
                           {collection.title}
@@ -202,7 +207,6 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                       <StyledNavLink
                         className={` hover:bg-slate-100 hover:text-yellow-900 dark:hover:text-slate-300`}
                         to={href(`/channels/collections/new`)}
-                        hideNavbar={hideNavbar}
                       >
                         <PlusIcon className="w-4" />
                         New collection
@@ -249,11 +253,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                         )
                         .map((channel) => (
                           <li key={channel.id}>
-                            <StyledNavLink
-                              className="block"
-                              to={channel.id}
-                              hideNavbar={() => setIsNavExpanded(false)}
-                            >
+                            <StyledNavLink className="block" to={channel.id}>
                               <span className="pointer-events-none">
                                 <Highlight
                                   input={channel.title}
@@ -319,27 +319,27 @@ export function ErrorBoundary(props: { error: Error }) {
 }
 
 function StyledNavLink({
-  hideNavbar,
   ...props
-}: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {
-  hideNavbar: () => void;
-}) {
+}: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {}) {
   return (
     <NavLink
       {...props}
       className={(state) =>
-        `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 sm:text-lg dark:text-slate-300 dark:hover:bg-slate-900 ${
-          state.isActive ? " bg-slate-200 text-slate-600 dark:bg-slate-800" : ""
-        } ${
+        clsx(
+          `m-2  flex gap-2 rounded p-2 py-1 text-lg hover:bg-slate-200 active:bg-slate-300 sm:text-lg dark:text-slate-300 dark:hover:bg-slate-900`,
+          state.isActive &&
+            " bg-slate-200 text-slate-600 sm:text-slate-600 dark:bg-slate-800 sm:[&]:bg-slate-200",
           typeof props.className === "function"
             ? props.className(state)
             : props.className
-        }`
+        )
       }
       onClick={(event) => {
         if (event.currentTarget.getAttribute("aria-current") === "page") {
-          hideNavbar();
-          document.body.scrollTo({ top: 0, behavior: "smooth" });
+          document.body.scrollTo({
+            top: 0,
+            behavior: getPrefersReducedMotion() ? "auto" : "smooth",
+          });
         }
       }}
     >
@@ -455,29 +455,36 @@ function registerNavSwipeCallbacks(
   React.HTMLAttributes<HTMLDivElement>,
   "onTouchStart" | "onTouchMove" | "onTouchEnd"
 > {
-  const getSlidingElement = (event: React.TouchEvent<HTMLDivElement>) =>
-    event.currentTarget.querySelector("[data-nav-sliding-element]");
+  const getSlidingElement = () =>
+    document.getElementById("nav-sliding-element");
   const getOverlayElement = () => document.getElementById("overlay");
   return {
     onTouchStart: (event) => {
-      event.currentTarget.dataset.touchStartX = String(
-        event.targetTouches[0]?.clientX
+      event.currentTarget.setAttribute(
+        "data-touch-start-x",
+        String(event.targetTouches[0]?.clientX)
       );
-      event.currentTarget.dataset.touchStartY = String(
-        event.targetTouches[0]?.clientY
+      event.currentTarget.setAttribute(
+        "data-touch-start-y",
+        String(event.targetTouches[0]?.clientY)
       );
+      event.currentTarget.setAttribute("data-slide-diff", "");
     },
     onTouchMove: (event) => {
       const changedTouch = event.changedTouches[0];
+
       if (!changedTouch) {
         return;
       }
-      const diffX =
-        Number(event.currentTarget.dataset.touchStartX) - changedTouch.clientX;
-      const diffY =
-        Number(event.currentTarget.dataset.touchStartY) - changedTouch.clientY;
 
-      event.currentTarget?.setAttribute("data-slide-diff", String(diffX));
+      const diffX =
+        Number(event.currentTarget.getAttribute("data-touch-start-x")) -
+        changedTouch.clientX;
+      const diffY =
+        Number(event.currentTarget.getAttribute("data-touch-start-y")) -
+        changedTouch.clientY;
+
+      event.currentTarget.setAttribute("data-slide-diff", String(diffX));
 
       const isExpanded = (
         document.getElementById("nav-toggle") as HTMLInputElement
@@ -487,14 +494,14 @@ function registerNavSwipeCallbacks(
         Math.abs(diffX) > Math.abs(diffY) &&
         (isExpanded ? diffX > 0 : diffX < 0)
       ) {
-        const slidingElement = getSlidingElement(event);
-
-        const opacity = Math.abs(diffX / event.currentTarget.clientWidth / 5);
+        const slidingElement = getSlidingElement();
+        slidingElement?.setAttribute("data-sliding", String(true));
         slidingElement?.setAttribute(
           "style",
           `translate:${-1 * diffX}px;transition:none;`
         );
 
+        const opacity = Math.abs(diffX / event.currentTarget.clientWidth / 5);
         getOverlayElement()?.setAttribute(
           "style",
           `--opacity:${isExpanded ? 0.1 - opacity : opacity}`
@@ -502,18 +509,18 @@ function registerNavSwipeCallbacks(
       }
     },
     onTouchEnd: (event) => {
-      const slidingElement = getSlidingElement(event);
+      const slidingElement = getSlidingElement();
+      console.log("end", event);
 
       slidingElement?.setAttribute("style", "");
       getOverlayElement()?.setAttribute("style", "");
+      slidingElement?.setAttribute("data-sliding", "");
 
       const diff = Number(event.currentTarget.getAttribute("data-slide-diff"));
 
-      if (Math.abs(diff) < event.currentTarget.clientWidth / 4) {
-        return;
+      if (Math.abs(diff) >= event.currentTarget.clientWidth / 4) {
+        setIsExpanded(diff < 0);
       }
-
-      setIsExpanded(diff < 0);
     },
   };
 }

@@ -31,9 +31,14 @@ export function NavWrapper(props: Props) {
     <>
       <nav
         className={`absolute right-full h-full w-3/4 border-r bg-white sm:relative sm:right-0 sm:block sm:h-auto sm:w-64 sm:bg-slate-100 lg:w-80 dark:border-r-0 dark:bg-slate-950 sm:dark:bg-slate-950`}
+        onClickCapture={(e) => {
+          if ((e.target as HTMLElement).tagName === "A") {
+            hide();
+          }
+        }}
       >
         <div
-          className="sticky top-0 h-[100svh] overflow-y-auto overflow-x-hidden overscroll-y-none sm:h-screen"
+          className="sticky top-0 h-[100svh] overflow-y-auto overflow-x-hidden sm:h-screen"
           ref={scrollElementRef}
         >
           {props.children}
@@ -45,7 +50,8 @@ export function NavWrapper(props: Props) {
         htmlFor="nav-toggle"
         aria-hidden
         className={clsx(
-          `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-blue-950 transition-opacity duration-500 sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
+          `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-blue-950 sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
+          "transition-opacity duration-500 [[data-sliding='true']_&]:duration-0",
           // increasing opacity on opening slide
           `opacity-[clamp(0,var(--opacity,0),0.1)]`,
           // decreasing opacity on closing slide
