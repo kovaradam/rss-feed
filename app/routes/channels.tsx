@@ -326,7 +326,7 @@ function StyledNavLink({
       {...props}
       className={(state) =>
         clsx(
-          `m-2 flex gap-2 rounded p-2 py-1 text-lg active:bg-slate-50 sm:text-lg sm:hover:bg-slate-200 sm:active:bg-slate-300 dark:text-slate-300 dark:hover:bg-slate-900`,
+          `m-2 flex gap-2 rounded p-2 py-1 text-lg active:bg-slate-100 sm:text-lg sm:hover:bg-slate-200 sm:active:bg-slate-300 dark:text-slate-300 dark:hover:bg-slate-900`,
           state.isActive &&
             " bg-slate-200 text-slate-600 sm:text-slate-600 dark:bg-slate-800 sm:[&]:bg-slate-200",
           typeof props.className === "function"

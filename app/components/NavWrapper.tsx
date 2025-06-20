@@ -32,7 +32,9 @@ export function NavWrapper(props: Props) {
       <nav
         className={`absolute right-full h-full w-3/4 border-r bg-white sm:relative sm:right-0 sm:block sm:h-auto sm:w-64 sm:bg-slate-100 lg:w-80 dark:border-r-0 dark:bg-slate-950 sm:dark:bg-slate-950`}
         onClickCapture={(e) => {
-          if ((e.target as HTMLElement).tagName === "A") {
+          if (
+            (e.target as HTMLElement).getAttribute("aria-current") === "page"
+          ) {
             hide();
           }
         }}
