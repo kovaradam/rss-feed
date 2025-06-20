@@ -20,7 +20,7 @@ export function Bookmark(props: React.SVGProps<SVGSVGElement>) {
     >
       <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
       <path
-        className="hidden md:group-hover:block"
+        className="hidden sm:[button:hover_&]:block"
         fill="currentColor"
         d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"
         transform="scale(0.4 0.3) translate(18 58)"

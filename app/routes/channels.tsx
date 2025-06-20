@@ -510,8 +510,6 @@ function registerNavSwipeCallbacks(
     },
     onTouchEnd: (event) => {
       const slidingElement = getSlidingElement();
-      console.log("end", event);
-
       slidingElement?.setAttribute("style", "");
       getOverlayElement()?.setAttribute("style", "");
       slidingElement?.setAttribute("data-sliding", "");
