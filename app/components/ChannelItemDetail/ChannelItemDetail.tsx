@@ -190,8 +190,8 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
           Icon: HiddenFromFeedIcon,
           title: hiddenFromFeed ? "Show in feed" : "Hide in feed",
           className: `${
-            hiddenFromFeed ? "hover:bg-green-200" : "hover:bg-red-200"
-          } dark:hover:bg-slate-900`,
+            hiddenFromFeed ? "sm:hover:bg-green-200" : "sm:hover:bg-red-200"
+          } sm:dark:hover:bg-slate-900`,
           playSubmit: hiddenFromFeed ? playConfirm : playCancel,
         },
         {
@@ -200,7 +200,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
           currentValue: String(read),
           Icon: ReadIcon,
           title: !read ? "Mark as read" : "Mark as not read yet",
-          className: "hover:bg-green-200 dark:hover:bg-slate-900",
+          className: "sm:hover:bg-green-200 sm:dark:hover:bg-slate-900",
           playSubmit: read ? playCancel : playConfirm,
         },
         {
@@ -212,7 +212,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
           title: !bookmarked
             ? "Bookmark article"
             : "Remove from bookmarked articles",
-          className: "hover:bg-yellow-100 dark:hover:bg-slate-900",
+          className: "sm:hover:bg-yellow-100 sm:dark:hover:bg-slate-900",
           playSubmit: bookmarked ? playCancel : playConfirm,
         },
       ].map((formItem, _, array) => (
