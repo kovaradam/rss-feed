@@ -2,6 +2,7 @@ import { useLocation } from "react-router";
 import React from "react";
 import { useEvent } from "~/utils/useEvent";
 import clsx from "clsx";
+import { getPrefersReducedMotion } from "~/utils";
 
 type Props = {
   isExpanded: boolean;
@@ -22,8 +23,11 @@ export function NavWrapper(props: Props) {
   const scrollElementRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (props.isExpanded) {
-      scrollElementRef.current?.scroll({ top: 0 });
+    if (!props.isExpanded) {
+      scrollElementRef.current?.scroll({
+        top: 0,
+        behavior: getPrefersReducedMotion() ? "auto" : "smooth",
+      });
     }
   }, [props.isExpanded]);
 
