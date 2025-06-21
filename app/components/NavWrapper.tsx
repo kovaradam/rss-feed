@@ -2,7 +2,6 @@ import { useLocation } from "react-router";
 import React from "react";
 import { useEvent } from "~/utils/useEvent";
 import clsx from "clsx";
-import { getPrefersReducedMotion } from "~/utils";
 
 type Props = {
   isExpanded: boolean;
@@ -20,17 +19,6 @@ export function NavWrapper(props: Props) {
     hide();
   }, [pathname, hide]);
 
-  const scrollElementRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!props.isExpanded) {
-      scrollElementRef.current?.scroll({
-        top: 0,
-        behavior: getPrefersReducedMotion() ? "auto" : "smooth",
-      });
-    }
-  }, [props.isExpanded]);
-
   return (
     <>
       <nav
@@ -43,10 +31,7 @@ export function NavWrapper(props: Props) {
           }
         }}
       >
-        <div
-          className="sticky top-0 h-[100svh] overflow-y-auto overflow-x-hidden sm:h-screen"
-          ref={scrollElementRef}
-        >
+        <div className="sticky top-0 h-[100svh] overflow-y-auto overflow-x-hidden sm:h-screen">
           {props.children}
         </div>
       </nav>
