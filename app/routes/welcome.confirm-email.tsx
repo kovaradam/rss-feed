@@ -1,9 +1,10 @@
 import { Form, href, Link, redirect, useNavigation } from "react-router";
-import { getUserById, sendConfirmEmail } from "~/models/user.server";
+import { getUserById } from "~/models/user.server";
 import { requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/welcome.confirm-email";
 import { SERVER_ENV } from "~/env.server";
+import { sendConfirmEmail } from "~/models/user.mail.server";
 
 export const meta = createMeta(() => [{ title: "Confirm email" }]);
 

@@ -11,14 +11,12 @@ import invariant from "tiny-invariant";
 
 import { prisma } from "~/db.server";
 import { createDefaultCollections } from "./collection.server";
-import { Mail } from "./mail.server";
 import {
   AuthenticatorTransportFuture,
   VerifiedRegistrationResponse,
 } from "@simplewebauthn/server";
-import { SERVER_ENV } from "~/env.server";
-import { href } from "react-router";
 import { createTtl } from "~/utils.server";
+import { sendConfirmEmail, sendPasswordResetEmail } from "./user.mail.server";
 
 export type { User } from "~/__generated__/prisma/client";
 
@@ -150,37 +148,10 @@ export async function validateUserEmail(requestId: EmailRequest["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
-}
-
-export async function sendConfirmEmail(emailRequest: EmailRequest) {
-  const link = `https://${SERVER_ENV.domain}${href(
-    "/welcome/confirm-email/:requestId",
-    { requestId: emailRequest.id }
-  )}`;
-  return Mail.send(emailRequest.email, {
-    subject: "Please confirm your e-mail address ✔",
-    html: `Thank you for joining us!<br/><br/> Please verify your address by visiting <a href=${link}>${link}</a>`,
-    text: `Thank you for joining us!\n\n Please verify your address by visiting ${link}`,
-  }).catch(console.error);
-}
-
-export async function sendPasswordResetEmail(
-  operationId: PasswordReset["id"],
-  email: User["email"]
-) {
-  const link = `https://${SERVER_ENV.domain}${href(
-    "/welcome/password-reset/:operationId",
-    { operationId }
-  )}`;
-  return Mail.send(email, {
-    subject: "Reset your password ✔",
-    html: `You can now reset your password at <a href=${link}>${link}</a>`,
-    text: `You can now reset your password at ${link}`,
-  }).catch(console.error);
 }
 
 export async function requestPasswordReset(email: User["email"]) {
