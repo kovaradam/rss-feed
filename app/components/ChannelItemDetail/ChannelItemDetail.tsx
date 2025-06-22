@@ -82,7 +82,9 @@ export function ChannelItemDetail(props: Props) {
       <span className="text-slate-500 dark:text-slate-400">
         <span className="flex flex-col gap-1">
           {item.author}
-          <TimeFromNow date={new Date(item.pubDate)} />
+          <div className="w-fit">
+            <TimeFromNow date={new Date(item.pubDate)} />
+          </div>
         </span>
       </span>
       <span className="my-1 flex gap-1 text-sm">
