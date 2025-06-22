@@ -142,9 +142,12 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   <StyledNavLink
                     className={({ isActive }) =>
                       clsx(
-                        isActive ? "max-sm:bg-rose-500" : "sm:text-yellow-900",
+                        isActive
+                          ? "max-sm:bg-rose-500 max-sm:dark:[&]:bg-rose-500"
+                          : "sm:text-yellow-900",
                         `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow dark:shadow-none dark:max-sm:text-white`,
-                        `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`
+                        `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`,
+                        `dark:max-sm:bg-rose-600 dark:max-sm:hover:bg-rose-500 dark:max-sm:active:bg-rose-500`
                       )
                     }
                     to={href("/channels/new")}
