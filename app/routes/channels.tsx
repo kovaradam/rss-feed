@@ -142,8 +142,9 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   <StyledNavLink
                     className={({ isActive }) =>
                       clsx(
-                        isActive ? "[&]:bg-rose-500" : "sm:text-yellow-900",
-                        `my-4  rounded-lg bg-rose-600 py-2 font-bold text-white shadow-lg shadow-rose-400 active:bg-rose-500 sm:h-auto sm:bg-inherit sm:py-2 sm:shadow hover:[&]:bg-rose-500 sm:[&]:hover:bg-slate-200 sm:[&]:active:bg-slate-300`
+                        isActive ? "max-sm:bg-rose-500" : "sm:text-yellow-900",
+                        `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow dark:shadow-none dark:max-sm:text-white`,
+                        `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`
                       )
                     }
                     to={href("/channels/new")}
@@ -326,10 +327,10 @@ function StyledNavLink({
       {...props}
       className={(state) =>
         clsx(
-          state.isPending ? "bg-slate-100" : "", // mobile pending state
+          state.isPending && "max-sm:bg-slate-100 max-sm:dark:bg-slate-800", // mobile pending state
           `m-2 flex gap-2 rounded p-2 py-1 text-lg sm:text-lg sm:hover:bg-slate-200 sm:active:bg-slate-300 dark:text-slate-300 dark:hover:bg-slate-900`,
           state.isActive &&
-            " bg-slate-200 text-slate-600 sm:text-slate-600 dark:bg-slate-800 sm:[&]:bg-slate-200",
+            " bg-slate-200 text-slate-600 sm:bg-slate-200 sm:text-slate-600 dark:bg-slate-800",
           typeof props.className === "function"
             ? props.className(state)
             : props.className
