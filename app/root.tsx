@@ -73,6 +73,12 @@ export default function App(props: Route.ComponentProps) {
 
   useOnWindowFocus(revalidator.revalidate);
 
+  const isLoadervisible =
+    (!navigation.formAction ||
+      navigation.formMethod === "GET" ||
+      navigation.formData?.get("loader") === String(true)) &&
+    ["loading", "submitting"].includes(navigation.state);
+
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">
       <head>
@@ -100,16 +106,9 @@ export default function App(props: Route.ComponentProps) {
         </noscript>
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
-        {(!navigation.formAction ||
-          navigation.formMethod === "GET" ||
-          navigation.formData?.get("loader") === String(true)) && (
-          <div
-            data-loading={["loading", "submitting"].includes(navigation.state)}
-            className="_progress"
-          >
-            <div className="" />
-          </div>
-        )}
+        <div data-loading={isLoadervisible} className="_progress">
+          <div data-loader-effect />
+        </div>
         <div id="confirm-modal"></div>
         {data.console && (
           <div className="absolute top-0 z-50 w-full bg-orange-200 sm:hidden">
