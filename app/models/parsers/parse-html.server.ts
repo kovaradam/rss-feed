@@ -11,7 +11,7 @@ const RSS_LINK_QUERY = `
 
 export function parseLinksFromHtml(query: ReturnType<typeof getDocumentQuery>) {
   const linkElements = query(RSS_LINK_QUERY).filter(
-    (_, e) => e.tagName === "link" || e.tagName === "a"
+    (_, e) => e.tagName === "link" || e.tagName === "a",
   );
 
   const links: Array<{ href: string }> = [];

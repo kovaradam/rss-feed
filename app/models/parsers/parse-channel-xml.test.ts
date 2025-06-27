@@ -4,7 +4,7 @@ import { TEST_FEED_DATA } from "./test-feed-data";
 
 test("valid feed result", async () => {
   const { channel, channelItems } = await parseChannelXml(
-    TEST_FEED_DATA.TEST_CHANNEL_1
+    TEST_FEED_DATA.TEST_CHANNEL_1,
   );
   expect(channel.title).toBe("Feed Name");
   expect(channel.link).toBe("https://link.com");
@@ -22,6 +22,6 @@ test("valid feed result", async () => {
   expect(channelItems[0]?.description).toBe("Item description");
   expect(channelItems[0]?.imageUrl).toBe("https://item.img");
   expect(channelItems[0]?.pubDate?.toISOString()).toBe(
-    "2025-05-25T08:15:00.000Z"
+    "2025-05-25T08:15:00.000Z",
   );
 });

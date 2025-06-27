@@ -7,6 +7,6 @@ React.startTransition(() => {
     document,
     <React.StrictMode>
       <HydratedRouter />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 });

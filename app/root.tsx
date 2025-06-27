@@ -62,7 +62,7 @@ export default function App(props: Route.ComponentProps) {
           document.body.classList.remove("scroll");
         }
       },
-      { signal: controller.signal, passive: true }
+      { signal: controller.signal, passive: true },
     );
     return () => controller.abort();
   }, []);

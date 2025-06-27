@@ -53,7 +53,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
           password: validate.getError(password),
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -67,7 +67,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
           password: "Invalid email or password",
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

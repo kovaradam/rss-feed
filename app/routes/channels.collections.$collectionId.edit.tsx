@@ -74,7 +74,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     read: getBooleanValue(form.read),
     category: categoryToDelete
       ? undefined
-      : (getCategoryFormValue(formData, fieldNames.category) ?? undefined),
+      : getCategoryFormValue(formData, fieldNames.category) ?? undefined,
     language: form.language ?? undefined,
   });
 
@@ -88,7 +88,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   throw redirect(
-    href("/channels/collections/:collectionId", { collectionId: collection.id })
+    href("/channels/collections/:collectionId", {
+      collectionId: collection.id,
+    }),
   );
 };
 

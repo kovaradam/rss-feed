@@ -64,7 +64,7 @@ class Cache {
   static set(
     fnName: string,
     key: string,
-    params: { value: unknown; ttl: number }
+    params: { value: unknown; ttl: number },
   ) {
     let invocationMap = this.fnMap.get(fnName);
 

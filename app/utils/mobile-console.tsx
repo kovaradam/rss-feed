@@ -34,6 +34,6 @@ function renderConsole() {
           </li>
         ))}
       </ul>
-    </details>
+    </details>,
   );
 }

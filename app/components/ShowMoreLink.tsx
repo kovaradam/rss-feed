@@ -17,7 +17,7 @@ export function ShowMoreLink(props: Props) {
       Array.from(searchParams.entries()).map(([name, value]) => ({
         value,
         name,
-      }))
+      })),
     )
     .filter(({ name }) => name !== props.cursor.name);
 

@@ -9,11 +9,11 @@ export const validate = {
     v.pipe(
       v.string("Provided password is invalid"),
       v.nonEmpty("Password is required"),
-      v.minLength(8, "Password is too short, provide at least 8 characters")
-    )
+      v.minLength(8, "Password is too short, provide at least 8 characters"),
+    ),
   ),
   email: parseFrom(
-    v.message(v.pipe(v.string(), v.email()), "Email is in incorrect format")
+    v.message(v.pipe(v.string(), v.email()), "Email is in incorrect format"),
   ),
   isError: (input: unknown) => input instanceof UserError,
   getError: (input: unknown) =>

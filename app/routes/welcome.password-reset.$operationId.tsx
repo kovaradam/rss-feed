@@ -9,7 +9,7 @@ import { HiddenInputs } from "~/components/HiddenInputs";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const operation = await getPasswordReset(params.operationId).catch(
-    () => null
+    () => null,
   );
 
   return { operationId: operation?.id };

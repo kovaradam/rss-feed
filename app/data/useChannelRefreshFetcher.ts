@@ -5,7 +5,7 @@ export function useChannelRefreshFetcher() {
   const status = React.useSyncExternalStore(
     RefreshFetcherStore.subscribe,
     RefreshFetcherStore.getStatus,
-    () => "idle" as const
+    () => "idle" as const,
   );
 
   if (typeof status === "number") {

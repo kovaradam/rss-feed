@@ -16,7 +16,7 @@ const html = renderToString(
     <body>
       <a href="/rss">rss feeds</a>
     </body>
-  </html>
+  </html>,
 );
 
 test("valid feed result", async () => {

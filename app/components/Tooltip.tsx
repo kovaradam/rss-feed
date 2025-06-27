@@ -9,18 +9,18 @@ export function Tooltip(
   props: React.PropsWithChildren<{
     target?: HTMLElement;
     position?: Partial<Position>;
-  }>
+  }>,
 ) {
   const id = React.useId();
   const [elementRef, setElementRef] = React.useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const positionTimeoutRef = React.useRef(-1);
   const [position, setPosition] = React.useState<Position | null>(null);
 
   const getTarget = React.useCallback(
     () => props.target ?? elementRef?.parentElement,
-    [props.target, elementRef]
+    [props.target, elementRef],
   );
 
   const show = React.useCallback(() => {
@@ -46,7 +46,7 @@ export function Tooltip(
             props.position?.y ??
             (targetCenter.top / window.innerHeight > 0.5 ? "top" : "bottom"),
         }),
-      500
+      500,
     );
   }, [getTarget, props.position]);
 
@@ -88,7 +88,7 @@ export function Tooltip(
           hide();
         }
       },
-      { signal: controller.signal }
+      { signal: controller.signal },
     );
 
     return () => controller.abort();

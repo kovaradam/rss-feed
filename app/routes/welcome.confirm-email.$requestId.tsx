@@ -19,7 +19,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       request,
       href("/welcome/email-confirmed")
         .concat("?")
-        .concat(searchParams.toString())
+        .concat(searchParams.toString()),
     );
   }
 

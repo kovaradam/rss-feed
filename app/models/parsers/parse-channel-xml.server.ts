@@ -10,7 +10,7 @@ export type ChannelResult = Omit<
 export type ItemParseResult = Omit<Item, "channelId" | "id">[];
 
 export async function parseChannelXml(
-  channelXml: string
+  channelXml: string,
 ): Promise<{ channel: ChannelResult; channelItems: ItemParseResult }> {
   const result = await parseStringPromise(channelXml);
 
@@ -33,7 +33,7 @@ class ChannelDataTransformer {
     public transformedItems: ReturnType<
       ItemDataTransformer["getResult"]
     >[] = [],
-    private hasItemPubDateErrors = false
+    private hasItemPubDateErrors = false,
   ) {
     this.channelData = channelData;
     this.transformedItems = this.items?.map((item) => {

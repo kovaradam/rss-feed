@@ -64,7 +64,7 @@ export async function action({ request }: Route.ActionArgs) {
         {
           soundsAllowed: !user.soundsAllowed,
         },
-        { soundsAllowed: true }
+        { soundsAllowed: true },
       );
       return { user: updatedUser };
     }
@@ -84,7 +84,7 @@ export async function action({ request }: Route.ActionArgs) {
 
     case actions["update-password"]: {
       const currentPassword = validate.password(
-          formData.get("current-password")
+          formData.get("current-password"),
         ),
         newPassword = validate.password(formData.get("new-password"));
 
@@ -151,7 +151,7 @@ export async function loader(args: Route.LoaderArgs) {
       password: user.password
         ? {
             isCurrentLogin: user.password?.sessions.find(
-              (s) => s.id === sessionId
+              (s) => s.id === sessionId,
             ),
             sessionCount: user.password.sessions.length,
           }

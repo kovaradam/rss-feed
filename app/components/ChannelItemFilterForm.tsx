@@ -80,7 +80,7 @@ export function ChannelItemFilterForm(props: Props) {
                           value={channel.id}
                           id={channel.id}
                           defaultChecked={filters.channels?.includes(
-                            channel.id
+                            channel.id,
                           )}
                           className="min-w-[1rem]"
                         />
@@ -109,7 +109,7 @@ export function ChannelItemFilterForm(props: Props) {
                           value={category}
                           id={category}
                           defaultChecked={filters.categories?.includes(
-                            category
+                            category,
                           )}
                           className="min-w-[1rem]"
                         />

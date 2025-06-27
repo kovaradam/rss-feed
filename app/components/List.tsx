@@ -29,6 +29,6 @@ export function List<T extends "ul" | "ol" = "ul">({
       >
         Skip to start
       </a>
-    </>
+    </>,
   );
 }

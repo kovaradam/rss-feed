@@ -24,7 +24,7 @@ export async function createDefaultCollections(userId: string) {
 }
 
 export async function getCollections(
-  params: FirstParam<typeof prisma.collection.findMany>
+  params: FirstParam<typeof prisma.collection.findMany>,
 ) {
   return prisma.collection.findMany(params);
 }
@@ -32,7 +32,7 @@ export async function getCollections(
 export async function getCollection(
   id: string,
   userId: string,
-  params?: FirstParam<typeof prisma.collection.findFirst>
+  params?: FirstParam<typeof prisma.collection.findFirst>,
 ) {
   return prisma.collection.findFirst({
     ...params,
@@ -41,7 +41,7 @@ export async function getCollection(
 }
 
 export async function createCollection(
-  params: FirstParam<typeof prisma.collection.create>
+  params: FirstParam<typeof prisma.collection.create>,
 ) {
   return prisma.collection.create(params);
 }
@@ -49,7 +49,7 @@ export async function createCollection(
 export async function updateCollection(
   id: string,
   userId: string,
-  data: FirstParam<typeof prisma.collection.update>["data"]
+  data: FirstParam<typeof prisma.collection.update>["data"],
 ) {
   return prisma.collection.update({
     data: data,

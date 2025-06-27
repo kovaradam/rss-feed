@@ -49,7 +49,7 @@ export async function $confirm(params: {
           {params.confirm}
         </SubmitButton>
       </fieldset>
-    </Modal>
+    </Modal>,
   );
   return result;
 }

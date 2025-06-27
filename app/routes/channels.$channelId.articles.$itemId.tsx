@@ -79,7 +79,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     userId,
     {
       count: quoteCount,
-    }
+    },
   );
 
   if (!item) {

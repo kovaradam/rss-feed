@@ -20,7 +20,7 @@ export function WithTabs<T extends string>(props: {
 
   const currentOptionIndex = Math.max(
     props.options.findIndex((o) => o.value === currentValue),
-    0
+    0,
   );
 
   const [focusedIndex, setFocusedIndex] = React.useState<null | number>(null);
@@ -36,19 +36,20 @@ export function WithTabs<T extends string>(props: {
         className={clsx(
           styles.input,
           `grid gap-[var(--gap)] bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] focus:focus:bg-gray-50 sm:[--hor:0] dark:text-slate-100 dark:focus:focus:text-slate-100`,
-          props.className
+          props.className,
         )}
         style={{
-          [isVertical ? "gridTemplateRows" : "gridTemplateColumns"]:
-            `repeat(${props.options.length}, 1fr)`,
+          [isVertical
+            ? "gridTemplateRows"
+            : "gridTemplateColumns"]: `repeat(${props.options.length}, 1fr)`,
         }}
         onKeyDown={(e) => {
           const tablist = e.currentTarget;
           const firstTab = tablist.querySelector(
-            `a:first-of-type`
+            `a:first-of-type`,
           ) as HTMLButtonElement;
           const lastTab = tablist.querySelector(
-            `a:last-of-type`
+            `a:last-of-type`,
           ) as HTMLButtonElement;
           switch (e.key) {
             case isVertical ? "ArrowUp" : "ArrowLeft": {
@@ -62,7 +63,7 @@ export function WithTabs<T extends string>(props: {
             case isVertical ? "ArrowDown" : "ArrowRight": {
               (
                 (tablist.querySelector(
-                  `a:nth-of-type(${(focusedIndex ?? 0) + 2})`
+                  `a:nth-of-type(${(focusedIndex ?? 0) + 2})`,
                 ) ?? firstTab) as HTMLButtonElement
               )?.focus();
               e.preventDefault();
@@ -105,7 +106,7 @@ export function WithTabs<T extends string>(props: {
             className={"rounded-sm p-1 text-center ".concat(
               option.value === currentValue
                 ? ""
-                : "text-gray-600 hover:bg-gray-100 hover:text-inherit dark:text-slate-300 dark:hover:bg-slate-700"
+                : "text-gray-600 hover:bg-gray-100 hover:text-inherit dark:text-slate-300 dark:hover:bg-slate-700",
             )}
             style={{
               zIndex: 1,
@@ -127,7 +128,7 @@ export function WithTabs<T extends string>(props: {
                 }
 
                 const controlled = document.querySelector(
-                  `[data-visible-panel-for="${id}"]`
+                  `[data-visible-panel-for="${id}"]`,
                 ) as HTMLElement;
 
                 if (controlled) {
@@ -160,7 +161,7 @@ export function WithTabs<T extends string>(props: {
 function useMediaQuery(query: string) {
   const [matches, update] = React.useReducer(
     () => globalThis.matchMedia?.(query).matches,
-    globalThis.matchMedia?.(query).matches
+    globalThis.matchMedia?.(query).matches,
   );
   React.useEffect(() => {
     window.addEventListener("resize", update);

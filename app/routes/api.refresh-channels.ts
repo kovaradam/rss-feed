@@ -26,14 +26,12 @@ export async function action({ request }: Route.LoaderArgs) {
             console.error("update failed", dbChannel.feedUrl, error);
             return null;
           }
-        })
+        }),
       );
       return {
         newItemCount: results
           .map((result) =>
-            result.status === "fulfilled"
-              ? (result.value?.newItemCount ?? 0)
-              : 0
+            result.status === "fulfilled" ? result.value?.newItemCount ?? 0 : 0,
           )
           .reduce((prev, next) => prev + (next ?? 0), 0),
       };

@@ -20,6 +20,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     href(`/channels/:channelId/articles/:itemId`, {
       channelId: item.channelId,
       itemId: item.id,
-    })
+    }),
   );
 }

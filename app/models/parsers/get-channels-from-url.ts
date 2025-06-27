@@ -17,7 +17,7 @@ export async function getChannelsFromUrl(
     level: 0,
     fetched: [] as string[],
     parent: null as string | null,
-  }
+  },
 ): Promise<DefinitionResult[] | null> {
   const u = (linkUrl: string | URL) => new URL(linkUrl, url);
 
@@ -73,7 +73,7 @@ export async function getChannelsFromUrl(
         .filter((link) => link.href)
         .map(async (link) => {
           return getChannelsFromUrl(u(link.href), abortSignal, nextRecursion);
-        })
+        }),
     )
   )
     .filter((result) => result.status === "fulfilled")
@@ -81,8 +81,8 @@ export async function getChannelsFromUrl(
     .filter(booleanFilter)
     .filter(
       filterUnique(
-        (a, b) => hrefToCompare(a.url.href) === hrefToCompare(b.url.href)
-      )
+        (a, b) => hrefToCompare(a.url.href) === hrefToCompare(b.url.href),
+      ),
     );
 
   return traversedLinks;

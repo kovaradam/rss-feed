@@ -30,7 +30,7 @@ const SESSION_MAX_AGE_IN_MS = createTtl(
       },
     });
   },
-  "0 0,12 * * *" // at 00 and 12
+  "0 0,12 * * *", // at 00 and 12
 );
 const BROWSER_SESSION_ID_KEY = "sessionId";
 
@@ -69,7 +69,7 @@ export async function getUserId(request: Request): Promise<User["id"] | null> {
 
 export async function getUser<T extends Prisma.UserSelect>(
   request: Request,
-  select: T
+  select: T,
 ) {
   const userId = await getUserId(request);
   if (userId === null) return null;
@@ -83,8 +83,8 @@ export async function getUser<T extends Prisma.UserSelect>(
 export async function requireUserId(
   request: Request,
   redirectTo: string = mapValue(new URL(request.url))(
-    (url) => url.pathname + url.search + url.hash
-  )
+    (url) => url.pathname + url.search + url.hash,
+  ),
 ) {
   const userId = await getUserId(request);
   if (!userId) {
@@ -96,7 +96,7 @@ export async function requireUserId(
 
 export async function requireUser<T extends Prisma.UserSelect>(
   request: Request,
-  select: T
+  select: T,
 ) {
   const userId = await requireUserId(request);
 

@@ -39,7 +39,7 @@ type ErrorTypes = keyof typeof inputs | "xml-parse" | "create" | "fetch";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const channelUrlParam = new URL(request.url).searchParams.get(
-    inputs["channel-url"]
+    inputs["channel-url"],
   );
   return {
     title: "Add new channel",
@@ -112,7 +112,7 @@ export const action = async ({
           userId,
           channelHref: singleFeedResponse.url.href,
         },
-        request.signal
+        request.signal,
       );
     } catch (error) {
       let errorResponse;
@@ -154,7 +154,7 @@ export const action = async ({
         (await getChannelsFromUrl(parentUrl, request.signal)) ?? [];
     } else {
       throw redirect(
-        href("/channels/:channelId", { channelId: newChannel.id })
+        href("/channels/:channelId", { channelId: newChannel.id }),
       );
     }
   }
@@ -171,7 +171,7 @@ export const action = async ({
   const feeds = channelResponse?.map((foundChannel) => ({
     channelId: userChannels.find(
       (userChannel) =>
-        normalizeHref(foundChannel.url.href) === userChannel.normalizedHref
+        normalizeHref(foundChannel.url.href) === userChannel.normalizedHref,
     )?.id,
     href: foundChannel.url.href,
     title: foundChannel.content.title,
@@ -192,7 +192,7 @@ export default function NewChannelPage({
   const isSaving = isSubmitting(navigation);
 
   const feedsResponse = useKeepTruthy(
-    actionData && "feeds" in actionData ? actionData : null
+    actionData && "feeds" in actionData ? actionData : null,
   );
 
   return (
@@ -290,8 +290,8 @@ export default function NewChannelPage({
                           isPending={
                             normalizeHref(
                               String(
-                                navigation.formData?.get(inputs["channel-url"])
-                              )
+                                navigation.formData?.get(inputs["channel-url"]),
+                              ),
                             ) === normalizeHref(channel.href)
                           }
                           className="h-fit rounded border-current bg-rose-100 p-1 px-2 text-rose-700 hover:bg-rose-200 active:bg-rose-50 disabled:pointer-events-none dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700 "
@@ -341,7 +341,7 @@ function TextWithLink(props: { text: string }) {
                 <Link to={props.to} className="underline">
                   {props.label}
                 </Link>
-              )
+              ),
           )}
         </React.Fragment>
       ))}

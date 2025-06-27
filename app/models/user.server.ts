@@ -27,14 +27,14 @@ type UserSelect = Prisma.UserSelect;
 
 export async function getUserById<T extends UserSelect>(
   id: User["id"],
-  select: T
+  select: T,
 ) {
   return prisma.user.findUnique({ where: { id }, select });
 }
 
 export async function getUserByEmail<T extends UserSelect>(
   email: User["email"],
-  select: T
+  select: T,
 ) {
   return prisma.user.findUnique({ where: { email }, select });
 }
@@ -148,8 +148,8 @@ export async function validateUserEmail(requestId: EmailRequest["id"]) {
     loginType: updatedUser.passkeys.length
       ? "passkey"
       : updatedUser.password?.userId
-        ? "password"
-        : null,
+      ? "password"
+      : null,
     email: updatedUser.email,
   };
 }
@@ -210,7 +210,7 @@ export async function requestUpdateUserEmail(id: User["id"], newEmail: string) {
 export async function updateUser<T extends UserSelect>(
   id: User["id"],
   data: Prisma.UserUpdateArgs["data"],
-  select: T
+  select: T,
 ) {
   return await prisma.user.update({
     where: { id: id },
@@ -242,7 +242,7 @@ export async function makeUserAdmin(id: User["id"], isAdmin: boolean) {
 
 export async function verifyLogin(
   email: User["email"],
-  password: Password["hash"]
+  password: Password["hash"],
 ) {
   const userWithPassword = await prisma.user
     .findUnique({
@@ -259,7 +259,7 @@ export async function verifyLogin(
 
   const isValid = await bcrypt.compare(
     password,
-    userWithPassword.password.hash
+    userWithPassword.password.hash,
   );
 
   if (!isValid) {
@@ -314,7 +314,7 @@ export async function resetPassword(params: {
   newPassword: string;
 }) {
   const operation = await getPasswordReset(params.operationId).catch(
-    () => null
+    () => null,
   );
 
   if (!operation) {
@@ -335,7 +335,7 @@ export async function resetPassword(params: {
 }
 
 function getPasskeyInputFromRegistration(
-  registration: PasskeyRegistration
+  registration: PasskeyRegistration,
 ): Omit<Prisma.WebAuthnCredentialCreateInput, "userId" | "user"> {
   const { credential } = registration;
   return {
@@ -379,7 +379,7 @@ const PASSWORD_RESET_TTL = createTtl(
       where: { createdAt: { lte: new Date(Date.now() - ttl) } },
     });
   },
-  "0 * * * *" // every hour
+  "0 * * * *", // every hour
 );
 
 export const getPasskeysByUser = async (email: string) => {

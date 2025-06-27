@@ -4,7 +4,7 @@ import { getDocumentQuery } from "./models/utils.server";
 export function createTtl(
   ttl: number,
   cleanup: (interval: number) => Promise<void>,
-  schedule: string
+  schedule: string,
 ) {
   cleanup(ttl);
   cron.schedule(schedule, () => cleanup(ttl));
@@ -12,7 +12,7 @@ export function createTtl(
 }
 
 export function getIsRssChannelFile(
-  query: ReturnType<typeof getDocumentQuery>
+  query: ReturnType<typeof getDocumentQuery>,
 ) {
   const rssElement = query("feed,rss");
   return rssElement.length === 1;

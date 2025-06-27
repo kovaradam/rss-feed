@@ -51,7 +51,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
           password: validate.getError(password),
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -61,7 +61,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     if (existingUser) {
       return data<ActionData>(
         { errors: { email: "User with this email already exists." } },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +73,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     console.error(e);
     return data<ActionData>(
       { errors: { email: "Something went wrong, please try again later" } },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

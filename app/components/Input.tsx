@@ -73,7 +73,7 @@ export function Input<T extends readonly React.ReactNode[]>({
             .concat(inputProps.className ?? "")}
           disabled={inputProps.disabled || formStatus.pending}
           aria-describedby={(inputProps["aria-describedby"] ?? "").concat(
-            errors?.map((e) => e.id).join(" ") ?? ""
+            errors?.map((e) => e.id).join(" ") ?? "",
           )}
           aria-invalid={errors ? true : undefined}
         />
@@ -88,7 +88,9 @@ export function Input<T extends readonly React.ReactNode[]>({
         )}
       </div>
       <div aria-live="polite">
-        {errors?.map((e) => <InputError key={e.id}>{e.content}</InputError>)}
+        {errors?.map((e) => (
+          <InputError key={e.id}>{e.content}</InputError>
+        ))}
       </div>
     </div>
   );
@@ -111,13 +113,13 @@ export function Input<T extends readonly React.ReactNode[]>({
 }
 
 Input.Email = function EmailInput<T extends readonly React.ReactNode[]>(
-  props: Omit<Props<T>, "type" | "placeholder">
+  props: Omit<Props<T>, "type" | "placeholder">,
 ) {
   return <Input {...props} type="email" placeholder="name@example.com" />;
 };
 
 Input.Password = function EmailInput<T extends readonly React.ReactNode[]>(
-  props: Omit<Props<T>, "type" | "placeholder">
+  props: Omit<Props<T>, "type" | "placeholder">,
 ) {
   return <Input {...props} type="password" />;
 };

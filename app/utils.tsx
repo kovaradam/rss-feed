@@ -15,7 +15,7 @@ const DEFAULT_REDIRECT = "/";
  */
 export function safeRedirect(
   to: FormDataEntryValue | string | null | undefined,
-  defaultRedirect: string = DEFAULT_REDIRECT
+  defaultRedirect: string = DEFAULT_REDIRECT,
 ) {
   if (!to || typeof to !== "string") {
     return defaultRedirect;
@@ -35,12 +35,12 @@ export function safeRedirect(
  * @returns {JSON|undefined} The router data or undefined if not found
  */
 export function useMatchesData(
-  id: string
+  id: string,
 ): Record<string, unknown> | undefined {
   const matchingRoutes = useMatches();
   const route = React.useMemo(
     () => matchingRoutes.find((route) => route.id === id),
-    [matchingRoutes, id]
+    [matchingRoutes, id],
   );
 
   return route?.data as Record<string, unknown>;
@@ -91,7 +91,7 @@ export function createMeta(metaFunction?: MetaFunction): MetaFunction {
 export function uniqueArrayFilter<T>(
   item: T,
   index: number,
-  array: T[]
+  array: T[],
 ): boolean {
   return array.indexOf(item) === index;
 }
@@ -111,7 +111,7 @@ export function isSubmitting({
 }
 
 export function enumerate<T extends readonly string[]>(
-  input: [...T]
+  input: [...T],
 ): { [key in T[number]]: key } {
   return Object.fromEntries(input.map((v) => [v, v])) as ReturnType<
     typeof enumerate<T>

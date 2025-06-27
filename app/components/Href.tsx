@@ -19,7 +19,7 @@ export function Href(props: Props) {
     >
       {props.children ??
         mapValue(props.href)((href) =>
-          href.endsWith("/") ? href.slice(0, -1) : href
+          href.endsWith("/") ? href.slice(0, -1) : href,
         )}
     </a>
   );

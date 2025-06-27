@@ -27,8 +27,8 @@ export const restHandlers = [
           <body>
             <a href={FEEDS_PAGE_URL}>rss channels</a>
           </body>
-        </html>
-      )
+        </html>,
+      ),
     );
   }),
   http.get(FEEDS_PAGE_URL, () => {
@@ -48,8 +48,8 @@ export const restHandlers = [
             <a href={FEED_1_URL}>rss channel 1</a>
             <a href={FEED_2_URL}>rss channel 2</a>
           </body>
-        </html>
-      )
+        </html>,
+      ),
     );
   }),
   http.get(FEED_MAIN_URL, () => {
@@ -72,7 +72,7 @@ afterEach(() => server.resetHandlers());
 test("feed file link returns feed definition", async () => {
   const result = await getChannelsFromUrl(
     new URL(FEED_MAIN_URL),
-    new AbortController().signal
+    new AbortController().signal,
   );
 
   expect(result?.length).toBe(1);
@@ -84,7 +84,7 @@ test("feed file link returns feed definition", async () => {
 test("page link returns links list", async () => {
   const result = await getChannelsFromUrl(
     new URL(PAGE_URL),
-    new AbortController().signal
+    new AbortController().signal,
   );
 
   expect(result?.length).toBe(3);

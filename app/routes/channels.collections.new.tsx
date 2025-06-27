@@ -59,7 +59,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
   });
 
   throw redirect(
-    href("/channels/collections/:collectionId", { collectionId: collection.id })
+    href("/channels/collections/:collectionId", {
+      collectionId: collection.id,
+    }),
   );
 };
 

@@ -7,7 +7,7 @@ export class MailService {
 
   static async send(
     recipient: string,
-    options: Omit<MailOptions, "from" | "to">
+    options: Omit<MailOptions, "from" | "to">,
   ) {
     // send mail with defined transport object
 

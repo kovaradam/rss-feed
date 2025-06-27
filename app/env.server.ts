@@ -5,24 +5,24 @@ const EnvSchema = v.object({
   domain: v.message(v.pipe(v.string(), v.nonEmpty()), "missing server domain!"),
   sessionSecret: v.message(
     v.pipe(v.string(), v.nonEmpty()),
-    "missing session secret!"
+    "missing session secret!",
   ),
   mail: v.object({
     smtpUrl: v.message(
       v.pipe(v.string(), v.nonEmpty()),
-      "missing email smtp url!"
+      "missing email smtp url!",
     ),
     user: v.message(v.pipe(v.string(), v.nonEmpty()), "missing email user!"),
     password: v.message(
       v.pipe(v.string(), v.nonEmpty()),
-      "missing email password!"
+      "missing email password!",
     ),
   }),
   admin: v.object({
     email: v.message(v.pipe(v.string(), v.nonEmpty()), "missing admin email!"),
     password: v.message(
       v.pipe(v.string(), v.nonEmpty()),
-      "missing admin password!"
+      "missing admin password!",
     ),
   }),
 });

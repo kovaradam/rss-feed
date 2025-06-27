@@ -15,7 +15,7 @@ DescriptionList.Term = function DescriptionTerm(
           children: React.ReactNode;
         }
       | { visuallyHidden: true; children: string }
-    )
+    ),
 ) {
   return (
     <dt
@@ -25,7 +25,7 @@ DescriptionList.Term = function DescriptionTerm(
         "visuallyHidden" in props &&
           props.visuallyHidden === true &&
           "_visually-hidden",
-        props.className
+        props.className,
       )}
     >
       {props.children}
@@ -34,7 +34,7 @@ DescriptionList.Term = function DescriptionTerm(
 };
 
 DescriptionList.Definition = function DescriptionDefinition(
-  props: React.HTMLAttributes<HTMLElement>
+  props: React.HTMLAttributes<HTMLElement>,
 ) {
   return (
     <dd

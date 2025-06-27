@@ -17,7 +17,7 @@ export async function action({ request }: Route.LoaderArgs) {
     case "add-get-options": {
       const user = await requireUser(request, { email: true });
       const registrationOptions = await WebAuthnService.startRegistration(
-        user.email
+        user.email,
       );
 
       return registrationOptions;

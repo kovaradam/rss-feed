@@ -28,7 +28,7 @@ export class WebAuthnService {
     } else {
       return {
         authenticationOptions: await this.#startAuthentication(
-          existingUser.email
+          existingUser.email,
         ),
       };
     }
@@ -116,7 +116,9 @@ export class WebAuthnService {
     const authenticationOptions = await generateAuthenticationOptions({
       rpID: this.#relyingPartyId,
 
-      allowCredentials: (await getPasskeysByUser(email)).map((passkey) => ({
+      allowCredentials: (
+        await getPasskeysByUser(email)
+      ).map((passkey) => ({
         id: passkey.credentialId,
         transports: passkey.transports,
       })),
@@ -163,7 +165,7 @@ export class WebAuthnService {
     if (!this.#clearTimeoutId) {
       this.#clearTimeoutId = globalThis.setTimeout(async () => {
         const fiveMinutesBack = new Date(
-          new Date().getTime() - CEREMONY_TIMEOUT
+          new Date().getTime() - CEREMONY_TIMEOUT,
         );
 
         try {

@@ -147,7 +147,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                           : "sm:text-yellow-900",
                         `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow dark:shadow-none dark:max-sm:text-white`,
                         `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`,
-                        `dark:max-sm:bg-rose-600 dark:max-sm:hover:bg-rose-500 dark:max-sm:active:bg-rose-500`
+                        `dark:max-sm:bg-rose-600 dark:max-sm:hover:bg-rose-500 dark:max-sm:active:bg-rose-500`,
                       )
                     }
                     to={href("/channels/new")}
@@ -253,7 +253,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                         ?.filter((channel) =>
                           channel.title
                             .toLowerCase()
-                            .includes(channelFilter.toLocaleLowerCase())
+                            .includes(channelFilter.toLocaleLowerCase()),
                         )
                         .map((channel) => (
                           <li key={channel.id}>
@@ -336,7 +336,7 @@ function StyledNavLink({
             " bg-slate-200 text-slate-600 sm:bg-slate-200 sm:text-slate-600 dark:bg-slate-800",
           typeof props.className === "function"
             ? props.className(state)
-            : props.className
+            : props.className,
         )
       }
       onClick={(event) => {
@@ -455,7 +455,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
 }
 
 function registerNavSwipeCallbacks(
-  setIsExpanded: (value: boolean) => void
+  setIsExpanded: (value: boolean) => void,
 ): Pick<
   React.HTMLAttributes<HTMLDivElement>,
   "onTouchStart" | "onTouchMove" | "onTouchEnd"
@@ -467,11 +467,11 @@ function registerNavSwipeCallbacks(
     onTouchStart: (event) => {
       event.currentTarget.setAttribute(
         "data-touch-start-x",
-        String(event.targetTouches[0]?.clientX)
+        String(event.targetTouches[0]?.clientX),
       );
       event.currentTarget.setAttribute(
         "data-touch-start-y",
-        String(event.targetTouches[0]?.clientY)
+        String(event.targetTouches[0]?.clientY),
       );
       event.currentTarget.setAttribute("data-slide-diff", "");
     },
@@ -503,13 +503,13 @@ function registerNavSwipeCallbacks(
         slidingElement?.setAttribute("data-sliding", String(true));
         slidingElement?.setAttribute(
           "style",
-          `translate:${-1 * diffX}px;transition:none;`
+          `translate:${-1 * diffX}px;transition:none;`,
         );
 
         const opacity = Math.abs(diffX / event.currentTarget.clientWidth / 5);
         getOverlayElement()?.setAttribute(
           "style",
-          `--opacity:${isExpanded ? 0.1 - opacity : opacity}`
+          `--opacity:${isExpanded ? 0.1 - opacity : opacity}`,
         );
       }
     },
@@ -530,7 +530,7 @@ function registerNavSwipeCallbacks(
 
 function useNavToggleState() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(
-    globalThis.document?.querySelector("#nav-toggle:checked") !== null
+    globalThis.document?.querySelector("#nav-toggle:checked") !== null,
   );
 
   React.useEffect(() => {

@@ -46,7 +46,7 @@ export function NavWrapper(props: Props) {
           // increasing opacity on opening slide
           `opacity-[clamp(0,var(--opacity,0),0.1)]`,
           // decreasing opacity on closing slide
-          `[input:checked+div_&]:opacity-[clamp(0,var(--opacity,0.1),0.1)]`
+          `[input:checked+div_&]:opacity-[clamp(0,var(--opacity,0.1),0.1)]`,
         )}
       />
     </>
