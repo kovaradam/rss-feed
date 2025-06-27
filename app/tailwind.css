@@ -36,7 +36,7 @@
 }
 
 ._progress {
-  --duration: 1s;
+  --duration: 1.2s;
   @apply absolute top-0 z-20 h-1 w-0 bg-rose-700 bg-opacity-25;
 }
 
@@ -46,7 +46,7 @@
   @apply w-full;
 }
 
-._progress[data-loading="true"] [data-loader-effect] {
+._progress[data-loading="true"] [data-loader-slider] {
   @apply h-full w-1/2 bg-rose-500;
   animation: progress;
   animation-duration: var(--duration);
@@ -59,10 +59,10 @@
 
 @keyframes progress {
   from {
-    transform: translateX(-100%) scaleX(80%);
+    transform: translateX(-100%) scaleX(60%);
   }
   to {
-    transform: translateX(200%) scaleX(100%);
+    transform: translateX(250%) scaleX(100%);
   }
 }
 
