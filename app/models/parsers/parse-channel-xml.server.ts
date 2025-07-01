@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Channel, Item } from "~/__generated__/prisma/client";
 import { parseStringPromise } from "xml2js";
-
+import { mapValue } from "../../utils/map-value";
+import * as cheerio from "cheerio";
 export type ChannelResult = Omit<
   Channel,
   "userId" | "feedUrl" | "id" | "updatedAt" | "createdAt"
@@ -152,6 +153,29 @@ class ItemDataTransformer {
     return pubDateObject;
   }
 
+  get imageUrl() {
+    return (
+      (this.itemData?.enclosure
+        ?.map((payload: any) => payload?.["$"])
+        ?.filter(Boolean)
+        ?.find((enclosure: any) => enclosure.type?.includes("image"))?.url ||
+        //
+        this.itemData?.["media:content"]
+          ?.map((media: any) => media?.$)
+          ?.filter(Boolean)
+          ?.find((media: any) => media.medium?.includes("image"))?.url ||
+        //
+        mapValue(
+          this.itemData?.["content:encoded"]
+            ?.map((content: any) => content?.trim?.())
+            ?.filter(Boolean)?.[0],
+        )((xml) =>
+          typeof xml === "string" ? cheerio.load(xml)("img").attr("src") : null,
+        )) ??
+      ""
+    );
+  }
+
   getResult(): ItemParseResult[number] {
     return {
       link: this.link,
@@ -160,15 +184,7 @@ class ItemDataTransformer {
       author: this.author,
       comments: this.itemData?.comments?.[0] ?? "",
       pubDate: this.pubDate,
-      imageUrl:
-        (
-          this.itemData?.enclosure as
-            | { $: { type: string; url: string } }[]
-            | undefined
-        )
-          ?.map((payload) => payload?.["$"])
-          .filter(Boolean)
-          .find((enclosure) => enclosure.type?.includes("image"))?.url ?? "",
+      imageUrl: this.imageUrl,
       bookmarked: false,
       read: false,
       hiddenFromFeed: false,

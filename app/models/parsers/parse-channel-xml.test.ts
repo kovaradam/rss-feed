@@ -24,4 +24,7 @@ test("valid feed result", async () => {
   expect(channelItems[0]?.pubDate?.toISOString()).toBe(
     "2025-05-25T08:15:00.000Z",
   );
+
+  expect(channelItems[1]?.imageUrl)?.toBe("https://item2.img");
+  expect(channelItems[2]?.imageUrl)?.toBe("https://item3.img");
 });
