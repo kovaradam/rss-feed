@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, useSearchParams } from "react-router";
+import { DotsLoading } from "./icons/DotsLoading";
 
 type Props = React.ComponentProps<typeof Form> & {
   isLoading?: boolean;
@@ -23,7 +24,10 @@ export function ShowMoreLink(props: Props) {
 
   return (
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
-      <button type={"submit"} className="hover:underline dark:text-white">
+      <button
+        type={"submit"}
+        className="h-[3ex] hover:underline dark:text-white"
+      >
         <input
           type="hidden"
           name={props.cursor.name}
@@ -32,7 +36,7 @@ export function ShowMoreLink(props: Props) {
         {otherValues.map(({ value, name }) => (
           <input type="hidden" name={name} value={value} key={name + value} />
         ))}
-        {props.isLoading ? "Loading..." : "Show more"}
+        {props.isLoading ? <DotsLoading /> : "Show more"}
       </button>
     </Form>
   );

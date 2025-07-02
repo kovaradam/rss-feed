@@ -1,5 +1,6 @@
 import { useFetcher } from "react-router";
 import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
+import { DotsLoading } from "./icons/DotsLoading";
 
 export function NewItemsAlert() {
   /** submits mutation that triggers query revalidation */
@@ -33,22 +34,8 @@ export function NewItemsAlert() {
         }}
         disabled={isFetchingNewItems}
       >
-        {isFetchingNewItems ? <LoadingIcon /> : <>Show new articles</>}
+        {isFetchingNewItems ? <DotsLoading /> : <>Show new articles</>}
       </button>
-    </div>
-  );
-}
-
-function LoadingIcon() {
-  return (
-    <div className="flex gap-2">
-      {[0, 1, 2].map((idx) => (
-        <div
-          key={idx}
-          className="h-2 w-2 rounded-lg bg-slate-200"
-          style={{ animation: `bounce 1s ease ${idx * 100}ms infinite` }}
-        />
-      ))}
     </div>
   );
 }
