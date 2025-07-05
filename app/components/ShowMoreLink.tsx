@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, useSearchParams } from "react-router";
+import { Form, useNavigation, useSearchParams } from "react-router";
 import { DotsLoading } from "./icons/DotsLoading";
 
 type Props = React.ComponentProps<typeof Form> & {
@@ -13,6 +13,7 @@ type Props = React.ComponentProps<typeof Form> & {
  */
 export function ShowMoreLink(props: Props) {
   const [searchParams] = useSearchParams();
+  const navigation = useNavigation();
   const otherValues = (props.otherValues ?? [])
     .concat(
       Array.from(searchParams.entries()).map(([name, value]) => ({
@@ -21,6 +22,9 @@ export function ShowMoreLink(props: Props) {
       })),
     )
     .filter(({ name }) => name !== props.cursor.name);
+
+  const isLoading =
+    props.isLoading || Boolean(navigation.formData?.get(props.cursor.name));
 
   return (
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
@@ -36,7 +40,7 @@ export function ShowMoreLink(props: Props) {
         {otherValues.map(({ value, name }) => (
           <input type="hidden" name={name} value={value} key={name + value} />
         ))}
-        {props.isLoading ? <DotsLoading /> : "Show more"}
+        {isLoading ? <DotsLoading /> : "Show more"}
       </button>
     </Form>
   );
