@@ -471,6 +471,5 @@ async function getChannelPageMeta(url: string, signal: AbortSignal) {
 
   return {
     image: getContent('meta[property$="image"], meta[name$="image"]'),
-    imageAlt: getContent('meta[property$="image:alt"]'),
   };
 }
