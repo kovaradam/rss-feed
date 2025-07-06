@@ -27,7 +27,7 @@ export async function getChannelsFromUrl(
 
   recursion.fetched.push(url.href);
 
-  const response = await fetchChannel.$cached(url, abortSignal).catch((_) => {
+  const response = await fetchDocument.$cached(url, abortSignal).catch((_) => {
     throw new ChannelErrors.invalidUrl();
   });
 
@@ -88,9 +88,11 @@ export async function getChannelsFromUrl(
   return traversedLinks;
 }
 
-export const fetchChannel = cached({
+export const fetchDocument = cached({
   fn: (url: URL, signal: AbortSignal) =>
-    fetch(url, { signal }).then((r) => {
+    fetch(url, {
+      signal: AbortSignal.any([signal, AbortSignal.timeout(10 * 1000)]),
+    }).then((r) => {
       if (!r.ok) {
         throw "";
       }

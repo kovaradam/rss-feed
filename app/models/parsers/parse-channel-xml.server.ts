@@ -2,7 +2,7 @@
 import type { Channel, Item } from "~/__generated__/prisma/client";
 import { parseStringPromise } from "xml2js";
 import { mapValue } from "../../utils/map-value";
-import * as cheerio from "cheerio";
+import { load } from "cheerio/slim";
 export type ChannelResult = Omit<
   Channel,
   "userId" | "feedUrl" | "id" | "updatedAt" | "createdAt"
@@ -170,7 +170,7 @@ class ItemDataTransformer {
             ?.map((content: any) => content?.trim?.())
             ?.filter(Boolean)?.[0],
         )((xml) =>
-          typeof xml === "string" ? cheerio.load(xml)("img").attr("src") : null,
+          typeof xml === "string" ? load(xml)("img").attr("src") : null,
         )) ??
       ""
     );

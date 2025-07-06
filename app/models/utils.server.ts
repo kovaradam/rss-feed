@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { load } from "cheerio/slim";
 import { Channel } from "./types.server";
 
 export const ChannelErrors = {
@@ -14,5 +14,5 @@ export const ChannelErrors = {
 };
 
 export function getDocumentQuery(xmlInput: string) {
-  return cheerio.load(xmlInput);
+  return load(xmlInput);
 }

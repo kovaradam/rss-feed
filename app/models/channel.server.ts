@@ -6,7 +6,7 @@ import invariant from "tiny-invariant";
 import { Channel, Collection, Item, User } from "./types.server";
 import { ChannelErrors, getDocumentQuery } from "./utils.server";
 import { cached } from "~/utils/cached";
-import { fetchChannel } from "./parsers/get-channels-from-url";
+import { fetchDocument } from "./parsers/get-channels-from-url";
 import { normalizeHref } from "~/utils";
 
 export async function createChannelFromXml(
@@ -56,7 +56,7 @@ export async function createChannelFromXml(
 
   if (!parseResult.channel.imageUrl) {
     try {
-      const channelPageMeta = await getChannelPageMeta(
+      const channelPageMeta = await getChannelPageMeta.$cached(
         new URL(feedUrl).origin,
         abortSignal,
       );
@@ -113,7 +113,7 @@ export const refreshChannel = cached({
     signal: AbortSignal;
   }) => {
     const feedUrl = params.feedUrl;
-    const channelXml = await fetchChannel.$cached(
+    const channelXml = await fetchDocument.$cached(
       new URL(feedUrl),
       params.signal,
     );
@@ -147,7 +147,8 @@ export const refreshChannel = cached({
     });
 
     if (!updatedChannel.imageUrl) {
-      getChannelPageMeta(new URL(updatedChannel.link).origin, params.signal)
+      getChannelPageMeta
+        .$cached(new URL(updatedChannel.link).origin, params.signal)
         .then((meta) => {
           if (!meta.image) {
             return;
@@ -457,19 +458,23 @@ export function getItemQueryFilter(query: string) {
   };
 }
 
-async function getChannelPageMeta(url: string, signal: AbortSignal) {
-  const response = await fetch(url, {
-    signal: signal,
-  });
+const getChannelPageMeta = cached({
+  fn: async (url: string, signal: AbortSignal) => {
+    const response = await fetch(url, {
+      signal: signal,
+    });
 
-  const query = getDocumentQuery(await response.text());
+    const query = getDocumentQuery(await response.text());
 
-  function getContent(selector: string) {
-    const node = query(selector);
-    return node?.attr("content");
-  }
+    function getContent(selector: string) {
+      const node = query(selector);
+      return node?.attr("content");
+    }
 
-  return {
-    image: getContent('meta[property$="image"], meta[name$="image"]'),
-  };
-}
+    return {
+      image: getContent('meta[property$="image"], meta[name$="image"]'),
+    };
+  },
+  getKey: (url) => url,
+  ttl: 1000 * 60 * 60,
+});
