@@ -37,8 +37,6 @@ import type { Route } from "./+types/channels";
 import { List } from "~/components/List";
 import { useOnWindowFocus } from "~/utils/use-on-window-focus";
 import clsx from "clsx";
-import { SpinTransition } from "~/components/animations/SpinTransition";
-import { useDebouncedValue } from "~/utils/useDebouncedValue";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -71,10 +69,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   const [title, setTitle] = React.useState(data.title as string | undefined);
 
   const refreshFetcher = useChannelRefreshFetcher();
-  const isRefreshing = useDebouncedValue(
-    refreshFetcher.status === "pending",
-    500,
-  );
+  const isRefreshing = refreshFetcher.status === "pending";
   const { refresh: refreshChannels, newItemCount } = refreshFetcher;
 
   React.useEffect(() => {
@@ -165,16 +160,14 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                       to: href(`/channels`),
                       content: (
                         <>
-                          <SpinTransition className="flex h-[inherit] items-center">
-                            {isRefreshing && !getPrefersReducedMotion() ? (
-                              <div className={"relative flex items-center"}>
-                                <RefreshIcon className={`_animate-spin w-4`} />
-                                <Tooltip>Looking for new articles</Tooltip>
-                              </div>
-                            ) : (
-                              <HomeIcon className="w-4" />
-                            )}
-                          </SpinTransition>
+                          {isRefreshing && !getPrefersReducedMotion() ? (
+                            <div className={"relative flex items-center"}>
+                              <RefreshIcon className={`_animate-spin w-4`} />
+                              <Tooltip>Looking for new articles</Tooltip>
+                            </div>
+                          ) : (
+                            <HomeIcon className="w-4" />
+                          )}
                           <Tooltip>Looking for new articles</Tooltip>
                           Feed
                         </>
