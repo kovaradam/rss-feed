@@ -1,6 +1,9 @@
+import clsx from "clsx";
 import { TimedTransition } from "./TimedTransition";
 
-export function SpinTransition(props: React.PropsWithChildren) {
+export function SpinTransition(
+  props: React.PropsWithChildren<{ className?: string }>,
+) {
   return (
     <>
       <style href="SpinTransition">{`
@@ -37,10 +40,10 @@ export function SpinTransition(props: React.PropsWithChildren) {
           t.isTransition ? (
             <div
               style={{ "--timeout": `${t.timeout}ms` } as never}
-              className="h-full"
+              className={clsx("h-full", props.className)}
             >
               <div
-                className={"spin spin-in h-full"}
+                className={"spin spin-in"}
                 onAnimationEnd={(e) => {
                   e.currentTarget.style.display = "none";
                   const sibling = e.currentTarget.nextSibling as HTMLElement;
@@ -51,7 +54,7 @@ export function SpinTransition(props: React.PropsWithChildren) {
               >
                 {t.prev}
               </div>
-              <div className={"spin spin-out h-full"}>{t.next}</div>
+              <div className={"spin spin-out"}>{t.next}</div>
             </div>
           ) : (
             t.next

@@ -95,3 +95,13 @@
   /* fixed height to prevent jankyness */
   --welcome-form-min-height: 28ex;
 }
+
+@keyframes _spin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+._animate-spin {
+  animation: _spin 2s linear infinite;
+}
