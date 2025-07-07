@@ -91,7 +91,7 @@ export async function getChannelsFromUrl(
 export const fetchDocument = cached({
   fn: (url: URL, signal: AbortSignal) =>
     fetch(url, {
-      signal: AbortSignal.any([signal, AbortSignal.timeout(10 * 1000)]),
+      signal: AbortSignal.any([signal /**  AbortSignal.timeout(10 * 1000) */]),
     }).then((r) => {
       if (!r.ok) {
         throw "";
