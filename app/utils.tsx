@@ -169,3 +169,6 @@ export function normalizeHref(href: string) {
   }
   return href;
 }
+
+export type MakeRequired<T, K extends keyof T> = T &
+  Required<{ [U in keyof Pick<T, K>]: Exclude<T[U], undefined> }>;

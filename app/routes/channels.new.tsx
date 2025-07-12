@@ -9,7 +9,7 @@ import { UseAppTitle } from "~/components/AppTitle";
 import { PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
 import { WithFormLabel } from "~/components/WithFormLabel";
-import { createChannelFromXml, getChannels } from "~/models/channel.server";
+import { createChannelFromUrl, getChannels } from "~/models/channel.server";
 import { storeFailedUpload } from "~/models/failed-upload.server";
 import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
@@ -83,11 +83,12 @@ export const action = async ({
 
   try {
     channelResponse = await getChannelsFromUrl(channelUrl, request.signal);
+
     invariant(channelResponse?.length);
   } catch (_) {
     return {
       errors: {
-        fetch: `Could not load any RSS feed from "${channelUrl.origin}"`,
+        fetch: `Could not load any RSS feed from "${inputChannelUrl}"`,
       },
     };
   }
@@ -106,11 +107,10 @@ export const action = async ({
   if (singleFeedResponse) {
     let newChannel;
     try {
-      newChannel = await createChannelFromXml(
-        singleFeedResponse.feedXml,
+      newChannel = await createChannelFromUrl(
         {
           userId,
-          channelHref: singleFeedResponse.url.href,
+          channelHref: singleFeedResponse.url,
         },
         request.signal,
       );
@@ -125,7 +125,7 @@ export const action = async ({
           };
           isErrorToStore = false;
           break;
-        case error instanceof ChannelErrors.dbUnavailible:
+        case error instanceof ChannelErrors.dbUnavailable:
           errorResponse = {
             create: "Cannot save RSS feed at this moment, please try later",
           };
@@ -171,9 +171,9 @@ export const action = async ({
   const feeds = channelResponse?.map((foundChannel) => ({
     channelId: userChannels.find(
       (userChannel) =>
-        normalizeHref(foundChannel.url.href) === userChannel.normalizedHref,
+        normalizeHref(foundChannel.url) === userChannel.normalizedHref,
     )?.id,
-    href: foundChannel.url.href,
+    href: foundChannel.url,
     title: foundChannel.content.title,
     description: foundChannel.content.description,
   }));

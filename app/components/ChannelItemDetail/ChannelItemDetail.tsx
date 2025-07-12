@@ -21,6 +21,7 @@ import { Bookmark } from "../icons/Bookmark";
 import { SpinTransition } from "../animations/SpinTransition";
 import { Item } from "~/models/types.server";
 import { htmlToText } from "~/utils/html-to-text";
+import clsx from "clsx";
 
 type Props = {
   item: ItemWithChannel;
@@ -41,7 +42,10 @@ export function ChannelItemDetail(props: Props) {
   return (
     <article
       id={item.id}
-      className={`relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none ${props.wrapperClassName}`}
+      className={clsx(
+        `relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none`,
+        props.wrapperClassName,
+      )}
       style={{
         viewTransitionName: item.id,
       }}
@@ -69,7 +73,7 @@ export function ChannelItemDetail(props: Props) {
           <img
             alt=""
             src={item.imageUrl}
-            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 object-cover text-sm italic sm:rounded-none dark:bg-slate-950"
+            className=" mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 object-cover text-sm italic sm:rounded-none dark:bg-slate-950"
             loading="lazy"
           />
         )}

@@ -65,7 +65,9 @@ model Channel {
   category      String
   copyright     String
   language      String
+  ttl           Int?
 
+  hash                  String?
   refreshDate           DateTime?
   itemPubDateParseError Boolean?
 

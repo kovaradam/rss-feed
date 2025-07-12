@@ -143,6 +143,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       feedUrl: channel.feedUrl,
       userId,
       signal: request.signal,
+      force: true,
     });
   } catch (error) {
     console.error(error);
@@ -197,7 +198,7 @@ export default function ChannelDetailsPage() {
               {data.channel.lastBuildDate ? (
                 <TimeFromNow date={data.channel.lastBuildDate} />
               ) : (
-                "unknown"
+                <i>unknown</i>
               )}
               {data.channel.refreshDate && (
                 <span>
@@ -215,7 +216,7 @@ export default function ChannelDetailsPage() {
                 {category ? (
                   <ChannelCategoryLinks category={category} />
                 ) : (
-                  "None"
+                  <i>None</i>
                 )}
               </DescriptionList.Definition>
             </span>
@@ -226,7 +227,7 @@ export default function ChannelDetailsPage() {
                 <TranslateIcon className="h-4" /> Language:
               </DescriptionList.Term>
               <DescriptionList.Definition>
-                {channel.language || "None"}
+                {channel.language || <i>None</i>}
               </DescriptionList.Definition>
             </span>
           </WithEditLink>
@@ -236,7 +237,7 @@ export default function ChannelDetailsPage() {
             </WithEditLink>
             <DescriptionList.Definition>
               <p className="text-slate-900 [overflow-wrap:anywhere] dark:text-slate-300">
-                {data.channel.description || "Description is missing"}
+                {data.channel.description || <i>Description is missing</i>}
               </p>
             </DescriptionList.Definition>
           </div>
@@ -296,7 +297,7 @@ export default function ChannelDetailsPage() {
                   updatedAt: channel.updatedAt,
                 },
               }}
-              wrapperClassName=" sm:shadow-none sm:px-0 sm:rounded-none dark:sm:bg-transparent dark:sm:border-b-slate-600 dark:sm:border-b"
+              wrapperClassName="sm:shadow-none sm:px-0 sm:rounded-none dark:sm:bg-transparent dark:sm:border-b-slate-600 dark:sm:border-b sm:bg-transparent"
             />
             <hr className="hidden dark:block dark:border-slate-600" />
           </React.Fragment>

@@ -321,6 +321,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                     pubDate: item.pubDate,
                     channel: {
                       ...item.channel,
+
                       updatedAt: item.channel.updatedAt,
                       createdAt: item.channel.createdAt,
                       lastBuildDate: item.channel.lastBuildDate,
