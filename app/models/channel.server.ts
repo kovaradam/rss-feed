@@ -106,12 +106,20 @@ export const refreshChannel = cached({
     force?: boolean;
   }) => {
     const feedUrl = params.feedUrl;
-    const hash = getChannelHash({ feedUrl, userId: params.userId });
+    const refreshData = await getChannelRefreshData({
+      feedUrl,
+      userId: params.userId,
+    });
+
+    if (refreshData?.isFresh && !params.force) {
+      return null;
+    }
+
     const response = await fetchSingleFeed(feedUrl, {
       signal: params.signal,
     });
 
-    if (!params.force && (await hash) === response.meta.feedHash) {
+    if (!params.force && refreshData?.hash === response.meta.feedHash) {
       return null;
     }
 
@@ -239,16 +247,28 @@ export async function getChannelItems<
   return prisma.item.findMany(params);
 }
 
-export async function getChannelHash(params: {
+export async function getChannelRefreshData(params: {
   feedUrl: string;
   userId: User["id"];
 }) {
-  return prisma.channel
-    .findFirst({
-      where: { feedUrl: params.feedUrl, userId: params.userId },
-      select: { hash: true },
-    })
-    .then((c) => c?.hash);
+  const channel = await prisma.channel.findFirst({
+    where: { feedUrl: params.feedUrl, userId: params.userId },
+    select: { hash: true, ttl: true, refreshDate: true, lastBuildDate: true },
+  });
+
+  if (!channel) {
+    return null;
+  }
+
+  const ttl = channel.ttl ?? 10; // minutes
+  const ttlMs = ttl * 60 * 1000;
+
+  const updateDate = channel.lastBuildDate ?? channel.refreshDate;
+
+  return {
+    hash: channel?.hash,
+    isFresh: updateDate ? updateDate.getTime() + ttlMs >= Date.now() : false,
+  };
 }
 
 export async function getChannelItem(itemId: string, userId: string) {

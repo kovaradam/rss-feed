@@ -3,8 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const CONFIG = {
-  url: "http://localhost:5173",
-  // url: "https://does-it-rss.com",
+  url: "https://does-it-rss.com",
   sources: [{ typeName: "DoesItRssApi", path: "/__schema" }],
 };
 

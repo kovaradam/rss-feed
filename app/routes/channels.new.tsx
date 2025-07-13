@@ -16,12 +16,11 @@ import { styles } from "~/styles/shared";
 import { createTitle, enumerate, isSubmitting, normalizeHref } from "~/utils";
 import { mapValue } from "~/utils/map-value";
 import type { Route } from "./+types/channels.new";
-import { getChannelsFromUrl } from "~/models/parsers/get-channels-from-url";
 import invariant from "tiny-invariant";
 import { Href } from "~/components/Href";
 import { FormButton } from "~/components/Button";
 import { HiddenInputs } from "~/components/HiddenInputs";
-import { ChannelErrors } from "~/models/utils.server";
+import { ChannelErrors, getChannelsFromUrl } from "~/models/utils.server";
 import { List } from "~/components/List";
 import { useKeepTruthy } from "~/utils/use-keep-truthy";
 
