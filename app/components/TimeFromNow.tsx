@@ -42,9 +42,10 @@ export function TimeFromNow(props: Props) {
   for (const entry of entries) {
     const [value, label] = entry;
     if (value >= 1) {
+      const floored = Math.floor(value);
       return (
         <span className={"relative"}>
-          {`${value.toFixed()} ${label}${Math.floor(value) > 1 ? "s" : ""} ago`}
+          {`${floored.toFixed()} ${label}${floored > 1 ? "s" : ""} ago`}
           {tooltip}
         </span>
       );

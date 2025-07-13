@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { getDocumentQuery } from "./models/utils.server";
+import * as v from "valibot";
 
 export function createTtl(
   ttl: number,
@@ -11,9 +11,23 @@ export function createTtl(
   return ttl;
 }
 
-export function getIsRssChannelFile(
-  query: ReturnType<typeof getDocumentQuery>,
-) {
-  const rssElement = query("feed,rss");
-  return rssElement.length === 1;
+export function asDate(value: unknown): Date | null {
+  try {
+    return v.parse(v.date(), new Date(value as never));
+  } catch (_) {
+    return null;
+  }
+}
+
+export function asUrl(value: unknown): URL | null {
+  try {
+    return new URL(value as never);
+  } catch (_) {
+    return null;
+  }
+}
+
+export function asNumber(value: unknown): number | null {
+  const result = Number(value);
+  return isNaN(result) ? null : result;
 }

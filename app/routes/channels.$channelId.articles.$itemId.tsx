@@ -1,4 +1,5 @@
 import {
+  ChatIcon,
   ChevronLeftIcon,
   ClockIcon,
   RssIcon,
@@ -182,25 +183,40 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
             content: <TimeFromNow date={item.pubDate} />,
             id: "published",
           },
-        ].map((entry) => (
-          <span className="flex items-start gap-1" key={entry.id}>
-            <DescriptionList.Term
-              className="flex items-center gap-1"
-              visuallyHidden={entry.visuallyHidden === true ? true : undefined}
-            >
-              {entry.label}
-            </DescriptionList.Term>
-            <DescriptionList.Definition>
-              {entry.content || "missing"}
-            </DescriptionList.Definition>
-          </span>
-        ))}
+          {
+            label: (
+              <>
+                <ChatIcon className="w-4" /> Comments:
+              </>
+            ),
+            content: <Href href={item.comments} className={`break-all`} />,
+            id: "comments",
+            hidden: !item.comments,
+          },
+        ].map(
+          (entry) =>
+            !entry.hidden && (
+              <span className="flex items-start gap-1" key={entry.id}>
+                <DescriptionList.Term
+                  className="flex items-center gap-1"
+                  visuallyHidden={
+                    entry.visuallyHidden === true ? true : undefined
+                  }
+                >
+                  {entry.label}
+                </DescriptionList.Term>
+                <DescriptionList.Definition>
+                  {entry.content || "missing"}
+                </DescriptionList.Definition>
+              </span>
+            ),
+        )}
         <span>
           <DescriptionList.Term className="flex items-center gap-1 pb-1 pt-2">
             Description:
           </DescriptionList.Term>
           <DescriptionList.Definition>
-            <p className="[overflow-wrap:anywhere] dark:text-white">
+            <p className="text-slate-950 [overflow-wrap:anywhere] dark:text-white">
               {description || "missing"}
             </p>
           </DescriptionList.Definition>

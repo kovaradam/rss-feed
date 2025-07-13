@@ -23,7 +23,7 @@ export async function action({ request }: Route.LoaderArgs) {
             if ((error as Error).name === "AbortError") {
               return null;
             }
-            console.error("update failed", dbChannel.feedUrl, error);
+            console.error("update failed", dbChannel.feedUrl);
             return null;
           }
         }),

@@ -9,19 +9,18 @@ import { UseAppTitle } from "~/components/AppTitle";
 import { PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
 import { WithFormLabel } from "~/components/WithFormLabel";
-import { createChannelFromXml, getChannels } from "~/models/channel.server";
+import { createChannelFromUrl, getChannels } from "~/models/channel.server";
 import { storeFailedUpload } from "~/models/failed-upload.server";
 import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
 import { createTitle, enumerate, isSubmitting, normalizeHref } from "~/utils";
 import { mapValue } from "~/utils/map-value";
 import type { Route } from "./+types/channels.new";
-import { getChannelsFromUrl } from "~/models/parsers/get-channels-from-url";
 import invariant from "tiny-invariant";
 import { Href } from "~/components/Href";
 import { FormButton } from "~/components/Button";
 import { HiddenInputs } from "~/components/HiddenInputs";
-import { ChannelErrors } from "~/models/utils.server";
+import { ChannelErrors, getChannelsFromUrl } from "~/models/utils.server";
 import { List } from "~/components/List";
 import { useKeepTruthy } from "~/utils/use-keep-truthy";
 
@@ -83,11 +82,12 @@ export const action = async ({
 
   try {
     channelResponse = await getChannelsFromUrl(channelUrl, request.signal);
+
     invariant(channelResponse?.length);
   } catch (_) {
     return {
       errors: {
-        fetch: `Could not load any RSS feed from "${channelUrl.origin}"`,
+        fetch: `Could not load any RSS feed from "${inputChannelUrl}"`,
       },
     };
   }
@@ -106,11 +106,10 @@ export const action = async ({
   if (singleFeedResponse) {
     let newChannel;
     try {
-      newChannel = await createChannelFromXml(
-        singleFeedResponse.feedXml,
+      newChannel = await createChannelFromUrl(
         {
           userId,
-          channelHref: singleFeedResponse.url.href,
+          channelHref: singleFeedResponse.url,
         },
         request.signal,
       );
@@ -125,7 +124,7 @@ export const action = async ({
           };
           isErrorToStore = false;
           break;
-        case error instanceof ChannelErrors.dbUnavailible:
+        case error instanceof ChannelErrors.dbUnavailable:
           errorResponse = {
             create: "Cannot save RSS feed at this moment, please try later",
           };
@@ -171,9 +170,9 @@ export const action = async ({
   const feeds = channelResponse?.map((foundChannel) => ({
     channelId: userChannels.find(
       (userChannel) =>
-        normalizeHref(foundChannel.url.href) === userChannel.normalizedHref,
+        normalizeHref(foundChannel.url) === userChannel.normalizedHref,
     )?.id,
-    href: foundChannel.url.href,
+    href: foundChannel.url,
     title: foundChannel.content.title,
     description: foundChannel.content.description,
   }));
