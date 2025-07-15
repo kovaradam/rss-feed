@@ -82,7 +82,7 @@ export function ChannelItemFilterForm(props: Props) {
                           defaultChecked={filters.channels?.includes(
                             channel.id,
                           )}
-                          className="min-w-[1rem]"
+                          className="min-w-4"
                         />
                         {channel.title}
                       </label>
@@ -111,7 +111,7 @@ export function ChannelItemFilterForm(props: Props) {
                           defaultChecked={filters.categories?.includes(
                             category,
                           )}
-                          className="min-w-[1rem]"
+                          className="min-w-4"
                         />
                         {category}
                       </label>
@@ -149,7 +149,7 @@ export function ChannelItemFilterForm(props: Props) {
                           value={String(true)}
                           id={field.name}
                           defaultChecked={field.currentValue}
-                          className="min-w-[1rem]"
+                          className="min-w-4"
                         />
                         {field.label}
                       </label>

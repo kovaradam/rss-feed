@@ -22,14 +22,14 @@ export function Button({ isPending: isLoading, ...buttonProps }: Props) {
 }
 
 export const buttonStyle = `flex w-fit items-center gap-2 rounded px-4 py-2 bg-slate-100 dark:bg-slate-500 dark:text-white dark:hover:bg-slate-600
-  dark:active:bg-slate-500 text-slate-700 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300 [&>*]:pointer-events-none`;
+  dark:active:bg-slate-500 text-slate-700 hover:bg-slate-200 active:bg-slate-100 disabled:text-slate-300 *:pointer-events-none`;
 
 export function SubmitButton(props: Props) {
   return (
     <FormButton
       {...props}
       type="submit"
-      className={`flex items-center justify-center rounded bg-rose-600  px-4 py-2 font-medium text-white hover:bg-rose-700 active:bg-rose-500 disabled:bg-rose-500 [&>*]:pointer-events-none ${props.className}`}
+      className={`flex items-center justify-center rounded bg-rose-600  px-4 py-2 font-medium text-white hover:bg-rose-700 active:bg-rose-500 disabled:bg-rose-500 *:pointer-events-none ${props.className}`}
     >
       {props.children}
     </FormButton>

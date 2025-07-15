@@ -145,7 +145,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                         isActive
                           ? "max-sm:bg-rose-500 max-sm:dark:[&]:bg-rose-500"
                           : "sm:text-yellow-900",
-                        `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow dark:shadow-none dark:max-sm:text-white`,
+                        `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow-sm sm:shadow-black/10 dark:shadow-none dark:max-sm:text-white`,
                         `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`,
                         `dark:max-sm:bg-rose-600 dark:max-sm:hover:bg-rose-500 dark:max-sm:active:bg-rose-500`,
                       )
@@ -281,7 +281,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                 <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
                   <label
                     aria-label="Toggle navigation"
-                    className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800"
+                    className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800 dark:active:bg-slate-900"
                     htmlFor="nav-toggle"
                   >
                     <MenuAlt2Icon className="w-6" />
@@ -370,8 +370,8 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
     <>
       <noscript className="sm:flex-1">
         <a href={href("/channels/user")} className={linkStyle}>
-          <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
-          <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
+          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4 " />
+          <span className="pointer-events-none hidden shrink overflow-hidden text-ellipsis sm:block">
             {props.email}
           </span>
         </a>
@@ -396,13 +396,13 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
           className={`${linkStyle} [&::-webkit-details-marker]:hidden`}
           aria-label="Toggle user menu"
         >
-          <UserIcon className="pointer-events-none w-6 sm:w-[1rem] sm:min-w-[1rem] " />
-          <span className="pointer-events-none hidden flex-shrink overflow-hidden text-ellipsis sm:block">
+          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4 " />
+          <span className="pointer-events-none hidden shrink overflow-hidden text-ellipsis sm:block">
             {props.email}
           </span>
         </summary>
         <ul
-          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col dark:bg-slate-800 "
+          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col dark:bg-slate-800 dark:border "
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
         >
@@ -501,7 +501,7 @@ function registerNavSwipeCallbacks(
         slidingElement?.setAttribute("data-sliding", String(true));
         slidingElement?.setAttribute(
           "style",
-          `translate:${-1 * diffX}px;transition:none;`,
+          `translate:calc(${isExpanded ? "var(--tw-translate-x)" : "0px"} + ${-1 * diffX}px);transition:none;`,
         );
 
         const opacity = Math.abs(diffX / event.currentTarget.clientWidth / 5);

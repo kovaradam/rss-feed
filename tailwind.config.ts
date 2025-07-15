@@ -10,15 +10,10 @@ export default {
       },
       colors: {
         accent: "#ff5678",
-        background: "bg-yellow-50",
       },
     },
   },
-  variants: {
-    extend: {
-      lineClamp: ["hover"],
-    },
-  },
+
   plugins: [
     plugin(({ addVariant }) => {
       addVariant("active-select-item", "&[data-active-item]");

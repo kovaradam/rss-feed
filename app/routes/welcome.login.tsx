@@ -135,7 +135,7 @@ export default function LoginPage({
           passwordForm={
             <Form
               method="post"
-              className="min-h-[var(--welcome-form-min-height)] space-y-6"
+              className="min-h-(--welcome-form-min-height) space-y-6"
             >
               {
                 // eslint-disable-next-line react-compiler/react-compiler

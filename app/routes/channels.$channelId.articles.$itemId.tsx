@@ -216,7 +216,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
             Description:
           </DescriptionList.Term>
           <DescriptionList.Definition>
-            <p className="text-slate-950 [overflow-wrap:anywhere] dark:text-white">
+            <p className="text-slate-950 wrap-anywhere dark:text-white">
               {description || "missing"}
             </p>
           </DescriptionList.Definition>
@@ -277,7 +277,7 @@ function Quote(props: { content: string; createdAt: Date; id: string }) {
       key={props.id}
       className="flex flex-col border-b border-dashed py-2  last:border-none"
     >
-      <p className="overflow-hidden text-ellipsis italic [overflow-wrap:anywhere] dark:text-white">
+      <p className="overflow-hidden text-ellipsis italic wrap-anywhere dark:text-white">
         „{props.content}“
       </p>
 

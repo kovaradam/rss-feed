@@ -31,7 +31,7 @@ export function NavWrapper(props: Props) {
           }
         }}
       >
-        <div className="sticky top-0 h-[100svh] overflow-y-auto overflow-x-hidden sm:h-screen">
+        <div className="sticky top-0 h-svh overflow-y-auto overflow-x-hidden sm:h-screen">
           {props.children}
         </div>
       </nav>
@@ -42,7 +42,7 @@ export function NavWrapper(props: Props) {
         aria-hidden
         className={clsx(
           `pointer-events-none absolute right-0 top-0 z-10 h-full w-full bg-blue-950 sm:hidden [input:checked+div_&]:pointer-events-auto [input:checked+div_&]:touch-none`,
-          "transition-opacity duration-500 [[data-sliding='true']_&]:duration-0",
+          "transition-opacity duration-500 in-data-[sliding='true']:duration-0",
           // increasing opacity on opening slide
           `opacity-[clamp(0,var(--opacity,0),0.1)]`,
           // decreasing opacity on closing slide

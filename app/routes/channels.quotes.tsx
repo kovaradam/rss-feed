@@ -50,7 +50,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
               <p className="dark:text-white">
                 Store memorable quotes from articles
               </p>
-              <p className="mb-4 font-normal text-slate-500 [overflow-wrap:anywhere] dark:text-slate-300">
+              <p className="mb-4 font-normal text-slate-500 wrap-anywhere dark:text-slate-300">
                 Add a quote to any article from your{" "}
                 <Link to="/channels" className="underline">
                   feed
@@ -92,7 +92,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
               {quote.item.channel.title}
             </Link>
 
-            <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic [overflow-wrap:anywhere] before:text-slate-500 before:content-['„'] dark:text-white">
+            <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic wrap-anywhere before:text-slate-500 before:content-['„'] dark:text-white">
               <Highlight
                 input={quote.content.trim()}
                 query={loaderData.search ?? ""}

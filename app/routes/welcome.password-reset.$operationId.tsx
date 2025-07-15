@@ -78,10 +78,7 @@ export default function PasswordResetForm(props: Route.ComponentProps) {
       </div>
       {loaderData.operationId && (
         <div className={`w-full sm:max-w-md `}>
-          <Form
-            method="post"
-            className="min-h-[var(--welcome-form-min-height)] "
-          >
+          <Form method="post" className="min-h-(--welcome-form-min-height) ">
             <HiddenInputs
               inputs={{
                 [fieldNames["operation-id"]]: loaderData.operationId,

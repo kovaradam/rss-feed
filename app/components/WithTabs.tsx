@@ -35,13 +35,12 @@ export function WithTabs<T extends string>(props: {
         disabled={props.disabled}
         className={clsx(
           styles.input,
-          `grid gap-[var(--gap)] bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] focus:focus:bg-gray-50 sm:[--hor:0] dark:text-slate-100 dark:focus:focus:text-slate-100`,
+          `grid gap-(--gap) bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] focus:focus:bg-gray-50 sm:[--hor:0] dark:text-slate-100 dark:focus:focus:text-slate-100`,
           props.className,
         )}
         style={{
-          [isVertical
-            ? "gridTemplateRows"
-            : "gridTemplateColumns"]: `repeat(${props.options.length}, 1fr)`,
+          [isVertical ? "gridTemplateRows" : "gridTemplateColumns"]:
+            `repeat(${props.options.length}, 1fr)`,
         }}
         onKeyDown={(e) => {
           const tablist = e.currentTarget;

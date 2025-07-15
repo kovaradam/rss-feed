@@ -236,7 +236,7 @@ export default function ChannelDetailsPage() {
               <DescriptionList.Term>Description:</DescriptionList.Term>
             </WithEditLink>
             <DescriptionList.Definition>
-              <p className="text-slate-900 [overflow-wrap:anywhere] dark:text-slate-300">
+              <p className="text-slate-900 wrap-anywhere dark:text-slate-300">
                 {data.channel.description || <i>Description is missing</i>}
               </p>
             </DescriptionList.Definition>
@@ -312,7 +312,7 @@ export default function ChannelDetailsPage() {
         )}
       </section>
       <AsideWrapper>
-        <Form method="patch" className="flex-1 sm:flex-grow-0">
+        <Form method="patch" className="flex-1 sm:grow-0">
           <Button
             onClick={() => playRefresh()}
             type="submit"
@@ -414,7 +414,7 @@ function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
     <div
       className={`absolute right-0 -z-10 w-1/2 rotate-12 overflow-hidden rounded ${props.className}`}
     >
-      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-gradient-to-b after:from-transparent after:to-white after:to-[20rem] dark:after:to-slate-900'>
+      <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-linear-to-b after:from-transparent after:to-white after:to-[20rem] dark:after:to-slate-900'>
         <img
           {...props}
           alt=""

@@ -32,7 +32,7 @@ export function PasskeyLoginForm() {
   return (
     <form
       action={action}
-      className="min-h-[var(--welcome-form-min-height)] space-y-6"
+      className="min-h-(--welcome-form-min-height) space-y-6"
     >
       <noscript>
         <div className="flex items-center gap-2 rounded border-current bg-yellow-200 p-2 pr-3 text-yellow-900 dark:border dark:bg-inherit dark:text-yellow-100">
