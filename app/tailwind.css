@@ -54,13 +54,13 @@
 
 ._progress {
   --duration: 1.2s;
-  @apply absolute top-0 z-20 h-1 w-0 bg-rose-700 bg-rose-700/25;
+  @apply absolute top-0 z-20 h-1 w-0 bg-rose-700/25;
 }
 
 ._progress[data-loading="true"] {
   transition: width var(--duration);
-  transition-delay: var(500ms);
-  @apply w-full;
+  transition-delay: 500ms;
+  width: 100%;
 }
 
 ._progress[data-loading="true"] [data-loader-slider] {
