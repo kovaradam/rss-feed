@@ -140,10 +140,10 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                 </h1>
                 <div className="overscroll-contain sm:overflow-y-auto ">
                   <StyledNavLink
-                    className={({ isActive }) =>
+                    className={({ isActive, isPending }) =>
                       clsx(
-                        isActive
-                          ? "max-sm:bg-rose-500 max-sm:dark:[&]:bg-rose-500"
+                        isActive || isPending
+                          ? "max-sm:bg-rose-500! max-sm:dark:[&]:bg-rose-500!"
                           : "sm:text-yellow-900",
                         `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow-sm sm:shadow-black/10 dark:shadow-none dark:max-sm:text-white`,
                         `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`,
@@ -352,7 +352,7 @@ function StyledNavLink({
           <div className="ml-auto flex w-4 items-center">
             {isActive && (
               <ChevronUpIcon
-                className={`active-scroll:scale-100 w-5 scale-0 transition-all`}
+                className={`scroll:scale-100 w-5 not-active-scroll:scale-0! transition-all`}
               />
             )}
           </div>
