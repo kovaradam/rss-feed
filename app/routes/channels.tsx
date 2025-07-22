@@ -10,6 +10,7 @@ import {
   RefreshIcon,
   SearchIcon,
   UserIcon,
+  XIcon,
 } from "@heroicons/react/outline";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import React from "react";
@@ -67,6 +68,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   const navigation = useNavigation();
 
   const [title, setTitle] = React.useState(data.title as string | undefined);
+  const [isChannelSearchOpen, setIsChannelSearchOpen] = React.useState(false);
 
   const refreshFetcher = useChannelRefreshFetcher();
   const isRefreshing = refreshFetcher.status === "pending";
@@ -123,6 +125,13 @@ export default function ChannelsPage(props: Route.ComponentProps) {
       />
       <div className="flex flex-col sm:overflow-x-visible">
         <UseAppTitle>{data.title}</UseAppTitle>
+
+        <MobileChannelSearch
+          channels={data.channels}
+          isOpen={isChannelSearchOpen}
+          onClose={() => setIsChannelSearchOpen(false)}
+        />
+
         <div
           className="_background flex justify-center"
           {...registerNavSwipeCallbacks(setIsNavExpanded)}
@@ -222,10 +231,22 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                       className="_script-only relative flex w-full items-center"
                       onSubmit={(e) => e.preventDefault()}
                     >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsChannelSearchOpen(true);
+                          setTimeout(() => {
+                            document
+                              ?.getElementById("mobile-channel-filter")
+                              ?.focus();
+                          });
+                        }}
+                        className="sm:hidden flex absolute w-full h-full z-10"
+                      />
                       <input
                         value={channelFilter}
                         className={
-                          "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400"
+                          "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400 max-sm:hidden"
                         }
                         type="search"
                         onChange={(e) =>
@@ -353,6 +374,7 @@ function StyledNavLink({
             {isActive && (
               <ChevronUpIcon
                 className={`scroll:scale-100 w-5 not-active-scroll:scale-0! transition-all`}
+                data-scroll-top-icon
               />
             )}
           </div>
@@ -553,4 +575,78 @@ function useNavToggleState() {
       }
     },
   ] as const;
+}
+
+function MobileChannelSearch(props: {
+  channels: Route.ComponentProps["loaderData"]["channels"];
+  onClose(): void;
+  isOpen: boolean;
+}) {
+  const [filter, setFilter] = React.useState("");
+
+  const channels = props.channels?.filter((channel) =>
+    channel.title.toLowerCase().includes(filter.toLocaleLowerCase()),
+  );
+
+  return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    <div
+      className={clsx(
+        "w-screen h-svh fixed bg-[#0f183b54] z-50 transition-opacity prefers-reduced-motion:transition-none",
+        props.isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
+      )}
+      onClickCapture={(e) => {
+        if (e.target === e.currentTarget) props.onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") props.onClose();
+      }}
+    >
+      <div
+        className={clsx(
+          "sm:hidden",
+          "border fixed bottom-0 bg-white shadow-md rounded-t-2xl p-2 w-screen z-50",
+          props.isOpen ? "translate-y-0" : "translate-y-full",
+          "prefers-reduced-motion:transition-none transition-transform",
+        )}
+      >
+        {channels.length === 0 && (
+          <p className="p-2 text-slate-700 italic">No channels found</p>
+        )}
+        <List
+          as="ol"
+          className="overflow-auto max-h-[90svh]"
+          onClickCapture={props.onClose}
+        >
+          {channels.map((channel) => (
+            <li key={channel.id} className="not-last:border-b">
+              <StyledNavLink
+                className="block [&_[data-scroll-top-icon]]:hidden"
+                to={channel.id}
+              >
+                <span className="pointer-events-none">
+                  <Highlight input={channel.title} query={filter} />
+                </span>
+              </StyledNavLink>
+            </li>
+          ))}
+        </List>
+        <hr />
+        <div className="flex items-center pt-2">
+          <input
+            type="search"
+            placeholder="Find a channel"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="p-2 w-full"
+            disabled={!props.isOpen}
+            id="mobile-channel-filter"
+          />
+          <button disabled={!props.isOpen} onClick={props.onClose}>
+            <XIcon className="w-8 p-2 ml-auto right-0" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
