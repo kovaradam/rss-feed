@@ -25,11 +25,7 @@ export async function $confirm(params: {
   });
 
   root.render(
-    <Modal
-      isOpen={true}
-      onRequestClose={rejectOption}
-      style={{ content: { maxWidth: "90vw", width: "50ch" } }}
-    >
+    <Modal isOpen={true} onRequestClose={rejectOption}>
       <h2 className="text-2xl font-bold">{params.header}</h2>
       <p className="my-4 text-slate-700">{params.message}</p>
 
