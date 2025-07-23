@@ -10,7 +10,6 @@ import {
   RefreshIcon,
   SearchIcon,
   UserIcon,
-  XIcon,
 } from "@heroicons/react/outline";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import React from "react";
@@ -38,6 +37,8 @@ import type { Route } from "./+types/channels";
 import { List } from "~/components/List";
 import { useOnWindowFocus } from "~/utils/use-on-window-focus";
 import clsx from "clsx";
+import { Modal } from "~/components/Modal";
+import { TimedTransition } from "~/components/animations/TimedTransition";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -138,7 +139,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         >
           <div
             id="nav-sliding-element"
-            className={`relative flex  h-full min-h-screen w-screen duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] [input:checked+div_&]:translate-x-3/4`}
+            className={`relative flex  h-full min-h-screen w-screen duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] max-sm:[input:checked+div_&]:translate-x-3/4`}
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
@@ -227,26 +228,30 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   <hr className="dark:border-slate-800" />
                   <h2 className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Channels
+                    <button
+                      data-silent
+                      type="button"
+                      onClick={() => {
+                        setIsChannelSearchOpen(true);
+                        setTimeout(() => {
+                          document
+                            ?.getElementById("mobile-channel-filter")
+                            ?.focus();
+                        });
+                      }}
+                      className="sm:hidden flex w-full justify-end"
+                      aria-label={"Open channel search dialog"}
+                    >
+                      <SearchIcon className="w-4 " />
+                    </button>
                     <form
-                      className="_script-only relative flex w-full items-center"
+                      className="_script-only relative flex w-full items-center max-sm:hidden"
                       onSubmit={(e) => e.preventDefault()}
                     >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsChannelSearchOpen(true);
-                          setTimeout(() => {
-                            document
-                              ?.getElementById("mobile-channel-filter")
-                              ?.focus();
-                          });
-                        }}
-                        className="sm:hidden flex absolute w-full h-full z-10"
-                      />
                       <input
                         value={channelFilter}
                         className={
-                          "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400 max-sm:hidden"
+                          "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400 "
                         }
                         type="search"
                         onChange={(e) =>
@@ -589,64 +594,74 @@ function MobileChannelSearch(props: {
   );
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div
-      className={clsx(
-        "w-screen h-svh fixed bg-[#0f183b54] z-50 transition-opacity prefers-reduced-motion:transition-none",
-        props.isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
-      )}
-      onClickCapture={(e) => {
-        if (e.target === e.currentTarget) props.onClose();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") props.onClose();
-      }}
-    >
-      <div
-        className={clsx(
-          "sm:hidden",
-          "border fixed bottom-0 bg-white shadow-md rounded-t-2xl p-2 w-screen z-50",
-          props.isOpen ? "translate-y-0" : "translate-y-full",
-          "prefers-reduced-motion:transition-none transition-transform",
-        )}
-      >
-        {channels.length === 0 && (
-          <p className="p-2 text-slate-700 italic">No channels found</p>
-        )}
-        <List
-          as="ol"
-          className="overflow-auto max-h-[90svh]"
-          onClickCapture={props.onClose}
+    <TimedTransition
+      timeout={100}
+      value={props.isOpen}
+      render={(transition) => (
+        <Modal
+          isOpen={transition.isTransition || props.isOpen}
+          className={clsx(
+            "bottom-0! bg-white shadow-md rounded-b-none p-2! w-screen! max-w-screen  dark:tech-slate-300",
+            props.isOpen
+              ? "translate-y-0! starting:translate-y-full!"
+              : "translate-y-full!",
+            "prefers-reduced-motion:transition-none transition-transform",
+          )}
+          overlayClassName={clsx(
+            "sm:hidden transition-opacity",
+            props.isOpen ? "opacity-100 starting:opacity-0" : "opacity-0",
+          )}
+          onRequestClose={props.onClose}
         >
-          {channels.map((channel) => (
-            <li key={channel.id} className="not-last:border-b">
-              <StyledNavLink
-                className="block [&_[data-scroll-top-icon]]:hidden"
-                to={channel.id}
+          {channels.length === 0 && (
+            <p className="p-2 text-slate-700 dark:text-slate-400 italic">
+              No channels found
+            </p>
+          )}
+          <List
+            aria-live="polite"
+            as="ol"
+            className="overflow-auto max-h-[90svh]"
+            onClickCapture={props.onClose}
+          >
+            {channels.map((channel) => (
+              <li
+                key={channel.id}
+                className="not-last:border-b dark:border-slate-800"
               >
-                <span className="pointer-events-none">
-                  <Highlight input={channel.title} query={filter} />
-                </span>
-              </StyledNavLink>
-            </li>
-          ))}
-        </List>
-        <hr />
-        <div className="flex items-center pt-2">
-          <input
-            type="search"
-            placeholder="Find a channel"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="p-2 w-full"
-            disabled={!props.isOpen}
-            id="mobile-channel-filter"
-          />
-          <button disabled={!props.isOpen} onClick={props.onClose}>
-            <XIcon className="w-8 p-2 ml-auto right-0" />
-          </button>
-        </div>
-      </div>
-    </div>
+                <StyledNavLink
+                  className="block [&_[data-scroll-top-icon]]:hidden"
+                  to={channel.id}
+                >
+                  <span className="pointer-events-none">
+                    <Highlight input={channel.title} query={filter} />
+                  </span>
+                </StyledNavLink>
+              </li>
+            ))}
+          </List>
+          <hr />
+          <div className="flex items-center pt-2 sticky bottom-0">
+            <input
+              type="search"
+              placeholder="Find a channel"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="p-2 w-full dark:text-slate-200"
+              disabled={!props.isOpen}
+              id="mobile-channel-filter"
+            />
+            <button
+              data-silent
+              disabled={!props.isOpen}
+              onClick={props.onClose}
+              className="dark:text-slate-200 p-2"
+            >
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
+    />
   );
 }

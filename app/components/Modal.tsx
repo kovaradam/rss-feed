@@ -27,7 +27,8 @@ const RenderModal = (props: Props) => {
       className={clsx(
         props.className,
         "fixed bottom-[5%] top-auto sm:top-[40%] left-[50%] translate-x-[-50%] translate-y-[-50%]",
-        "bg-white rounded-xl h-min w-[60ch] max-w-[90vw]",
+        "bg-white dark:border   dark:bg-slate-700 rounded-xl h-min w-[60ch] max-w-[90vw]",
+        "p-4 pb-6",
       )}
       overlayClassName={clsx(
         "fixed inset-0 z-20 bg-[#0f183b54]",
@@ -35,7 +36,7 @@ const RenderModal = (props: Props) => {
       )}
       appElement={document.body}
     >
-      <div className="p-4 pb-6">{props.children}</div>
+      {props.children}
     </ReactModal>
   );
 };

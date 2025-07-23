@@ -26,8 +26,12 @@ export async function $confirm(params: {
 
   root.render(
     <Modal isOpen={true} onRequestClose={rejectOption}>
-      <h2 className="text-2xl font-bold">{params.header}</h2>
-      <p className="my-4 text-slate-700">{params.message}</p>
+      <h2 className="text-2xl font-bold dark:text-slate-100">
+        {params.header}
+      </h2>
+      <p className="my-4 text-slate-700 dark:text-slate-200">
+        {params.message}
+      </p>
 
       <fieldset className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row">
         <Button
