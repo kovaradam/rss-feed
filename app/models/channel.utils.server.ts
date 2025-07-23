@@ -23,7 +23,7 @@ export function mapRssFeedResponseToCreateInput(
 
   return {
     channel: {
-      link: feedLink,
+      link: sanitize(feedLink),
       title: sanitize(feed.title ?? "") || new URL(feedLink).hostname,
       description: sanitize(feed.description?.substring?.(0, 500) ?? ""),
       imageUrl: feed.extensions?.imageUrl ?? feed.image?.url ?? null,
@@ -60,7 +60,7 @@ export function mapRssFeedItemsResponseToCreateInput(
         }
 
         return {
-          link: i.link,
+          link: sanitize(i.link),
           title: sanitize(i.title ?? ""),
           author: sanitize(i.author ?? ""),
           comments: asUrl(i.comments)?.href ?? "",
