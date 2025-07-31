@@ -1,4 +1,10 @@
-Made with **Remix Indie Stack**
+# Web Journal 📖
+
+Easy-going RSS feed, no JS or mouse required.
+
+ - Uses [does-it-rss](https://does-it-rss.com), which was extracted from this app as a standalone service.
+ - Built with Remix/SQlite.
+
 
 ## Development
 

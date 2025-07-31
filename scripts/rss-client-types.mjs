@@ -1,3 +1,7 @@
+/**
+ * Fetches JSON schema from does-it-rss and generates types for its API.
+ */
+
 import { compile } from "json-schema-to-typescript";
 import fs from "node:fs";
 import path from "node:path";
