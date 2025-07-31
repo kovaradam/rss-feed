@@ -125,7 +125,9 @@ export const refreshChannel = cached({
 
     const feedPayload = await response.json?.();
     if (!feedPayload?.feed)
-      throw new Error(`No feed in payload ${JSON.stringify(feedPayload)}`);
+      throw new Error(
+        `[${response.response.status}] No feed in payload ${JSON.stringify(feedPayload)}`,
+      );
 
     const itemsParseResult = mapRssFeedItemsResponseToCreateInput(
       feedPayload?.feed?.items,
