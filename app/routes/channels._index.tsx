@@ -284,6 +284,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                           className="flex justify-center rounded bg-white bg-white/60 pt-8 dark:bg-inherit dark:bg-inherit/60"
                         >
                           <img
+                            rel="noreferrer"
                             src={item.img}
                             alt=""
                             className="pointer-events-none absolute h-14 -rotate-6 pt-6 opacity-50 transition-opacity [li:hover_&]:opacity-100"

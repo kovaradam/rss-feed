@@ -72,6 +72,7 @@ export function ChannelItemDetail(props: Props) {
         {item.imageUrl && !props.hideImage && (
           <img
             alt=""
+            rel="noreferrer"
             src={item.imageUrl}
             className=" mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 object-cover text-sm italic sm:rounded-none dark:bg-slate-950"
             loading="lazy"

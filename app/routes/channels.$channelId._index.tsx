@@ -417,6 +417,7 @@ function ChannelImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
       <div className='after:content-[" "] relative to-transparent opacity-20 after:absolute after:top-0 after:h-full after:w-full after:bg-linear-to-b after:from-transparent after:to-white after:to-[20rem] dark:after:to-slate-900'>
         <img
           {...props}
+          rel="noreferrer"
           alt=""
           className={`w-full border-none text-transparent`}
         />

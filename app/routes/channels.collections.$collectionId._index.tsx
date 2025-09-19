@@ -187,7 +187,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                 )}
               </div>
               <img
-                alt="Illustration of a person struggling with sheets of paper"
+                alt=""
                 src="/clumsy.svg"
                 width={"70%"}
                 data-from="https://www.opendoodles.com/"

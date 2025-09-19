@@ -489,7 +489,7 @@ function registerNavSwipeCallbacks(
     document.getElementById("nav-sliding-element");
   const getOverlayElement = () => document.getElementById("overlay");
   return {
-    onTouchStart: (event) => {
+    onTouchStart: withValidSingleTouch((event) => {
       event.currentTarget.setAttribute(
         "data-touch-start-x",
         String(event.targetTouches[0]?.clientX),
@@ -499,8 +499,8 @@ function registerNavSwipeCallbacks(
         String(event.targetTouches[0]?.clientY),
       );
       event.currentTarget.setAttribute("data-slide-diff", "");
-    },
-    onTouchMove: (event) => {
+    }),
+    onTouchMove: withValidSingleTouch((event) => {
       const changedTouch = event.changedTouches[0];
 
       if (!changedTouch) {
@@ -537,8 +537,8 @@ function registerNavSwipeCallbacks(
           `--opacity:${isExpanded ? 0.1 - opacity : opacity}`,
         );
       }
-    },
-    onTouchEnd: (event) => {
+    }),
+    onTouchEnd: withValidSingleTouch((event) => {
       const slidingElement = getSlidingElement();
       slidingElement?.setAttribute("style", "");
       getOverlayElement()?.setAttribute("style", "");
@@ -549,7 +549,16 @@ function registerNavSwipeCallbacks(
       if (Math.abs(diff) >= event.currentTarget.clientWidth / 4) {
         setIsExpanded(diff < 0);
       }
-    },
+    }),
+  };
+}
+
+function withValidSingleTouch<T>(handler: React.TouchEventHandler<T>) {
+  return (event: React.TouchEvent<T>) => {
+    const selectedText = document.getSelection()?.toString();
+    if (event.changedTouches.length === 1 && !selectedText) {
+      handler(event);
+    }
   };
 }
 

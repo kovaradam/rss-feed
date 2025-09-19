@@ -84,6 +84,7 @@ export default function App(props: Route.ComponentProps) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="referrer" content="no-referrer" />
         <meta
           name="description"
           content="Keep up with the latest web content with an RSS feed."

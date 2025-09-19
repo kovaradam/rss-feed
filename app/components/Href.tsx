@@ -12,8 +12,7 @@ export function Href(props: Props) {
   return (
     <a
       href={props.href}
-      target="_blank"
-      rel="noopener noreferrer"
+      rel="noreferrer"
       className={`underline ${props.className}`}
       style={props.style}
     >
