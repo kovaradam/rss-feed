@@ -73,7 +73,7 @@ export default function App(props: Route.ComponentProps) {
 
   useOnWindowFocus(revalidator.revalidate);
 
-  const isLoadervisible =
+  const isLoaderVisible =
     (!navigation.formAction ||
       navigation.formMethod === "GET" ||
       navigation.formData?.get("loader") === String(true)) &&
@@ -107,7 +107,7 @@ export default function App(props: Route.ComponentProps) {
         </noscript>
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
-        <div data-loading={isLoadervisible} className="_progress">
+        <div data-loading={isLoaderVisible} className="_progress">
           <div data-loader-slider />
         </div>
         <div id="confirm-modal"></div>

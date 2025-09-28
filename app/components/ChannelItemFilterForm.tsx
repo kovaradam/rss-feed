@@ -67,8 +67,8 @@ export function ChannelItemFilterForm(props: Props) {
         </div>
         <div className="flex flex-col gap-4 empty:hidden">
           {props.filters.categories !== undefined && (
-            <WithFormLabel label="Filter by channels">
-              <div className={styles.input.concat("")}>
+            <WithFormLabel label="Filter by channels" labelAs="div">
+              <div className={styles.input}>
                 <List>
                   {data.channels?.map((channel) => (
                     <li key={channel.id}>
@@ -96,7 +96,7 @@ export function ChannelItemFilterForm(props: Props) {
             </WithFormLabel>
           )}
           {props.filters.channels !== undefined && (
-            <WithFormLabel label={"Filter by categories"}>
+            <WithFormLabel label={"Filter by categories"} labelAs="div">
               <div className={styles.input}>
                 <List>
                   {data.categories?.map((category) => (
@@ -125,7 +125,7 @@ export function ChannelItemFilterForm(props: Props) {
             </WithFormLabel>
           )}
           {props.canExcludeRead && (
-            <WithFormLabel label={"Filter by state"}>
+            <WithFormLabel label={"Filter by state"} labelAs="div">
               <div className={styles.input.concat("")}>
                 <List>
                   {[

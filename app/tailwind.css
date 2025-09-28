@@ -64,7 +64,7 @@
 }
 
 ._progress[data-loading="true"] [data-loader-slider] {
-  @apply h-full w-1/2 bg-rose-500;
+  @apply h-full w-[50vw] bg-rose-500;
   animation: progress;
   animation-duration: var(--duration);
   animation-timing-function: ease-in-out;

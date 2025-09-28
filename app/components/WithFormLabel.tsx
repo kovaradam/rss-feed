@@ -7,6 +7,7 @@ type Props = {
   htmlFor?: string;
   children?: React.ReactNode | ((props: Props) => React.JSX.Element);
   className?: string;
+  labelAs?: React.ElementType;
 };
 
 export function WithFormLabel(props: Props) {
@@ -21,9 +22,15 @@ export function WithFormLabel(props: Props) {
         className={`mb-1 flex w-full items-center gap-2 `}
         {...legendProps}
       >
-        <label htmlFor={htmlFor} className="dark:text-slate-100">
-          {label}
-        </label>{" "}
+        {React.createElement(
+          props.labelAs ?? "label",
+          {
+            htmlFor:
+              props.labelAs && props.labelAs !== "label" ? undefined : htmlFor,
+            className: "dark:text-slate-100",
+          },
+          label,
+        )}
         {required && (
           <span className="text-slate-500 dark:text-slate-200">(required)</span>
         )}
