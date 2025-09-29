@@ -281,7 +281,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       {recommendedChannels.map((item) => (
                         <li
                           key={item.href}
-                          className="flex justify-center rounded bg-white bg-white/60 pt-8 dark:bg-inherit dark:bg-inherit/60"
+                          className="flex justify-center rounded bg-white/60 pt-8 dark:bg-inherit/60"
                         >
                           <img
                             rel="noreferrer"

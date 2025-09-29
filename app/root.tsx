@@ -49,6 +49,10 @@ export default function App(props: Route.ComponentProps) {
 
   React.useEffect(() => {
     HistoryStack.add({ href, title: lastTitle });
+
+    if (!document.querySelector("#main :focus")) {
+      document.getElementById("main")?.focus();
+    }
   }, [href]);
 
   React.useEffect(() => {

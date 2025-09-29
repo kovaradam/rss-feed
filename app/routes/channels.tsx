@@ -227,6 +227,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     </li>
                   </List>
                   <hr className="dark:border-slate-800" />
+
                   <h2 className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
                     Channels
                     <button
@@ -271,7 +272,9 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     </form>
                   </h2>
                   {!data.channels || data.channels.length === 0 ? (
-                    <p className="p-4 dark:text-slate-500">No channels yet</p>
+                    <p className="p-4 text-sm  dark:text-slate-500">
+                      No channels yet
+                    </p>
                   ) : (
                     <List as="ol">
                       {data.channels
@@ -324,11 +327,12 @@ export default function ChannelsPage(props: Route.ComponentProps) {
               </header>
               <main
                 id="main"
-                className={`p-6 ${
-                  navigation.formAction?.includes("logout")
-                    ? "animate-pulse opacity-60"
-                    : ""
-                } `}
+                tabIndex={-1}
+                className={clsx(
+                  "p-6 outline-none",
+                  navigation.formAction?.includes("logout") &&
+                    "animate-pulse opacity-60",
+                )}
               >
                 <Outlet />
               </main>
