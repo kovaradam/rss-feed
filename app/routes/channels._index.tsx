@@ -38,12 +38,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const [filterChannels, filterCategories] = ["channels", "categories"].map(
     (name) => searchParams.getAll(name),
   );
-  const [before, after, search, includeReadParam, includeHiddenFromFeed] = [
+  const [before, after, search, includeHiddenFromFeed] = [
     ChannelItemFilterForm.names.before,
     ChannelItemFilterForm.names.after,
     PageSearchInput.names.search,
-    ChannelItemFilterForm.names.excludeRead,
-    ChannelItemFilterForm.names.includeHiddenFromFeed,
+    ChannelItemFilterForm.names["include-hidden-from-feed"],
   ].map((name) => searchParams.get(name));
 
   const filters = {
@@ -51,7 +50,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     before: before ?? null,
     categories: filterCategories ?? [],
     channels: filterChannels ?? [],
-    includeRead: includeReadParam ? includeReadParam === String(true) : null,
     includeHiddenFromFeed: includeHiddenFromFeed
       ? includeHiddenFromFeed === String(true)
       : null,
@@ -63,7 +61,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       userId,
       filters: {
         ...filters,
-        excludeRead: !filters.search && !filters.includeRead,
         excludeHiddenFromFeed:
           !filters.search && !filters.includeHiddenFromFeed,
       },
@@ -131,8 +128,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
         formId={"filter-form"}
         filters={{
           ...filters,
-          excludeRead:
-            filters.includeRead === null ? null : !filters.includeRead,
+
           excludeHiddenFromFeed:
             filters.includeHiddenFromFeed === null
               ? null
@@ -146,7 +142,6 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           refreshDate: channel.refreshDate,
         }))}
         categories={categories}
-        canExcludeRead
       />
     ),
     [filters, channels, categories],
@@ -206,9 +201,6 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     .map((i) => updatedItems.find((updated) => updated.id === i.id) ?? i)
     .filter((i) => {
       if (i.hiddenFromFeed && !filters.includeHiddenFromFeed) {
-        return false;
-      }
-      if (i.read && !filters.includeRead) {
         return false;
       }
 
@@ -329,6 +321,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       refreshDate: item.channel.refreshDate,
                     },
                   }}
+                  isContrivedOnRead
                   query={filters.search ?? undefined}
                 />
               </li>

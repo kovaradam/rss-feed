@@ -99,7 +99,7 @@ export function Tooltip(
       popover={"hint" as never}
       className={`absolute z-50 ${
         position ? "flex" : "hidden"
-      } items-center justify-center whitespace-nowrap rounded bg-slate-950 bg-slate-950/90 p-2 text-white dark:border`}
+      } items-center justify-center whitespace-nowrap rounded bg-slate-950/90 p-2 text-white dark:border`}
       style={{
         left: {
           right: "100%",

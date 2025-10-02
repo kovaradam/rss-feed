@@ -6,11 +6,17 @@ import { load } from "cheerio/slim";
 
 type CreateChannelInput = FirstParam<typeof createChanel>;
 type RssFeedResponse = DoesItRssApi["/json-feed"]["response"]["feed"];
-export function mapRssFeedResponseToCreateInput(
-  feed: RssFeedResponse,
-  feedUrl: string,
-  hash?: string,
-): Pick<CreateChannelInput, "channel" | "items"> {
+export function mapRssFeedResponseToCreateInput({
+  feed,
+  feedUrl,
+  etag,
+  hash,
+}: {
+  feed: RssFeedResponse;
+  feedUrl: string;
+  hash?: string;
+  etag?: string;
+}): Pick<CreateChannelInput, "channel" | "items"> {
   let itemPubDateParseError = false;
 
   const items = mapRssFeedItemsResponseToCreateInput(feed.items, {
@@ -37,6 +43,7 @@ export function mapRssFeedResponseToCreateInput(
       category:
         feed.categories?.map((c) => sanitize(c.value ?? "")).join("/") ?? "",
       itemPubDateParseError,
+      etag: etag ?? null,
     },
     items,
   };

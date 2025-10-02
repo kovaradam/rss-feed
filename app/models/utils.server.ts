@@ -2,6 +2,7 @@ import { cached } from "~/utils/cached";
 import { Channel } from "./types.server";
 import { DoesItRssApi } from "~/__generated__/does-it-rss";
 import { normalizeHref } from "~/utils";
+import { SERVER_ENV } from "~/env.server";
 
 export const ChannelErrors = {
   channelExists: class ChannelExistsError extends Error {
@@ -20,7 +21,7 @@ export function fetchFromRssClient(
   searchParams: DoesItRssApi[typeof path]["search"],
   init?: RequestInit,
 ) {
-  const clientUrl = new URL(path, "https://does-it-rss.com");
+  const clientUrl = new URL(path, SERVER_ENV.rssClientUrl);
 
   Object.entries(searchParams).forEach(([key, value]) => {
     clientUrl.searchParams.set(key, String(value));
@@ -31,17 +32,32 @@ export function fetchFromRssClient(
 
 export async function fetchSingleFeed(
   feedUrl: string,
-  init?: RequestInit & { currentHash?: string },
+  params: { etag?: string },
+  init?: RequestInit,
 ) {
-  return fetchFromRssClient("/json-feed", { feed: feedUrl }, init).then((r) => {
+  const headers = {
+    ...init?.headers,
+    "if-none-match": params?.etag || "",
+  };
+
+  return fetchFromRssClient(
+    "/json-feed",
+    { feed: feedUrl },
+    { ...init, headers },
+  ).then((r) => {
+    console.log(r.headers.get("etag"), "hasCurrentVersion", r.status === 304);
+    const hasCurrentVersion = r.status === 304;
     return {
       meta: {
         lastBuildDate: r.headers.get("x-last-build-date"),
         feedHash: r.headers.get("x-feed-hash"),
+        etag: r.headers.get("etag"),
+        hasCurrentVersion,
       },
-      json: r.ok
-        ? () => r.json() as Promise<DoesItRssApi["/json-feed"]["response"]>
-        : null,
+      json:
+        r.ok && !hasCurrentVersion
+          ? () => r.json() as Promise<DoesItRssApi["/json-feed"]["response"]>
+          : null,
       response: r,
     };
   });

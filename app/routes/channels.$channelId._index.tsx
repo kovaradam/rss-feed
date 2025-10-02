@@ -138,6 +138,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   });
 
   invariant(channel, "Channel could not be loaded");
+
   try {
     await refreshChannel({
       feedUrl: channel.feedUrl,

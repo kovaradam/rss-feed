@@ -47,3 +47,6 @@ script_checks = [ ]
   timeout = "2s"
   tls_skip_verify = false
   headers = { }
+
+[env]
+  RSS_CLIENT_URL = "https://does-it-rss.com"

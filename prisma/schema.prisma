@@ -66,6 +66,7 @@ model Channel {
   copyright     String
   language      String
   ttl           Int?
+  etag          String?
 
   hash                  String?
   refreshDate           DateTime?

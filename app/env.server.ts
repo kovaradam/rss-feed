@@ -3,6 +3,10 @@ import "dotenv/config";
 
 const EnvSchema = v.object({
   domain: v.message(v.pipe(v.string(), v.nonEmpty()), "missing server domain!"),
+  rssClientUrl: v.message(
+    v.pipe(v.string(), v.nonEmpty()),
+    "missing rcc client url!",
+  ),
   sessionSecret: v.message(
     v.pipe(v.string(), v.nonEmpty()),
     "missing session secret!",
@@ -34,6 +38,7 @@ export const SERVER_ENV = {
   },
   ...v.parse(EnvSchema, {
     domain: process.env.SERVER_DOMAIN,
+    rssClientUrl: process.env.RSS_CLIENT_URL,
     sessionSecret: process.env.SESSION_SECRET,
     mail: {
       smtpUrl: process.env.SMTP_URL,

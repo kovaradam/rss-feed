@@ -22,7 +22,7 @@ export function SpinTransition(
         }
 
         .spin-out {
-          --from: 270deg;
+          --from: 90deg;
           --to: 0deg;
           display:none;
         }

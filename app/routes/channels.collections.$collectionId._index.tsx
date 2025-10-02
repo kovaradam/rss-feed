@@ -214,6 +214,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                         : null,
                     },
                   }}
+                  isContrivedOnRead={!collection.read}
                   query={filters.search ?? undefined}
                 />
               </li>

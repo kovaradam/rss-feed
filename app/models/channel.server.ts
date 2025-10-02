@@ -37,10 +37,19 @@ export async function createChannelFromUrl(
 
   let rssFeedResponse: DoesItRssApi["/json-feed"]["response"] | undefined;
   let rssFeedHash: string | undefined;
+  let rssFeedEtag: string | undefined;
   try {
-    [rssFeedResponse, rssFeedHash] = await fetchSingleFeed(feedUrl, {
-      signal: abortSignal,
-    }).then(async (r) => [await r.json?.(), r.meta.feedHash ?? undefined]);
+    [rssFeedResponse, rssFeedHash, rssFeedEtag] = await fetchSingleFeed(
+      feedUrl,
+      {},
+      {
+        signal: abortSignal,
+      },
+    ).then(async (r) => [
+      await r.json?.(),
+      r.meta.feedHash ?? undefined,
+      r.meta.etag ?? undefined,
+    ]);
     invariant(rssFeedResponse?.feed);
   } catch (_) {
     throw new ChannelErrors.invalidUrl();
@@ -48,11 +57,12 @@ export async function createChannelFromUrl(
 
   let parseResult: ReturnType<typeof mapRssFeedResponseToCreateInput>;
   try {
-    parseResult = mapRssFeedResponseToCreateInput(
-      rssFeedResponse.feed,
-      feedUrl,
-      rssFeedHash,
-    );
+    parseResult = mapRssFeedResponseToCreateInput({
+      feed: rssFeedResponse.feed,
+      feedUrl: feedUrl,
+      hash: rssFeedHash,
+      etag: rssFeedEtag,
+    });
   } catch (e) {
     console.error(e);
     throw new ChannelErrors.incorrectDefinition();
@@ -115,11 +125,21 @@ export const refreshChannel = cached({
       return null;
     }
 
-    const response = await fetchSingleFeed(feedUrl, {
-      signal: params.signal,
-    });
+    const response = await fetchSingleFeed(
+      feedUrl,
+      {
+        etag: refreshData?.etag ?? undefined,
+      },
+      {
+        signal: params.signal,
+      },
+    );
 
-    if (!params.force && refreshData?.hash === response.meta.feedHash) {
+    const hasCurrentVersion =
+      refreshData?.hash === response.meta.feedHash ||
+      response.meta.hasCurrentVersion;
+
+    if (!params.force && hasCurrentVersion) {
       return null;
     }
 
@@ -150,6 +170,7 @@ export const refreshChannel = cached({
       },
       data: {
         hash: response.meta.feedHash,
+        etag: response.meta.etag,
         lastBuildDate: asDate(feedPayload.feed.lastBuildDate),
         refreshDate: new Date(),
         items: {
@@ -250,13 +271,19 @@ export async function getChannelItems<
   return prisma.item.findMany(params);
 }
 
-export async function getChannelRefreshData(params: {
+async function getChannelRefreshData(params: {
   feedUrl: string;
   userId: User["id"];
 }) {
   const channel = await prisma.channel.findFirst({
     where: { feedUrl: params.feedUrl, userId: params.userId },
-    select: { hash: true, ttl: true, refreshDate: true, lastBuildDate: true },
+    select: {
+      hash: true,
+      etag: true,
+      ttl: true,
+      refreshDate: true,
+      lastBuildDate: true,
+    },
   });
 
   if (!channel) {
@@ -269,6 +296,7 @@ export async function getChannelRefreshData(params: {
   const updateDate = channel.lastBuildDate ?? channel.refreshDate;
 
   return {
+    etag: channel?.etag,
     hash: channel?.hash,
     isFresh: updateDate ? updateDate.getTime() + ttlMs >= Date.now() : false,
   };
@@ -427,7 +455,6 @@ export async function getItemsByFilters(
       categories: string[];
       before: string | null;
       after: string | null;
-      excludeRead: boolean | null;
       excludeHiddenFromFeed: boolean | null;
       search: string | null;
     };
@@ -439,7 +466,6 @@ export async function getItemsByFilters(
     ...params,
 
     where: {
-      read: filters.excludeRead === true ? false : undefined,
       hiddenFromFeed:
         filters.excludeHiddenFromFeed === true ? false : undefined,
       channel: {

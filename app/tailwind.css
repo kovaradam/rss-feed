@@ -18,6 +18,10 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
+
+  * {
+    text-underline-offset: 2px;
+  }
 }
 
 @keyframes bounce {

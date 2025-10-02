@@ -28,16 +28,14 @@ export function TimeFromNow(props: Props) {
     [difference.minutes, "minute"],
   ] as const;
 
-  const tooltip = (
-    <Tooltip>
-      {props.date.toLocaleDateString("en", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-      })}
-    </Tooltip>
-  );
+  const formattedDate = props.date.toLocaleDateString("en", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+  });
+
+  const tooltip = <Tooltip>{formattedDate}</Tooltip>;
 
   for (const entry of entries) {
     const [value, label] = entry;
@@ -53,11 +51,11 @@ export function TimeFromNow(props: Props) {
   }
 
   return (
-    <span className={"relative"}>
+    <time className={"relative"} dateTime={formattedDate}>
       {`${Math.max(Math.ceil(difference.seconds), 0)} second${
         difference.seconds > 1 ? "s" : ""
       } ago`}
       {tooltip}
-    </span>
+    </time>
   );
 }

@@ -8,12 +8,13 @@ import { WithFormLabel } from "./WithFormLabel";
 import { isEmptyObject } from "~/utils/is-empty-object";
 import { Channel } from "~/models/types.server";
 import { List } from "./List";
+import { enumerate } from "~/utils";
+import clsx from "clsx";
 
 type Props = {
   filters: Partial<ChannelItemsFilter>;
   channels?: Channel[];
   categories?: string[];
-  canExcludeRead?: boolean;
   className?: string;
   formId: string;
 };
@@ -32,10 +33,10 @@ export function ChannelItemFilterForm(props: Props) {
         id={props.formId}
         ref={formRef}
         method="get"
-        className={`flex flex-col gap-6 ${props.className}`}
+        className={clsx(`flex flex-col gap-6`, props.className)}
         onChange={() => submitButtonRef.current?.click()}
       >
-        <div className="flex flex-col gap-4">
+        <div className="overflow-x-hidden">
           {filters.after !== undefined && (
             <WithFormLabel label="Published after" htmlFor="after">
               {({ htmlFor }) => (
@@ -51,7 +52,11 @@ export function ChannelItemFilterForm(props: Props) {
             </WithFormLabel>
           )}
           {filters.before !== undefined && (
-            <WithFormLabel htmlFor="before" label="Published before">
+            <WithFormLabel
+              htmlFor="before"
+              label="Published before"
+              className="mt-4"
+            >
               {({ htmlFor }) => (
                 <input
                   name={ChannelItemFilterForm.names.before}
@@ -65,14 +70,14 @@ export function ChannelItemFilterForm(props: Props) {
             </WithFormLabel>
           )}
         </div>
-        <div className="flex flex-col gap-4 empty:hidden">
+        <div className="empty:hidden">
           {props.filters.categories !== undefined && (
             <WithFormLabel label="Filter by channels" labelAs="div">
               <div className={styles.input}>
                 <List>
                   {data.channels?.map((channel) => (
                     <li key={channel.id}>
-                      <label className="flex cursor-pointer items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
+                      <CheckboxLabel>
                         <input
                           key={String(filters.channels)}
                           name="channels"
@@ -85,7 +90,7 @@ export function ChannelItemFilterForm(props: Props) {
                           className="min-w-4"
                         />
                         {channel.title}
-                      </label>
+                      </CheckboxLabel>
                     </li>
                   ))}
                   {(data.channels?.length ?? 0) === 0 && (
@@ -96,12 +101,16 @@ export function ChannelItemFilterForm(props: Props) {
             </WithFormLabel>
           )}
           {props.filters.channels !== undefined && (
-            <WithFormLabel label={"Filter by categories"} labelAs="div">
+            <WithFormLabel
+              label={"Filter by categories"}
+              labelAs="div"
+              className="mt-4"
+            >
               <div className={styles.input}>
                 <List>
                   {data.categories?.map((category) => (
                     <li key={category}>
-                      <label className="flex cursor-pointer items-baseline gap-1 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
+                      <CheckboxLabel>
                         <input
                           key={String(filters.categories)}
                           name="categories"
@@ -114,7 +123,7 @@ export function ChannelItemFilterForm(props: Props) {
                           className="min-w-4"
                         />
                         {category}
-                      </label>
+                      </CheckboxLabel>
                     </li>
                   ))}
                   {(data.categories?.length ?? 0) === 0 && (
@@ -124,44 +133,43 @@ export function ChannelItemFilterForm(props: Props) {
               </div>
             </WithFormLabel>
           )}
-          {props.canExcludeRead && (
-            <WithFormLabel label={"Filter by state"} labelAs="div">
-              <div className={styles.input.concat("")}>
-                <List>
-                  {[
-                    {
-                      name: ChannelItemFilterForm.names.excludeRead,
-                      label: "Include read articles",
-                      currentValue: filters.excludeRead === false,
-                    },
-                    {
-                      name: ChannelItemFilterForm.names.includeHiddenFromFeed,
-                      label: "Include hidden from feed",
-                      currentValue: filters.excludeHiddenFromFeed === false,
-                    },
-                  ].map((field) => (
-                    <li key={field.name}>
-                      <label className="flex cursor-pointer items-baseline gap-1 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600">
-                        <input
-                          key={String(field.currentValue)}
-                          name={field.name}
-                          type="checkbox"
-                          value={String(true)}
-                          id={field.name}
-                          defaultChecked={field.currentValue}
-                          className="min-w-4"
-                        />
-                        {field.label}
-                      </label>
-                    </li>
-                  ))}
-                </List>
-              </div>
-            </WithFormLabel>
-          )}
+          <WithFormLabel
+            label={"Filter by state"}
+            labelAs="div"
+            className="mt-4"
+          >
+            <div className={styles.input}>
+              <List>
+                {[
+                  {
+                    name: ChannelItemFilterForm.names[
+                      "include-hidden-from-feed"
+                    ],
+                    label: "Include hidden from feed",
+                    currentValue: filters.excludeHiddenFromFeed === false,
+                  },
+                ].map((field) => (
+                  <li key={field.name}>
+                    <CheckboxLabel>
+                      <input
+                        key={String(field.currentValue)}
+                        name={field.name}
+                        type="checkbox"
+                        value={String(true)}
+                        id={field.name}
+                        defaultChecked={field.currentValue}
+                        className="min-w-4"
+                      />
+                      {field.label}
+                    </CheckboxLabel>
+                  </li>
+                ))}
+              </List>
+            </div>
+          </WithFormLabel>
         </div>
         {hasFilters && (
-          <fieldset className="flex flex-col gap-1 ">
+          <fieldset className="flex flex-col gap-1">
             <Button form="reset-filters" type="submit" className="w-full ">
               <BanIcon className="w-4" />
               <span className="flex-1 items-center">Disable filters</span>
@@ -194,9 +202,22 @@ export function ChannelItemFilterForm(props: Props) {
 
 const inputClassName = styles.input;
 
-ChannelItemFilterForm.names = {
-  before: "before",
-  after: "after",
-  includeHiddenFromFeed: "include-hidden-from-feed",
-  excludeRead: "exclude-read",
-};
+ChannelItemFilterForm.names = enumerate([
+  "before",
+  "after",
+  "include-hidden-from-feed",
+]);
+
+function CheckboxLabel(props: React.ComponentProps<"label">) {
+  return (
+    <label
+      {...props}
+      className={clsx(
+        "flex items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600 [&_input]:translate-y-[0.2ex]",
+        props.className,
+      )}
+    >
+      {props.children}
+    </label>
+  );
+}

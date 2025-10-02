@@ -30,7 +30,6 @@ import { createMeta, enumerate } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.articles.$itemId";
 import { BackLink } from "~/components/BackLink";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
-import { htmlToText } from "~/utils/html-to-text";
 import { List } from "~/components/List";
 
 export const meta = createMeta();
@@ -113,9 +112,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         ].concat(loaderData.quotes)
       : loaderData.quotes;
 
-  const description = React.useMemo(() => {
-    return htmlToText(item.description);
-  }, [item.description]);
+  const description = item.description;
 
   const formRef = React.useRef<HTMLFormElement>(null);
 

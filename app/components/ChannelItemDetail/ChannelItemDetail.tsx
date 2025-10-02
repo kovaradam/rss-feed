@@ -3,7 +3,7 @@ import {
   BookmarkIcon as SolidBookmarkIcon,
   CheckCircleIcon as SolidCheckIcon,
 } from "@heroicons/react/solid";
-import { Link, useFetcher } from "react-router";
+import { href, Link, useFetcher } from "react-router";
 import useSound from "~/utils/use-sound";
 import type { ItemWithChannel } from "~/models/channel.server";
 import { ChannelCategoryLinks } from "../ChannelCategories";
@@ -20,7 +20,6 @@ import { CircleCheck } from "../icons/CircleCheck";
 import { Bookmark } from "../icons/Bookmark";
 import { SpinTransition } from "../animations/SpinTransition";
 import { Item } from "~/models/types.server";
-import { htmlToText } from "~/utils/html-to-text";
 import clsx from "clsx";
 
 type Props = {
@@ -28,22 +27,24 @@ type Props = {
   query?: string;
   hideImage?: boolean;
   wrapperClassName?: string;
+  isContrivedOnRead?: boolean;
 };
 
 export function ChannelItemDetail(props: Props) {
   const { channel, ...item } = props.item;
 
-  const description = React.useMemo(() => {
-    return htmlToText(item.description);
-  }, [item.description]);
+  const description = item.description.slice(0, 500);
 
   const itemTitle = ChannelItemDetail.Title({ description, title: item.title });
+
+  const isContrived = props.isContrivedOnRead && item.read;
 
   return (
     <article
       id={item.id}
       className={clsx(
         `relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none`,
+        isContrived && "opacity-65",
         props.wrapperClassName,
       )}
       style={{
@@ -52,7 +53,7 @@ export function ChannelItemDetail(props: Props) {
     >
       <span className="flex w-full justify-between gap-2 dark:text-white">
         <Link
-          to={`/channels/${channel.id}`}
+          to={href(`/channels/:channelId`, { channelId: channel.id })}
           className={`max-w-[60vw] truncate sm:max-w-[40ch]`}
         >
           {props.query ? (
@@ -69,7 +70,7 @@ export function ChannelItemDetail(props: Props) {
         href={item.link}
         className="mt-2 text-lg text-slate-900 visited:text-violet-900 dark:text-white dark:visited:text-violet-200"
       >
-        {item.imageUrl && !props.hideImage && (
+        {item.imageUrl && !props.hideImage && !isContrived && (
           <img
             alt=""
             rel="noreferrer"
@@ -84,10 +85,10 @@ export function ChannelItemDetail(props: Props) {
           itemTitle
         )}
       </Href>
-      <span className="text-slate-500 dark:text-slate-400">
+      <span className="text-slate-500 dark:text-slate-400 ">
         <span className="flex flex-col gap-1">
           {item.author}
-          <div className="w-fit">
+          <div className="w-fit text-sm">
             <TimeFromNow date={new Date(item.pubDate)} />
           </div>
         </span>
@@ -95,16 +96,24 @@ export function ChannelItemDetail(props: Props) {
       <span className="my-1 flex gap-1 text-sm">
         <ChannelCategoryLinks category={channel.category} />
       </span>
-      <p className="line-clamp-10 wrap-anywhere dark:text-white">
-        {props.query ? (
-          <Highlight query={props.query} input={description.slice(0, 500)} />
-        ) : (
-          description
-        )}
-      </p>
+
+      {!isContrived && (
+        <>
+          <p className="line-clamp-10 wrap-anywhere dark:text-white">
+            {props.query ? (
+              <Highlight query={props.query} input={description} />
+            ) : (
+              description
+            )}
+          </p>
+        </>
+      )}
       <Link
-        to={`/channels/${channel.id}/articles/${item.id}`}
-        className="pt-1 text-slate-500 dark:text-slate-400"
+        to={href(`/channels/:channelId/articles/:itemId`, {
+          channelId: channel.id,
+          itemId: item.id,
+        })}
+        className="pt-1 text-sm hover:underline text-slate-500 dark:text-slate-400"
       >
         See details
       </Link>
@@ -155,7 +164,7 @@ ChannelItemDetail.Title = function ChannelItemDetailTitle({
     if (title) {
       return title;
     }
-    const result = htmlToText(description.slice(0, 30));
+    const result = description.slice(0, 30);
     return result.slice(0, result.lastIndexOf(" ")).concat(" ...");
   }, [description, title]);
 };
