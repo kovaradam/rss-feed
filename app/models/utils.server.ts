@@ -45,7 +45,6 @@ export async function fetchSingleFeed(
     { feed: feedUrl },
     { ...init, headers },
   ).then((r) => {
-    console.log(r.headers.get("etag"), "hasCurrentVersion", r.status === 304);
     const hasCurrentVersion = r.status === 304;
     return {
       meta: {

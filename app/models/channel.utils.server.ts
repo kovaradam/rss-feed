@@ -87,6 +87,8 @@ function sanitize(input: string) {
   if (!input) {
     return input;
   }
+  // this can turn e.g. "&lt;" into "<"
   const query = load(input, { xml: true });
-  return query.text();
+  // so here it runs it once again to remove created tags
+  return load(query.text(), { xml: true }).text();
 }
