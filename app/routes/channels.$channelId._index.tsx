@@ -319,6 +319,7 @@ export default function ChannelDetailsPage() {
             type="submit"
             className="flex w-[13ch] items-center gap-2"
             isPending={isRefreshing}
+            data-silent
           >
             <RefreshIcon
               className={`w-4  ${

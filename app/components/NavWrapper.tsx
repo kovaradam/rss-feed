@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
 import React from "react";
-import { useEvent } from "~/utils/useEvent";
+
 import clsx from "clsx";
 
 type Props = {
@@ -11,13 +11,13 @@ type Props = {
 
 export function NavWrapper(props: Props) {
   const { pathname } = useLocation();
-  const hide = useEvent(() => {
+  const hide = React.useEffectEvent(() => {
     props.hide();
   });
 
   React.useEffect(() => {
     hide();
-  }, [pathname, hide]);
+  }, [pathname]);
 
   return (
     <>
