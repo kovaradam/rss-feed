@@ -10,6 +10,7 @@ import {
   isRouteErrorResponse,
   useRouteError,
   useRevalidator,
+  href,
 } from "react-router";
 
 import stylesheet from "./tailwind.css?url";
@@ -26,6 +27,7 @@ import { SERVER_ENV } from "./env.server";
 import { useOnWindowFocus } from "./utils/use-on-window-focus";
 
 export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
   { rel: "stylesheet", href: stylesheet },
 ];
 
@@ -45,15 +47,15 @@ export default function App(props: Route.ComponentProps) {
   const data = props.loaderData;
   const navigation = useNavigation();
 
-  const href = useHref(useLocation());
+  const currentHref = useHref(useLocation());
 
   React.useEffect(() => {
-    HistoryStack.add({ href, title: lastTitle });
+    HistoryStack.add({ href: currentHref, title: lastTitle });
 
     if (!document.querySelector("#main :focus")) {
       document.getElementById("main")?.focus();
     }
-  }, [href]);
+  }, [currentHref]);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -75,7 +77,11 @@ export default function App(props: Route.ComponentProps) {
 
   const revalidator = useRevalidator();
 
-  useOnWindowFocus(revalidator.revalidate);
+  useOnWindowFocus((_, signal) => {
+    fetch(href("/healthcheck"), { signal }).then(() => {
+      revalidator.revalidate();
+    });
+  });
 
   const isLoaderVisible =
     (!navigation.formAction ||
@@ -94,6 +100,7 @@ export default function App(props: Route.ComponentProps) {
           content="Keep up with the latest web content with an RSS feed."
         />
         <meta name="keywords" content="RSS feed, RSS, journal, news" />
+
         {props.loaderData.scan && (
           <script
             crossOrigin="anonymous"
@@ -109,6 +116,7 @@ export default function App(props: Route.ComponentProps) {
               }`}
           </style>
         </noscript>
+        <script crossOrigin="anonymous" src="/register-sw.js" />
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
         <div data-loading={isLoaderVisible} className="_progress">

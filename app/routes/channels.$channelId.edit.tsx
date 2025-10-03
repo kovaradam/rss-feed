@@ -142,8 +142,8 @@ export default function Channels({
 
   return (
     <>
-      <UseAppTitle>{channel?.title}</UseAppTitle>
-      <PageHeading>Edit channel</PageHeading>
+      <UseAppTitle>Edit channel</UseAppTitle>
+      <PageHeading>{channel?.title}</PageHeading>
       <Form method="post" className="flex max-w-xl flex-col gap-4">
         {/* To prevent submitting with category-delete buttons */}
         <input type="submit" hidden />

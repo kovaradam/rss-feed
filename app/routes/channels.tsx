@@ -357,6 +357,7 @@ function StyledNavLink({
   return (
     <NavLink
       {...props}
+      prefetch="intent"
       className={(state) =>
         clsx(
           state.isPending && "max-sm:bg-slate-100 max-sm:dark:bg-slate-800", // mobile pending state

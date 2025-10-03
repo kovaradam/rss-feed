@@ -11,8 +11,16 @@ type Props = {
 };
 
 export function WithFormLabel(props: Props) {
-  const { label, labelEndSlot, required, children, className, ...legendProps } =
-    props;
+  const {
+    label,
+    labelEndSlot,
+    required,
+    children,
+    className,
+    labelAs = "label",
+    ...legendProps
+  } = props;
+
   const id = React.useId();
   const htmlFor = props.htmlFor ?? id;
 
@@ -23,10 +31,9 @@ export function WithFormLabel(props: Props) {
         {...legendProps}
       >
         {React.createElement(
-          props.labelAs ?? "label",
+          labelAs,
           {
-            htmlFor:
-              props.labelAs && props.labelAs !== "label" ? undefined : htmlFor,
+            htmlFor: labelAs !== "label" ? undefined : htmlFor,
             className: "dark:text-slate-100",
           },
           label,
