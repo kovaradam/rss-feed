@@ -19,7 +19,9 @@ export function TimedTransition<T>(props: Props<T>) {
 
   const isDisabled = getPrefersReducedMotion();
 
-  const timeout = props.timeout;
+  const timeout = React.useMemo(() => {
+    return props.timeout - (props.timeout / 2) * Math.random();
+  }, [props.timeout]);
 
   const getKey =
     props.getKey ??

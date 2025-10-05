@@ -151,7 +151,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
 
   const [updatedItems, addUpdatedItem] = React.useReducer(
     (
-      prev: typeof serverItems,
+      prev: Map<string, (typeof serverItems)[number]>,
       update: { fetcher: Fetcher; items: typeof prev },
     ) => {
       if (
@@ -165,40 +165,45 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
         ChannelItemDetail.form.names.itemId,
       );
 
-      const itemToUpdate = update.items.find((i) => i.id === itemId);
+      const itemToUpdate = itemId ? update.items.get(itemId as string) : null;
 
       if (!itemToUpdate) {
         return prev;
       }
 
-      return prev
-        .filter((i) => i.id !== itemToUpdate.id)
-        .concat({
-          ...itemToUpdate,
-          bookmarked:
-            update.fetcher.formData?.get(
-              ChannelItemDetail.form.names.bookmarked,
-            ) === String(true),
-          read:
-            update.fetcher.formData?.get(ChannelItemDetail.form.names.read) ===
-            String(true),
-          hiddenFromFeed:
-            update.fetcher.formData?.get(
-              ChannelItemDetail.form.names.hiddenFromFeed,
-            ) === String(true),
-        });
+      prev.set(itemId as string, {
+        ...itemToUpdate,
+        bookmarked:
+          update.fetcher.formData?.get(
+            ChannelItemDetail.form.names.bookmarked,
+          ) === String(true),
+        read:
+          update.fetcher.formData?.get(ChannelItemDetail.form.names.read) ===
+          String(true),
+        hiddenFromFeed:
+          update.fetcher.formData?.get(
+            ChannelItemDetail.form.names.hiddenFromFeed,
+          ) === String(true),
+      });
+
+      return new Map(prev);
     },
-    [],
+    new Map(),
   );
 
   React.useEffect(() => {
-    fetchers.forEach((f) => addUpdatedItem({ fetcher: f, items: serverItems }));
+    fetchers.forEach((f) =>
+      addUpdatedItem({
+        fetcher: f,
+        items: new Map(serverItems.map((i) => [i.id, i])),
+      }),
+    );
     // eslint-disable-next-line react-compiler/react-compiler
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(fetchers), addUpdatedItem, serverItems]);
 
   const items = serverItems
-    .map((i) => updatedItems.find((updated) => updated.id === i.id) ?? i)
+    .map((i) => updatedItems.get(i.id) ?? i)
     .filter((i) => {
       if (i.hiddenFromFeed && !filters.includeHiddenFromFeed) {
         return false;

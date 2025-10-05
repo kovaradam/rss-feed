@@ -121,7 +121,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       <UseAppTitle>Article detail</UseAppTitle>
 
       <BackLink
-        className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400"
+        className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400 hover:underline"
         to={`/channels/${item.channelId}`}
       >
         {(backEntry) => (
