@@ -1,7 +1,7 @@
 const version = "v1";
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(Cache.init(version));
+  event.waitUntil(Data.init());
 });
 
 self.addEventListener("fetch", (event) => {
@@ -9,18 +9,18 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (Cache.isAsset(event.request)) {
+  if (Data.isAsset(event.request)) {
     event.respondWith(cacheFirst(event));
     return;
   }
 
-  if (Cache.canCache(event.request)) {
+  if (Data.canCache(event.request)) {
     event.respondWith(
       (async () => {
         if (conn.isOnline) {
           return networkFirst(event);
         } else {
-          const cachedResponse = await Cache.get(event.request);
+          const cachedResponse = await Data.get(event.request);
           if (cachedResponse) {
             return cachedResponse;
           } else {
@@ -38,7 +38,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 async function cacheFirst(event) {
-  const networkResponse = await Cache.get(event.request);
+  const networkResponse = await Data.get(event.request);
 
   if (networkResponse) {
     return networkResponse;
@@ -46,7 +46,7 @@ async function cacheFirst(event) {
 
   const responseFromNetwork = await fetch(event.request);
 
-  event.waitUntil(Cache.add(event.request, responseFromNetwork.clone()));
+  event.waitUntil(Data.add(event.request, responseFromNetwork.clone()));
 
   return responseFromNetwork;
 }
@@ -54,10 +54,10 @@ async function cacheFirst(event) {
 async function networkFirst(event) {
   try {
     const networkResponse = await fetch(event.request);
-    event.waitUntil(Cache.add(event.request, networkResponse.clone()));
+    event.waitUntil(Data.add(event.request, networkResponse.clone()));
     return networkResponse;
   } catch (e) {
-    const cacheResponse = await Cache.get(event.request);
+    const cacheResponse = await Data.get(event.request);
 
     if (cacheResponse) {
       return cacheResponse;
@@ -70,25 +70,32 @@ async function fetchWhenOnline(event) {
   return fetch(event.request);
 }
 
-class Cache {
+class Data {
+  static #cacheKey = version;
   static #cache;
 
-  static init = async (cacheKey) => {
+  static init = async () => {
     const cachesToDelete = (await caches.keys()).filter(
-      (key) => key !== cacheKey,
+      (key) => key !== this.#cacheKey,
     );
     await Promise.all(cachesToDelete.map((key) => caches.delete(key)));
-    this.#cache = caches.open(cacheKey);
+    return this.#getCache();
+  };
+
+  static #getCache = async () => {
+    if (!(await this.#cache)) {
+      this.#cache = await caches.open(this.#cacheKey);
+    }
     return this.#cache;
   };
 
   static add = async (request, response) => {
-    const cache = await this.#cache;
+    const cache = await this.#getCache();
     return cache.put(request, response);
   };
 
   static get = async (request) => {
-    const cache = await this.#cache;
+    const cache = await this.#getCache();
     const cached = await cache.match(request);
     return cached;
   };
@@ -115,11 +122,13 @@ class Connection {
   #isOnLine = true;
 
   constructor() {
-    navigator.connection.addEventListener("change", () => {
-      this.healthCheck().then((isOnline) => {
-        this.#isOnLine = isOnline;
+    if ("connection" in navigator) {
+      navigator.connection.addEventListener("change", () => {
+        this.healthCheck().then((isOnline) => {
+          this.#isOnLine = isOnline;
+        });
       });
-    });
+    }
   }
 
   get isOnline() {
