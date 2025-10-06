@@ -570,7 +570,7 @@ function withValidSingleTouch<T>(handler: React.TouchEventHandler<T>) {
 
 function useNavToggleState() {
   const [isNavExpanded, setIsNavExpanded] = React.useState(
-    globalThis.document?.querySelector("#nav-toggle:checked") !== null,
+    Boolean(globalThis.document?.querySelector("#nav-toggle:checked")),
   );
 
   React.useEffect(() => {

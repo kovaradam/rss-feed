@@ -38,6 +38,7 @@ export function ChannelItemDetail(props: Props) {
   const itemTitle = ChannelItemDetail.Title({ description, title: item.title });
 
   const isContrived = props.isContrivedOnRead && item.read;
+  const isImageHidden = props.hideImage || isContrived;
 
   return (
     <article
@@ -70,7 +71,7 @@ export function ChannelItemDetail(props: Props) {
         href={item.link}
         className="mt-2 text-lg text-slate-900 visited:text-violet-900 dark:text-white dark:visited:text-violet-200"
       >
-        {item.imageUrl && !props.hideImage && !isContrived && (
+        {item.imageUrl && !isImageHidden && (
           <img
             alt=""
             rel="noreferrer"
