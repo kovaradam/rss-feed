@@ -77,6 +77,9 @@ export function mapRssFeedItemsResponseToCreateInput(
           bookmarked: false,
           read: false,
           hiddenFromFeed: false,
+          enclosureType: i.enclosure?.type ?? null,
+          enclosureUrl: i.enclosure?.url ?? null,
+          enclosureLength: asNumber(i.enclosure?.length) ?? null,
         };
       })
       .filter(booleanFilter) ?? []

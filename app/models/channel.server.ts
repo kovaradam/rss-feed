@@ -8,7 +8,7 @@ import { normalizeHref } from "~/utils";
 import {
   mapRssFeedItemsResponseToCreateInput,
   mapRssFeedResponseToCreateInput,
-} from "./channel.utils.server";
+} from "./channel.mappers.server";
 import { DoesItRssApi } from "~/__generated__/does-it-rss";
 import { asDate } from "~/utils.server";
 

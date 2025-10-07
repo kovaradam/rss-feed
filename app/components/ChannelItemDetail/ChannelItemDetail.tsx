@@ -21,6 +21,7 @@ import { Bookmark } from "../icons/Bookmark";
 import { SpinTransition } from "../animations/SpinTransition";
 import { Item } from "~/models/types.server";
 import clsx from "clsx";
+import { AudioTrack } from "../AudioTrack";
 
 type Props = {
   item: ItemWithChannel;
@@ -39,6 +40,13 @@ export function ChannelItemDetail(props: Props) {
 
   const isContrived = props.isContrivedOnRead && item.read;
   const isImageHidden = props.hideImage || isContrived;
+  const audioTrack =
+    !isContrived && item.enclosureType?.includes("audio") && item.enclosureUrl
+      ? {
+          url: item.enclosureUrl,
+          length: item.enclosureLength,
+        }
+      : null;
 
   return (
     <article
@@ -100,6 +108,19 @@ export function ChannelItemDetail(props: Props) {
 
       {!isContrived && (
         <>
+          {audioTrack && (
+            <div className="mb-2">
+              <AudioTrack
+                src={audioTrack.url}
+                className="w-full rounded-md"
+                metadata={{
+                  artist: item.author || channel.title,
+                  title: item.title,
+                  artworkUrl: (item.imageUrl || channel.imageUrl) ?? undefined,
+                }}
+              />
+            </div>
+          )}
           <p className="line-clamp-10 wrap-anywhere dark:text-white">
             {props.query ? (
               <Highlight query={props.query} input={description} />
