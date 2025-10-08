@@ -185,9 +185,7 @@ export default function ChannelDetailsPage() {
         <DescriptionList className="pt-2 ">
           <span className="flex items-center gap-1 ">
             <DescriptionList.Definition>
-              <Href href={channel.link} className="">
-                {channel.link}
-              </Href>
+              <Href href={channel.link} />
             </DescriptionList.Definition>
           </span>
 
@@ -298,7 +296,7 @@ export default function ChannelDetailsPage() {
                   updatedAt: channel.updatedAt,
                 },
               }}
-              wrapperClassName="sm:shadow-none sm:px-0 sm:rounded-none dark:sm:bg-transparent dark:sm:border-b-slate-600 dark:sm:border-b sm:bg-transparent"
+              wrapperClassName="sm:shadow-none sm:px-0 sm:rounded-none dark:sm:bg-transparent dark:sm:border-b-slate-600 dark:sm:border-b sm:bg-transparent!"
             />
             <hr className="hidden dark:block dark:border-slate-600" />
           </React.Fragment>

@@ -9,8 +9,6 @@ import {
   useNavigation,
   isRouteErrorResponse,
   useRouteError,
-  useRevalidator,
-  href,
 } from "react-router";
 
 import stylesheet from "./tailwind.css?url";
@@ -24,7 +22,6 @@ import { lastTitle } from "./utils";
 import { HistoryStack } from "./utils/history-stack";
 import { useScrollRestoration } from "./utils/use-scroll-restoration";
 import { SERVER_ENV } from "./env.server";
-import { useOnWindowFocus } from "./utils/use-on-window-focus";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -40,6 +37,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     user,
     console: !SERVER_ENV.is.prod,
     scan: !SERVER_ENV.is.prod,
+    sw: SERVER_ENV.is.prod,
   };
 };
 
@@ -52,7 +50,10 @@ export default function App(props: Route.ComponentProps) {
   React.useEffect(() => {
     HistoryStack.add({ href: currentHref, title: lastTitle });
 
-    if (!document.querySelector("#main :focus")) {
+    if (
+      !document.querySelector("#main :focus") &&
+      !new URL(currentHref, window.location.origin).hash
+    ) {
       document.getElementById("main")?.focus();
     }
   }, [currentHref]);
@@ -74,14 +75,6 @@ export default function App(props: Route.ComponentProps) {
   }, []);
 
   useScrollRestoration();
-
-  const revalidator = useRevalidator();
-
-  useOnWindowFocus((_, signal) => {
-    fetch(href("/healthcheck"), { signal }).then(() => {
-      revalidator.revalidate();
-    });
-  });
 
   const isLoaderVisible =
     (!navigation.formAction ||
@@ -116,7 +109,7 @@ export default function App(props: Route.ComponentProps) {
               }`}
           </style>
         </noscript>
-        <script crossOrigin="anonymous" src="/register-sw.js" />
+        {data.sw && <script crossOrigin="anonymous" src="/register-sw.js" />}
       </head>
       <body className="h-full w-screen overflow-x-hidden sm:caret-rose-600 sm:accent-rose-600">
         <div data-loading={isLoaderVisible} className="_progress">

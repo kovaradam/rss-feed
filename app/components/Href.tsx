@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 import { mapValue } from "~/utils/map-value";
 
@@ -13,7 +14,11 @@ export function Href(props: Props) {
     <a
       href={props.href}
       rel="noreferrer"
-      className={`underline ${props.className}`}
+      className={clsx(
+        `underline`,
+        props.className,
+        (!props.children || props.children === props.href) && "break-all",
+      )}
       style={props.style}
     >
       {props.children ??

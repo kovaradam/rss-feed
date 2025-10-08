@@ -74,36 +74,13 @@ export default function ChannelsPage(props: Route.ComponentProps) {
 
   const refreshFetcher = useChannelRefreshFetcher();
   const isRefreshing = refreshFetcher.status === "pending";
-  const { refresh: refreshChannels, newItemCount } = refreshFetcher;
+  const { refresh: refreshChannels } = refreshFetcher;
 
   React.useEffect(() => {
     refreshChannels();
   }, [refreshChannels]);
 
   useOnWindowFocus(refreshChannels);
-
-  const itemsContainer = globalThis.document?.body;
-  const itemsContainerHeight = itemsContainer?.scrollHeight;
-  React.useLayoutEffect(() => {
-    if ((newItemCount ?? 0) === 0 || !itemsContainerHeight) {
-      return;
-    }
-    if (
-      window.matchMedia("(max-width: 640px)").matches &&
-      document.body.style.overflowAnchor !== undefined
-    ) {
-      return;
-    }
-    const newItemsContainerHeight = itemsContainer.scrollHeight;
-
-    const scrollingElement = document.body;
-
-    const scrollDiff = newItemsContainerHeight - itemsContainerHeight;
-
-    if (scrollingElement.scrollTop && scrollDiff) {
-      scrollingElement.scrollTop = scrollingElement.scrollTop + scrollDiff;
-    }
-  }, [newItemCount, itemsContainer, itemsContainerHeight]);
 
   const [channelFilter, setChannelFilter] = React.useState("");
 
@@ -329,7 +306,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                 id="main"
                 tabIndex={-1}
                 className={clsx(
-                  "p-6 outline-none",
+                  "p-6 outline-none ",
                   navigation.formAction?.includes("logout") &&
                     "animate-pulse opacity-60",
                 )}

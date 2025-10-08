@@ -310,9 +310,9 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
               )}
             </div>
           )}
-          <ChannelItemList>
-            {items.map((item) => (
-              <li key={item.id}>
+          <ChannelItemList items={items} getKey={(i) => i.id}>
+            {(item) => (
+              <li>
                 <ChannelItemDetail
                   item={{
                     ...item,
@@ -330,7 +330,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                   query={filters.search ?? undefined}
                 />
               </li>
-            ))}
+            )}
           </ChannelItemList>
           {cursor && <ShowMoreLink cursor={cursor} isLoading={isLoading} />}
         </section>

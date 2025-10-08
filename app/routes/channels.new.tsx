@@ -23,6 +23,7 @@ import { HiddenInputs } from "~/components/HiddenInputs";
 import { ChannelErrors, getChannelsFromUrl } from "~/models/utils.server";
 import { List } from "~/components/List";
 import { useKeepTruthy } from "~/utils/use-keep-truthy";
+import clsx from "clsx";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -87,7 +88,7 @@ export const action = async ({
   } catch (_) {
     return {
       errors: {
-        fetch: `Could not load any RSS feed from "${inputChannelUrl}"`,
+        fetch: `Could not load any RSS feed from [${inputChannelUrl}](${inputChannelUrl})`,
       },
     };
   }
@@ -337,7 +338,13 @@ function TextWithLink(props: { text: string }) {
           {mapValue(linkElements[index])(
             (props) =>
               props && (
-                <Link to={props.to} className="underline">
+                <Link
+                  to={props.to}
+                  className={clsx(
+                    "underline",
+                    props.to === props.label && "break-all",
+                  )}
+                >
                   {props.label}
                 </Link>
               ),

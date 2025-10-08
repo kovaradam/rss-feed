@@ -1,11 +1,13 @@
-import { List } from "./List";
+import React from "react";
+import { StableList } from "./List";
 
-export function ChannelItemList(props: React.HTMLProps<HTMLUListElement>) {
+export function ChannelItemList<U>(
+  props: React.ComponentProps<typeof StableList<U>>,
+) {
   return (
-    <List
+    <StableList
+      {...props}
       className={` grid grid-cols-1 gap-4 sm:min-w-[30ch] xl:grid-cols-2  ${props.className}`}
-    >
-      {props.children}
-    </List>
+    />
   );
 }
