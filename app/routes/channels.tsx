@@ -90,7 +90,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <a
-        href="#main"
+        href="#main-content"
         className="bg-accent absolute z-10 scale-0 rounded p-1 text-white focus:scale-100"
       >
         Skip to main content
@@ -303,7 +303,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                 </div>
               </header>
               <main
-                id="main"
+                id="main-content"
                 tabIndex={-1}
                 className={clsx(
                   "p-6 outline-none ",

@@ -51,10 +51,10 @@ export default function App(props: Route.ComponentProps) {
     HistoryStack.add({ href: currentHref, title: lastTitle });
 
     if (
-      !document.querySelector("#main :focus") &&
+      !document.querySelector("#main-content :focus") &&
       !new URL(currentHref, window.location.origin).hash
     ) {
-      document.getElementById("main")?.focus();
+      document.getElementById("main-content")?.focus();
     }
   }, [currentHref]);
 
