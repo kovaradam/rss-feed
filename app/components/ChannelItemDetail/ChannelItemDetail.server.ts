@@ -10,7 +10,7 @@ export const ChannelItemDetailService = {
     const bookmarked = formData.get(names.bookmarked);
     const read = formData.get(names.read);
     const hiddenFromFeed = formData.get(names.hiddenFromFeed);
-
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await updateChannelItem(userId, {
       where: {
         id: itemId,

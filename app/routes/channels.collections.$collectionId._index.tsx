@@ -30,6 +30,7 @@ import { createTitle } from "~/utils";
 import type { Route } from "./+types/channels.collections.$collectionId._index";
 import { Filter } from "~/components/icons/Filter";
 import { SpinTransition } from "~/components/animations/SpinTransition";
+import { useOptimisticItems } from "~/data/useOptimisticItmes";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -121,7 +122,13 @@ export const action = async ({ request }: Route.ActionArgs) => {
 };
 
 export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
-  const { items, cursor, filters, collection, channelCount } = loaderData;
+  const {
+    items: serverItems,
+    cursor,
+    filters,
+    collection,
+    channelCount,
+  } = loaderData;
   const transition = useNavigation();
   const isSubmitting = transition.state === "submitting";
 
@@ -131,7 +138,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     () => <ChannelItemFilterForm formId={"filter-form"} filters={filters} />,
     [filters],
   );
-
+  const items = useOptimisticItems(serverItems);
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>

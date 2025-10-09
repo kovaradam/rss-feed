@@ -52,8 +52,9 @@ export function ChannelItemDetail(props: Props) {
     <article
       id={item.id}
       className={clsx(
-        `relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4 sm:shadow-md dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none`,
+        `relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4  dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none`,
         isContrived && "opacity-65",
+        isContrived ? "sm:shadow" : "sm:shadow-md",
         props.wrapperClassName,
       )}
       style={{
@@ -197,19 +198,22 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
   const { item } = props;
 
   const fetcher = useFetcher();
-  const [sentBookmarked, sentRead, sentHiddenFromFeed] = [
-    fetcher.formData?.get(ChannelItemDetail.form.names.bookmarked) ?? null,
-    fetcher.formData?.get(ChannelItemDetail.form.names.read) ?? null,
-    fetcher.formData?.get(ChannelItemDetail.form.names.hiddenFromFeed) ?? null,
-  ];
+  const sentBookmarked =
+      fetcher.formData?.get(ChannelItemDetail.form.names.bookmarked) ?? null,
+    sentRead = fetcher.formData?.get(ChannelItemDetail.form.names.read) ?? null,
+    sentHiddenFromFeed =
+      fetcher.formData?.get(ChannelItemDetail.form.names.hiddenFromFeed) ??
+      null;
 
-  const [bookmarked, read, hiddenFromFeed] = [
-    sentBookmarked === null ? item.bookmarked : sentBookmarked === String(true),
-    sentRead === null ? item.read : sentRead === String(true),
-    sentHiddenFromFeed === null
-      ? item.hiddenFromFeed
-      : sentHiddenFromFeed === String(true),
-  ];
+  const bookmarked =
+      sentBookmarked === null
+        ? item.bookmarked
+        : sentBookmarked === String(true),
+    read = sentRead === null ? item.read : sentRead === String(true),
+    hiddenFromFeed =
+      sentHiddenFromFeed === null
+        ? item.hiddenFromFeed
+        : sentHiddenFromFeed === String(true);
 
   const ReadIcon = read ? SolidCheckIcon : CircleCheck;
   const BookmarkIcon = bookmarked ? SolidBookmarkIcon : Bookmark;

@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Fetcher,
-  Form,
-  href,
-  Link,
-  ShouldRevalidateFunctionArgs,
-  useFetchers,
-  useNavigation,
-} from "react-router";
+import { Form, href, Link, useNavigation } from "react-router";
 import { SpinTransition } from "~/components/animations/SpinTransition";
 import { UseAppTitle } from "~/components/AppTitle";
 import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
@@ -26,6 +18,7 @@ import { requireUserId } from "~/session.server";
 import { isEmptyObject } from "~/utils/is-empty-object";
 import type { Route } from "./+types/channels._index";
 import { List } from "~/components/List";
+import { useOptimisticItems } from "~/data/useOptimisticItmes";
 
 const itemCountName = "item-count";
 
@@ -147,70 +140,13 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     [filters, channels, categories],
   );
 
-  const fetchers = useFetchers();
+  const items = useOptimisticItems(serverItems).filter((i) => {
+    if (i.hiddenFromFeed && !filters.includeHiddenFromFeed) {
+      return false;
+    }
 
-  const [updatedItems, addUpdatedItem] = React.useReducer(
-    (
-      prev: Map<string, (typeof serverItems)[number]>,
-      update: { fetcher: Fetcher; items: typeof prev },
-    ) => {
-      if (
-        update.fetcher.formData?.get(ChannelItemDetail.form.names.action) !==
-        ChannelItemDetail.form.values["update-channel-item"]
-      ) {
-        return prev;
-      }
-
-      const itemId = update.fetcher.formData?.get(
-        ChannelItemDetail.form.names.itemId,
-      );
-
-      const itemToUpdate = itemId ? update.items.get(itemId as string) : null;
-
-      if (!itemToUpdate) {
-        return prev;
-      }
-
-      prev.set(itemId as string, {
-        ...itemToUpdate,
-        bookmarked:
-          update.fetcher.formData?.get(
-            ChannelItemDetail.form.names.bookmarked,
-          ) === String(true),
-        read:
-          update.fetcher.formData?.get(ChannelItemDetail.form.names.read) ===
-          String(true),
-        hiddenFromFeed:
-          update.fetcher.formData?.get(
-            ChannelItemDetail.form.names.hiddenFromFeed,
-          ) === String(true),
-      });
-
-      return new Map(prev);
-    },
-    new Map(),
-  );
-
-  React.useEffect(() => {
-    fetchers.forEach((f) =>
-      addUpdatedItem({
-        fetcher: f,
-        items: new Map(serverItems.map((i) => [i.id, i])),
-      }),
-    );
-    // eslint-disable-next-line react-compiler/react-compiler
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(fetchers), addUpdatedItem, serverItems]);
-
-  const items = serverItems
-    .map((i) => updatedItems.get(i.id) ?? i)
-    .filter((i) => {
-      if (i.hiddenFromFeed && !filters.includeHiddenFromFeed) {
-        return false;
-      }
-
-      return true;
-    });
+    return true;
+  });
 
   return (
     <>
@@ -314,18 +250,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             {(item) => (
               <li>
                 <ChannelItemDetail
-                  item={{
-                    ...item,
-                    pubDate: item.pubDate,
-                    channel: {
-                      ...item.channel,
-
-                      updatedAt: item.channel.updatedAt,
-                      createdAt: item.channel.createdAt,
-                      lastBuildDate: item.channel.lastBuildDate,
-                      refreshDate: item.channel.refreshDate,
-                    },
-                  }}
+                  item={item}
                   isContrivedOnRead
                   query={filters.search ?? undefined}
                 />
@@ -360,13 +285,6 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary() {
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
-}
-
-export function shouldRevalidate({ formData }: ShouldRevalidateFunctionArgs) {
-  return (
-    formData?.get(ChannelItemDetail.form.names.action) !==
-    ChannelItemDetail.form.values["update-channel-item"]
-  );
 }
 
 const recommendedChannels = [
