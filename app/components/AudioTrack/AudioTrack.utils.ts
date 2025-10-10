@@ -23,11 +23,10 @@ export function useMediaSession(
 
     const abortController = new AbortController();
 
-    const defaultSkipTime = 10;
-
     audioElement.addEventListener(
       "play",
       () => {
+        const defaultSkipTime = 10;
         const actionHandlers: [
           MediaSessionAction,
           MediaSessionActionHandler,
@@ -126,6 +125,7 @@ export function useMediaSession(
 
             navigator.mediaSession.playbackState = "playing";
           }
+
           if (event === "pause") {
             navigator.mediaSession.playbackState = "paused";
           }
