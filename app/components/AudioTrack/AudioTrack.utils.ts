@@ -47,7 +47,7 @@ export function useMediaSession(
 
           [
             "seekto",
-            (details: MediaSessionActionDetails) => {
+            (details) => {
               if (details.seekTime === undefined) return;
 
               if (details.fastSeek && "fastSeek" in audioElement) {
