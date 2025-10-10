@@ -19,6 +19,17 @@ export function NewItemsAlert() {
 
   usePreserveScroll(scrollAnchorRef.current, [isHidden], isHidden);
 
+  const reset = React.useEffectEvent(() => refresh.reset?.());
+
+  React.useEffect(() => {
+    // If visible alert is unmounted, it can be assumed that items will be invalidated and alert needs to be reset
+    if (!isHidden) {
+      return () => {
+        reset();
+      };
+    }
+  }, [isHidden]);
+
   return (
     <div>
       {!isHidden && (

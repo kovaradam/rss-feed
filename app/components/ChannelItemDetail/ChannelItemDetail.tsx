@@ -21,7 +21,7 @@ import { Bookmark } from "../icons/Bookmark";
 import { SpinTransition } from "../animations/SpinTransition";
 import { Item } from "~/models/types.server";
 import clsx from "clsx";
-import { AudioTrack } from "../AudioTrack";
+import { AudioTrack } from "../AudioTrack/AudioTrack";
 
 type Props = {
   item: ItemWithChannel;
@@ -57,9 +57,6 @@ export function ChannelItemDetail(props: Props) {
         isContrived ? "sm:shadow" : "sm:shadow-md",
         props.wrapperClassName,
       )}
-      style={{
-        viewTransitionName: item.id,
-      }}
     >
       <span className="flex w-full justify-between gap-2 dark:text-white">
         <Link

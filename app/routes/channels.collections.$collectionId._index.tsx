@@ -138,7 +138,11 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     () => <ChannelItemFilterForm formId={"filter-form"} filters={filters} />,
     [filters],
   );
-  const items = useOptimisticItems(serverItems);
+  const items = useOptimisticItems(serverItems).filter((item) => {
+    if (collection.read === null) return true;
+    return item.read === collection.read;
+  });
+
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
