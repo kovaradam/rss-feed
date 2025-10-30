@@ -2,7 +2,7 @@ import { useFetcher } from "react-router";
 import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
 import { DotsLoading } from "./icons/DotsLoading";
 import React from "react";
-import { usePreserveScroll } from "~/utils/usePreserveScroll";
+import { usePreserveScroll } from "~/utils/use-preserve-scroll";
 
 export function NewItemsAlert() {
   /** submits mutation that triggers query revalidation */

@@ -182,12 +182,14 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                   <p className="mt-6 font-bold dark:text-white">
                     No articles found {isFilters && "matching your criteria"}
                   </p>
-                  <img
-                    src="/laying.svg"
-                    alt=""
-                    className="scale-50 dark:invert-[.8]"
-                    data-from="https://www.opendoodles.com/"
-                  ></img>
+                  <div className="flex flec-col justify-center">
+                    <img
+                      src="/laying.svg"
+                      alt=""
+                      className="dark:invert-[.8] max-w-[30ch] mt-16"
+                      data-from="https://www.opendoodles.com/"
+                    ></img>
+                  </div>
                 </>
               ) : (
                 <div className="mt-8 flex flex-col items-center gap-16">

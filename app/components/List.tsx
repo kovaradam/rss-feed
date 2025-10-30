@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React from "react";
-import { usePreserveScroll } from "~/utils/usePreserveScroll";
+import { usePreserveScroll } from "~/utils/use-preserve-scroll";
 
 type Props<T extends "ul" | "ol" = "ul"> = React.ComponentProps<T> & { as?: T };
 

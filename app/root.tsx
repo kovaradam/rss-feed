@@ -22,6 +22,7 @@ import { lastTitle } from "./utils";
 import { HistoryStack } from "./utils/history-stack";
 import { useScrollRestoration } from "./utils/use-scroll-restoration";
 import { SERVER_ENV } from "./env.server";
+import { withAbortController } from "./utils/with-abort-controller";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -49,14 +50,23 @@ export default function App(props: Route.ComponentProps) {
 
   React.useEffect(() => {
     HistoryStack.add({ href: currentHref, title: lastTitle });
-
-    if (
-      !document.querySelector("#main-content :focus") &&
-      !new URL(currentHref, window.location.origin).hash
-    ) {
-      document.getElementById("main-content")?.focus();
-    }
   }, [currentHref]);
+
+  React.useEffect(() => {
+    return withAbortController((controller) => {
+      document.addEventListener(
+        "click",
+        (e) => {
+          if (e.target instanceof HTMLElement && e.target.closest("#nav")) {
+            document.getElementById("main-content")?.focus();
+          }
+        },
+        {
+          signal: controller.signal,
+        },
+      );
+    });
+  }, []);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -77,10 +87,10 @@ export default function App(props: Route.ComponentProps) {
   useScrollRestoration();
 
   const isLoaderVisible =
+    ["loading", "submitting"].includes(navigation.state) &&
     (!navigation.formAction ||
       navigation.formMethod === "GET" ||
-      navigation.formData?.get("loader") === String(true)) &&
-    ["loading", "submitting"].includes(navigation.state);
+      navigation.formData?.get("loader") === String(true));
 
   return (
     <html lang="en" className="h-full w-screen overflow-x-hidden">

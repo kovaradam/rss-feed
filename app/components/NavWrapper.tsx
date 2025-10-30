@@ -30,6 +30,7 @@ export function NavWrapper(props: Props) {
             hide();
           }
         }}
+        id="nav"
       >
         <div className="sticky top-0 h-svh overflow-y-auto overflow-x-hidden sm:h-screen">
           {props.children}

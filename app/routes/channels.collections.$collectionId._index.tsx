@@ -202,7 +202,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                 src="/clumsy.svg"
                 width={"70%"}
                 data-from="https://www.opendoodles.com/"
-                className="dark:invert-[.8]"
+                className="dark:invert-[.8] max-w-[40ch]"
               />
             </div>
           )}
