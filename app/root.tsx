@@ -57,7 +57,11 @@ export default function App(props: Route.ComponentProps) {
       document.addEventListener(
         "click",
         (e) => {
-          if (e.target instanceof HTMLElement && e.target.closest("#nav")) {
+          if (
+            e.target instanceof HTMLAnchorElement &&
+            e.target.getAttribute("href")?.startsWith("/") &&
+            e.target.closest("#nav")
+          ) {
             document.getElementById("main-content")?.focus();
           }
         },
