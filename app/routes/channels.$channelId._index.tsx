@@ -54,7 +54,7 @@ import { HiddenInputs } from "~/components/HiddenInputs";
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
     {
-      title: createTitle(data?.channel?.title ?? "Channel detail"),
+      title: createTitle(data?.channel?.title ?? "Channel"),
     },
   ];
 };
@@ -175,7 +175,7 @@ export default function ChannelDetailsPage() {
 
   return (
     <div className={`relative flex flex-col sm:flex-row`}>
-      <UseAppTitle>Channel detail</UseAppTitle>
+      <UseAppTitle>Channel</UseAppTitle>
       <section className="relative z-0 max-w-[90vw] flex-1">
         {channel.imageUrl && <ChannelImage src={channel.imageUrl} />}
         <WithEditLink name={"title"} label="Edit channel title">

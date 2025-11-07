@@ -40,6 +40,7 @@ import { useOnWindowFocus } from "~/utils/use-on-window-focus";
 import clsx from "clsx";
 import { Modal } from "~/components/Modal";
 import { TimedTransition } from "~/components/animations/TimedTransition";
+import { attachOverscroll } from "~/utils/attach-overscroll";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -126,7 +127,10 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     <AppTitle defaultTitle={data.title} />
                   </span>
                 </h1>
-                <div className="overscroll-contain sm:overflow-y-auto ">
+                <div
+                  className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs"
+                  ref={attachOverscroll}
+                >
                   <StyledNavLink
                     className={({ isActive, isPending }) =>
                       clsx(
@@ -275,7 +279,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     </List>
                   )}
                 </div>
-                <div className="relative hidden h-full w-full items-center px-2 sm:flex ">
+                <div className="relative hidden h-full w-full items-center px-2 sm:flex sm:data-[overscroll=true]:shadow-2xl data-[overscroll=true]:border-t">
                   <UserMenu
                     email={data.user.email}
                     isAdmin={data.user.isAdmin}
@@ -374,8 +378,10 @@ function StyledNavLink({
 
 function UserMenu(props: { email: string; isAdmin: boolean }) {
   const location = useLocation();
-  const linkStyle =
-    "text-md flex cursor-pointer items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700";
+  const linkStyle = clsx(
+    "text-md flex cursor-pointer items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700",
+  );
+
   return (
     <>
       <noscript className="sm:flex-1">
