@@ -352,10 +352,13 @@ function StyledNavLink({
       }
       onClick={(event) => {
         if (event.currentTarget.getAttribute("aria-current") === "page") {
-          document.body.scrollTo({
-            top: 0,
-            behavior: getPrefersReducedMotion() ? "auto" : "smooth",
-          });
+          // safari hack
+          setTimeout(() => {
+            document.body.scrollTo({
+              top: 0,
+              behavior: getPrefersReducedMotion() ? "auto" : "smooth",
+            });
+          }, 10);
         }
       }}
     >
