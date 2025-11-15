@@ -60,9 +60,8 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
             <img
               alt=""
               src="/reading-side.svg"
-              width={"50%"}
               data-from="https://www.opendoodles.com/"
-              className="dark:invert-[.7]"
+              className="dark:invert-[.7] w-1/2 max-w-[30ch]"
             />
           </div>
         )}
