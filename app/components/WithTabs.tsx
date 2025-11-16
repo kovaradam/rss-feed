@@ -102,7 +102,8 @@ export function WithTabs<T extends string>(props: {
                 return params.toString();
               }),
             }}
-            className={"rounded-sm p-1 text-center ".concat(
+            className={clsx(
+              "rounded-sm p-1 text-center ",
               option.value === currentValue
                 ? ""
                 : "text-gray-600 hover:bg-gray-100 hover:text-inherit dark:text-slate-300 dark:hover:bg-slate-700",

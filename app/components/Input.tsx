@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom";
 import { InputError } from "./InputError";
 import { replaceAll } from "~/utils/replace-all";
 import React from "react";
+import clsx from "clsx";
 
 type Error<T> = T extends string
   ? {
@@ -41,7 +42,7 @@ export function Input<T extends readonly React.ReactNode[]>({
   const [isShowPassword, setIsShowPassword] = React.useState(false);
 
   wrapperClassName = honeypot
-    ? "absolute -z-10 ".concat(wrapperClassName ?? "")
+    ? clsx("absolute -z-10 ", wrapperClassName ?? "")
     : wrapperClassName;
 
   const input = (
@@ -68,9 +69,7 @@ export function Input<T extends readonly React.ReactNode[]>({
           }
           type={isShowPassword ? "text" : inputProps.type}
           id={id}
-          className={styles.input
-            .concat(" ")
-            .concat(inputProps.className ?? "")}
+          className={clsx(styles.input, inputProps.className ?? "")}
           disabled={inputProps.disabled || formStatus.pending}
           aria-describedby={(inputProps["aria-describedby"] ?? "").concat(
             errors?.map((e) => e.id).join(" ") ?? "",

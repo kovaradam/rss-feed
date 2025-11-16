@@ -1,6 +1,7 @@
 import type { Collection } from "~/__generated__/prisma/client";
 import {
   Form,
+  href,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -159,8 +160,10 @@ export function CollectionForm<
         <SubmitSection
           cancelProps={{
             to: data.defaultValue?.id
-              ? "/channels/collections/".concat(data.defaultValue?.id ?? "")
-              : "/channels",
+              ? href("/channels/collections/:collectionId", {
+                  collectionId: data.defaultValue?.id,
+                })
+              : href("/channels"),
             scriptOnly: true,
           }}
           submitProps={{

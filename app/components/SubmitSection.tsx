@@ -2,6 +2,7 @@ import type { LinkProps } from "react-router";
 import { SubmitButton, buttonStyle } from "./Button";
 import { c } from "~/utils";
 import { BackLink } from "./BackLink";
+import clsx from "clsx";
 
 export function SubmitSection(props: {
   cancelProps: LinkProps & { scriptOnly?: boolean };
@@ -12,8 +13,9 @@ export function SubmitSection(props: {
     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row-reverse">
       <SubmitButton
         {...props.submitProps}
-        className={"w-full whitespace-nowrap sm:w-min".concat(
-          props.submitProps.className ?? "",
+        className={clsx(
+          "w-full whitespace-nowrap sm:w-min",
+          props.submitProps.className,
         )}
         isPending={props.isSubmitting}
       >

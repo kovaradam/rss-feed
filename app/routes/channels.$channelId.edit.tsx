@@ -201,7 +201,9 @@ export default function Channels({
         </div>
 
         <SubmitSection
-          cancelProps={{ to: "/channels/".concat(channel.id) }}
+          cancelProps={{
+            to: href("/channels/:channelId", { channelId: channel.id }),
+          }}
           submitProps={{ children: "Save changes" }}
           isSubmitting={isSaving}
         />

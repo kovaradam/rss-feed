@@ -1,10 +1,5 @@
 import { PencilIcon } from "@heroicons/react/outline";
-import {
-  Link,
-  useNavigation,
-  isRouteErrorResponse,
-  useRouteError,
-} from "react-router";
+import { Link, useNavigation, isRouteErrorResponse } from "react-router";
 import React from "react";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
@@ -31,6 +26,7 @@ import type { Route } from "./+types/channels.collections.$collectionId._index";
 import { Filter } from "~/components/icons/Filter";
 import { SpinTransition } from "~/components/animations/SpinTransition";
 import { useOptimisticItems } from "~/data/useOptimisticItmes";
+import clsx from "clsx";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -250,7 +246,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             >
               <FilterForm />
             </Details>
-            <Link to={`edit`} className={buttonStyle.concat(" w-full")}>
+            <Link to={`edit`} className={clsx(buttonStyle, " w-full")}>
               <PencilIcon className="w-4" />
               <span className="pointer-events-none flex-1 text-center ">
                 Edit collection
@@ -263,11 +259,11 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary() {
-  const caught = useRouteError();
+export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
+  console.error(props.error);
 
-  if (isRouteErrorResponse(caught)) {
-    if (caught.status === 404) {
+  if (isRouteErrorResponse(props.error)) {
+    if (props.error.status === 404) {
       return (
         <ErrorMessage>
           <h4>Collection not found</h4>

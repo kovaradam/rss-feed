@@ -104,6 +104,8 @@ export default function NewCollectionPage() {
   );
 }
 
-export function ErrorBoundary() {
+export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
+  console.error(props.error);
+
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

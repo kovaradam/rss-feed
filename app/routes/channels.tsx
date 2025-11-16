@@ -325,7 +325,8 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary(props: { error: Error }) {
+export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
+  console.error(props.error);
   if (!props.error) {
     return null;
   }

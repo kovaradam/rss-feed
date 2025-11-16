@@ -273,7 +273,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
 
           <button
             type="submit"
-            className={"group relative rounded p-1 ".concat(formItem.className)}
+            className={clsx("group relative rounded p-1 ", formItem.className)}
             data-silent
             aria-label={formItem.title}
             onClick={() => formItem.playSubmit()}

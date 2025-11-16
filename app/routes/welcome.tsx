@@ -3,6 +3,7 @@ import { href, Outlet, useRevalidator } from "react-router";
 import { ErrorMessage } from "~/components/ErrorMessage";
 import { createTitle } from "~/utils";
 import { useOnWindowFocus } from "~/utils/use-on-window-focus";
+import { Route } from "./+types/welcome._index";
 
 export const meta: MetaFunction = () => {
   return [{ title: createTitle("Welcome") }];
@@ -47,7 +48,7 @@ export default function Welcome() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
+export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
+  console.error(props.error);
   return <ErrorMessage>An unexpected error occurred</ErrorMessage>;
 }

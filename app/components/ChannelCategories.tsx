@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import type { MouseEventHandler } from "react";
 import { Tooltip } from "./Tooltip";
 import { X } from "./icons/X";
+import clsx from "clsx";
 
 type Props = {
   category: string;
@@ -54,7 +55,7 @@ export function ChannelCategoryLinks(props: Omit<Props, "delete">) {
         .filter(Boolean)
         .map((category) => (
           <Link
-            className={"relative ".concat(className)}
+            className={clsx("relative ", className)}
             key={category}
             to={`/channels?categories=${category}`}
           >

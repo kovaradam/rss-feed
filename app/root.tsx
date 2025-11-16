@@ -8,7 +8,6 @@ import {
   useLocation,
   useNavigation,
   isRouteErrorResponse,
-  useRouteError,
 } from "react-router";
 
 import stylesheet from "./tailwind.css?url";
@@ -147,9 +146,10 @@ export default function App(props: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary() {
-  const caught = useRouteError();
-  const isNotFound = isRouteErrorResponse(caught) && caught.status === 404;
+export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
+  console.error(props.error);
+  const isNotFound =
+    isRouteErrorResponse(props.error) && props.error.status === 404;
 
   return (
     <main>

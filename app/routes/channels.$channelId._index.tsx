@@ -6,7 +6,6 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useNavigation,
-  useRouteError,
   href,
   useFetcher,
 } from "react-router";
@@ -50,6 +49,7 @@ import { useSound } from "~/utils/use-sound";
 import type { Route } from "./+types/channels.$channelId._index";
 import { $confirm } from "~/utils/confirm";
 import { HiddenInputs } from "~/components/HiddenInputs";
+import clsx from "clsx";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -327,7 +327,7 @@ export default function ChannelDetailsPage() {
             <div className="flex-1 text-center">Refresh</div>
           </Button>
         </Form>
-        <Link to="edit" className={buttonStyle.concat(" sm:w-full")}>
+        <Link to="edit" className={clsx(buttonStyle, " sm:w-full")}>
           <PencilIcon className="w-4" />
           <div className=" flex-1 text-center">Edit</div>
         </Link>
@@ -363,11 +363,11 @@ export default function ChannelDetailsPage() {
   );
 }
 
-export function ErrorBoundary({ error: _ }: { error: Error }) {
-  const caught = useRouteError();
+export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
+  console.error(props.error);
 
-  if (isRouteErrorResponse(caught)) {
-    if (caught.status === 404) {
+  if (isRouteErrorResponse(props.error)) {
+    if (props.error.status === 404) {
       return (
         <ErrorMessage>
           <h4>Channel not found</h4>
