@@ -8,10 +8,12 @@ import { requireUserId } from "~/session.server";
 import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.quotes";
 import { List } from "~/components/List";
+import { UseAppTitle } from "~/components/AppTitle";
 
 export const meta = createMeta();
 
 const countParamName = "count";
+
 export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
   const url = new URL(request.url);
@@ -41,9 +43,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function QuotesPage({ loaderData }: Route.ComponentProps) {
+  const title = <UseAppTitle>{loaderData.title}</UseAppTitle>;
   if (!loaderData.quotes.length && !loaderData.search) {
     return (
       <div className="flex flex-col gap-2 text-center text-lg font-bold ">
+        {title}
         {loaderData.quotes.length === 0 && (
           <div className="mt-8 flex flex-col items-center gap-16">
             <div>
@@ -70,6 +74,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
   }
   return (
     <div>
+      {title}
       <Form id="search">
         <PageSearchInput
           placeholder="Search in quotes"

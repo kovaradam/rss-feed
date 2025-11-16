@@ -25,7 +25,12 @@ import { withAbortController } from "./utils/with-abort-controller";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
-  { rel: "stylesheet", href: stylesheet },
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true },
+  {
+    href: "https://fonts.googleapis.com/css2?family=Merriweather:opsz,wght@700&display=swap",
+    rel: "stylesheet",
+  },
 ];
 
 export const meta: MetaFunction = () => [{ title: "RSS Journal" }];

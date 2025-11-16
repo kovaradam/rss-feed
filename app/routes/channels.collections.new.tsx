@@ -98,7 +98,7 @@ export const loader = async ({
 export default function NewCollectionPage() {
   return (
     <>
-      <UseAppTitle>New collection</UseAppTitle>
+      <UseAppTitle default />
       <CollectionForm title="Create a new collection" />
     </>
   );
