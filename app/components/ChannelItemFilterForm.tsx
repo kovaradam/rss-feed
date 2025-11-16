@@ -77,18 +77,21 @@ export function ChannelItemFilterForm(props: Props) {
                 <List>
                   {data.channels?.map((channel) => (
                     <li key={channel.id}>
-                      <CheckboxLabel>
-                        <input
-                          key={String(filters.channels)}
-                          name="channels"
-                          type="checkbox"
-                          value={channel.id}
-                          id={channel.id}
-                          defaultChecked={filters.channels?.includes(
-                            channel.id,
-                          )}
-                          className="min-w-4"
-                        />
+                      <CheckboxLabel
+                        inputSlot={
+                          <input
+                            key={String(filters.channels)}
+                            name="channels"
+                            type="checkbox"
+                            value={channel.id}
+                            id={channel.id}
+                            defaultChecked={filters.channels?.includes(
+                              channel.id,
+                            )}
+                            className="min-w-4"
+                          />
+                        }
+                      >
                         {channel.title}
                       </CheckboxLabel>
                     </li>
@@ -110,7 +113,21 @@ export function ChannelItemFilterForm(props: Props) {
                 <List>
                   {data.categories?.map((category) => (
                     <li key={category}>
-                      <CheckboxLabel>
+                      <CheckboxLabel
+                        inputSlot={
+                          <input
+                            key={String(filters.categories)}
+                            name="categories"
+                            type="checkbox"
+                            value={category}
+                            id={category}
+                            defaultChecked={filters.categories?.includes(
+                              category,
+                            )}
+                            className="min-w-4"
+                          />
+                        }
+                      >
                         <input
                           key={String(filters.categories)}
                           name="categories"
@@ -150,16 +167,19 @@ export function ChannelItemFilterForm(props: Props) {
                   },
                 ].map((field) => (
                   <li key={field.name}>
-                    <CheckboxLabel>
-                      <input
-                        key={String(field.currentValue)}
-                        name={field.name}
-                        type="checkbox"
-                        value={String(true)}
-                        id={field.name}
-                        defaultChecked={field.currentValue}
-                        className="min-w-4"
-                      />
+                    <CheckboxLabel
+                      inputSlot={
+                        <input
+                          key={String(field.currentValue)}
+                          name={field.name}
+                          type="checkbox"
+                          value={String(true)}
+                          id={field.name}
+                          defaultChecked={field.currentValue}
+                          className="min-w-4"
+                        />
+                      }
+                    >
                       {field.label}
                     </CheckboxLabel>
                   </li>
@@ -208,15 +228,18 @@ ChannelItemFilterForm.names = enumerate([
   "include-hidden-from-feed",
 ]);
 
-function CheckboxLabel(props: React.ComponentProps<"label">) {
+function CheckboxLabel(
+  props: React.ComponentProps<"label"> & { inputSlot: React.ReactNode },
+) {
   return (
     <label
       {...props}
       className={clsx(
-        "flex items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600 [&_input]:translate-y-[0.2ex]",
+        "flex items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600 ",
         props.className,
       )}
     >
+      <span className="flex items-center h-[1lh]">{props.inputSlot}</span>
       {props.children}
     </label>
   );

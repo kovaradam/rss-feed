@@ -183,7 +183,7 @@ export default function UserPage({
   return (
     <>
       <UseAppTitle>Your profile</UseAppTitle>
-      <div className="relative flex min-h-screen flex-col sm:flex-row">
+      <div className="relative flex flex-col sm:flex-row">
         <section className="flex flex-1 flex-col gap-8 ">
           <div className="flex justify-between">
             <PageHeading>{user.email}</PageHeading>
@@ -213,7 +213,7 @@ export default function UserPage({
                 label: "Categories",
                 icon: <BookmarkIcon className="h-4" />,
                 value: categories ? (
-                  <span className="flex flex-wrap gap-1 ">
+                  <span className="flex flex-wrap gap-1">
                     <ChannelCategoryLinks category={categories} />
                   </span>
                 ) : (
@@ -222,7 +222,7 @@ export default function UserPage({
               },
             ].map((item) => (
               <span
-                className="mb-3 flex max-w-[89vw] flex-col items-baseline gap-2 text-gray-400 sm:gap-1 md:mb-1 md:flex-row"
+                className="mb-3 flex max-w-[89vw] flex-wrap gap-2 text-gray-500 sm:gap-1 "
                 key={item.label}
               >
                 <dt className="flex items-center gap-1">
