@@ -128,17 +128,6 @@ export function ChannelItemFilterForm(props: Props) {
                           />
                         }
                       >
-                        <input
-                          key={String(filters.categories)}
-                          name="categories"
-                          type="checkbox"
-                          value={category}
-                          id={category}
-                          defaultChecked={filters.categories?.includes(
-                            category,
-                          )}
-                          className="min-w-4"
-                        />
                         {category}
                       </CheckboxLabel>
                     </li>
@@ -150,43 +139,45 @@ export function ChannelItemFilterForm(props: Props) {
               </div>
             </WithFormLabel>
           )}
-          <WithFormLabel
-            label={"Filter by state"}
-            labelAs="div"
-            className="mt-4"
-          >
-            <div className={styles.input}>
-              <List>
-                {[
-                  {
-                    name: ChannelItemFilterForm.names[
-                      "include-hidden-from-feed"
-                    ],
-                    label: "Include hidden from feed",
-                    currentValue: filters.excludeHiddenFromFeed === false,
-                  },
-                ].map((field) => (
-                  <li key={field.name}>
-                    <CheckboxLabel
-                      inputSlot={
-                        <input
-                          key={String(field.currentValue)}
-                          name={field.name}
-                          type="checkbox"
-                          value={String(true)}
-                          id={field.name}
-                          defaultChecked={field.currentValue}
-                          className="min-w-4"
-                        />
-                      }
-                    >
-                      {field.label}
-                    </CheckboxLabel>
-                  </li>
-                ))}
-              </List>
-            </div>
-          </WithFormLabel>
+          {props.filters.excludeHiddenFromFeed !== undefined && (
+            <WithFormLabel
+              label={"Filter by state"}
+              labelAs="div"
+              className="mt-4"
+            >
+              <div className={styles.input}>
+                <List>
+                  {[
+                    {
+                      name: ChannelItemFilterForm.names[
+                        "include-hidden-from-feed"
+                      ],
+                      label: "Include hidden from feed",
+                      currentValue: filters.excludeHiddenFromFeed === false,
+                    },
+                  ].map((field) => (
+                    <li key={field.name}>
+                      <CheckboxLabel
+                        inputSlot={
+                          <input
+                            key={String(field.currentValue)}
+                            name={field.name}
+                            type="checkbox"
+                            value={String(true)}
+                            id={field.name}
+                            defaultChecked={field.currentValue}
+                            className="min-w-4"
+                          />
+                        }
+                      >
+                        {field.label}
+                      </CheckboxLabel>
+                    </li>
+                  ))}
+                </List>
+              </div>
+            </WithFormLabel>
+          )}
         </div>
         {hasFilters && (
           <fieldset className="flex flex-col gap-1">

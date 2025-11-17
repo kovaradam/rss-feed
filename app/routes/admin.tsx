@@ -27,10 +27,10 @@ export async function action({ request }: Route.ActionArgs) {
   if (request.method === "DELETE") {
     const formData = await request.formData();
 
-    const channelLink = formData.get("channel-link");
+    const channelId = formData.get("channel-id");
 
-    if (typeof channelLink === "string") {
-      const deletedUpload = await deleteFailedUpload(channelLink);
+    if (typeof channelId === "string") {
+      const deletedUpload = await deleteFailedUpload(channelId);
       return { deletedUpload, action: "deleted" };
     }
 
@@ -162,16 +162,21 @@ export default function AdminIndexPage({
               </tr>
             </thead>
             <tbody>
-              {loaderData.failedChannelUploads.map((channel) => (
-                <tr key={channel.link}>
-                  <td className="pr-5">{channel.link}</td>
-                  <td className="pr-5">{channel.error}</td>
+              {loaderData.failedChannelUploads.map((failedUpload) => (
+                <tr key={failedUpload.id}>
+                  <td className="pr-5">{failedUpload.link}</td>
+                  <td className="pr-5">
+                    <details>
+                      <summary>Error Details</summary>
+                      {failedUpload.error}
+                    </details>
+                  </td>
                   <td className="pr-5">
                     <Form method="delete">
                       <input
                         type="hidden"
-                        name="channel-link"
-                        value={channel.link}
+                        name="channel-id"
+                        value={failedUpload.id}
                       />
                       <button type="submit">Delete</button>
                     </Form>

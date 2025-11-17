@@ -4,23 +4,26 @@ export async function getFailedUploads() {
   return await prisma.failedChannelUpload.findMany();
 }
 
-export async function storeFailedUpload(link: string, error: string) {
+export async function storeFailedUpload(link: string, error: unknown) {
   return await prisma.failedChannelUpload
     .create({
       data: {
         link: link,
-        error: error,
+        error:
+          error instanceof Error
+            ? `${error.name}|${error.message}|${error.stack}`
+            : String(error),
       },
     })
     // Don't really care
     .catch(console.error);
 }
 
-export async function deleteFailedUpload(link: string) {
+export async function deleteFailedUpload(id: string) {
   return await prisma.failedChannelUpload
     .delete({
       where: {
-        link: link,
+        id: id,
       },
     })
     // Don't really care

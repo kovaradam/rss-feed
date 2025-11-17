@@ -83,9 +83,9 @@ export const action = async ({
 
   try {
     channelResponse = await getChannelsFromUrl(channelUrl, request.signal);
-
     invariant(channelResponse?.length);
-  } catch (_) {
+  } catch (error) {
+    storeFailedUpload(String(inputChannelUrl), error);
     return {
       errors: {
         fetch: `Could not load any RSS feed from [${inputChannelUrl}](${inputChannelUrl})`,
@@ -141,9 +141,9 @@ export const action = async ({
             create: "Could not save RSS feed, please try later",
           };
       }
-
+      console.log(singleFeedResponse.url, isErrorToStore, error);
       if (isErrorToStore) {
-        storeFailedUpload(String(inputChannelUrl), String(error));
+        storeFailedUpload(String(inputChannelUrl), error);
       }
 
       return { errors: errorResponse };

@@ -54,7 +54,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
               <p className="dark:text-white">
                 Store memorable quotes from articles
               </p>
-              <p className="mb-4 font-normal text-slate-500 wrap-anywhere dark:text-slate-300">
+              <p className="mb-4 font-normal text-slate-500 wrap-anywhere dark:text-slate-300 text-sm">
                 Add a quote to any article from your{" "}
                 <Link to="/channels" className="underline">
                   feed

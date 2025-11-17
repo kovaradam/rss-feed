@@ -173,7 +173,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                     <p className=" text-center text-lg font-bold dark:text-white">
                       No articles were found in this collection.
                     </p>
-                    <p className="text-center text-lg text-slate-600 dark:text-slate-300">
+                    <p className="text-center text-sm text-slate-600 dark:text-slate-300">
                       You may try adding a{" "}
                       <Link
                         to={"/channels/new"}

@@ -125,7 +125,8 @@ model Collection {
 }
 
 model FailedChannelUpload {
-  link  String @id
+  id    String @id @default(cuid())
+  link  String
   error String
 }
 

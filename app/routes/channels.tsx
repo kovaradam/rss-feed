@@ -253,7 +253,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     </form>
                   </h2>
                   {!data.channels || data.channels.length === 0 ? (
-                    <p className="p-4 text-sm  dark:text-slate-500">
+                    <p className="p-4 py-2 italic text-sm  dark:text-slate-500 text-slate-600">
                       No channels yet
                     </p>
                   ) : (

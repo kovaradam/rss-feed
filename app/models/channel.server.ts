@@ -51,7 +51,8 @@ export async function createChannelFromUrl(
       r.meta.etag ?? undefined,
     ]);
     invariant(rssFeedResponse?.feed);
-  } catch (_) {
+  } catch (error) {
+    console.error(error);
     throw new ChannelErrors.invalidUrl();
   }
 

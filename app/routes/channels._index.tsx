@@ -194,10 +194,10 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
               ) : (
                 <div className="mt-8 flex flex-col items-center gap-16">
                   <div className="[&_p]:w-full [&_p]:text-center [&_p]:font-normal [&_p]:text-slate-500 [&_p]:dark:text-slate-300">
-                    <h3 className="pb-2 font-bold dark:text-white">
+                    <h3 className="font-bold dark:text-white">
                       You are not subscribed to any RSS feeds.
                     </h3>
-                    <p className="mb-4">
+                    <p className="mb-4 text-sm">
                       To get started, you should{" "}
                       <Link
                         to={href("/channels/new")}
@@ -208,7 +208,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       .
                     </p>
                     <hr className="my-4" />
-                    <p>
+                    <p className="text-sm">
                       If you cannot think of any site that provides RSS feed
                       right now, you can try adding one of these:
                     </p>
@@ -292,14 +292,19 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
 
 const recommendedChannels = [
   {
-    href: "https://feeds.npr.org/1039/rss.xml",
-    title: <>NPR Topics: Music</>,
-    img: "https://static-assets.npr.org/chrome_svg/npr-logo-2025.svg",
+    href: "https://www.themarginalian.org/feed/",
+    title: "The Marginalian",
+    img: "https://i1.wp.com/www.themarginalian.org/wp-content/themes/themarginalian/images/the_marginalian_opengraph.png",
   },
   {
     href: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
     title: <>BBC News - Science & Environment</>,
     img: "https://upload.wikimedia.org/wikipedia/commons/6/62/BBC_News_2019.svg",
+  },
+  {
+    href: "https://reflectionsofthenaturalworld.com/feed",
+    title: <>Reflections of the Natural World</>,
+    img: "https://i0.wp.com/reflectionsofthenaturalworld.com/wp-content/uploads/2020/01/img_8291b.jpg?fit=1200%2C800&#038;ssl=1",
   },
   {
     href: "https://www.nasa.gov/feeds/iotd-feed/",
