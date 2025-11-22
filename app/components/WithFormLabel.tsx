@@ -27,7 +27,7 @@ export function WithFormLabel(props: Props) {
   return (
     <fieldset className={`flex w-full flex-col gap-1 ${className}`}>
       <legend
-        className={`mb-1 flex w-full items-center gap-2 `}
+        className={`mb-1 flex w-full items-center gap-1 `}
         {...legendProps}
       >
         {React.createElement(

@@ -25,12 +25,6 @@ import { withAbortController } from "./utils/with-abort-controller";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  { rel: "preconnect", href: "https://fonts.gstatic.com" },
-  {
-    href: "https://fonts.googleapis.com/css2?family=Merriweather:opsz,wght@700&display=swap",
-    rel: "stylesheet",
-  },
 ];
 
 export const meta: MetaFunction = () => [{ title: "RSS Journal" }];
@@ -62,9 +56,11 @@ export default function App(props: Route.ComponentProps) {
         "click",
         (e) => {
           if (
-            e.target instanceof HTMLAnchorElement &&
-            e.target.getAttribute("href")?.startsWith("/") &&
-            e.target.closest("#nav")
+            (e.target as HTMLElement)
+              .closest?.("a")
+              ?.getAttribute("href")
+              ?.startsWith("/") &&
+            (e.target as HTMLElement).closest("#nav")
           ) {
             document.getElementById("main-content")?.focus();
           }

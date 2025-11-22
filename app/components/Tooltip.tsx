@@ -18,10 +18,9 @@ export function Tooltip(
   const positionTimeoutRef = React.useRef(-1);
   const [position, setPosition] = React.useState<Position | null>(null);
 
-  const getTarget = React.useCallback(
-    () => props.target ?? elementRef?.parentElement,
-    [props.target, elementRef],
-  );
+  const target = props.target ?? elementRef?.parentElement;
+
+  const getTarget = React.useEffectEvent(() => target);
 
   const show = React.useCallback(() => {
     clearTimeout(positionTimeoutRef.current);
@@ -48,12 +47,12 @@ export function Tooltip(
         }),
       500,
     );
-  }, [getTarget, props.position]);
+  }, [props.position]);
 
-  const hide = React.useCallback(() => {
+  const hide = React.useEffectEvent(() => {
     clearTimeout(positionTimeoutRef.current);
     setPosition(null);
-  }, []);
+  });
 
   React.useEffect(() => {
     const target = getTarget();
@@ -73,7 +72,7 @@ export function Tooltip(
     target.addEventListener("click", hide, { signal: controller.signal });
 
     return () => controller.abort();
-  }, [id, getTarget, show, hide]);
+  }, [id, show]);
 
   useEffect(() => {
     if (!position) {
@@ -92,7 +91,7 @@ export function Tooltip(
     );
 
     return () => controller.abort();
-  }, [position, hide]);
+  }, [position]);
 
   return (
     <div
@@ -115,7 +114,7 @@ export function Tooltip(
         if (e) setElementRef(e);
       }}
     >
-      {getTarget()?.getAttribute("aria-label") ?? props.children}
+      {target?.getAttribute("aria-label") ?? props.children}
     </div>
   );
 }

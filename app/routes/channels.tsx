@@ -131,22 +131,6 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs"
                   ref={attachOverscroll}
                 >
-                  <StyledNavLink
-                    className={({ isActive, isPending }) =>
-                      clsx(
-                        isActive || isPending
-                          ? "max-sm:bg-rose-500! max-sm:dark:[&]:bg-rose-500!"
-                          : "sm:text-yellow-900",
-                        `my-4 rounded-lg py-2 font-bold shadow-lg shadow-rose-400 max-sm:text-white sm:h-auto sm:py-2 sm:shadow-sm sm:shadow-black/10 dark:shadow-none dark:max-sm:text-white`,
-                        `max-sm:bg-rose-600 max-sm:hover:bg-rose-500 max-sm:active:bg-rose-500`,
-                        `dark:max-sm:bg-rose-600 dark:max-sm:hover:bg-rose-500 dark:max-sm:active:bg-rose-500`,
-                      )
-                    }
-                    to={href("/channels/new")}
-                  >
-                    <PlusIcon className="w-4 " style={{ strokeWidth: "3px" }} />{" "}
-                    Add RSS Channel
-                  </StyledNavLink>
                   {[
                     {
                       to: href(`/channels`),
@@ -183,9 +167,18 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     </React.Fragment>
                   ))}
                   <hr className="dark:border-slate-800" />
-                  <h2 className="pl-4 pt-2 text-sm text-slate-600 dark:text-slate-400">
-                    Collections
-                  </h2>
+                  <div
+                    className={clsx(
+                      "flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400",
+                      !data.collectionListItems?.length && "pb-2",
+                    )}
+                  >
+                    <h2>Collections</h2>
+                    <AddEntityLink
+                      to={href("/channels/collections/new")}
+                      label="Create new collection"
+                    />
+                  </div>
                   <List>
                     {data.collectionListItems?.map((collection) => (
                       <li key={collection.id}>
@@ -197,61 +190,62 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                         </StyledNavLink>
                       </li>
                     ))}
-                    <li>
-                      <StyledNavLink
-                        className={` hover:bg-slate-100 hover:text-yellow-900 dark:hover:text-slate-300`}
-                        to={href(`/channels/collections/new`)}
-                      >
-                        <PlusIcon className="w-4" />
-                        New collection
-                      </StyledNavLink>
-                    </li>
                   </List>
+
                   <hr className="dark:border-slate-800" />
 
-                  <h2 className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
-                    Channels
-                    <button
-                      data-silent
-                      type="button"
-                      onClick={() => {
-                        setIsChannelSearchOpen(true);
-                        setTimeout(() => {
-                          document
-                            ?.getElementById("mobile-channel-filter")
-                            ?.focus();
-                        });
-                      }}
-                      className="sm:hidden flex w-full justify-end"
-                      aria-label={"Open channel search dialog"}
-                    >
-                      <SearchIcon className="w-4 " />
-                    </button>
-                    <form
-                      className="_script-only relative flex w-full items-center max-sm:hidden"
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <input
-                        value={channelFilter}
-                        className={
-                          "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:focus-visible:border-slate-400 "
-                        }
-                        type="search"
-                        onChange={(e) =>
-                          setChannelFilter(e.currentTarget.value)
-                        }
-                        name="channels-filter"
-                        id="channels-filter"
-                      />
-                      <label
-                        className="absolute right-1 z-10"
-                        htmlFor="channels-filter"
-                        aria-label="Filter channels by name"
-                      >
-                        <SearchIcon className="w-4 " />
-                      </label>
-                    </form>
-                  </h2>
+                  <div className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
+                    <h2>Channels</h2>
+                    {data.channels.length > 5 && (
+                      <>
+                        <button
+                          data-silent
+                          type="button"
+                          onClick={() => {
+                            setIsChannelSearchOpen(true);
+                            setTimeout(() => {
+                              document
+                                ?.getElementById("mobile-channel-filter")
+                                ?.focus();
+                            });
+                          }}
+                          className="sm:hidden flex w-full justify-end items-center"
+                          aria-label={"Open channel search dialog"}
+                        >
+                          <SearchIcon className="size-4 " />
+                        </button>
+                        <form
+                          className="_script-only relative flex w-full items-center max-sm:hidden"
+                          onSubmit={(e) => e.preventDefault()}
+                        >
+                          <input
+                            value={channelFilter}
+                            className={
+                              "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:border-slate-400 sm:hover:border-b "
+                            }
+                            type="search"
+                            onChange={(e) =>
+                              setChannelFilter(e.currentTarget.value)
+                            }
+                            name="channels-filter"
+                            id="channels-filter"
+                          />
+                          <label
+                            className="absolute right-1 z-10"
+                            htmlFor="channels-filter"
+                            aria-label="Filter channels by name"
+                          >
+                            <SearchIcon className="w-4 " />
+                          </label>
+                        </form>
+                      </>
+                    )}
+
+                    <AddEntityLink
+                      to={href("/channels/new")}
+                      label="Add new channel"
+                    />
+                  </div>
                   {!data.channels || data.channels.length === 0 ? (
                     <p className="p-4 py-2 italic text-sm  dark:text-slate-500 text-slate-600">
                       No channels yet
@@ -333,6 +327,9 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
   return <ErrorMessage>Something went wrong</ErrorMessage>;
 }
 
+const navInteractionStyles =
+  "sm:hover:bg-slate-200 rounded sm:active:bg-slate-300 dark:text-slate-300 dark:hover:bg-slate-900";
+
 function StyledNavLink({
   ...props
 }: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {}) {
@@ -343,7 +340,8 @@ function StyledNavLink({
       className={(state) =>
         clsx(
           state.isPending && "max-sm:bg-slate-100 max-sm:dark:bg-slate-800", // mobile pending state
-          `m-2 flex gap-2 rounded p-2 py-1 text-lg sm:text-lg sm:hover:bg-slate-200 sm:active:bg-slate-300 dark:text-slate-300 dark:hover:bg-slate-900`,
+          `m-2 flex gap-2  p-2 py-1 text-lg sm:text-lg`,
+          navInteractionStyles,
           state.isActive &&
             " bg-slate-200 text-slate-600 sm:bg-slate-200 sm:text-slate-600 dark:bg-slate-800",
           typeof props.className === "function"
@@ -444,10 +442,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
               className="relative flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
             >
               <CogIcon className="w-4" />
-              <span className="gap-4 whitespace-nowrap">Profile</span>
-              <Tooltip position={{ x: "left-box" }}>
-                Update your profile
-              </Tooltip>
+              <span className="gap-4 whitespace-nowrap">Your profile</span>
             </Link>
           </li>
           {props.isAdmin && (
@@ -582,6 +577,20 @@ function useNavToggleState() {
       }
     },
   ] as const;
+}
+
+function AddEntityLink(props: { to: string; label: string }) {
+  return (
+    <Link
+      className={clsx(navInteractionStyles, "relative flex items-center")}
+      aria-label={props.label}
+      to={props.to}
+    >
+      <Tooltip position={{ x: "left" }} />
+      <span className="absolute inset-0 scale-200 pointer-fine:hidden" />
+      <PlusIcon className="size-4" />
+    </Link>
+  );
 }
 
 function MobileChannelSearch(props: {

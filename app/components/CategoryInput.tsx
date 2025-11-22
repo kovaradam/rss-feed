@@ -44,7 +44,7 @@ export function CategoryInput(props: CategoryInputProps) {
   const inputId = useId();
 
   return (
-    <WithFormLabel label="Category:" htmlFor={inputId}>
+    <WithFormLabel label="Category" htmlFor={inputId}>
       <div className="flex flex-wrap gap-1">
         <ChannelCategories
           category={category}

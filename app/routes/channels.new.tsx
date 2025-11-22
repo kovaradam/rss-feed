@@ -226,7 +226,7 @@ export default function NewChannelPage({
                 </span>
               ))
             ) : (
-              <span className="pt-1 text-slate-500 dark:text-slate-400">
+              <span className="pt-1 text-slate-500 dark:text-slate-400 text-sm">
                 Provide an address of an RSS channel or a web page
               </span>
             )}
