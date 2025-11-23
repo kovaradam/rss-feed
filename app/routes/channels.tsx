@@ -6,20 +6,16 @@ import {
   KeyIcon,
   LogoutIcon,
   MenuAlt2Icon,
-  PlusIcon,
   RefreshIcon,
   SearchIcon,
   UserIcon,
 } from "@heroicons/react/outline";
-import { ChevronUpIcon } from "@heroicons/react/solid";
 import React from "react";
 
 import {
-  type NavLinkProps,
   Form,
   href,
   Link,
-  NavLink,
   Outlet,
   useLocation,
   useNavigation,
@@ -113,12 +109,12 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         />
 
         <div
-          className="_background flex justify-center"
+          className="_background flex justify-center sm:[--nav-bg:var(--color-slate-100)] [--nav-bg:var(--color-white)] dark:[--nav-bg:var(--color-slate-950)] sm:dark:[--nav-bg:var(--color-slate-950)]"
           {...registerNavSwipeCallbacks(setIsNavExpanded)}
         >
           <div
             id="nav-sliding-element"
-            className={`relative flex  h-full min-h-screen w-screen duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 sm:shadow-[-40rem_0_0rem_20rem_rgb(241,245,249)] 2xl:w-2/3 dark:shadow-[-40rem_0_0rem_20rem_rgb(2,6,23)] max-sm:[input:checked+div_&]:translate-x-3/4`}
+            className={`relative flex h-full min-h-screen w-screen duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 2xl:w-2/3 shadow-[-40rem_0_0rem_20rem_var(--nav-bg)] max-sm:[input:checked+div_&]:translate-x-3/4`}
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
@@ -128,7 +124,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   </span>
                 </h1>
                 <div
-                  className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs"
+                  className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs dark:inset-shadow-slate-800"
                   ref={attachOverscroll}
                 >
                   {[
@@ -159,121 +155,128 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                       ),
                     },
                   ].map((link) => (
-                    <React.Fragment key={link.to}>
-                      <hr className="dark:border-slate-800" />
-                      <StyledNavLink to={link.to} end>
+                    <NavWrapper.NavSection key={link.to}>
+                      <NavWrapper.StyledNavLink to={link.to} end>
                         {link.content}
-                      </StyledNavLink>
-                    </React.Fragment>
+                      </NavWrapper.StyledNavLink>
+                    </NavWrapper.NavSection>
                   ))}
-                  <hr className="dark:border-slate-800" />
-                  <div
-                    className={clsx(
-                      "flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400",
-                      !data.collectionListItems?.length && "pb-2",
-                    )}
+                  <NavWrapper.NavSection
+                    heading={
+                      <div className={clsx("flex justify-between gap-2")}>
+                        <h2>Collections</h2>
+                        <NavWrapper.AddEntityLink
+                          to={href("/channels/collections/new")}
+                          label="Create new collection"
+                        />
+                      </div>
+                    }
                   >
-                    <h2>Collections</h2>
-                    <AddEntityLink
-                      to={href("/channels/collections/new")}
-                      label="Create new collection"
-                    />
-                  </div>
-                  <List>
-                    {data.collectionListItems?.map((collection) => (
-                      <li key={collection.id}>
-                        <StyledNavLink
-                          to={`/channels/collections/${collection.id}`}
-                        >
-                          <ArchiveIcon className="w-4" />
-                          {collection.title}
-                        </StyledNavLink>
-                      </li>
-                    ))}
-                  </List>
-
-                  <hr className="dark:border-slate-800" />
-
-                  <div className="flex justify-between gap-2 pl-4 pr-2 pt-2 text-sm text-slate-600 dark:text-slate-400">
-                    <h2>Channels</h2>
-                    {data.channels.length > 5 && (
-                      <>
-                        <button
-                          data-silent
-                          type="button"
-                          onClick={() => {
-                            setIsChannelSearchOpen(true);
-                            setTimeout(() => {
-                              document
-                                ?.getElementById("mobile-channel-filter")
-                                ?.focus();
-                            });
-                          }}
-                          className="sm:hidden flex w-full justify-end items-center"
-                          aria-label={"Open channel search dialog"}
-                        >
-                          <SearchIcon className="size-4 " />
-                        </button>
-                        <form
-                          className="_script-only relative flex w-full items-center max-sm:hidden"
-                          onSubmit={(e) => e.preventDefault()}
-                        >
-                          <input
-                            value={channelFilter}
-                            className={
-                              "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:border-slate-400 sm:hover:border-b "
-                            }
-                            type="search"
-                            onChange={(e) =>
-                              setChannelFilter(e.currentTarget.value)
-                            }
-                            name="channels-filter"
-                            id="channels-filter"
-                          />
-                          <label
-                            className="absolute right-1 z-10"
-                            htmlFor="channels-filter"
-                            aria-label="Filter channels by name"
+                    <List>
+                      {data.collectionListItems?.map((collection) => (
+                        <li key={collection.id}>
+                          <NavWrapper.StyledNavLink
+                            className={"mb-2"}
+                            to={href(`/channels/collections/:collectionId`, {
+                              collectionId: collection.id,
+                            })}
                           >
-                            <SearchIcon className="w-4 " />
-                          </label>
-                        </form>
-                      </>
-                    )}
-
-                    <AddEntityLink
-                      to={href("/channels/new")}
-                      label="Add new channel"
-                    />
-                  </div>
-                  {!data.channels || data.channels.length === 0 ? (
-                    <p className="p-4 py-2 italic text-sm  dark:text-slate-500 text-slate-600">
-                      No channels yet
-                    </p>
-                  ) : (
-                    <List as="ol">
-                      {data.channels
-                        ?.filter((channel) =>
-                          channel.title
-                            .toLowerCase()
-                            .includes(channelFilter.toLocaleLowerCase()),
-                        )
-                        .map((channel) => (
-                          <li key={channel.id}>
-                            <StyledNavLink className="block" to={channel.id}>
-                              <span className="pointer-events-none">
-                                <Highlight
-                                  input={channel.title}
-                                  query={channelFilter}
-                                />
-                              </span>
-                            </StyledNavLink>
-                          </li>
-                        ))}
+                            <ArchiveIcon className="w-4" />
+                            {collection.title}
+                          </NavWrapper.StyledNavLink>
+                        </li>
+                      ))}
                     </List>
-                  )}
+                  </NavWrapper.NavSection>
+
+                  <NavWrapper.NavSection
+                    heading={
+                      <div className="flex justify-between gap-2">
+                        <h2>Channels</h2>
+                        {data.channels.length > 5 && (
+                          <>
+                            <button
+                              data-silent
+                              type="button"
+                              onClick={() => {
+                                setIsChannelSearchOpen(true);
+                                setTimeout(() => {
+                                  document
+                                    ?.getElementById("mobile-channel-filter")
+                                    ?.focus();
+                                });
+                              }}
+                              className="sm:hidden flex w-full justify-end items-center"
+                              aria-label={"Open channel search dialog"}
+                            >
+                              <SearchIcon className="size-4 " />
+                            </button>
+                            <form
+                              className="_script-only relative flex w-full items-center max-sm:hidden"
+                              onSubmit={(e) => e.preventDefault()}
+                            >
+                              <input
+                                value={channelFilter}
+                                className={
+                                  "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:border-slate-400 sm:hover:border-b "
+                                }
+                                type="search"
+                                onChange={(e) =>
+                                  setChannelFilter(e.currentTarget.value)
+                                }
+                                name="channels-filter"
+                                id="channels-filter"
+                              />
+                              <label
+                                className="absolute right-1 z-10"
+                                htmlFor="channels-filter"
+                                aria-label="Filter channels by name"
+                              >
+                                <SearchIcon className="w-4 " />
+                              </label>
+                            </form>
+                          </>
+                        )}
+
+                        <NavWrapper.AddEntityLink
+                          to={href("/channels/new")}
+                          label="Add new channel"
+                        />
+                      </div>
+                    }
+                  >
+                    {!data.channels || data.channels.length === 0 ? (
+                      <p className="p-4 py-2 italic text-sm  dark:text-slate-500 text-slate-600">
+                        No channels yet
+                      </p>
+                    ) : (
+                      <List as="ol">
+                        {data.channels
+                          ?.filter((channel) =>
+                            channel.title
+                              .toLowerCase()
+                              .includes(channelFilter.toLocaleLowerCase()),
+                          )
+                          .map((channel) => (
+                            <li key={channel.id}>
+                              <NavWrapper.StyledNavLink
+                                className="block mb-2"
+                                to={channel.id}
+                              >
+                                <span className="pointer-events-none">
+                                  <Highlight
+                                    input={channel.title}
+                                    query={channelFilter}
+                                  />
+                                </span>
+                              </NavWrapper.StyledNavLink>
+                            </li>
+                          ))}
+                      </List>
+                    )}
+                  </NavWrapper.NavSection>
                 </div>
-                <div className="relative hidden h-full w-full items-center px-2 sm:flex sm:data-[overscroll=true]:shadow-2xl data-[overscroll=true]:border-t">
+                <div className="relative hidden h-full w-full items-center px-2 sm:flex sm:data-[overscroll=true]:shadow-2xl data-[overscroll=true]:border-t dark:border-slate-800">
                   <UserMenu
                     email={data.user.email}
                     isAdmin={data.user.isAdmin}
@@ -325,57 +328,6 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
     return null;
   }
   return <ErrorMessage>Something went wrong</ErrorMessage>;
-}
-
-const navInteractionStyles =
-  "sm:hover:bg-slate-200 rounded sm:active:bg-slate-300 dark:text-slate-300 dark:hover:bg-slate-900";
-
-function StyledNavLink({
-  ...props
-}: React.PropsWithChildren<Omit<NavLinkProps, "children">> & {}) {
-  return (
-    <NavLink
-      {...props}
-      prefetch="intent"
-      className={(state) =>
-        clsx(
-          state.isPending && "max-sm:bg-slate-100 max-sm:dark:bg-slate-800", // mobile pending state
-          `m-2 flex gap-2  p-2 py-1 text-lg sm:text-lg`,
-          navInteractionStyles,
-          state.isActive &&
-            " bg-slate-200 text-slate-600 sm:bg-slate-200 sm:text-slate-600 dark:bg-slate-800",
-          typeof props.className === "function"
-            ? props.className(state)
-            : props.className,
-        )
-      }
-      onClick={(event) => {
-        if (event.currentTarget.getAttribute("aria-current") === "page") {
-          // safari hack
-          setTimeout(() => {
-            document.body.scrollTo({
-              top: 0,
-              behavior: getPrefersReducedMotion() ? "auto" : "smooth",
-            });
-          }, 10);
-        }
-      }}
-    >
-      {({ isActive }) => (
-        <>
-          {props.children}
-          <div className="ml-auto flex w-4 items-center">
-            {isActive && (
-              <ChevronUpIcon
-                className={`scroll:scale-100 w-5 not-active-scroll:scale-0! transition-all`}
-                data-scroll-top-icon
-              />
-            )}
-          </div>
-        </>
-      )}
-    </NavLink>
-  );
 }
 
 function UserMenu(props: { email: string; isAdmin: boolean }) {
@@ -579,20 +531,6 @@ function useNavToggleState() {
   ] as const;
 }
 
-function AddEntityLink(props: { to: string; label: string }) {
-  return (
-    <Link
-      className={clsx(navInteractionStyles, "relative flex items-center")}
-      aria-label={props.label}
-      to={props.to}
-    >
-      <Tooltip position={{ x: "left" }} />
-      <span className="absolute inset-0 scale-200 pointer-fine:hidden" />
-      <PlusIcon className="size-4" />
-    </Link>
-  );
-}
-
 function MobileChannelSearch(props: {
   channels: Route.ComponentProps["loaderData"]["channels"];
   onClose(): void;
@@ -640,14 +578,14 @@ function MobileChannelSearch(props: {
                 key={channel.id}
                 className="not-last:border-b dark:border-slate-800"
               >
-                <StyledNavLink
-                  className="block [&_[data-scroll-top-icon]]:hidden"
+                <NavWrapper.StyledNavLink
+                  className="block [&_[data-scroll-top-icon]]:hidden m-2"
                   to={channel.id}
                 >
                   <span className="pointer-events-none">
                     <Highlight input={channel.title} query={filter} />
                   </span>
-                </StyledNavLink>
+                </NavWrapper.StyledNavLink>
               </li>
             ))}
           </List>
