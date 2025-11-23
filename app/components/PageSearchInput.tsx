@@ -21,7 +21,7 @@ export function PageSearchInput(props: {
           // allow default browser action
           return;
         }
-        if (event.key === "k" && event.ctrlKey) {
+        if (event.key === "k" && (event.ctrlKey || event.metaKey)) {
           inputRef.current?.focus();
           event.preventDefault();
         }
