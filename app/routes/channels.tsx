@@ -84,6 +84,11 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   const [isNavExpanded, setIsNavExpanded] = useNavToggleState();
 
   const hideNavbar = () => setIsNavExpanded(false);
+
+  const filteredChannels = data.channels?.filter((channel) =>
+    channel.title.toLowerCase().includes(channelFilter.toLocaleLowerCase()),
+  );
+
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <a
@@ -251,27 +256,44 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                       </p>
                     ) : (
                       <List as="ol">
-                        {data.channels
-                          ?.filter((channel) =>
-                            channel.title
-                              .toLowerCase()
-                              .includes(channelFilter.toLocaleLowerCase()),
-                          )
-                          .map((channel) => (
-                            <li key={channel.id}>
-                              <NavWrapper.StyledNavLink
-                                className="block mb-2"
-                                to={channel.id}
-                              >
-                                <span className="pointer-events-none">
-                                  <Highlight
-                                    input={channel.title}
-                                    query={channelFilter}
-                                  />
-                                </span>
-                              </NavWrapper.StyledNavLink>
-                            </li>
-                          ))}
+                        {filteredChannels.map((channel) => (
+                          <li key={channel.id}>
+                            <NavWrapper.StyledNavLink
+                              className="block mb-2"
+                              to={href("/channels/:channelId", {
+                                channelId: channel.id,
+                              })}
+                            >
+                              <span className="pointer-events-none">
+                                <Highlight
+                                  input={channel.title}
+                                  query={channelFilter}
+                                />
+                              </span>
+                            </NavWrapper.StyledNavLink>
+                          </li>
+                        ))}
+                        {filteredChannels.length !== data.channels.length &&
+                          data.channels
+                            .filter(
+                              (channel) =>
+                                !filteredChannels.some(
+                                  (filteredChannel) =>
+                                    filteredChannel.id === channel.id,
+                                ),
+                            )
+                            .map((channel) => (
+                              <li key={channel.id}>
+                                <NavWrapper.StyledNavLink
+                                  className="block mb-2 opacity-35"
+                                  to={href("/channels/:channelId", {
+                                    channelId: channel.id,
+                                  })}
+                                >
+                                  {channel.title}
+                                </NavWrapper.StyledNavLink>
+                              </li>
+                            ))}
                       </List>
                     )}
                   </NavWrapper.NavSection>

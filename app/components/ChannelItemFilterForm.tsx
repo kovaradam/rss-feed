@@ -219,9 +219,10 @@ ChannelItemFilterForm.names = enumerate([
   "include-hidden-from-feed",
 ]);
 
-function CheckboxLabel(
-  props: React.ComponentProps<"label"> & { inputSlot: React.ReactNode },
-) {
+function CheckboxLabel({
+  inputSlot,
+  ...props
+}: React.ComponentProps<"label"> & { inputSlot: React.ReactNode }) {
   return (
     <label
       {...props}
@@ -230,7 +231,7 @@ function CheckboxLabel(
         props.className,
       )}
     >
-      <span className="flex items-center h-[1lh]">{props.inputSlot}</span>
+      <span className="flex items-center h-[1lh]">{inputSlot}</span>
       {props.children}
     </label>
   );
