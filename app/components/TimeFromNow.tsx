@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { Tooltip } from "./Tooltip";
 
 function getTimeDifference(firstDate: Date, secondDate: Date) {
@@ -28,34 +29,48 @@ export function TimeFromNow(props: Props) {
     [difference.minutes, "minute"],
   ] as const;
 
-  const formattedDate = props.date.toLocaleDateString("en", {
+  for (const entry of entries) {
+    const [value, label] = entry;
+    if (value >= 1) {
+      const floored = Math.floor(value);
+      return (
+        <Time date={props.date}>
+          {`${floored.toFixed()} ${label}${floored > 1 ? "s" : ""} ago`}
+        </Time>
+      );
+    }
+  }
+
+  return (
+    <Time date={props.date}>
+      {`${Math.max(Math.ceil(difference.seconds), 0)} second${
+        difference.seconds > 1 ? "s" : ""
+      } ago`}
+    </Time>
+  );
+}
+
+function Time({
+  children,
+  date,
+  ...props
+}: React.ComponentProps<"time"> & { date: Date }) {
+  const formattedDate = date.toLocaleDateString("en", {
     month: "long",
     day: "numeric",
     year: "numeric",
     hour: "numeric",
   });
 
-  const tooltip = <Tooltip>{formattedDate}</Tooltip>;
-
-  for (const entry of entries) {
-    const [value, label] = entry;
-    if (value >= 1) {
-      const floored = Math.floor(value);
-      return (
-        <span className={"relative"}>
-          {`${floored.toFixed()} ${label}${floored > 1 ? "s" : ""} ago`}
-          {tooltip}
-        </span>
-      );
-    }
-  }
-
   return (
-    <time className={"relative"} dateTime={formattedDate}>
-      {`${Math.max(Math.ceil(difference.seconds), 0)} second${
-        difference.seconds > 1 ? "s" : ""
-      } ago`}
-      {tooltip}
+    <time
+      {...props}
+      className={clsx("relative", props.className)}
+      dateTime={formattedDate}
+      suppressHydrationWarning
+    >
+      {children}
+      <Tooltip>{formattedDate}</Tooltip>
     </time>
   );
 }

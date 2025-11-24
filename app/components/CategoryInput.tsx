@@ -31,13 +31,17 @@ export function CategoryInput(props: CategoryInputProps) {
     );
   };
 
+  const inputValueToAdd = inputValue.trim();
+
   const addCategory = () => {
     setCategory((prev) => {
-      if (prev.split("/").find((prevCategory) => prevCategory === inputValue)) {
+      if (
+        prev.split("/").find((prevCategory) => prevCategory === inputValueToAdd)
+      ) {
         return prev;
       }
       setInputValue("");
-      return prev.concat("/").concat(inputValue).concat("/");
+      return prev.concat("/").concat(inputValueToAdd).concat("/");
     });
   };
 
@@ -64,9 +68,11 @@ export function CategoryInput(props: CategoryInputProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.currentTarget.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && e.currentTarget.value) {
+            if (e.key === "Enter" && inputValue) {
               e.preventDefault();
-              addCategory();
+              if (inputValueToAdd) {
+                addCategory();
+              }
             }
           }}
         />

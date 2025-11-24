@@ -129,18 +129,19 @@ export const refreshChannel = cached({
     const response = await fetchSingleFeed(
       feedUrl,
       {
-        etag: refreshData?.etag ?? undefined,
+        etag: (params.force ? undefined : refreshData?.etag) ?? undefined,
       },
       {
         signal: params.signal,
       },
     );
 
-    const hasCurrentVersion =
-      refreshData?.hash === response.meta.feedHash ||
-      response.meta.hasCurrentVersion;
+    const hasCurrentVersion = params.force
+      ? false
+      : refreshData?.hash === response.meta.feedHash ||
+        response.meta.hasCurrentVersion;
 
-    if (!params.force && hasCurrentVersion) {
+    if (hasCurrentVersion) {
       return null;
     }
 
