@@ -63,7 +63,7 @@ NavWrapper.NavSection = function NavSection(
   return (
     <div className="p-2 border-t dark:border-slate-800 flex flex-col">
       {props.heading && (
-        <div className="text-sm text-slate-600 dark:text-slate-400 -mt-2 p-2 pr-0 ">
+        <div className="text-sm text-slate-600 dark:text-slate-400 -mt-2 p-2 ">
           {props.heading}
         </div>
       )}

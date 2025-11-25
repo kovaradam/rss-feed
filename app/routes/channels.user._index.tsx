@@ -228,7 +228,7 @@ export default function UserPage({
                 <dt className="flex items-center gap-1">
                   {item.icon} {item.label}:
                 </dt>
-                <dd className="text-black dark:text-white">{item.value}</dd>
+                <dd>{item.value}</dd>
               </span>
             ))}
           </dl>

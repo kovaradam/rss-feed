@@ -284,9 +284,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
             <SpinTransition>
               <formItem.Icon
                 aria-hidden
-                className={`h-4 w-4 ${
-                  formItem.value === "false" ? "text-black dark:text-white" : ""
-                } pointer-events-none ${formItem.className}`}
+                className={`h-4 w-4 pointer-events-none ${formItem.className}`}
                 key={formItem.value}
               />
             </SpinTransition>

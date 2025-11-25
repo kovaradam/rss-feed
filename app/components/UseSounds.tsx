@@ -11,34 +11,31 @@ export function UseSounds() {
   const [playOpenSound] = useSound(openSound);
 
   React.useEffect(() => {
-    const tagNameSoundMap: Record<string, (element: HTMLElement) => void> = {
-      BUTTON: () => playTap(),
-      SUMMARY: (element) => {
-        if ((element.parentElement as HTMLDetailsElement).open) {
-          playCloseSound();
-        } else {
-          playOpenSound();
-        }
-      },
-      A: () => playTap(),
-    };
-
     const abortController = new AbortController();
 
     document.addEventListener(
       "click",
       (event) => {
-        if (!(event.target instanceof HTMLElement)) {
+        if (!(event.target instanceof Element)) {
           return;
         }
 
         const element = event.target;
 
-        if (element.dataset.silent) {
-          return;
+        switch (true) {
+          case !!element.closest("[data-silent]"):
+            break;
+          case !!element.closest("button, a"):
+            playTap();
+            break;
+          case !!element.closest("summary"):
+            if ((element.parentElement as HTMLDetailsElement).open) {
+              playCloseSound();
+            } else {
+              playOpenSound();
+            }
+            break;
         }
-
-        tagNameSoundMap[event.target.tagName]?.(element);
       },
       {
         signal: abortController.signal,

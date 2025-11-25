@@ -115,6 +115,8 @@
 :root {
   /* fixed height to prevent jankyness */
   --welcome-form-min-height: 28ex;
+
+  @apply text-slate-800 dark:text-slate-100;
 }
 
 @keyframes _spin {
