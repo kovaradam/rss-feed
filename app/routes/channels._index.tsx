@@ -201,7 +201,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       To get started, you should{" "}
                       <Link
                         to={href("/channels/new")}
-                        className="font-bold text-yellow-900 underline dark:text-white"
+                        className="underline dark:text-white"
                       >
                         add a new channel
                       </Link>

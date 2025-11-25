@@ -251,7 +251,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     }
                   >
                     {!data.channels || data.channels.length === 0 ? (
-                      <p className="p-4 py-2 italic text-sm  dark:text-slate-500 text-slate-600">
+                      <p className="p-2 italic text-sm  dark:text-slate-500 text-slate-600">
                         No channels yet
                       </p>
                     ) : (
