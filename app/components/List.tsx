@@ -17,7 +17,7 @@ export function List<T extends "ul" | "ol" = "ul">({ as, ...props }: Props<T>) {
         aria-hidden
         href={`#${idEnd}`}
         id={idStart}
-        className="bg-accent absolute top-0 z-10 hidden w-full scale-0 overflow-hidden rounded-b text-center text-sm text-white focus:scale-100 group-has-[:where(li,[data-li]):nth-of-type(5)]:block"
+        className="absolute top-0 z-10 hidden w-full scale-0 overflow-hidden rounded-b bg-accent text-center text-sm text-white group-has-[:where(li,[data-li]):nth-of-type(5)]:block focus:scale-100"
       >
         Skip to end
       </a>
@@ -26,7 +26,7 @@ export function List<T extends "ul" | "ol" = "ul">({ as, ...props }: Props<T>) {
         aria-hidden
         href={`#${idStart}`}
         id={idEnd}
-        className="bg-accent absolute bottom-0 z-10 hidden w-full scale-0 overflow-hidden rounded-t text-center text-sm text-white focus:scale-100 group-has-[:where(li,[data-li]):nth-of-type(5)]:block"
+        className="absolute bottom-0 z-10 hidden w-full scale-0 overflow-hidden rounded-t bg-accent text-center text-sm text-white group-has-[:where(li,[data-li]):nth-of-type(5)]:block focus:scale-100"
       >
         Skip to start
       </a>

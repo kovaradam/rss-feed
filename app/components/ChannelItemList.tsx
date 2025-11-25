@@ -7,7 +7,7 @@ export function ChannelItemList<U>(
   return (
     <StableList
       {...props}
-      className={` grid grid-cols-1 gap-4 sm:min-w-[30ch] xl:grid-cols-2  ${props.className}`}
+      className={`grid grid-cols-1 gap-4 sm:min-w-[30ch] xl:grid-cols-2 ${props.className}`}
     />
   );
 }

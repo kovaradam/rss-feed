@@ -33,13 +33,13 @@ export function NewItemsAlert() {
   return (
     <div>
       {!isHidden && (
-        <div className="mb-2 flex justify-center items-center h-10">
+        <div className="mb-2 flex h-10 items-center justify-center">
           {isFetchingNewItems ? (
             <DotsLoading />
           ) : (
             <button
               type="submit"
-              className="flex  items-center justify-center rounded-2xl px-4  bg-white p-2 text-gray-900 border shadow-lg hover:bg-slate-50 disabled:bg-transparent disabled:shadow-none dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+              className="flex items-center justify-center rounded-2xl border bg-white p-2 px-4 text-gray-900 shadow-lg hover:bg-slate-50 disabled:bg-transparent disabled:shadow-none dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
               onClick={() => {
                 refresh.reset?.();
                 invalidateFetcher.submit(

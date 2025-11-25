@@ -30,7 +30,7 @@ export function ShowMoreLink(props: Props) {
     <Form className={`mt-6 flex w-full justify-center ${props.className}`}>
       <button
         type={"submit"}
-        className="h-[3ex] hover:underline dark:text-white text-slate-600 "
+        className="h-[3ex] text-slate-600 hover:underline dark:text-white"
       >
         <input
           type="hidden"

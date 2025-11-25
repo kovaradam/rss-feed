@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 
 export function DescriptionList(props: React.HTMLAttributes<HTMLDListElement>) {
   return (
-    <dl {...props} className={clsx("flex flex-col gap-2 ", props.className)}>
+    <dl {...props} className={clsx("flex flex-col gap-2", props.className)}>
       {props.children}
     </dl>
   );

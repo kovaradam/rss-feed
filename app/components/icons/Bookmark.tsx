@@ -16,7 +16,7 @@ export function Bookmark(props: React.SVGProps<SVGSVGElement>) {
       strokeLinecap="round"
       strokeLinejoin="round"
       {...props}
-      className={clsx("overflow-visible ", props.className ?? "")}
+      className={clsx("overflow-visible", props.className ?? "")}
       id={id}
     >
       <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />

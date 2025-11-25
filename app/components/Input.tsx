@@ -42,7 +42,7 @@ export function Input<T extends readonly React.ReactNode[]>({
   const [isShowPassword, setIsShowPassword] = React.useState(false);
 
   wrapperClassName = honeypot
-    ? clsx("absolute -z-10 ", wrapperClassName ?? "")
+    ? clsx("absolute -z-10", wrapperClassName ?? "")
     : wrapperClassName;
 
   const input = (
@@ -79,7 +79,7 @@ export function Input<T extends readonly React.ReactNode[]>({
         {inputProps.type === "password" && (
           <button
             type="button"
-            className="_script-only password-toggle absolute right-2 top-0 h-full text-sm text-slate-600 hover:underline peer-placeholder-shown:hidden dark:text-slate-200"
+            className="_script-only password-toggle absolute top-0 right-2 h-full text-sm text-slate-600 peer-placeholder-shown:hidden hover:underline dark:text-slate-200"
             onClick={() => setIsShowPassword((p) => !p)}
           >
             {isShowPassword ? "hide" : "show"}

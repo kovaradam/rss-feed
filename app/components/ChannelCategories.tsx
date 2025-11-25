@@ -55,7 +55,7 @@ export function ChannelCategoryLinks(props: Omit<Props, "delete">) {
         .filter(Boolean)
         .map((category) => (
           <Link
-            className={clsx("relative ", className)}
+            className={clsx("relative", className)}
             key={category}
             to={`/channels?categories=${category}`}
           >

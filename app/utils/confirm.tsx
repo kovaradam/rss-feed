@@ -35,14 +35,14 @@ export async function $confirm(params: {
 
       <fieldset className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row">
         <Button
-          className=" flex w-full justify-center"
+          className="flex w-full justify-center"
           onClick={rejectOption}
           data-silent
         >
           {params.reject}
         </Button>
         <SubmitButton
-          className="w-full whitespace-nowrap "
+          className="w-full whitespace-nowrap"
           data-silent
           onClick={confirmOption}
         >

@@ -181,7 +181,7 @@ export function ChannelItemFilterForm(props: Props) {
         </div>
         {hasFilters && (
           <fieldset className="flex flex-col gap-1">
-            <Button form="reset-filters" type="submit" className="w-full ">
+            <Button form="reset-filters" type="submit" className="w-full">
               <BanIcon className="w-4" />
               <span className="flex-1 items-center">Disable filters</span>
             </Button>
@@ -227,11 +227,11 @@ function CheckboxLabel({
     <label
       {...props}
       className={clsx(
-        "flex items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600 ",
+        "flex items-baseline gap-2 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-600",
         props.className,
       )}
     >
-      <span className="flex items-center h-[1lh]">{inputSlot}</span>
+      <span className="flex h-[1lh] items-center">{inputSlot}</span>
       {props.children}
     </label>
   );

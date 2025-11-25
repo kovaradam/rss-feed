@@ -36,7 +36,7 @@ export function PasskeyLoginForm() {
     >
       <noscript>
         <div className="flex items-center gap-2 rounded border-current bg-yellow-200 p-2 pr-3 text-yellow-900 dark:border dark:bg-inherit dark:text-yellow-100">
-          <ExclamationIcon className=" h-6 w-4 min-w-4" />
+          <ExclamationIcon className="h-6 w-4 min-w-4" />
           <p className="text-pretty">
             Passkey authorization does not work without JavaScript enabled in
             your browser

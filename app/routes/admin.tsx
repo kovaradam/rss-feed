@@ -76,7 +76,7 @@ export default function AdminIndexPage({
     <div className="p-5">
       <section>
         <h2>Users</h2>
-        <table className="table-auto ">
+        <table className="table-auto">
           <thead>
             <tr>
               <td className="pr-5">Email</td>
