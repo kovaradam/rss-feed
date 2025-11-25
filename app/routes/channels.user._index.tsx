@@ -184,11 +184,11 @@ export default function UserPage({
     <>
       <UseAppTitle>Your profile</UseAppTitle>
       <div className="relative flex flex-col sm:flex-row">
-        <section className="flex flex-1 flex-col gap-8 ">
+        <section className="flex flex-1 flex-col gap-8">
           <div className="flex justify-between">
             <PageHeading>{user.email}</PageHeading>
             <Form action={href("/logout")} method="post">
-              <Button className="flex ">
+              <Button className="flex">
                 <LogoutIcon className="h-6 w-4" />
                 <span className="w-full">Log out</span>
               </Button>
@@ -222,7 +222,7 @@ export default function UserPage({
               },
             ].map((item) => (
               <span
-                className="mb-3 flex max-w-[89vw] flex-wrap gap-2 text-gray-500 sm:gap-1 "
+                className="mb-3 flex max-w-[89vw] flex-wrap gap-2 text-gray-500 sm:gap-1"
                 key={item.label}
               >
                 <dt className="flex items-center gap-1">
@@ -232,9 +232,9 @@ export default function UserPage({
               </span>
             ))}
           </dl>
-          <hr></hr>
+          <hr className="dark:border-slate-800"></hr>
           <div className="flex flex-col gap-4">
-            <h4 className="font-bold dark:text-white">General</h4>
+            <h4 className="font-bold">General</h4>
 
             <Form method="post" className="w-full sm:w-min">
               <HiddenInputs inputs={{ action: actions["toggle-sound"] }} />
@@ -269,7 +269,7 @@ export default function UserPage({
               </Button>
             </Form>
 
-            <h4 className="font-bold dark:text-white">Login and credentials</h4>
+            <h4 className="font-bold">Login and credentials</h4>
             <Form
               action={href("/channels/user/edit-email")}
               className="w-full sm:w-min"
@@ -298,8 +298,8 @@ export default function UserPage({
                 <HiddenInputs.Action value={actions["update-password"]} />
 
                 {loaderData.user.password?.isCurrentLogin && (
-                  <p className="text-slate-600">
-                    <InformationCircleIcon className="inline w-4 min-w-4" />{" "}
+                  <p className="text-slate-600 dark:text-slate-400">
+                    <InformationCircleIcon className="-mt-1 inline size-4" />{" "}
                     This will log you out of this device
                     {loaderData.user.password?.sessionCount > 1 && (
                       <> and other devices logged in using this password</>
@@ -354,8 +354,8 @@ export default function UserPage({
                 {user.passkeys.map((passkey) => (
                   <React.Fragment key={passkey.id}>
                     <li className="mb-1 flex overflow-hidden rounded-sm border last:mb-2 dark:border-slate-700">
-                      <KeyIcon className="w-8 min-w-8 border-r bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-400 " />
-                      <dl className="flex  flex-1 flex-col sm:flex-row">
+                      <KeyIcon className="w-8 min-w-8 border-r bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-400" />
+                      <dl className="flex flex-1 flex-col sm:flex-row">
                         {[
                           {
                             label: "Last login:",
@@ -372,9 +372,9 @@ export default function UserPage({
                           {
                             label: "Status:",
                             value: (
-                              <div className=" overflow-hidden rounded-md">
+                              <div className="overflow-hidden rounded-md">
                                 {passkey.sessionCount > 0 ? (
-                                  <span className=" bg-green-100 p-1 text-green-700 dark:bg-green-700 dark:text-green-200">
+                                  <span className="bg-green-100 p-1 text-green-700 dark:bg-green-700 dark:text-green-200">
                                     {passkey.sessionCount} Device
                                     {passkey.sessionCount === 1 ? "" : "s"}{" "}
                                     logged in
@@ -390,7 +390,7 @@ export default function UserPage({
                         ].map((item) => (
                           <div
                             key={item.label}
-                            className="min-w-24 border-b p-2 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 dark:border-slate-700"
+                            className="min-w-24 border-b p-2 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0 dark:border-slate-700"
                           >
                             <dd className="text-sm text-slate-600 dark:text-slate-400">
                               {item.label}
@@ -455,7 +455,7 @@ export default function UserPage({
               </List>
               {isPasskeySupported && <PasskeyAddForm />}
             </Details>
-            <h4 className="font-bold dark:text-white">Account</h4>
+            <h4 className="font-bold">Account</h4>
             <fetcher.Form
               method="post"
               action={href("/logout")}

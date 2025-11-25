@@ -7,7 +7,9 @@ export function InputError(props: React.ComponentProps<"div">) {
       {...props}
       className={`flex items-start gap-1 pt-1 text-red-800 dark:text-red-400 ${props.className}`}
     >
-      <ExclamationIcon className="h-6 w-4 min-w-4" />
+      <div className="flex h-[1lh] items-center">
+        <ExclamationIcon className="mt-px size-4" />
+      </div>
       {props.children}
     </div>
   );

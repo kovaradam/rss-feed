@@ -46,15 +46,13 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
   const title = <UseAppTitle>{loaderData.title}</UseAppTitle>;
   if (!loaderData.quotes.length && !loaderData.search) {
     return (
-      <div className="flex flex-col gap-2 text-center text-lg font-bold ">
+      <div className="flex flex-col gap-2 text-center text-lg font-bold">
         {title}
         {loaderData.quotes.length === 0 && (
           <div className="mt-8 flex flex-col items-center gap-16">
             <div>
-              <p className="dark:text-white">
-                Store memorable quotes from articles
-              </p>
-              <p className="mb-4 font-normal text-slate-500 wrap-anywhere dark:text-slate-300 text-sm">
+              <p>Store memorable quotes from articles</p>
+              <p className="mb-4 text-sm font-normal wrap-anywhere text-slate-500 dark:text-slate-300">
                 Add a quote to any article from your{" "}
                 <Link to="/channels" className="underline">
                   feed
@@ -65,7 +63,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
               alt=""
               src="/reading-side.svg"
               data-from="https://www.opendoodles.com/"
-              className="dark:invert-[.7] w-1/2 max-w-[30ch]"
+              className="w-1/2 max-w-[30ch] dark:invert-[.7]"
             />
           </div>
         )}
@@ -87,7 +85,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
           <li
             id={quote.id}
             key={quote.id}
-            className="flex flex-col overflow-hidden border-b border-dashed  py-4 last:border-none"
+            className="flex flex-col overflow-hidden border-b border-dashed py-4 last:border-none dark:border-slate-800"
           >
             <Link
               to={`/channels/${quote.item.channel.id}`}
@@ -96,7 +94,7 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
               {quote.item.channel.title}
             </Link>
 
-            <p className="relative  overflow-hidden text-ellipsis whitespace-break-spaces py-2 text-lg italic wrap-anywhere before:text-slate-500 before:content-['„'] dark:text-white">
+            <p className="relative overflow-hidden py-2 text-lg wrap-anywhere text-ellipsis whitespace-break-spaces italic before:text-slate-500 before:content-['„']">
               <Highlight
                 input={quote.content.trim()}
                 query={loaderData.search ?? ""}

@@ -121,12 +121,12 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       <UseAppTitle>Article detail</UseAppTitle>
 
       <BackLink
-        className="mb-4 flex  gap-1 text-slate-500 dark:text-slate-400 hover:underline"
+        className="mb-4 flex gap-1 text-slate-500 hover:underline dark:text-slate-400"
         to={`/channels/${item.channelId}`}
       >
         {(backEntry) => (
           <>
-            <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4 " />
+            <ChevronLeftIcon className="h-[2.9ex] w-4 min-w-4" />
             {backEntry?.title ?? item.channel.title}
           </>
         )}
@@ -209,20 +209,16 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
             ),
         )}
         <span>
-          <DescriptionList.Term className="flex items-center gap-1 pb-1 pt-2">
+          <DescriptionList.Term className="flex items-center gap-1 pt-2 pb-1">
             Description:
           </DescriptionList.Term>
           <DescriptionList.Definition>
-            <p className="text-slate-950 wrap-anywhere dark:text-white">
-              {description || "missing"}
-            </p>
+            <p className="wrap-anywhere">{description || "missing"}</p>
           </DescriptionList.Definition>
         </span>
       </DescriptionList>
-      <hr className="my-2" />
-      <h4 className="py-2 text-2xl  font-bold sm:text-2xl dark:text-white">
-        Quotes
-      </h4>
+      <hr className="my-2 dark:border-slate-800" />
+      <h4 className="py-2 text-2xl font-bold sm:text-2xl">Quotes</h4>
       <fetcher.Form
         method="post"
         onSubmit={() => setTimeout(() => formRef.current?.reset())}
@@ -246,8 +242,8 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           <p className="text-red-700">{fetcher.data?.error}</p>
         )}
       </fetcher.Form>
-      <hr className="my-2 mt-4" />
-      <List>
+      {/*<hr className="my-2 mt-4 dark:border-slate-800" />*/}
+      <List className="pt-4">
         {quotes.map((quote) => (
           <Quote
             key={quote.id}
@@ -272,9 +268,9 @@ function Quote(props: { content: string; createdAt: Date; id: string }) {
     <li
       id={props.id}
       key={props.id}
-      className="flex flex-col border-b border-dashed py-2  last:border-none"
+      className="flex flex-col border-b border-dashed py-2 last:border-none dark:border-slate-800"
     >
-      <p className="overflow-hidden text-ellipsis italic wrap-anywhere dark:text-white">
+      <p className="overflow-hidden wrap-anywhere text-ellipsis italic">
         „{props.content}“
       </p>
 

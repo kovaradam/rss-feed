@@ -5,7 +5,7 @@ export function PageHeading(props: React.HTMLAttributes<HTMLParagraphElement>) {
     <h3
       {...props}
       className={clsx(
-        "mb-2 max-w-[30ch] whitespace-break-spaces text-3xl font-bold sm:text-3xl dark:text-white",
+        "mb-2 max-w-[30ch] text-3xl font-bold whitespace-break-spaces sm:text-3xl",
         props.className,
       )}
     >

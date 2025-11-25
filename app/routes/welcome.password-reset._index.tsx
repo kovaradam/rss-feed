@@ -68,15 +68,13 @@ export default function PasswordReset(props: Route.ComponentProps) {
   return (
     <>
       <div>
-        <h1 className="my-2 text-4xl font-bold dark:text-white">
-          Forgotten password?
-        </h1>
+        <h1 className="my-2 text-4xl font-bold">Forgotten password?</h1>
         <p className="text-slate-500 dark:text-slate-400">
           No worries, enter your registered email and you will be sent a
           password reset link
         </p>
       </div>
-      <div className={`w-full sm:max-w-md `}>
+      <div className={`w-full sm:max-w-md`}>
         <Form
           method="post"
           className="min-h-(--welcome-form-min-height) space-y-6"

@@ -27,9 +27,7 @@ export default function PasswordResetEmailSent(props: Route.ComponentProps) {
   return (
     <>
       <div>
-        <h1 className="my-2 text-4xl font-bold dark:text-white">
-          Email has been sent
-        </h1>
+        <h1 className="my-2 text-4xl font-bold">Email has been sent</h1>
         <p className="text-slate-500 dark:text-slate-400">
           There should be an email with the password reset link in your inbox.
           If it is not, check your spam folder or{" "}

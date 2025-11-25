@@ -4,7 +4,7 @@ export default function PasswordResetSuccess() {
   return (
     <>
       <div>
-        <h1 className="my-2 text-4xl font-bold dark:text-white">
+        <h1 className="my-2 text-4xl font-bold">
           Your password has been updated!
         </h1>
         <p className="text-slate-500 dark:text-slate-400">

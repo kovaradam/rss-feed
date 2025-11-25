@@ -9,7 +9,7 @@ export function Details(props: Props) {
   return (
     <details
       {...props}
-      className={` rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 dark:text-white ${props.className}`}
+      className={`rounded-md border bg-white p-2 dark:border-none dark:bg-slate-800 ${props.className}`}
     >
       <summary
         className={`group flex w-full cursor-pointer items-center px-2 ${

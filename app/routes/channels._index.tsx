@@ -152,7 +152,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
     <>
       <UseAppTitle>Your feed</UseAppTitle>
       <div className="flex">
-        <section className="min-w-2/3 relative flex-1">
+        <section className="relative min-w-2/3 flex-1">
           <Details
             className="mb-4 w-full sm:hidden"
             title="Filter articles"
@@ -176,17 +176,17 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           <NewItemsAlert />
 
           {items.length === 0 && (
-            <div className="flex flex-col gap-2 text-center text-lg ">
+            <div className="flex flex-col gap-2 text-center text-lg">
               {channels.length !== 0 ? (
                 <>
-                  <p className="mt-6 font-bold dark:text-white">
+                  <p className="mt-6 font-bold">
                     No articles found {isFilters && "matching your criteria"}
                   </p>
-                  <div className="flex flec-col justify-center">
+                  <div className="flec-col flex justify-center">
                     <img
                       src="/laying.svg"
                       alt=""
-                      className="dark:invert-[.8] max-w-[30ch] mt-16"
+                      className="mt-16 max-w-[30ch] dark:invert-[.8]"
                       data-from="https://www.opendoodles.com/"
                     ></img>
                   </div>
@@ -194,18 +194,15 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
               ) : (
                 <div className="mt-8 flex flex-col items-center gap-16">
                   <div className="[&_p]:w-full [&_p]:text-center [&_p]:font-normal [&_p]:text-slate-500 [&_p]:dark:text-slate-300">
-                    <h3 className="font-bold dark:text-white">
+                    <h3 className="font-bold">
                       You are not subscribed to any RSS feeds.
                     </h3>
                     <p className="mb-4 text-sm">
-                      To get started, you should{" "}
-                      <Link
-                        to={href("/channels/new")}
-                        className="underline dark:text-white"
-                      >
-                        add a new channel
+                      To get started, try{" "}
+                      <Link to={href("/channels/new")} className="underline">
+                        adding a new channel
                       </Link>
-                      .
+                      !
                     </p>
                     <hr className="my-4" />
                     <p className="text-sm">
@@ -216,7 +213,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                       {recommendedChannels.map((item) => (
                         <li
                           key={item.href}
-                          className="flex justify-center rounded bg-white/60 pt-8 dark:bg-inherit/60"
+                          className="flex justify-center rounded bg-white/60 pt-8 dark:bg-transparent"
                         >
                           <img
                             rel="noreferrer"
@@ -236,7 +233,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                               name="loader"
                               value={"true"}
                             ></input>
-                            <button className="font-bold underline dark:text-white">
+                            <button className="font-bold underline">
                               {item.title}
                             </button>
                           </Form>
@@ -262,7 +259,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
           {cursor && <ShowMoreLink cursor={cursor} isLoading={isLoading} />}
         </section>
         {channels.length !== 0 && (
-          <aside className="hidden pl-4 sm:block ">
+          <aside className="hidden pl-4 sm:block">
             <Details
               title="Filter articles"
               className="w-60"

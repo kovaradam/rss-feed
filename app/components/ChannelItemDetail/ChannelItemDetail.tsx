@@ -52,13 +52,13 @@ export function ChannelItemDetail(props: Props) {
     <article
       id={item.id}
       className={clsx(
-        `relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4  dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none`,
+        `relative flex flex-col gap-1 border-b py-4 sm:rounded-lg sm:bg-white sm:p-4 sm:pt-4 dark:border-b-slate-600 dark:sm:border-none dark:sm:border-b-slate-600 dark:sm:bg-slate-800 dark:sm:shadow-none`,
         isContrived && "opacity-65",
         isContrived ? "sm:shadow" : "sm:shadow-md",
         props.wrapperClassName,
       )}
     >
-      <span className="flex w-full justify-between gap-2 dark:text-white">
+      <span className="flex w-full justify-between gap-2">
         <Link
           to={href(`/channels/:channelId`, { channelId: channel.id })}
           className={`max-w-[60vw] truncate sm:max-w-[40ch]`}
@@ -75,14 +75,14 @@ export function ChannelItemDetail(props: Props) {
 
       <Href
         href={item.link}
-        className="mt-2 text-lg text-slate-900 visited:text-violet-900 dark:text-white dark:visited:text-violet-200"
+        className="mt-2 text-lg visited:text-violet-900 dark:visited:text-violet-200"
       >
         {item.imageUrl && !isImageHidden && (
           <img
             alt=""
             rel="noreferrer"
             src={item.imageUrl}
-            className=" mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 object-cover text-sm italic sm:rounded-none dark:bg-slate-950"
+            className="mb-2 aspect-[1.4] h-auto w-full rounded-lg bg-slate-50 object-cover text-sm italic sm:rounded-none dark:bg-slate-950"
             loading="lazy"
           />
         )}
@@ -92,7 +92,7 @@ export function ChannelItemDetail(props: Props) {
           itemTitle
         )}
       </Href>
-      <span className="text-slate-500 dark:text-slate-400 ">
+      <span className="text-slate-500 dark:text-slate-400">
         <span className="flex flex-col gap-1">
           {item.author}
           <div className="w-fit text-sm">
@@ -119,7 +119,7 @@ export function ChannelItemDetail(props: Props) {
               />
             </div>
           )}
-          <p className="line-clamp-10 wrap-anywhere dark:text-white">
+          <p className="line-clamp-10 wrap-anywhere">
             {props.query ? (
               <Highlight query={props.query} input={description} />
             ) : (
@@ -133,7 +133,7 @@ export function ChannelItemDetail(props: Props) {
           channelId: channel.id,
           itemId: item.id,
         })}
-        className="pt-1 text-sm hover:underline text-slate-500 dark:text-slate-400"
+        className="pt-1 text-sm text-slate-500 hover:underline dark:text-slate-400"
       >
         See details
       </Link>
@@ -273,7 +273,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
 
           <button
             type="submit"
-            className={clsx("group relative rounded p-1 ", formItem.className)}
+            className={clsx("group relative rounded p-1", formItem.className)}
             data-silent
             aria-label={formItem.title}
             onClick={() => formItem.playSubmit()}
@@ -284,7 +284,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
             <SpinTransition>
               <formItem.Icon
                 aria-hidden
-                className={`h-4 w-4 pointer-events-none ${formItem.className}`}
+                className={`pointer-events-none h-4 w-4 ${formItem.className}`}
                 key={formItem.value}
               />
             </SpinTransition>

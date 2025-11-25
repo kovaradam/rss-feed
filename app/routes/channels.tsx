@@ -37,6 +37,7 @@ import clsx from "clsx";
 import { Modal } from "~/components/Modal";
 import { TimedTransition } from "~/components/animations/TimedTransition";
 import { attachOverscroll } from "~/utils/attach-overscroll";
+import { IncreaseTouchTarget } from "~/components/IncreaseTouchTarget";
 
 export const meta = createMeta();
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -93,7 +94,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <a
         href="#main-content"
-        className="bg-accent absolute z-10 scale-0 rounded p-1 text-white focus:scale-100"
+        className="absolute z-10 scale-0 rounded bg-accent p-1 text-white focus:scale-100"
       >
         Skip to main content
       </a>
@@ -114,22 +115,22 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         />
 
         <div
-          className="_background flex justify-center sm:[--nav-bg:var(--color-slate-100)] [--nav-bg:var(--color-white)] dark:[--nav-bg:var(--color-slate-950)] sm:dark:[--nav-bg:var(--color-slate-950)]"
+          className="_background flex justify-center [--nav-bg:var(--color-white)] sm:[--nav-bg:var(--color-slate-100)] dark:[--nav-bg:var(--color-slate-950)] sm:dark:[--nav-bg:var(--color-slate-800)]"
           {...registerNavSwipeCallbacks(setIsNavExpanded)}
         >
           <div
             id="nav-sliding-element"
-            className={`relative flex h-full min-h-screen w-screen duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 2xl:w-2/3 shadow-[-40rem_0_0rem_20rem_var(--nav-bg)] max-sm:[input:checked+div_&]:translate-x-3/4`}
+            className={`relative flex h-full min-h-screen w-screen shadow-[-40rem_0_0rem_20rem_var(--nav-bg)] duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 2xl:w-2/3 max-sm:[input:checked+div_&]:translate-x-3/4`}
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4 font-bold font-[Merriweather] sm:flex sm:text-4xl dark:text-slate-300">
+                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4 font-[Merriweather] font-bold sm:flex sm:text-4xl">
                   <span className="overflow-hidden text-ellipsis">
                     <AppTitle defaultTitle={data.title} />
                   </span>
                 </h1>
                 <div
-                  className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs dark:inset-shadow-slate-800"
+                  className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs dark:inset-shadow-slate-700"
                   ref={attachOverscroll}
                 >
                   {[
@@ -211,10 +212,10 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                                     ?.focus();
                                 });
                               }}
-                              className="sm:hidden flex w-full justify-end items-center"
+                              className="flex w-full items-center justify-end sm:hidden"
                               aria-label={"Open channel search dialog"}
                             >
-                              <SearchIcon className="size-4 " />
+                              <SearchIcon className="size-4" />
                             </button>
                             <form
                               className="_script-only relative flex w-full items-center max-sm:hidden"
@@ -223,7 +224,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                               <input
                                 value={channelFilter}
                                 className={
-                                  "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:caret-slate-400 sm:outline-none sm:focus-visible:border-b sm:border-slate-400 sm:hover:border-b "
+                                  "absolute w-full rounded-none bg-transparent px-1 pr-6 text-right accent-transparent sm:border-slate-400 sm:caret-slate-400 sm:outline-none sm:hover:border-b sm:focus-visible:border-b"
                                 }
                                 type="search"
                                 onChange={(e) =>
@@ -237,7 +238,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                                 htmlFor="channels-filter"
                                 aria-label="Filter channels by name"
                               >
-                                <SearchIcon className="w-4 " />
+                                <SearchIcon className="w-4" />
                               </label>
                             </form>
                           </>
@@ -251,15 +252,21 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     }
                   >
                     {!data.channels || data.channels.length === 0 ? (
-                      <p className="p-2 italic text-sm  dark:text-slate-500 text-slate-600">
-                        No channels yet
+                      <p className="flex origin-top-right -rotate-6 items-center justify-end gap-2 pr-1 font-[Mansalva] text-lg">
+                        Add a channel{" "}
+                        <svg className="size-7" viewBox="0 0 40 40">
+                          <g className="fill-none stroke-current stroke-3">
+                            <path d="m 2.7841001,21.34812 c 0.9033386,-0.278558 6.946171,-2.889228 9.2140509,-5.348308 1.920273,-2.082166 2.950906,-7.7439018 2.950906,-7.7439018" />
+                            <path d="m 5.7350056,6.4174297 c 0,0 7.6940654,-5.46727917 10.9605054,-4.6240571 3.266439,0.843222 6.022255,9.0809794 6.022255,9.0809794" />
+                          </g>
+                        </svg>
                       </p>
                     ) : (
                       <List as="ol">
                         {filteredChannels.map((channel) => (
                           <li key={channel.id}>
                             <NavWrapper.StyledNavLink
-                              className="block mb-2"
+                              className="mb-2 block"
                               to={href("/channels/:channelId", {
                                 channelId: channel.id,
                               })}
@@ -285,7 +292,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                             .map((channel) => (
                               <li key={channel.id}>
                                 <NavWrapper.StyledNavLink
-                                  className="block mb-2 opacity-35"
+                                  className="mb-2 block opacity-35"
                                   to={href("/channels/:channelId", {
                                     channelId: channel.id,
                                   })}
@@ -298,7 +305,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     )}
                   </NavWrapper.NavSection>
                 </div>
-                <div className="relative hidden h-full w-full items-center px-2 sm:flex sm:data-[overscroll=true]:shadow-2xl data-[overscroll=true]:border-t dark:border-slate-800">
+                <div className="relative hidden h-full w-full items-center px-2 data-[overscroll=true]:border-t sm:flex sm:data-[overscroll=true]:shadow-2xl dark:border-slate-700">
                   <UserMenu
                     email={data.user.email}
                     isAdmin={data.user.isAdmin}
@@ -307,13 +314,14 @@ export default function ChannelsPage(props: Route.ComponentProps) {
               </div>
             </NavWrapper>
             <div className="flex-1">
-              <header className="z-10 flex w-screen justify-center whitespace-nowrap border-b bg-white sm:hidden  dark:border-b-slate-700 dark:bg-slate-900 dark:text-white">
-                <div className="flex w-full items-center justify-between p-4 xl:w-2/3 ">
+              <header className="z-10 flex w-screen justify-center border-b bg-white whitespace-nowrap sm:hidden dark:border-b-slate-700 dark:bg-slate-900">
+                <div className="flex w-full items-center justify-between p-4 px-2 xl:w-2/3">
                   <label
                     aria-label="Toggle navigation"
-                    className="block rounded px-4  py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800 dark:active:bg-slate-900"
+                    className="relative block rounded px-4 py-2 hover:bg-slate-200 active:bg-slate-300 sm:hidden dark:hover:bg-slate-800 dark:active:bg-slate-900"
                     htmlFor="nav-toggle"
                   >
+                    <IncreaseTouchTarget className="scale-125!" />
                     <MenuAlt2Icon className="w-6" />
                   </label>
                   <h1 className="truncate font-bold sm:text-3xl">
@@ -329,7 +337,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                 id="main-content"
                 tabIndex={-1}
                 className={clsx(
-                  "p-6 outline-none ",
+                  "p-6 outline-none",
                   navigation.formAction?.includes("logout") &&
                     "animate-pulse opacity-60",
                 )}
@@ -355,14 +363,14 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
 function UserMenu(props: { email: string; isAdmin: boolean }) {
   const location = useLocation();
   const linkStyle = clsx(
-    "text-md flex cursor-pointer items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:text-white dark:hover:bg-slate-800 dark:sm:bg-slate-800 dark:sm:hover:bg-slate-700",
+    "text-md flex cursor-pointer items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:hover:bg-slate-800 dark:sm:bg-slate-700 dark:sm:hover:bg-slate-600",
   );
 
   return (
     <>
       <noscript className="sm:flex-1">
         <a href={href("/channels/user")} className={linkStyle}>
-          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4 " />
+          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4" />
           <span className="pointer-events-none hidden shrink overflow-hidden text-ellipsis sm:block">
             {props.email}
           </span>
@@ -370,7 +378,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
       </noscript>
       <details
         key={location.pathname}
-        className="_script-only peer relative flex  justify-center sm:w-full sm:flex-col-reverse"
+        className="_script-only peer relative flex justify-center sm:w-full sm:flex-col-reverse"
         onBlurCapture={(event) => {
           const thisElement = event.currentTarget;
           const blurTimeout = setTimeout(() => {
@@ -385,16 +393,22 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
         }}
       >
         <summary
-          className={`${linkStyle} [&::-webkit-details-marker]:hidden`}
+          className={clsx(
+            linkStyle,
+            "relative [&::-webkit-details-marker]:hidden",
+          )}
           aria-label="Toggle user menu"
         >
-          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4 " />
+          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4" />
           <span className="pointer-events-none hidden shrink overflow-hidden text-ellipsis sm:block">
             {props.email}
           </span>
+          <IncreaseTouchTarget />
         </summary>
         <ul
-          className="absolute right-0 z-20 flex w-[91vw] flex-col-reverse rounded-md bg-white p-2  shadow-md sm:bottom-[110%] sm:w-full sm:flex-col dark:bg-slate-800 dark:border "
+          className={clsx(
+            "absolute right-2 z-20 flex w-[92vw] flex-col-reverse rounded-md bg-white p-2 shadow-md sm:right-0 sm:bottom-[110%] sm:w-full sm:flex-col dark:border dark:border-slate-500 dark:bg-slate-800 [&_hr]:dark:border-slate-500",
+          )}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
         >
@@ -402,7 +416,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
             <Form action="/logout" method="post" className="w-full">
               <button
                 type="submit"
-                className="flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+                className="flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-slate-700"
               >
                 <LogoutIcon className="w-4" />
                 <span className="gap-4 whitespace-nowrap">Log out</span>
@@ -413,9 +427,10 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
           <li>
             <Link
               to={href("/channels/user")}
-              className="relative flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+              className="relative flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-slate-700"
             >
               <CogIcon className="w-4" />
+
               <span className="gap-4 whitespace-nowrap">Your profile</span>
             </Link>
           </li>
@@ -426,7 +441,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
                 <a
                   href="/admin"
                   title="Admin"
-                  className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200"
+                  className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-slate-700"
                 >
                   <KeyIcon className="w-4" />
                   <span className="gap-4 whitespace-nowrap">Admin</span>
@@ -436,7 +451,7 @@ function UserMenu(props: { email: string; isAdmin: boolean }) {
           )}
         </ul>
       </details>
-      <div className="invisible absolute -left-0 top-0 z-10 h-full w-full bg-blue-950 opacity-30 peer-open:visible sm:peer-open:invisible"></div>
+      <div className="invisible absolute top-0 -left-0 z-10 h-full w-full bg-blue-950 opacity-30 peer-open:visible sm:peer-open:invisible"></div>
     </>
   );
 }
@@ -572,27 +587,27 @@ function MobileChannelSearch(props: {
         <Modal
           isOpen={transition.isTransition || props.isOpen}
           className={clsx(
-            "bottom-0! bg-white shadow-md rounded-b-none p-2! w-screen! max-w-screen  dark:tech-slate-300",
+            "dark:tech-slate-300 bottom-0! w-screen! max-w-screen rounded-b-none bg-white p-2! shadow-md",
             props.isOpen
               ? "translate-y-0! starting:translate-y-full!"
               : "translate-y-full!",
             "prefers-reduced-motion:transition-none transition-transform",
           )}
           overlayClassName={clsx(
-            "sm:hidden transition-opacity",
+            "transition-opacity sm:hidden",
             props.isOpen ? "opacity-100 starting:opacity-0" : "opacity-0",
           )}
           onRequestClose={props.onClose}
         >
           {channels.length === 0 && (
-            <p className="p-2 text-slate-700 dark:text-slate-400 italic">
+            <p className="p-2 text-slate-700 italic dark:text-slate-400">
               No channels found
             </p>
           )}
           <List
             aria-live="polite"
             as="ol"
-            className="overflow-auto max-h-[90svh]"
+            className="max-h-[90svh] overflow-auto"
             onClickCapture={props.onClose}
           >
             {channels.map((channel) => (
@@ -601,7 +616,7 @@ function MobileChannelSearch(props: {
                 className="not-last:border-b dark:border-slate-800"
               >
                 <NavWrapper.StyledNavLink
-                  className="block [&_[data-scroll-top-icon]]:hidden m-2"
+                  className="m-2 block [&_[data-scroll-top-icon]]:hidden"
                   to={channel.id}
                 >
                   <span className="pointer-events-none">
@@ -612,13 +627,13 @@ function MobileChannelSearch(props: {
             ))}
           </List>
           <hr />
-          <div className="flex items-center pt-2 sticky bottom-0">
+          <div className="sticky bottom-0 flex items-center pt-2">
             <input
               type="search"
               placeholder="Find a channel"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="p-2 w-full dark:text-slate-200"
+              className="w-full p-2 dark:text-slate-200"
               disabled={!props.isOpen}
               id="mobile-channel-filter"
             />
@@ -626,7 +641,7 @@ function MobileChannelSearch(props: {
               data-silent
               disabled={!props.isOpen}
               onClick={props.onClose}
-              className="dark:text-slate-200 p-2"
+              className="p-2 dark:text-slate-200"
             >
               Close
             </button>

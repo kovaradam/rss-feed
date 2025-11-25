@@ -35,7 +35,7 @@ export function WithTabs<T extends string>(props: {
         disabled={props.disabled}
         className={clsx(
           styles.input,
-          `grid gap-(--gap) bg-gray-50 py-1 pl-1 pr-1 [--gap:0.25rem] focus:focus:bg-gray-50 sm:[--hor:0] dark:text-slate-100 dark:focus:focus:text-slate-100`,
+          `grid gap-(--gap) bg-gray-50 py-1 pr-1 pl-1 [--gap:0.25rem] focus:focus:bg-gray-50 sm:[--hor:0] dark:text-slate-100 dark:focus:focus:text-slate-100`,
           props.className,
         )}
         style={{
@@ -83,7 +83,7 @@ export function WithTabs<T extends string>(props: {
         tabIndex={0}
       >
         <span
-          className="rounded-sm bg-white shadow transition-transform motion-reduce:transition-none dark:bg-slate-800"
+          className="rounded-sm bg-white shadow transition-transform motion-reduce:transition-none dark:bg-slate-700"
           style={{
             gridRow: 1,
             gridColumn: 1,
@@ -103,7 +103,7 @@ export function WithTabs<T extends string>(props: {
               }),
             }}
             className={clsx(
-              "rounded-sm p-1 text-center ",
+              "rounded-sm p-1 text-center",
               option.value === currentValue
                 ? ""
                 : "text-gray-600 hover:bg-gray-100 hover:text-inherit dark:text-slate-300 dark:hover:bg-slate-700",

@@ -53,7 +53,7 @@ export function CollectionForm<
               value="delete"
             >
               <TrashIcon className="w-4" />
-              <span className="pointer-events-none hidden md:block">
+              <span className="pointer-events-none hidden flex-1 md:block">
                 {isDeleting ? "Deleting..." : "Delete collection"}
               </span>
             </Button>
@@ -110,7 +110,7 @@ export function CollectionForm<
               <div className="flex flex-col gap-2">
                 {values.map((radio) => (
                   <label
-                    className="flex items-center gap-2 dark:text-white"
+                    className="flex items-center gap-2"
                     key={String(radio.value)}
                   >
                     <input

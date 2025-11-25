@@ -115,9 +115,7 @@ export default function Welcome() {
   return (
     <>
       <div>
-        <h1 className="my-2 text-4xl font-bold dark:text-white">
-          Create your journal
-        </h1>
+        <h1 className="my-2 text-4xl font-bold">Create your journal</h1>
         <p className="text-slate-500 dark:text-slate-400">
           Get started with a new account or{" "}
           <Link to={toLogin} className={`font-bold underline`}>
@@ -194,7 +192,7 @@ export default function Welcome() {
                 <span className="text-slate-500">or</span>
                 <Link
                   to={toLogin}
-                  className={`${buttonStyle} w-full justify-center sm:w-48 `}
+                  className={`${buttonStyle} w-full justify-center sm:w-48`}
                 >
                   log In
                 </Link>{" "}

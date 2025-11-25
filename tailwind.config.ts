@@ -16,7 +16,6 @@ export default {
 
   plugins: [
     plugin(({ addVariant }) => {
-      addVariant("active-select-item", "&[data-active-item]");
       addVariant("active-scroll", "body.scroll &");
     }),
   ],

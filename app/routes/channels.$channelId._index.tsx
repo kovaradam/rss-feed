@@ -182,14 +182,14 @@ export default function ChannelDetailsPage() {
           <PageHeading>{data.channel.title}</PageHeading>
         </WithEditLink>
 
-        <DescriptionList className="pt-2 ">
-          <span className="flex items-center gap-1 ">
+        <DescriptionList className="pt-2">
+          <span className="flex items-center gap-1">
             <DescriptionList.Definition>
               <Href href={channel.link} />
             </DescriptionList.Definition>
           </span>
 
-          <span className="flex flex-wrap items-center gap-1 ">
+          <span className="flex flex-wrap items-center gap-1">
             <DescriptionList.Term className="flex items-center gap-1">
               <ClockIcon className="h-4" /> Last update:
             </DescriptionList.Term>
@@ -207,7 +207,7 @@ export default function ChannelDetailsPage() {
             </DescriptionList.Definition>
           </span>
           <WithEditLink name={"new-category"} label="Edit channel categories">
-            <span className="flex flex-wrap items-center gap-1 ">
+            <span className="flex flex-wrap items-center gap-1">
               <DescriptionList.Term className="flex items-center gap-1">
                 <BookmarkIcon className="h-4" /> Categories:
               </DescriptionList.Term>
@@ -221,7 +221,7 @@ export default function ChannelDetailsPage() {
             </span>
           </WithEditLink>
           <WithEditLink name={"language"} label="Edit language">
-            <span className="flex items-center gap-1 ">
+            <span className="flex items-center gap-1">
               <DescriptionList.Term className="flex items-center gap-1">
                 <TranslateIcon className="h-4" /> Language:
               </DescriptionList.Term>
@@ -235,7 +235,7 @@ export default function ChannelDetailsPage() {
               <DescriptionList.Term>Description:</DescriptionList.Term>
             </WithEditLink>
             <DescriptionList.Definition>
-              <p className="text-slate-900 wrap-anywhere dark:text-slate-300">
+              <p className="wrap-anywhere text-slate-900 dark:text-slate-300">
                 {data.channel.description || <i>Description is missing</i>}
               </p>
             </DescriptionList.Definition>
@@ -280,7 +280,7 @@ export default function ChannelDetailsPage() {
 
         <hr className="mb-8 dark:border-slate-600" />
 
-        <h4 className="pb-2 text-2xl font-medium dark:text-white">Articles</h4>
+        <h4 className="pb-2 text-2xl font-medium">Articles</h4>
         {items.map((item) => (
           <React.Fragment key={item.id}>
             <ChannelItemDetail
@@ -320,16 +320,16 @@ export default function ChannelDetailsPage() {
             data-silent
           >
             <RefreshIcon
-              className={`w-4  ${
+              className={`w-4 ${
                 isRefreshing ? "animate-spin" : "animate-none"
               }`}
             />
             <div className="flex-1 text-center">Refresh</div>
           </Button>
         </Form>
-        <Link to="edit" className={clsx(buttonStyle, " sm:w-full")}>
+        <Link to="edit" className={clsx(buttonStyle, "sm:w-full")}>
           <PencilIcon className="w-4" />
-          <div className=" flex-1 text-center">Edit</div>
+          <div className="flex-1 text-center">Edit</div>
         </Link>
         <br />
         <Form
@@ -340,7 +340,7 @@ export default function ChannelDetailsPage() {
               header: "Are you sure?",
               message: "This will delete all saved data from this channel",
               confirm: "Yes, delete",
-              reject: "Cancel",
+              reject: "No, cancel",
             });
             const formEl = event.target as typeof event.currentTarget;
             fetcher.submit(formEl, { method: formEl.method as never });

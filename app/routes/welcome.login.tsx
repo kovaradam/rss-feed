@@ -108,7 +108,7 @@ export default function LoginPage({
   return (
     <>
       <div>
-        <h1 className="my-2 text-4xl font-bold dark:text-white">
+        <h1 className="my-2 text-4xl font-bold">
           {loaderData.isFirst ? "Welcome!" : "Welcome back!"}
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
@@ -130,7 +130,7 @@ export default function LoginPage({
           )}
         </p>
       </div>
-      <div className={`w-full sm:max-w-md `}>
+      <div className={`w-full sm:max-w-md`}>
         <WithPasskeyFormTabs
           passwordForm={
             <Form

@@ -142,8 +142,8 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <UseAppTitle>{collection.title}</UseAppTitle>
-      <div className={`relative flex min-h-screen flex-col sm:flex-row `}>
-        <section className="sm:min-w-2/3 relative flex-1 ">
+      <div className={`relative flex min-h-screen flex-col sm:flex-row`}>
+        <section className="relative flex-1 sm:min-w-2/3">
           <Details
             title="Filter articles"
             className="mb-4 w-full sm:hidden"
@@ -170,25 +170,25 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
               <div>
                 {!isFilters ? (
                   <>
-                    <p className=" text-center text-lg font-bold dark:text-white">
+                    <p className="text-center text-lg font-bold">
                       No articles were found in this collection.
                     </p>
                     <p className="text-center text-sm text-slate-600 dark:text-slate-300">
-                      You may try adding a{" "}
+                      You may try{" "}
                       <Link
                         to={"/channels/new"}
-                        className="font-bold text-yellow-900 underline dark:text-white"
+                        className="font-bold underline"
                       >
-                        new channel
+                        adding a new channel
                       </Link>{" "}
                       or{" "}
-                      <Link to="edit" className=" underline">
+                      <Link to="edit" className="underline">
                         edit this collection
                       </Link>
                     </p>
                   </>
                 ) : (
-                  <p className="mb-2 text-center text-lg font-bold dark:text-white">
+                  <p className="mb-2 text-center text-lg font-bold">
                     No articles found matching your criteria.
                   </p>
                 )}
@@ -198,7 +198,7 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                 src="/clumsy.svg"
                 width={"70%"}
                 data-from="https://www.opendoodles.com/"
-                className="dark:invert-[.8] max-w-[40ch]"
+                className="max-w-[40ch] dark:invert-[.8]"
               />
             </div>
           )}
@@ -246,9 +246,9 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
             >
               <FilterForm />
             </Details>
-            <Link to={`edit`} className={clsx(buttonStyle, " w-full")}>
+            <Link to={`edit`} className={clsx(buttonStyle, "w-full")}>
               <PencilIcon className="w-4" />
-              <span className="pointer-events-none flex-1 text-center ">
+              <span className="pointer-events-none flex-1 text-center">
                 Edit collection
               </span>
             </Link>

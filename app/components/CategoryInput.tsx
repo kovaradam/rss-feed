@@ -58,7 +58,7 @@ export function CategoryInput(props: CategoryInputProps) {
       </div>
       <div className="flex gap-2">
         <input
-          placeholder="e.g. gardening"
+          placeholder="gardening"
           name={props.name}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={props.autoFocus}
@@ -84,7 +84,7 @@ export function CategoryInput(props: CategoryInputProps) {
           ))}
         </datalist>
         <Button
-          className="_script-only relative rounded bg-slate-100 px-4 py-2 text-slate-600  hover:bg-slate-200  disabled:bg-slate-300"
+          className="_script-only relative rounded bg-slate-100 px-4 py-2 text-slate-600 hover:bg-slate-200 disabled:bg-slate-300 dark:bg-slate-700"
           type="button"
           aria-label="Add category"
           onClick={() => {
@@ -92,7 +92,7 @@ export function CategoryInput(props: CategoryInputProps) {
             document.getElementById(inputId)?.focus();
           }}
         >
-          <Plus className="w-4 " />
+          <Plus className="w-4" />
           <Tooltip />
         </Button>
       </div>
