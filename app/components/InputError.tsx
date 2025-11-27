@@ -10,7 +10,7 @@ export function InputError(props: React.ComponentProps<"div">) {
       <div className="flex h-[1lh] items-center">
         <ExclamationIcon className="mt-px size-4" />
       </div>
-      {props.children}
+      <p>{props.children}</p>
     </div>
   );
 }

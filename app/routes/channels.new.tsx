@@ -20,7 +20,7 @@ import { ChannelErrors, getChannelsFromUrl } from "~/models/utils.server";
 import { List } from "~/components/List";
 import { useKeepTruthy } from "~/utils/use-keep-truthy";
 import clsx from "clsx";
-import { InputError } from "~/components/InputError";
+import { Input } from "~/components/Input";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -199,7 +199,7 @@ export default function NewChannelPage({
       <div className="flex max-w-xl flex-col gap-4">
         <Form method={"POST"} className={"flex flex-col gap-4"}>
           <WithFormLabel htmlFor="new-channel-input" label="Channel address">
-            <input
+            <Input
               type="url"
               name={inputs["channel-url"]}
               id="new-channel-input"
@@ -208,14 +208,16 @@ export default function NewChannelPage({
               className={`${styles.input} `}
               aria-invalid="false"
               defaultValue={loaderData.channelUrlParam ?? ""}
+              errors={
+                actionData && "errors" in actionData
+                  ? Object.entries(actionData.errors).map(([type, error]) => ({
+                      content: <TextWithLink text={error} />,
+                      key: type,
+                    }))
+                  : undefined
+              }
             />
-            {actionData && "errors" in actionData ? (
-              Object.entries(actionData.errors).map(([type, error]) => (
-                <InputError key={type} id={type}>
-                  <TextWithLink text={error} />
-                </InputError>
-              ))
-            ) : (
+            {!("errors" in (actionData ?? {})) && (
               <span className="pt-1 text-sm text-slate-500 dark:text-slate-400">
                 Provide an address of an RSS channel or a web page
               </span>
