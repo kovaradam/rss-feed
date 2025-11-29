@@ -27,6 +27,8 @@ export function mapRssFeedResponseToCreateInput({
 
   const feedLink = feed.link || feedUrl;
 
+  const lastBuildDate = asDate(feed.lastBuildDate);
+
   return {
     channel: {
       link: sanitize(feedLink),
@@ -37,7 +39,7 @@ export function mapRssFeedResponseToCreateInput({
       refreshDate: null,
       ttl: asNumber(feed.ttl),
       hash: hash ?? null,
-      lastBuildDate: asDate(feed.lastBuildDate),
+      lastBuildDate: lastBuildDate ? ceilDate(lastBuildDate) : null,
       rssVersion: feed.rssVersion ?? "2.0",
       copyright: sanitize(feed.copyright ?? ""),
       category:
@@ -73,7 +75,7 @@ export function mapRssFeedItemsResponseToCreateInput(
           comments: asUrl(i.comments)?.href ?? "",
           description: sanitize(i.description?.slice(0, 1000) ?? ""),
           imageUrl: asUrl(i["extensions:imageUrl"])?.href ?? "",
-          pubDate: pubDate ?? new Date(),
+          pubDate: pubDate ? ceilDate(pubDate) : new Date(),
           bookmarked: false,
           read: false,
           hiddenFromFeed: false,
@@ -94,4 +96,14 @@ function sanitize(input: string) {
   const query = load(input, { xml: true });
   // so here it runs it once again to remove created tags
   return load(query.text(), { xml: true }).text();
+}
+
+/**
+ * If date is in the future, return current date
+ */
+function ceilDate(date: Date) {
+  if (date.getTime() > Date.now()) {
+    return new Date();
+  }
+  return date;
 }
