@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, useNavigation, useSearchParams } from "react-router";
-import { DotsLoading } from "./icons/DotsLoading";
+import { DotsLoading } from "./icons/DotsLoadingIcon";
 
 type Props = React.ComponentProps<typeof Form> & {
   isLoading?: boolean;

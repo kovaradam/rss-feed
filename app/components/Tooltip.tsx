@@ -20,12 +20,11 @@ export function Tooltip(
 
   const target = props.target ?? elementRef?.parentElement;
 
-  const getTarget = React.useEffectEvent(() => target);
+  const getTarget = React.useCallback(() => target, [target]);
 
   const show = React.useCallback(() => {
     clearTimeout(positionTimeoutRef.current);
     const target = getTarget();
-
     if (!target) {
       return null;
     }
@@ -47,7 +46,7 @@ export function Tooltip(
         }),
       500,
     );
-  }, [props.position]);
+  }, [props.position, getTarget]);
 
   const hide = React.useEffectEvent(() => {
     clearTimeout(positionTimeoutRef.current);
@@ -60,6 +59,7 @@ export function Tooltip(
     if (!target) {
       return;
     }
+
     target?.setAttribute("aria-describedby", id);
     target?.setAttribute("interesttarget", id);
 
@@ -72,7 +72,7 @@ export function Tooltip(
     target.addEventListener("click", hide, { signal: controller.signal });
 
     return () => controller.abort();
-  }, [id, show]);
+  }, [id, show, getTarget]);
 
   useEffect(() => {
     if (!position) {

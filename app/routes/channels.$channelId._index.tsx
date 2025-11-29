@@ -7,14 +7,12 @@ import {
   useLoaderData,
   useNavigation,
   href,
-  useFetcher,
 } from "react-router";
 import invariant from "tiny-invariant";
 import { Href } from "~/components/Href";
 import { TimeFromNow } from "~/components/TimeFromNow";
 import {
   updateChannel,
-  deleteChannel,
   getChannel,
   getChannelItems,
   refreshChannel,
@@ -23,7 +21,6 @@ import {
   ClockIcon,
   BookmarkIcon,
   TranslateIcon,
-  TrashIcon,
   PencilIcon,
   RefreshIcon,
   ExclamationCircleIcon,
@@ -32,24 +29,21 @@ import {
 import { requireUserId } from "~/session.server";
 import React from "react";
 import { ChannelCategoryLinks } from "~/components/ChannelCategories";
-import { Button, buttonStyle } from "~/components/Button";
+
 import { ErrorMessage } from "~/components/ErrorMessage";
 import { createTitle } from "~/utils";
-import { AsideWrapper } from "~/components/AsideWrapper";
 import { UseAppTitle } from "~/components/AppTitle";
 import { ShowMoreLink } from "~/components/ShowMoreLink";
 
 import refreshSound from "/sounds/ui_refresh-feed.wav?url";
-import { PageHeading } from "~/components/PageHeading";
+import { PageHeader, PageHeading } from "~/components/PageHeading";
 import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
 import { Tooltip } from "~/components/Tooltip";
 import { DescriptionList } from "~/components/DescriptionList";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { useSound } from "~/utils/use-sound";
 import type { Route } from "./+types/channels.$channelId._index";
-import { $confirm } from "~/utils/confirm";
-import { HiddenInputs } from "~/components/HiddenInputs";
-import clsx from "clsx";
+import { MainSection } from "~/components/MainSection";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -106,12 +100,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   invariant(params.channelId, "channelId not found");
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const action = formData.get("action");
-
-  if (action === "delete") {
-    await deleteChannel({ userId, id: params.channelId });
-    throw redirect(href("/channels"));
-  }
 
   if (ChannelItemDetailService.isChannelItemUpdate(formData)) {
     return ChannelItemDetailService.handleAction(userId, formData);
@@ -156,7 +144,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
 export default function ChannelDetailsPage() {
   const data = useLoaderData<typeof loader>();
   const transition = useNavigation();
-  const fetcher = useFetcher();
 
   const isRefreshing =
     transition.state !== "idle" && transition.formMethod === "PATCH";
@@ -174,15 +161,17 @@ export default function ChannelDetailsPage() {
   const [playRefresh] = useSound(refreshSound);
 
   return (
-    <div className={`relative flex flex-col sm:flex-row`}>
+    <>
       <UseAppTitle>Channel</UseAppTitle>
-      <section className="relative z-0 max-w-[90vw] flex-1">
+      <MainSection className="relative z-0">
         {channel.imageUrl && <ChannelImage src={channel.imageUrl} />}
-        <WithEditLink name={"title"} label="Edit channel title">
-          <PageHeading>{data.channel.title}</PageHeading>
-        </WithEditLink>
+        <PageHeader>
+          <WithEditLink name={"title"} label="Edit channel title">
+            <PageHeading>{data.channel.title}</PageHeading>
+          </WithEditLink>
+        </PageHeader>
 
-        <DescriptionList className="pt-2">
+        <DescriptionList>
           <span className="flex items-center gap-1">
             <DescriptionList.Definition>
               <Href href={channel.link} />
@@ -191,7 +180,14 @@ export default function ChannelDetailsPage() {
 
           <span className="flex flex-wrap items-center gap-1">
             <DescriptionList.Term className="flex items-center gap-1">
-              <ClockIcon className="h-4" /> Last update:
+              <>
+                {isRefreshing ? (
+                  <RefreshIcon className={`w-4 animate-spin`} />
+                ) : (
+                  <ClockIcon className="h-4" />
+                )}
+              </>
+              Last update:
             </DescriptionList.Term>
             <DescriptionList.Definition className="flex flex-wrap gap-1">
               {data.channel.lastBuildDate ? (
@@ -199,11 +195,23 @@ export default function ChannelDetailsPage() {
               ) : (
                 <i>unknown</i>
               )}
-              {data.channel.refreshDate && (
-                <span>
-                  (refreshed <TimeFromNow date={data.channel.refreshDate} />)
-                </span>
-              )}
+              <Form method="patch" className="flex-1 sm:grow-0">
+                <button
+                  onClick={() => playRefresh()}
+                  type="submit"
+                  className="underline"
+                  data-silent
+                >
+                  {data.channel.refreshDate ? (
+                    <span className="text-nowrap">
+                      (refreshed <TimeFromNow date={data.channel.refreshDate} />
+                      )
+                    </span>
+                  ) : (
+                    "refresh"
+                  )}
+                </button>
+              </Form>
             </DescriptionList.Definition>
           </span>
           <WithEditLink name={"new-category"} label="Edit channel categories">
@@ -278,9 +286,8 @@ export default function ChannelDetailsPage() {
           </div>
         )}
 
-        <hr className="mb-8 dark:border-slate-600" />
+        <hr className="mb-2 dark:border-slate-600" />
 
-        <h4 className="pb-2 text-2xl font-medium">Articles</h4>
         {items.map((item) => (
           <React.Fragment key={item.id}>
             <ChannelItemDetail
@@ -309,57 +316,8 @@ export default function ChannelDetailsPage() {
             }
           />
         )}
-      </section>
-      <AsideWrapper>
-        <Form method="patch" className="flex-1 sm:grow-0">
-          <Button
-            onClick={() => playRefresh()}
-            type="submit"
-            className="flex w-[13ch] items-center gap-2"
-            isPending={isRefreshing}
-            data-silent
-          >
-            <RefreshIcon
-              className={`w-4 ${
-                isRefreshing ? "animate-spin" : "animate-none"
-              }`}
-            />
-            <div className="flex-1 text-center">Refresh</div>
-          </Button>
-        </Form>
-        <Link to="edit" className={clsx(buttonStyle, "sm:w-full")}>
-          <PencilIcon className="w-4" />
-          <div className="flex-1 text-center">Edit</div>
-        </Link>
-        <br />
-        <Form
-          method="post"
-          onSubmit={async (event) => {
-            event.preventDefault();
-            await $confirm({
-              header: "Are you sure?",
-              message: "This will delete all saved data from this channel",
-              confirm: "Yes, delete",
-              reject: "No, cancel",
-            });
-            const formEl = event.target as typeof event.currentTarget;
-            fetcher.submit(formEl, { method: formEl.method as never });
-          }}
-        >
-          <Button
-            type="submit"
-            className="flex h-full w-fit items-center gap-2 sm:w-full"
-            isPending={fetcher.formData?.get("action") === "delete"}
-          >
-            <HiddenInputs inputs={{ loader: "true", action: "delete" }} />
-            <TrashIcon className="w-4" />{" "}
-            <span className="pointer-events-none hidden flex-1 text-center sm:block">
-              Delete
-            </span>
-          </Button>
-        </Form>
-      </AsideWrapper>
-    </div>
+      </MainSection>
+    </>
   );
 }
 

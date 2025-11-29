@@ -5,7 +5,7 @@ import { Tooltip } from "./Tooltip";
 import { WithFormLabel } from "./WithFormLabel";
 import { ClientOnly } from "./ClientOnly";
 import { styles } from "../styles/shared";
-import { Plus } from "./icons/Plus";
+import { PlusIcon } from "./icons/PlusIcon";
 
 type CategoryInputProps = {
   name: string;
@@ -92,7 +92,7 @@ export function CategoryInput(props: CategoryInputProps) {
             document.getElementById(inputId)?.focus();
           }}
         >
-          <Plus className="w-4" />
+          <PlusIcon className="w-4" />
           <Tooltip />
         </Button>
       </div>

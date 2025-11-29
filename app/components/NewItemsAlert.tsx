@@ -1,6 +1,6 @@
 import { useFetcher } from "react-router";
 import { useChannelRefreshFetcher } from "~/data/useChannelRefreshFetcher";
-import { DotsLoading } from "./icons/DotsLoading";
+import { DotsLoading } from "./icons/DotsLoadingIcon";
 import React from "react";
 import { usePreserveScroll } from "~/utils/use-preserve-scroll";
 

@@ -24,7 +24,7 @@ import {
 import { ChannelCategoryLinks } from "~/components/ChannelCategories";
 
 import React from "react";
-import { PageHeading } from "~/components/PageHeading";
+import { PageHeader, PageHeading } from "~/components/PageHeading";
 import { UseAppTitle } from "~/components/AppTitle";
 import enableSound from "/sounds/state-change_confirm-up.wav?url";
 import disableSound from "/sounds/state-change_confirm-down.wav?url";
@@ -40,6 +40,7 @@ import { InputError } from "~/components/InputError";
 import { Input } from "~/components/Input";
 import { validate } from "~/models/validate";
 import { List } from "~/components/List";
+import { MainSection } from "~/components/MainSection";
 
 const actions = enumerate([
   "toggle-sound",
@@ -181,305 +182,299 @@ export default function UserPage({
   const fetcher = useFetcher();
   actionData ??= fetcher.data;
   return (
-    <>
+    <MainSection>
       <UseAppTitle>Your profile</UseAppTitle>
-      <div className="relative flex flex-col sm:flex-row">
-        <section className="flex flex-1 flex-col gap-8">
-          <div className="flex justify-between">
-            <PageHeading>{user.email}</PageHeading>
-            <Form action={href("/logout")} method="post">
-              <Button className="flex">
-                <LogoutIcon className="h-6 w-4" />
-                <span className="w-full">Log out</span>
-              </Button>
-            </Form>
-          </div>
-          <dl>
-            {[
-              {
-                label: "Registered on",
-                value: (
-                  <time>
-                    {new Date(user.createdAt).toLocaleDateString("en", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </time>
-                ),
-                icon: <ClockIcon className="h-4" />,
-              },
-              {
-                label: "Categories",
-                icon: <BookmarkIcon className="h-4" />,
-                value: categories ? (
-                  <span className="flex flex-wrap gap-1">
-                    <ChannelCategoryLinks category={categories} />
-                  </span>
-                ) : (
-                  "No categories yet"
-                ),
-              },
-            ].map((item) => (
-              <span
-                className="mb-3 flex max-w-[89vw] flex-wrap gap-2 text-gray-500 sm:gap-1"
-                key={item.label}
-              >
-                <dt className="flex items-center gap-1">
-                  {item.icon} {item.label}:
-                </dt>
-                <dd>{item.value}</dd>
+      <PageHeader>
+        <PageHeading>{user.email}</PageHeading>
+        <Form action={href("/logout")} method="post">
+          <Button className="flex">
+            <LogoutIcon className="h-6 w-4" />
+            <span className="w-full max-sm:hidden">Log out</span>
+          </Button>
+        </Form>
+      </PageHeader>
+      <dl>
+        {[
+          {
+            label: "Registered on",
+            value: (
+              <time>
+                {new Date(user.createdAt).toLocaleDateString("en", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </time>
+            ),
+            icon: <ClockIcon className="h-4" />,
+          },
+          {
+            label: "Categories",
+            icon: <BookmarkIcon className="h-4" />,
+            value: categories ? (
+              <span className="flex flex-wrap gap-1">
+                <ChannelCategoryLinks category={categories} />
               </span>
-            ))}
-          </dl>
-          <hr className="dark:border-slate-800"></hr>
-          <div className="flex flex-col gap-4">
-            <h4 className="font-bold">General</h4>
+            ) : (
+              "No categories yet"
+            ),
+          },
+        ].map((item) => (
+          <span
+            className="mb-3 flex max-w-[89vw] flex-wrap gap-2 text-gray-500 sm:gap-1"
+            key={item.label}
+          >
+            <dt className="flex items-center gap-1">
+              {item.icon} {item.label}:
+            </dt>
+            <dd>{item.value}</dd>
+          </span>
+        ))}
+      </dl>
+      <hr className="my-4 dark:border-slate-800"></hr>
+      <div className="flex flex-col gap-4">
+        <h4 className="font-bold">General</h4>
 
-            <Form method="post" className="w-full sm:w-min">
-              <HiddenInputs inputs={{ action: actions["toggle-sound"] }} />
-              <Button
-                type="submit"
-                className="flex w-full min-w-[20ch] gap-2"
-                disabled={navigation.formMethod === "PATCH"}
-                data-silent
-                onClick={() => {
-                  if (!user.soundsAllowed) {
-                    playEnable();
-                  } else {
-                    playDisable();
-                  }
-                }}
-              >
-                {user.soundsAllowed ? (
-                  <>
-                    <VolumeOffIcon className="h-6 w-4" />{" "}
-                    <span className="pointer-events-none w-full">
-                      Disable sounds
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeUpIcon className="h-6 w-4" />{" "}
-                    <span className="pointer-events-none w-full">
-                      Enable sounds
-                    </span>
-                  </>
-                )}
-              </Button>
-            </Form>
-
-            <h4 className="font-bold">Login and credentials</h4>
-            <Form
-              action={href("/channels/user/edit-email")}
-              className="w-full sm:w-min"
-            >
-              <Button type="submit" className="flex w-full min-w-[20ch] gap-2">
-                <MailIcon className="h-6 w-4" />{" "}
-                <span className="pointer-events-none w-full">Update email</span>
-              </Button>
-            </Form>
-            {(actionData?.passwordCreated || actionData?.passwordUpdated) && (
-              <div className="flex gap-1 rounded bg-green-100 p-2 pl-4 text-green-800">
-                <CheckCircleIcon className="inline w-4 min-w-4" />
-                <p className="flex-1 text-center">
-                  Password was{" "}
-                  {actionData.passwordCreated ? <>created</> : <>updated</>}{" "}
-                  successfuly
-                </p>
-              </div>
+        <Form method="post" className="w-full sm:w-min">
+          <HiddenInputs inputs={{ action: actions["toggle-sound"] }} />
+          <Button
+            type="submit"
+            className="flex w-full min-w-[20ch] gap-2"
+            disabled={navigation.formMethod === "PATCH"}
+            data-silent
+            onClick={() => {
+              if (!user.soundsAllowed) {
+                playEnable();
+              } else {
+                playDisable();
+              }
+            }}
+          >
+            {user.soundsAllowed ? (
+              <>
+                <VolumeOffIcon className="h-6 w-4" />{" "}
+                <span className="pointer-events-none w-full">
+                  Disable sounds
+                </span>
+              </>
+            ) : (
+              <>
+                <VolumeUpIcon className="h-6 w-4" />{" "}
+                <span className="pointer-events-none w-full">
+                  Enable sounds
+                </span>
+              </>
             )}
-            <Details
-              title={user.password ? "Update password" : "Add password"}
-              icon={<LockClosedIcon className="w-4" />}
-              key={actionData?.updatedAt}
-            >
-              <Form method="post" className="flex flex-col gap-2">
-                <HiddenInputs.Action value={actions["update-password"]} />
+          </Button>
+        </Form>
 
-                {loaderData.user.password?.isCurrentLogin && (
-                  <p className="text-slate-600 dark:text-slate-400">
-                    <InformationCircleIcon className="-mt-1 inline size-4" />{" "}
-                    This will log you out of this device
-                    {loaderData.user.password?.sessionCount > 1 && (
-                      <> and other devices logged in using this password</>
-                    )}
-                  </p>
-                )}
-
-                {loaderData.user.password && (
-                  <Input.Password
-                    name="current-password"
-                    formLabel="Current password"
-                    autoComplete="current-password"
-                    required
-                    errors={
-                      actionData?.errors?.currentPassword
-                        ? [{ content: actionData?.errors?.currentPassword }]
-                        : undefined
-                    }
-                  />
-                )}
-
-                <Input.Password
-                  name="new-password"
-                  formLabel="New password"
-                  autoComplete="new-password"
-                  required
-                  errors={
-                    actionData?.errors?.newPassword
-                      ? [{ content: actionData?.errors?.newPassword }]
-                      : undefined
-                  }
-                />
-                <SubmitButton>
-                  {loaderData.user.password ? (
-                    <>Update password</>
-                  ) : (
-                    <>Add password</>
-                  )}
-                </SubmitButton>
-              </Form>
-            </Details>
-            <Details
-              title={"Manage passkeys"}
-              icon={<FingerPrintIcon className="w-4" />}
-            >
-              {user.passkeys.length === 0 && !isPasskeySupported && (
-                <p className="text-center text-slate-700">
-                  You have no passkeys
-                </p>
-              )}
-              <List className="">
-                {user.passkeys.map((passkey) => (
-                  <React.Fragment key={passkey.id}>
-                    <li className="mb-1 flex overflow-hidden rounded-sm border last:mb-2 dark:border-slate-700">
-                      <KeyIcon className="w-8 min-w-8 border-r bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-400" />
-                      <dl className="flex flex-1 flex-col sm:flex-row">
-                        {[
-                          {
-                            label: "Last login:",
-                            value: (
-                              <time>
-                                {passkey.lastUsedAt?.toLocaleDateString("en", {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "2-digit",
-                                }) ?? "-"}
-                              </time>
-                            ),
-                          },
-                          {
-                            label: "Status:",
-                            value: (
-                              <div className="overflow-hidden rounded-md">
-                                {passkey.sessionCount > 0 ? (
-                                  <span className="bg-green-100 p-1 text-green-700 dark:bg-green-700 dark:text-green-200">
-                                    {passkey.sessionCount} Device
-                                    {passkey.sessionCount === 1 ? "" : "s"}{" "}
-                                    logged in
-                                  </span>
-                                ) : (
-                                  <span className="bg-slate-200 p-1 text-slate-600 dark:bg-slate-600 dark:text-slate-200">
-                                    No device logged in
-                                  </span>
-                                )}
-                              </div>
-                            ),
-                          },
-                        ].map((item) => (
-                          <div
-                            key={item.label}
-                            className="min-w-24 border-b p-2 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0 dark:border-slate-700"
-                          >
-                            <dd className="text-sm text-slate-600 dark:text-slate-400">
-                              {item.label}
-                            </dd>
-                            <dt>{item.value}</dt>
-                          </div>
-                        ))}
-                      </dl>
-                      {(user.passkeys.length > 1 || user.password) && (
-                        <form
-                          className="justify-end"
-                          method="post"
-                          onSubmit={async (e) => {
-                            e.preventDefault();
-                            await $confirm({
-                              header: "Are you sure?",
-                              message: (
-                                <>
-                                  {passkey.isCurrentLogin ? (
-                                    <>This will log you out on this device</>
-                                  ) : passkey.sessionCount > 0 ? (
-                                    <>
-                                      This will log you out on device
-                                      {passkey.sessionCount === 1
-                                        ? ""
-                                        : "s"}{" "}
-                                      using this key
-                                    </>
-                                  ) : (
-                                    <>You will permanently delete this key</>
-                                  )}
-                                </>
-                              ),
-                              confirm: "Yes, delete",
-                              reject: "No, cancel",
-                            });
-                            fetcher.submit(e.target as typeof e.currentTarget);
-                          }}
-                        >
-                          <HiddenInputs
-                            inputs={{
-                              action: actions["remove-passkey"],
-                              ["passkey-id"]: passkey.id,
-                            }}
-                          />
-                          <button
-                            aria-label="Delete passkey"
-                            className="h-full border-l p-2 dark:border-slate-700"
-                          >
-                            <TrashIcon className="pointer-events-none w-4 min-w-4" />
-                          </button>
-                        </form>
-                      )}
-                    </li>
-                    {actionData?.errors?.passkeyId === passkey.id && (
-                      <InputError className="mb-2">
-                        {actionData?.errors.passkey}
-                      </InputError>
-                    )}
-                  </React.Fragment>
-                ))}
-              </List>
-              {isPasskeySupported && <PasskeyAddForm />}
-            </Details>
-            <h4 className="font-bold">Account</h4>
-            <fetcher.Form
-              method="post"
-              action={href("/logout")}
-              className="w-full sm:w-fit"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                await $confirm({
-                  header: <>Are you sure?</>,
-                  message: <>This will permanently delete your account</>,
-                  confirm: "Yes, delete",
-                  reject: "No, cancel",
-                });
-                fetcher.submit(e.target as typeof e.currentTarget);
-              }}
-            >
-              <HiddenInputs inputs={{ action: "delete" }} />
-              <Button className="flex w-full min-w-[20ch] bg-slate-700 text-white hover:bg-slate-800">
-                <TrashIcon className="h-6 w-4" />
-                <span className="w-full">Delete account</span>
-              </Button>
-            </fetcher.Form>
+        <h4 className="font-bold">Login and credentials</h4>
+        <Form
+          action={href("/channels/user/edit-email")}
+          className="w-full sm:w-min"
+        >
+          <Button type="submit" className="flex w-full min-w-[20ch] gap-2">
+            <MailIcon className="h-6 w-4" />{" "}
+            <span className="pointer-events-none w-full">Update email</span>
+          </Button>
+        </Form>
+        {(actionData?.passwordCreated || actionData?.passwordUpdated) && (
+          <div className="flex gap-1 rounded bg-green-100 p-2 pl-4 text-green-800">
+            <CheckCircleIcon className="inline w-4 min-w-4" />
+            <p className="flex-1 text-center">
+              Password was{" "}
+              {actionData.passwordCreated ? <>created</> : <>updated</>}{" "}
+              successfuly
+            </p>
           </div>
-        </section>
+        )}
+        <Details
+          title={user.password ? "Update password" : "Add password"}
+          icon={<LockClosedIcon className="w-4" />}
+          key={actionData?.updatedAt}
+        >
+          <Form method="post" className="flex flex-col gap-2">
+            <HiddenInputs.Action value={actions["update-password"]} />
+
+            {loaderData.user.password?.isCurrentLogin && (
+              <p className="text-slate-600 dark:text-slate-400">
+                <InformationCircleIcon className="-mt-1 inline size-4" /> This
+                will log you out of this device
+                {loaderData.user.password?.sessionCount > 1 && (
+                  <> and other devices logged in using this password</>
+                )}
+              </p>
+            )}
+
+            {loaderData.user.password && (
+              <Input.Password
+                name="current-password"
+                formLabel="Current password"
+                autoComplete="current-password"
+                required
+                errors={
+                  actionData?.errors?.currentPassword
+                    ? [{ content: actionData?.errors?.currentPassword }]
+                    : undefined
+                }
+              />
+            )}
+
+            <Input.Password
+              name="new-password"
+              formLabel="New password"
+              autoComplete="new-password"
+              required
+              errors={
+                actionData?.errors?.newPassword
+                  ? [{ content: actionData?.errors?.newPassword }]
+                  : undefined
+              }
+            />
+            <SubmitButton>
+              {loaderData.user.password ? (
+                <>Update password</>
+              ) : (
+                <>Add password</>
+              )}
+            </SubmitButton>
+          </Form>
+        </Details>
+        <Details
+          title={"Manage passkeys"}
+          icon={<FingerPrintIcon className="w-4" />}
+        >
+          {user.passkeys.length === 0 && !isPasskeySupported && (
+            <p className="text-center text-slate-700">You have no passkeys</p>
+          )}
+          <List className="">
+            {user.passkeys.map((passkey) => (
+              <React.Fragment key={passkey.id}>
+                <li className="mb-1 flex overflow-hidden rounded-sm border last:mb-2 dark:border-slate-700">
+                  <KeyIcon className="w-8 min-w-8 border-r bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-400" />
+                  <dl className="flex flex-1 flex-col sm:flex-row">
+                    {[
+                      {
+                        label: "Last login:",
+                        value: (
+                          <time>
+                            {passkey.lastUsedAt?.toLocaleDateString("en", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "2-digit",
+                            }) ?? "-"}
+                          </time>
+                        ),
+                      },
+                      {
+                        label: "Status:",
+                        value: (
+                          <div className="overflow-hidden rounded-md">
+                            {passkey.sessionCount > 0 ? (
+                              <span className="bg-green-100 p-1 text-green-700 dark:bg-green-700 dark:text-green-200">
+                                {passkey.sessionCount} Device
+                                {passkey.sessionCount === 1 ? "" : "s"} logged
+                                in
+                              </span>
+                            ) : (
+                              <span className="bg-slate-200 p-1 text-slate-600 dark:bg-slate-600 dark:text-slate-200">
+                                No device logged in
+                              </span>
+                            )}
+                          </div>
+                        ),
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className="min-w-24 border-b p-2 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0 dark:border-slate-700"
+                      >
+                        <dd className="text-sm text-slate-600 dark:text-slate-400">
+                          {item.label}
+                        </dd>
+                        <dt>{item.value}</dt>
+                      </div>
+                    ))}
+                  </dl>
+                  {(user.passkeys.length > 1 || user.password) && (
+                    <form
+                      className="justify-end"
+                      method="post"
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        await $confirm({
+                          header: "Are you sure?",
+                          message: (
+                            <>
+                              {passkey.isCurrentLogin ? (
+                                <>This will log you out on this device</>
+                              ) : passkey.sessionCount > 0 ? (
+                                <>
+                                  This will log you out on device
+                                  {passkey.sessionCount === 1 ? "" : "s"} using
+                                  this key
+                                </>
+                              ) : (
+                                <>You will permanently delete this key</>
+                              )}
+                            </>
+                          ),
+                          confirm: "Yes, delete",
+                          reject: "No, cancel",
+                        });
+                        fetcher.submit(e.target as typeof e.currentTarget);
+                      }}
+                    >
+                      <HiddenInputs
+                        inputs={{
+                          action: actions["remove-passkey"],
+                          ["passkey-id"]: passkey.id,
+                        }}
+                      />
+                      <button
+                        aria-label="Delete passkey"
+                        className="h-full border-l p-2 dark:border-slate-700"
+                      >
+                        <TrashIcon className="pointer-events-none w-4 min-w-4" />
+                      </button>
+                    </form>
+                  )}
+                </li>
+                {actionData?.errors?.passkeyId === passkey.id && (
+                  <InputError className="mb-2">
+                    {actionData?.errors.passkey}
+                  </InputError>
+                )}
+              </React.Fragment>
+            ))}
+          </List>
+          {isPasskeySupported && <PasskeyAddForm />}
+        </Details>
+        <h4 className="font-bold">Account</h4>
+        <fetcher.Form
+          method="post"
+          action={href("/logout")}
+          className="w-full sm:w-fit"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await $confirm({
+              header: <>Are you sure?</>,
+              message: <>This will permanently delete your account</>,
+              confirm: "Yes, delete",
+              reject: "No, cancel",
+              action: async () => {
+                await fetcher.submit(e.target as typeof e.currentTarget);
+              },
+            });
+          }}
+        >
+          <HiddenInputs inputs={{ action: "delete" }} />
+          <Button className="flex w-full min-w-[20ch] bg-slate-700 text-white hover:bg-slate-800">
+            <TrashIcon className="h-6 w-4" />
+            <span className="w-full">Delete account</span>
+          </Button>
+        </fetcher.Form>
       </div>
-    </>
+    </MainSection>
   );
 }

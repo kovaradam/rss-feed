@@ -9,8 +9,9 @@ export async function $confirm(params: {
   message: React.ReactNode;
   confirm: React.ReactNode;
   reject: React.ReactNode;
+  action?: () => Promise<void>;
 }) {
-  let confirmOption, rejectOption;
+  let confirmOption: () => void, rejectOption;
   root ??= createRoot(document.getElementById("confirm-modal") as HTMLElement);
 
   const result = new Promise((resolve, reject) => {
@@ -33,7 +34,13 @@ export async function $confirm(params: {
         {params.message}
       </p>
 
-      <fieldset className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row">
+      <form
+        action={async () => {
+          await params.action?.();
+          confirmOption?.();
+        }}
+        className="flex flex-col-reverse place-content-between gap-4 pt-4 md:flex-row"
+      >
         <Button
           className="flex w-full justify-center"
           onClick={rejectOption}
@@ -41,14 +48,10 @@ export async function $confirm(params: {
         >
           {params.reject}
         </Button>
-        <SubmitButton
-          className="w-full whitespace-nowrap"
-          data-silent
-          onClick={confirmOption}
-        >
+        <SubmitButton className="w-full whitespace-nowrap" data-silent>
           {params.confirm}
         </SubmitButton>
-      </fieldset>
+      </form>
     </Modal>,
   );
   return result;

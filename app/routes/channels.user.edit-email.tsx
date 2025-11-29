@@ -1,5 +1,5 @@
 import { Form, useNavigation, redirect } from "react-router";
-import { PageHeading } from "~/components/PageHeading";
+import { PageHeader, PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
 import { getUserById, requestUpdateUserEmail } from "~/models/user.server";
 import { requireUser, requireUserId } from "~/session.server";
@@ -7,6 +7,7 @@ import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.user.edit-email";
 import { Input } from "~/components/Input";
 import { validate } from "~/models/validate";
+import { MainSection } from "~/components/MainSection";
 
 export const meta = createMeta();
 
@@ -61,9 +62,11 @@ export default function UserEditPage({
   const isSubmitting = transition.formMethod === "PATCH";
 
   return (
-    <>
-      <PageHeading>{loaderData.title}</PageHeading>
-      <Form className="flex max-w-xl flex-col gap-4" method="patch">
+    <MainSection className="max-w-xl">
+      <PageHeader>
+        <PageHeading>{loaderData.title}</PageHeading>
+      </PageHeader>
+      <Form className="flex flex-col gap-4" method="patch">
         {[
           {
             name: "current-email",
@@ -96,6 +99,6 @@ export default function UserEditPage({
           isSubmitting={isSubmitting}
         />
       </Form>
-    </>
+    </MainSection>
   );
 }

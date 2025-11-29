@@ -10,9 +10,10 @@ import { styles } from "~/styles/shared";
 import { Button } from "./Button";
 import { CategoryInput } from "./CategoryInput";
 import { WithFormLabel } from "./WithFormLabel";
-import { PageHeading } from "./PageHeading";
+import { PageHeader, PageHeading } from "./PageHeading";
 import { SubmitSection } from "./SubmitSection";
 import { TrashIcon } from "@heroicons/react/outline";
+import { MainSection } from "./MainSection";
 
 const inputClassName = styles.input;
 
@@ -40,8 +41,8 @@ export function CollectionForm<
     transition.formData?.get("action") === "delete";
 
   return (
-    <div>
-      <header className="flex max-w-xl justify-between">
+    <MainSection className="max-w-xl">
+      <PageHeader>
         <PageHeading>{props.title}</PageHeading>
         {props.isEditForm && (
           <Form method="post">
@@ -59,9 +60,9 @@ export function CollectionForm<
             </Button>
           </Form>
         )}
-      </header>
+      </PageHeader>
 
-      <Form method="post" className="flex max-w-xl flex-col gap-4">
+      <Form method="post" className="flex flex-col gap-4">
         {/* To prevent submitting with category-delete buttons */}
         <input type="submit" hidden />
         <div>
@@ -172,6 +173,6 @@ export function CollectionForm<
           isSubmitting={isSaving}
         />
       </Form>
-    </div>
+    </MainSection>
   );
 }

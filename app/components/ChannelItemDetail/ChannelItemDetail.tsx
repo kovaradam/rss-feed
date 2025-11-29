@@ -15,9 +15,9 @@ import { Highlight } from "../Highlight";
 import React from "react";
 import { Tooltip } from "../Tooltip";
 import { enumerate } from "~/utils";
-import { Eye } from "../icons/Eye";
-import { CircleCheck } from "../icons/CircleCheck";
-import { Bookmark } from "../icons/Bookmark";
+import { EyeIcon } from "../icons/EyeIcon";
+import { CircleCheckIcon } from "../icons/CircleCheckIcon";
+import { BookmarkIcon } from "../icons/BookmarkIcon";
 import { SpinTransition } from "../animations/SpinTransition";
 import { Item } from "~/models/types.server";
 import clsx from "clsx";
@@ -212,9 +212,9 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
         ? item.hiddenFromFeed
         : sentHiddenFromFeed === String(true);
 
-  const ReadIcon = read ? SolidCheckIcon : CircleCheck;
-  const BookmarkIcon = bookmarked ? SolidBookmarkIcon : Bookmark;
-  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : Eye;
+  const ReadIcon = read ? SolidCheckIcon : CircleCheckIcon;
+  const BookmarkedIcon = bookmarked ? SolidBookmarkIcon : BookmarkIcon;
+  const HiddenFromFeedIcon = hiddenFromFeed ? EyeOffIcon : EyeIcon;
 
   const [playConfirm] = useSound(confirmSound, { volume: 0.1 });
   const [playCancel] = useSound(cancelSound, { volume: 0.1 });
@@ -246,7 +246,7 @@ ChannelItemDetail.Actions = function ChannelItemDetailActions(props: {
           name: ChannelItemDetail.form.names.bookmarked,
           value: String(!bookmarked),
           currentValue: String(bookmarked),
-          Icon: BookmarkIcon,
+          Icon: BookmarkedIcon,
 
           title: !bookmarked
             ? "Bookmark article"

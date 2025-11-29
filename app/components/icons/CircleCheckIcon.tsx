@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Eye(props: React.SVGProps<SVGSVGElement>) {
+export function CircleCheckIcon(props: React.SVGProps<SVGSVGElement>) {
   const _id = React.useId();
   const id = props.id ?? _id;
   return (
@@ -17,8 +17,8 @@ export function Eye(props: React.SVGProps<SVGSVGElement>) {
       {...props}
       id={id}
     >
-      <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
-      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="m9 12 2 2 4-4"></path>
     </svg>
   );
 }

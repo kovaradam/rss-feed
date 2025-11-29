@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 
-export function Bookmark(props: React.SVGProps<SVGSVGElement>) {
+export function BookmarkIcon(props: React.SVGProps<SVGSVGElement>) {
   const _id = React.useId();
   const id = props.id ?? _id;
   return (

@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import type { MouseEventHandler } from "react";
 import { Tooltip } from "./Tooltip";
-import { X } from "./icons/X";
+import { XIcon } from "./icons/XIcon";
 import clsx from "clsx";
 
 type Props = {
@@ -34,7 +34,7 @@ export function ChannelCategories(props: Props) {
                 aria-label="Remove category"
                 className="relative"
               >
-                <X className="w-4" />
+                <XIcon className="w-4" />
                 <Tooltip />
               </button>
             )}

@@ -1,4 +1,6 @@
-export function Plus(props: React.SVGProps<SVGSVGElement>) {
+import React from "react";
+
+export function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,8 +14,8 @@ export function Plus(props: React.SVGProps<SVGSVGElement>) {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 }

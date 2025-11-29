@@ -1,11 +1,18 @@
-import { Form, useNavigation, redirect, data, href } from "react-router";
+import {
+  Form,
+  useNavigation,
+  redirect,
+  data,
+  href,
+  useFetcher,
+} from "react-router";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
 import {
   CategoryInput,
   getCategoryFormValue,
 } from "~/components/CategoryInput";
-import { PageHeading } from "~/components/PageHeading";
+import { PageHeader, PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
 import { WithFormLabel } from "~/components/WithFormLabel";
 import {
@@ -13,12 +20,18 @@ import {
   updateChannel,
   getChannel,
   deleteChannelCategory,
+  deleteChannel,
 } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 import { styles } from "~/styles/shared";
 import { createTitle, enumerate, isSubmitting } from "~/utils";
 import type { Route } from "./+types/channels.$channelId.edit";
 import { Channel } from "~/models/types.server";
+import { Button } from "~/components/Button";
+import { $confirm } from "~/utils/confirm";
+import { HiddenInputs } from "~/components/HiddenInputs";
+import { TrashIcon } from "@heroicons/react/outline";
+import { MainSection } from "~/components/MainSection";
 
 const fieldNames = enumerate([
   "title",
@@ -27,6 +40,7 @@ const fieldNames = enumerate([
   "category",
   "language",
   "delete-category",
+  "action",
 ]);
 
 export const meta = ({ data }: Route.MetaArgs) => {
@@ -53,6 +67,11 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     FieldName,
     string | null
   >;
+
+  if (form.action === "delete") {
+    await deleteChannel({ userId, id: params.channelId });
+    throw redirect(href("/channels"));
+  }
 
   const errors = {} as typeof form;
   if (!form.title) {
@@ -139,12 +158,44 @@ export default function Channels({
   const transition = useNavigation();
 
   const isSaving = isSubmitting(transition);
+  const fetcher = useFetcher();
 
   return (
-    <>
+    <MainSection className="max-w-xl">
       <UseAppTitle>Edit channel</UseAppTitle>
-      <PageHeading>{channel?.title}</PageHeading>
-      <Form method="post" className="flex max-w-xl flex-col gap-4">
+      <PageHeader className="flex justify-between gap-2">
+        <PageHeading>{channel?.title}</PageHeading>
+        <Form
+          method="post"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            await $confirm({
+              header: "Are you sure?",
+              message: "This will delete all saved data from this channel",
+              confirm: "Yes, delete",
+              reject: "No, cancel",
+              action: async () => {
+                const formEl = event.target as typeof event.currentTarget;
+                await fetcher.submit(formEl, {
+                  method: formEl.method as never,
+                });
+              },
+            });
+          }}
+        >
+          <HiddenInputs inputs={{ loader: "true", action: "delete" }} />
+          <Button
+            type="submit"
+            className="flex w-fit items-center gap-2 sm:w-full"
+            isPending={fetcher.formData?.get("action") === "delete"}
+            aria-label="Delete channel"
+          >
+            <TrashIcon className="size-4" />
+            <span className="text-nowrap max-sm:hidden">Delete channel</span>
+          </Button>
+        </Form>
+      </PageHeader>
+      <Form method="post" className="flex flex-col gap-4">
         {/* To prevent submitting with category-delete buttons */}
         <input type="submit" hidden />
         <div>
@@ -208,7 +259,7 @@ export default function Channels({
           isSubmitting={isSaving}
         />
       </Form>
-    </>
+    </MainSection>
   );
 }
 

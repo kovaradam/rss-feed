@@ -10,11 +10,11 @@ import { Link, useFetcher } from "react-router";
 import React from "react";
 import invariant from "tiny-invariant";
 import { UseAppTitle } from "~/components/AppTitle";
-import { SubmitButton } from "~/components/Button";
+import { Button } from "~/components/Button";
 import { ChannelItemDetail } from "~/components/ChannelItemDetail/ChannelItemDetail";
 import { DescriptionList } from "~/components/DescriptionList";
 import { Href } from "~/components/Href";
-import { PageHeading } from "~/components/PageHeading";
+import { PageHeader, PageHeading } from "~/components/PageHeading";
 import { ShowMoreLink } from "~/components/ShowMoreLink";
 import { TimeFromNow } from "~/components/TimeFromNow";
 import { WithFormLabel } from "~/components/WithFormLabel";
@@ -31,6 +31,7 @@ import type { Route } from "./+types/channels.$channelId.articles.$itemId";
 import { BackLink } from "~/components/BackLink";
 import { ChannelItemDetailService } from "~/components/ChannelItemDetail/ChannelItemDetail.server";
 import { List } from "~/components/List";
+import { MainSection } from "~/components/MainSection";
 
 export const meta = createMeta();
 
@@ -117,7 +118,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
   const formRef = React.useRef<HTMLFormElement>(null);
 
   return (
-    <div style={{ viewTransitionName: `${item.id}` }}>
+    <MainSection style={{ viewTransitionName: `${item.id}` }}>
       <UseAppTitle>Article detail</UseAppTitle>
 
       <BackLink
@@ -132,7 +133,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         )}
       </BackLink>
 
-      <div className="flex flex-col justify-between md:flex-row">
+      <PageHeader className="flex-col">
         <PageHeading>
           <ChannelItemDetail.Title
             title={item.title}
@@ -140,7 +141,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           />
         </PageHeading>
         <ChannelItemDetail.Actions item={item} />
-      </div>
+      </PageHeader>
       <DescriptionList className={`py-2`}>
         {[
           {
@@ -217,8 +218,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           </DescriptionList.Definition>
         </span>
       </DescriptionList>
-      <hr className="my-2 dark:border-slate-800" />
-      <h4 className="py-2 text-2xl font-bold sm:text-2xl">Quotes</h4>
+      <hr className="my-4 dark:border-slate-800" />
       <fetcher.Form
         method="post"
         onSubmit={() => setTimeout(() => formRef.current?.reset())}
@@ -226,7 +226,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
       >
         <WithFormLabel label="New quote">
           {({ htmlFor }) => (
-            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-col gap-2">
               <textarea
                 name={inputs["quote"]}
                 required
@@ -234,7 +234,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
                 className={styles.input}
                 maxLength={1000}
               />
-              <SubmitButton className="max-h-8 md:self-end">Add</SubmitButton>
+              <Button className="max-h-8 md:self-end">Add quote</Button>
             </div>
           )}
         </WithFormLabel>
@@ -242,7 +242,6 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
           <p className="text-red-700">{fetcher.data?.error}</p>
         )}
       </fetcher.Form>
-      {/*<hr className="my-2 mt-4 dark:border-slate-800" />*/}
       <List className="pt-4">
         {quotes.map((quote) => (
           <Quote
@@ -254,7 +253,7 @@ export default function ItemDetailPage({ loaderData }: Route.ComponentProps) {
         ))}
       </List>
       {loaderData.cursor && <ShowMoreLink cursor={loaderData.cursor} />}
-    </div>
+    </MainSection>
   );
 }
 

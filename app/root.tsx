@@ -59,6 +59,12 @@ export default function App(props: Route.ComponentProps) {
       document.addEventListener(
         "click",
         (e) => {
+          console.log(
+            (e.target as HTMLElement)
+              .closest?.("a")
+              ?.getAttribute("href")
+              ?.startsWith("/") && (e.target as HTMLElement).closest("#nav"),
+          );
           if (
             (e.target as HTMLElement)
               .closest?.("a")

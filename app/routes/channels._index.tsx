@@ -8,7 +8,7 @@ import { ChannelItemFilterForm } from "~/components/ChannelItemFilterForm";
 import { ChannelItemList } from "~/components/ChannelItemList";
 import { Details } from "~/components/Details";
 import { ErrorMessage } from "~/components/ErrorMessage";
-import { Filter } from "~/components/icons/Filter";
+import { FilterIcon } from "~/components/icons/FilterIcon";
 import { NewItemsAlert } from "~/components/NewItemsAlert";
 import { PageSearchInput } from "~/components/PageSearchInput";
 import { ShowMoreLink } from "~/components/ShowMoreLink";
@@ -19,6 +19,7 @@ import { isEmptyObject } from "~/utils/is-empty-object";
 import type { Route } from "./+types/channels._index";
 import { List } from "~/components/List";
 import { useOptimisticItems } from "~/data/useOptimisticItmes";
+import { MainSection } from "~/components/MainSection";
 
 const itemCountName = "item-count";
 
@@ -151,32 +152,45 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <UseAppTitle>Your feed</UseAppTitle>
-      <div className="flex">
-        <section className="relative min-w-2/3 flex-1">
-          <Details
-            className="mb-4 w-full sm:hidden"
-            title="Filter articles"
-            icon={
-              <SpinTransition>
-                <Filter
-                  key={String(isFilters)}
-                  className="pointer-events-none w-4 min-w-4"
-                  fill={isFilters ? "currentColor" : undefined}
-                />
-              </SpinTransition>
-            }
-          >
-            <FilterForm />
-          </Details>
-          <PageSearchInput
-            defaultValue={filters.search ?? undefined}
-            formId={"filter-form"}
-            placeholder="Search in articles"
-          />
-          <NewItemsAlert />
+      <MainSection
+        className="relative flex-1"
+        aside={
+          channels.length !== 0 && (
+            <Details
+              className="mb-4 w-full"
+              title="Filter articles"
+              icon={
+                <SpinTransition>
+                  <FilterIcon
+                    key={String(isFilters)}
+                    className="pointer-events-none w-4 min-w-4"
+                    fill={isFilters ? "currentColor" : undefined}
+                  />
+                </SpinTransition>
+              }
+            >
+              <FilterForm />
+            </Details>
+          )
+        }
+      >
+        {channels.length !== 0 && (
+          <>
+            <div className="mb-4 sm:hidden">
+              <MainSection.AsideOutlet />
+            </div>
+            <PageSearchInput
+              defaultValue={filters.search ?? undefined}
+              formId={"filter-form"}
+              placeholder="Search in articles"
+            />
+          </>
+        )}
+        <NewItemsAlert />
 
-          {items.length === 0 && (
-            <div className="flex flex-col gap-2 text-center text-lg">
+        {items.length === 0 && (
+          <section className="flex flex-col items-center">
+            <div className="flex max-w-[50ch] flex-col gap-2 text-center text-lg">
               {channels.length !== 0 ? (
                 <>
                   <p className="mt-6 font-bold">
@@ -244,40 +258,21 @@ export default function ChannelIndexPage({ loaderData }: Route.ComponentProps) {
                 </div>
               )}
             </div>
-          )}
-          <ChannelItemList items={items} getKey={(i) => i.id}>
-            {(item) => (
-              <li>
-                <ChannelItemDetail
-                  item={item}
-                  isContrivedOnRead
-                  query={filters.search ?? undefined}
-                />
-              </li>
-            )}
-          </ChannelItemList>
-          {cursor && <ShowMoreLink cursor={cursor} isLoading={isLoading} />}
-        </section>
-        {channels.length !== 0 && (
-          <aside className="hidden pl-4 sm:block">
-            <Details
-              title="Filter articles"
-              className="w-60"
-              icon={
-                <SpinTransition>
-                  <Filter
-                    key={String(isFilters)}
-                    className="pointer-events-none w-4 min-w-4"
-                    fill={isFilters ? "currentColor" : undefined}
-                  />
-                </SpinTransition>
-              }
-            >
-              <FilterForm />
-            </Details>
-          </aside>
+          </section>
         )}
-      </div>
+        <ChannelItemList items={items} getKey={(i) => i.id}>
+          {(item) => (
+            <li>
+              <ChannelItemDetail
+                item={item}
+                isContrivedOnRead
+                query={filters.search ?? undefined}
+              />
+            </li>
+          )}
+        </ChannelItemList>
+        {cursor && <ShowMoreLink cursor={cursor} isLoading={isLoading} />}
+      </MainSection>
     </>
   );
 }

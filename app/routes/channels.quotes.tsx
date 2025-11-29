@@ -9,6 +9,7 @@ import { createMeta } from "~/utils";
 import type { Route } from "./+types/channels.quotes";
 import { List } from "~/components/List";
 import { UseAppTitle } from "~/components/AppTitle";
+import { MainSection } from "~/components/MainSection";
 
 export const meta = createMeta();
 
@@ -46,12 +47,12 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
   const title = <UseAppTitle>{loaderData.title}</UseAppTitle>;
   if (!loaderData.quotes.length && !loaderData.search) {
     return (
-      <div className="flex flex-col gap-2 text-center text-lg font-bold">
+      <MainSection className="flex flex-col gap-2 text-center text-lg font-bold">
         {title}
         {loaderData.quotes.length === 0 && (
           <div className="mt-8 flex flex-col items-center gap-16">
             <div>
-              <p>Store memorable quotes from articles</p>
+              <p>Keep memorable quotes</p>
               <p className="mb-4 text-sm font-normal wrap-anywhere text-slate-500 dark:text-slate-300">
                 Add a quote to any article from your{" "}
                 <Link to="/channels" className="underline">
@@ -67,11 +68,11 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
             />
           </div>
         )}
-      </div>
+      </MainSection>
     );
   }
   return (
-    <div>
+    <MainSection>
       {title}
       <Form id="search">
         <PageSearchInput
@@ -127,6 +128,6 @@ export default function QuotesPage({ loaderData }: Route.ComponentProps) {
           ]}
         />
       )}
-    </div>
+    </MainSection>
   );
 }

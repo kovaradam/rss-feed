@@ -2,7 +2,7 @@ import { CheckCircleIcon, PlusIcon } from "@heroicons/react/outline";
 import { Form, Link, useNavigation, redirect, href } from "react-router";
 import React from "react";
 import { UseAppTitle } from "~/components/AppTitle";
-import { PageHeading } from "~/components/PageHeading";
+import { PageHeader, PageHeading } from "~/components/PageHeading";
 import { SubmitSection } from "~/components/SubmitSection";
 import { WithFormLabel } from "~/components/WithFormLabel";
 import { createChannelFromUrl, getChannels } from "~/models/channel.server";
@@ -21,6 +21,7 @@ import { List } from "~/components/List";
 import { useKeepTruthy } from "~/utils/use-keep-truthy";
 import clsx from "clsx";
 import { Input } from "~/components/Input";
+import { MainSection } from "~/components/MainSection";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   return [
@@ -193,10 +194,12 @@ export default function NewChannelPage({
   );
 
   return (
-    <>
+    <MainSection className="max-w-xl">
       <UseAppTitle default />
-      <PageHeading>{loaderData.title}</PageHeading>
-      <div className="flex max-w-xl flex-col gap-4">
+      <PageHeader>
+        <PageHeading>{loaderData.title}</PageHeading>
+      </PageHeader>
+      <div className="flex flex-col gap-4">
         <Form method={"POST"} className={"flex flex-col gap-4"}>
           <WithFormLabel htmlFor="new-channel-input" label="Channel address">
             <Input
@@ -303,7 +306,7 @@ export default function NewChannelPage({
           </>
         )}
       </div>
-    </>
+    </MainSection>
   );
 }
 

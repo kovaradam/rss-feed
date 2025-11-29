@@ -1,25 +1,13 @@
 import {
-  ArchiveIcon,
   ChatAltIcon,
-  CogIcon,
   HomeIcon,
-  KeyIcon,
-  LogoutIcon,
   MenuAlt2Icon,
   RefreshIcon,
   SearchIcon,
-  UserIcon,
 } from "@heroicons/react/outline";
 import React from "react";
 
-import {
-  Form,
-  href,
-  Link,
-  Outlet,
-  useLocation,
-  useNavigation,
-} from "react-router";
+import { href, Outlet, useNavigation } from "react-router";
 import { AppTitle, UseAppTitle } from "~/components/AppTitle";
 import { ErrorMessage } from "~/components/ErrorMessage";
 import { Highlight } from "~/components/Highlight";
@@ -89,7 +77,6 @@ export default function ChannelsPage(props: Route.ComponentProps) {
   const filteredChannels = data.channels?.filter((channel) =>
     channel.title.toLowerCase().includes(channelFilter.toLocaleLowerCase()),
   );
-
   return (
     <AppTitle.Context.Provider value={{ setTitle, title }}>
       <a
@@ -120,15 +107,16 @@ export default function ChannelsPage(props: Route.ComponentProps) {
         >
           <div
             id="nav-sliding-element"
-            className={`relative flex h-full min-h-screen w-screen shadow-[-40rem_0_0rem_20rem_var(--nav-bg)] duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 2xl:w-2/3 max-sm:[input:checked+div_&]:translate-x-3/4`}
+            className={`relative flex h-full min-h-screen w-screen shadow-[-40rem_0_0rem_20rem_var(--nav-bg)] duration-300 ease-in-out data-[sliding='true']:duration-0 sm:translate-x-0 2xl:w-4/5 max-sm:[input:checked+div_&]:translate-x-3/4`}
           >
             <NavWrapper isExpanded={isNavExpanded} hide={hideNavbar}>
               <div className="grid h-full grid-cols-1 grid-rows-[5rem_1fr_6rem]">
-                <h1 className="sticky top-0 z-10 hidden items-end truncate p-4 font-[Merriweather] font-bold sm:flex sm:text-4xl">
-                  <span className="overflow-hidden text-ellipsis">
+                <div className="sticky top-0 z-10 hidden items-end justify-between truncate p-4 sm:flex">
+                  <h1 className="overflow-hidden font-[Merriweather] font-bold text-ellipsis sm:text-3xl dark:font-normal">
                     <AppTitle defaultTitle={data.title} />
-                  </span>
-                </h1>
+                  </h1>
+                  <NavWrapper.TitleLink />
+                </div>
                 <div
                   className="overscroll-contain sm:overflow-y-auto sm:data-[overscroll=true]:inset-shadow-2xs dark:inset-shadow-slate-700"
                   ref={attachOverscroll}
@@ -180,14 +168,12 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   >
                     <List>
                       {data.collectionListItems?.map((collection) => (
-                        <li key={collection.id}>
+                        <li key={collection.id} className={"mb-1"}>
                           <NavWrapper.StyledNavLink
-                            className={"mb-2"}
                             to={href(`/channels/collections/:collectionId`, {
                               collectionId: collection.id,
                             })}
                           >
-                            <ArchiveIcon className="w-4" />
                             {collection.title}
                           </NavWrapper.StyledNavLink>
                         </li>
@@ -252,7 +238,7 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     }
                   >
                     {!data.channels || data.channels.length === 0 ? (
-                      <p className="flex origin-top-right -rotate-6 items-center justify-end gap-2 pr-1 font-[Mansalva] text-lg">
+                      <p className="flex origin-top-right -rotate-6 items-center justify-end gap-2 pr-1 font-[Mansalva] text-lg text-slate-600">
                         Add a channel{" "}
                         <svg className="size-7" viewBox="0 0 40 40">
                           <g className="fill-none stroke-current stroke-3">
@@ -264,9 +250,9 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                     ) : (
                       <List as="ol">
                         {filteredChannels.map((channel) => (
-                          <li key={channel.id}>
+                          <li key={channel.id} className={"mb-1"}>
                             <NavWrapper.StyledNavLink
-                              className="mb-2 block"
+                              className="block"
                               to={href("/channels/:channelId", {
                                 channelId: channel.id,
                               })}
@@ -306,14 +292,14 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   </NavWrapper.NavSection>
                 </div>
                 <div className="relative hidden h-full w-full items-center px-2 data-[overscroll=true]:border-t sm:flex sm:data-[overscroll=true]:shadow-2xl dark:border-slate-700">
-                  <UserMenu
+                  <NavWrapper.UserMenu
                     email={data.user.email}
                     isAdmin={data.user.isAdmin}
                   />
                 </div>
               </div>
             </NavWrapper>
-            <div className="flex-1">
+            <div className="min-h-screen flex-1" id="main-content">
               <header className="z-10 flex w-screen justify-center border-b bg-white whitespace-nowrap sm:hidden dark:border-b-slate-700 dark:bg-slate-900">
                 <div className="flex w-full items-center justify-between p-4 px-2 xl:w-2/3">
                   <label
@@ -327,14 +313,13 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                   <h1 className="truncate font-bold sm:text-3xl">
                     <AppTitle defaultTitle={data.title} />
                   </h1>
-                  <UserMenu
+                  <NavWrapper.UserMenu
                     email={data.user.email}
                     isAdmin={data.user.isAdmin}
                   />
                 </div>
               </header>
               <main
-                id="main-content"
                 tabIndex={-1}
                 className={clsx(
                   "p-6 outline-none",
@@ -358,102 +343,6 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
     return null;
   }
   return <ErrorMessage>Something went wrong</ErrorMessage>;
-}
-
-function UserMenu(props: { email: string; isAdmin: boolean }) {
-  const location = useLocation();
-  const linkStyle = clsx(
-    "text-md flex cursor-pointer items-center gap-4 rounded-md bg-white px-4 py-2 hover:bg-slate-200 sm:bg-slate-100 sm:p-4 sm:shadow-md sm:hover:bg-slate-50 sm:active:bg-slate-100 dark:bg-inherit dark:hover:bg-slate-800 dark:sm:bg-slate-700 dark:sm:hover:bg-slate-600",
-  );
-
-  return (
-    <>
-      <noscript className="sm:flex-1">
-        <a href={href("/channels/user")} className={linkStyle}>
-          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4" />
-          <span className="pointer-events-none hidden shrink overflow-hidden text-ellipsis sm:block">
-            {props.email}
-          </span>
-        </a>
-      </noscript>
-      <details
-        key={location.pathname}
-        className="_script-only peer relative flex justify-center sm:w-full sm:flex-col-reverse"
-        onBlurCapture={(event) => {
-          const thisElement = event.currentTarget;
-          const blurTimeout = setTimeout(() => {
-            thisElement.open = false;
-          });
-          event.currentTarget.dataset.blurTimeout = String(blurTimeout);
-        }}
-        onFocusCapture={(event) => {
-          if (event.currentTarget.contains(event.target)) {
-            clearTimeout(Number(event.currentTarget.dataset.blurTimeout));
-          }
-        }}
-      >
-        <summary
-          className={clsx(
-            linkStyle,
-            "relative [&::-webkit-details-marker]:hidden",
-          )}
-          aria-label="Toggle user menu"
-        >
-          <UserIcon className="pointer-events-none w-6 sm:w-4 sm:min-w-4" />
-          <span className="pointer-events-none hidden shrink overflow-hidden text-ellipsis sm:block">
-            {props.email}
-          </span>
-          <IncreaseTouchTarget />
-        </summary>
-        <ul
-          className={clsx(
-            "absolute right-2 z-20 flex w-[92vw] flex-col-reverse rounded-md bg-white p-2 shadow-md sm:right-0 sm:bottom-[110%] sm:w-full sm:flex-col dark:border dark:border-slate-500 dark:bg-slate-800 [&_hr]:dark:border-slate-500",
-          )}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-        >
-          <li>
-            <Form action="/logout" method="post" className="w-full">
-              <button
-                type="submit"
-                className="flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-slate-700"
-              >
-                <LogoutIcon className="w-4" />
-                <span className="gap-4 whitespace-nowrap">Log out</span>
-              </button>
-            </Form>
-          </li>
-          <hr className="my-1" />
-          <li>
-            <Link
-              to={href("/channels/user")}
-              className="relative flex w-full items-center gap-4 rounded-sm p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-slate-700"
-            >
-              <CogIcon className="w-4" />
-
-              <span className="gap-4 whitespace-nowrap">Your profile</span>
-            </Link>
-          </li>
-          {props.isAdmin && (
-            <>
-              <hr className="my-1" />
-              <li>
-                <a
-                  href="/admin"
-                  title="Admin"
-                  className="flex w-full items-center gap-4 p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-slate-700"
-                >
-                  <KeyIcon className="w-4" />
-                  <span className="gap-4 whitespace-nowrap">Admin</span>
-                </a>
-              </li>
-            </>
-          )}
-        </ul>
-      </details>
-      <div className="invisible absolute top-0 -left-0 z-10 h-full w-full bg-blue-950 opacity-30 peer-open:visible sm:peer-open:invisible"></div>
-    </>
-  );
 }
 
 function registerNavSwipeCallbacks(
