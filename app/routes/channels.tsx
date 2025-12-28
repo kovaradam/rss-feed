@@ -134,7 +134,6 @@ export default function ChannelsPage(props: Route.ComponentProps) {
                           ) : (
                             <HomeIcon className="w-4" />
                           )}
-                          <Tooltip>Looking for new articles</Tooltip>
                           Feed
                         </>
                       ),

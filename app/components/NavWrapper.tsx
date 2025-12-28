@@ -153,7 +153,7 @@ NavWrapper.AddEntityLink = function AddEntityLink(props: {
       aria-label={props.label}
       to={props.to}
     >
-      <Tooltip position={{ x: "left" }} />
+      <Tooltip />
       <IncreaseTouchTarget />
       <PlusIcon className="size-4" />
     </NavLink>
@@ -171,7 +171,7 @@ NavWrapper.TitleLink = function AddEntityLink() {
       aria-label={action.label}
       to={action.to}
     >
-      <Tooltip position={{ x: "left", y: "top" }} />
+      <Tooltip />
       <PencilIcon className="size-4" />
     </NavLink>
   );
